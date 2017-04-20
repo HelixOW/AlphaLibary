@@ -15,8 +15,6 @@ import java.util.ArrayList;
 
 public class Arena {
 
-    private static final File ARENA_FOLDER = new File("plugins/AlphaGameLibary/arenas");
-
     private String name;
     private String fileName;
     private ArenaFile.ArenaItem icon;

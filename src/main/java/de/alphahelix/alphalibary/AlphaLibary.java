@@ -102,6 +102,8 @@ public class AlphaLibary extends JavaPlugin {
         File arenaFolder = new File("plugins/AlphaGameLibary/arenas");
 
         if (!arenaFolder.exists()) arenaFolder.mkdirs();
+
+
     }
 
     @Override

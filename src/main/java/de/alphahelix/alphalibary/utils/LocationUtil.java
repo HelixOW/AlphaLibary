@@ -134,10 +134,10 @@ public class LocationUtil {
     public static Location getRandomLocation(Location player, int Xminimum, int Xmaximum, int Zminimum, int Zmaximum) {
         try {
             World world = player.getWorld();
-            int randomZ = Zminimum + ((int) (Math.random() * ((Zmaximum - Zminimum) + 1)));
             double x = Double.parseDouble(
                     Integer.toString(Xminimum + ((int) (Math.random() * ((Xmaximum - Xminimum) + 1))))) + 0.5d;
-            double z = Double.parseDouble(Integer.toString(randomZ)) + 0.5d;
+            double z = Double.parseDouble(
+                    Integer.toString(Zminimum + ((int) (Math.random() * ((Zmaximum - Zminimum) + 1))))) + 0.5d;
             player.setY(200);
             return new Location(world, x, player.getY(), z);
         } catch (NullPointerException e) {

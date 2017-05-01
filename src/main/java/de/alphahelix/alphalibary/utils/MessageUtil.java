@@ -26,16 +26,14 @@ public class MessageUtil implements Listener {
     /**
      * Map linking an action UUID and the action
      */
-    private Map<UUID, ActionData> actionMap;
+    private Map<UUID, ActionData> actionMap = new HashMap<>();
 
     /**
      * Private constructor
      * No new instances of the class
      * are needed to be created outside
      */
-    private MessageUtil() {
-        actionMap = new HashMap<>();
-
+    public MessageUtil() {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 

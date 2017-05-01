@@ -6,7 +6,7 @@
 
     <groupId>de.alphahelix</groupId>
     <artifactId>alphalibary</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
 
     <name>AlphaLibary</name>

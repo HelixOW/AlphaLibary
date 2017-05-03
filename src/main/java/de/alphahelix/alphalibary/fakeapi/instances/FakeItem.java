@@ -36,4 +36,11 @@ public class FakeItem extends FakeEntity {
     public Material getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        return "FakeItem{" +
+                "type=" + type +
+                "} " + super.toString();
+    }
 }

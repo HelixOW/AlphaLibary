@@ -17,57 +17,28 @@
 package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakeItem;
-import de.alphahelix.alphalibary.file.SimpleFile;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class ItemLocationsFile extends SimpleFile {
+public class ItemLocationsFile extends SimpleJSONFile {
 
     public ItemLocationsFile() {
-        super("plugins/AlphaLibary", "fake_items.yml");
+        super("plugins/AlphaLibary", "fake_items.json");
     }
 
-    /**
-     * Adds a new {@link FakeItem} to the file
-     *
-     * @param loc  {@link Location} where the {@link FakeItem} is located at
-     * @param name of the {@link FakeItem}
-     * @param type {@link Material} of the {@link FakeItem} to save
-     */
-    public void addItemToFile(Location loc, String name, Material type) {
-        if (!configContains(name)) {
-            setDefault(name.replace(" ", "_").replace("§", "&") + ".type", type.name());
-            setLocation(name.replace(" ", "_").replace("§", "&") + ".loc", loc);
+    public void addItemToFile(FakeItem fakeItem) {
+        if (!contains(fakeItem.getUUID().toString())) {
+            setValue(fakeItem.getUUID().toString(), fakeItem);
         }
     }
 
-    /**
-     * Gets all {@link Location}s of the {@link FakeItem}s from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link Location}s as values
-     */
-    public HashMap<String, Location> getPacketItemsLocations() {
-        HashMap<String, Location> itemMaps = new HashMap<>();
+    public ArrayList<FakeItem> getFakeItemsFromFile() {
+        ArrayList<FakeItem> fakeItems = new ArrayList<>();
 
-        for (String names : getKeys(false)) {
-            itemMaps.put(names.replace("_", " ").replace("&", "§"), getLocation(names + ".loc", false));
+        for (String ids : getPaths()) {
+            fakeItems.add(getValue(ids, FakeItem.class));
         }
-        return itemMaps;
-    }
-
-    /**
-     * Gets all {@link Material}s of the {@link FakeItem}s from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link Material}s as values
-     */
-    public HashMap<String, Material> getPacketItemsTypes() {
-        HashMap<String, Material> itemMaps = new HashMap<>();
-
-        for (String names : getKeys(false)) {
-            itemMaps.put(names.replace("_", " ").replace("&", "§"), Material.getMaterial(getString(names + ".type")));
-        }
-        return itemMaps;
+        return fakeItems;
     }
 }

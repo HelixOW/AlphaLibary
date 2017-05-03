@@ -57,4 +57,13 @@ public class FakePlayer extends FakeEntity {
     public OfflinePlayer getSkinPlayer() {
         return skinPlayer;
     }
+
+    @Override
+    public String toString() {
+        return "FakePlayer{" +
+                "skin='" + skin + '\'' +
+                ", skinUUID=" + skinUUID +
+                ", skinPlayer=" + skinPlayer +
+                "} " + super.toString();
+    }
 }

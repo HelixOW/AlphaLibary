@@ -53,32 +53,12 @@ public class ItemFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeItem}
      */
     public static FakeItem spawnItem(Player p, Location loc, String name, Material type) {
-        try {
-            Object item = entityItem.newInstance(ReflectionUtil.getWorldServer(p.getWorld())
-                    , loc.getX()
-                    , loc.getY()
-                    , loc.getZ()
-                    , ReflectionUtil.getObjectNMSItemStack(new ItemStack(type)));
+        FakeItem fI = spawnTemporaryItem(p, loc, name, type);
 
-            Object dw = getDataWatcher().invoke(item);
-            if (VERSION != MinecraftVersion.EIGHT) {
-                setItemStack().invoke(item, ReflectionUtil.getObjectNMSItemStack(new ItemStack(type)));
-            } else {
-                watch().invoke(dw, 10, ReflectionUtil.getObjectNMSItemStack(new ItemStack(type)));
-                update().invoke(dw, 10);
-            }
+        if (fI == null) return null;
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntity().newInstance(item, 2));
-
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(item), dw, true));
-
-            FakeRegister.getItemLocationsFile().addItemToFile(loc, name, type);
-            FakeAPI.addFakeItem(p, new FakeItem(loc, name, item, type));
-            return new FakeItem(loc, name, item, type);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakeRegister.getItemLocationsFile().addItemToFile(fI);
+        return fI;
     }
 
     /**
@@ -110,8 +90,10 @@ public class ItemFakeUtil extends FakeUtilBase {
             ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntity().newInstance(item, 2));
             ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(item), dw, true));
 
-            FakeAPI.addFakeItem(p, new FakeItem(loc, name, item, type));
-            return new FakeItem(loc, name, item, type);
+            FakeItem fI = new FakeItem(loc, name, item, type);
+
+            FakeAPI.addFakeItem(p, fI);
+            return fI;
         } catch (Exception e) {
             e.printStackTrace();
         }

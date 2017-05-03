@@ -16,6 +16,7 @@
 
 package de.alphahelix.alphalibary.fakeapi;
 
+import de.alphahelix.alphalibary.fakeapi.instances.*;
 import de.alphahelix.alphalibary.fakeapi.utils.*;
 import de.alphahelix.alphalibary.listener.SimpleListener;
 import org.bukkit.entity.Player;
@@ -28,51 +29,67 @@ public class FakeEventListener extends SimpleListener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        for (String names : FakeRegister.getArmorstandLocationsFile().getPacketArmorstand().keySet()) {
-            ArmorstandFakeUtil.spawnArmorstand(p,
-                    FakeRegister.getArmorstandLocationsFile().getPacketArmorstand().get(names),
-                    names);
-        }
-        for (String names : FakeRegister.getEndercrystalLocationsFile().getPacketEndercrystal().keySet()) {
-            EndercrystalFakeUtil.spawnEndercrystal(p,
-                    FakeRegister.getEndercrystalLocationsFile().getPacketEndercrystal().get(names),
-                    names);
-        }
-        for (String names : FakeRegister.getPlayerLocationsFile().getPacketPlayerLocations().keySet()) {
-            PlayerFakeUtil.spawnPlayer(p,
-                    FakeRegister.getPlayerLocationsFile().getPacketPlayerLocations().get(names),
-                    FakeRegister.getPlayerLocationsFile().getPacketPlayerSkins().get(names),
-                    names);
-        }
-        for (String names : FakeRegister.getItemLocationsFile().getPacketItemsLocations().keySet()) {
-            ItemFakeUtil.spawnItem(p,
-                    FakeRegister.getItemLocationsFile().getPacketItemsLocations().get(names),
-                    names,
-                    FakeRegister.getItemLocationsFile().getPacketItemsTypes().get(names));
 
+        for (FakeArmorstand stands : FakeRegister.getArmorstandLocationsFile().getFakeArmorstandFromFile()) {
+            ArmorstandFakeUtil.spawnTemporaryArmorstand(
+                    p,
+                    stands.getStartLocation(),
+                    stands.getName());
         }
-        for (String names : FakeRegister.getMobLocationsFile().getPacketMobLocations().keySet()) {
-            MobFakeUtil.spawnTemporaryMob(p,
-                    FakeRegister.getMobLocationsFile().getPacketMobLocations().get(names),
-                    names,
-                    FakeRegister.getMobLocationsFile().getPacketMobTypes().get(names),
-                    false);
+
+        for (FakeBigItem bigItem : FakeRegister.getBigItemLocationsFile().getFakeBigItemFromFile()) {
+            BigItemFakeUtil.spawnTemporaryBigItem(
+                    p,
+                    bigItem.getStartLocation(),
+                    bigItem.getName(),
+                    bigItem.getItemStack());
         }
-        for (String names : FakeRegister.getBigItemLocationsFile().getPacketBigItemsLocations().keySet()) {
-            BigItemFakeUtil.spawnBigItem(p,
-                    FakeRegister.getBigItemLocationsFile().getPacketBigItemsLocations().get(names),
-                    names,
-                    FakeRegister.getBigItemLocationsFile().getPacketBigItemsTypes().get(names));
+
+        for (FakeEndercrystal endercrystal : FakeRegister.getEndercrystalLocationsFile().getFakeEndercrystalsFromFile()) {
+            EndercrystalFakeUtil.spawnTemporaryEndercrystal(
+                    p,
+                    endercrystal.getStartLocation(),
+                    endercrystal.getName());
         }
-        for (String names : FakeRegister.getXpOrbLocationsFile().getPacketXPOrb().keySet()) {
-            XPOrbFakeUtil.spawnTemporaryXPOrb(p,
-                    FakeRegister.getXpOrbLocationsFile().getPacketXPOrb().get(names),
-                    names);
+
+        for (FakeItem item : FakeRegister.getItemLocationsFile().getFakeItemsFromFile()) {
+            ItemFakeUtil.spawnTemporaryItem(
+                    p,
+                    item.getStartLocation(),
+                    item.getName(),
+                    item.getType());
         }
-        for (String names : FakeRegister.getPaintingLocationsFile().getPacketPainting().keySet()) {
-            PaintingFakeUtil.spawnTemporaryPainting(p,
-                    FakeRegister.getPaintingLocationsFile().getPacketPainting().get(names),
-                    names);
+
+        for (FakeMob mob : FakeRegister.getMobLocationsFile().getFakeMobsFromFile()) {
+            MobFakeUtil.spawnTemporaryMob(
+                    p,
+                    mob.getStartLocation(),
+                    mob.getName(),
+                    mob.getFakeMobType(),
+                    mob.isBaby());
+        }
+
+        for (FakePainting painting : FakeRegister.getPaintingLocationsFile().getFakePaintingsFromFile()) {
+            PaintingFakeUtil.spawnTemporaryPainting(
+                    p,
+                    painting.getStartLocation(),
+                    painting.getName());
+        }
+
+        for (FakePlayer player : FakeRegister.getPlayerLocationsFile().getFakePlayersFromFile()) {
+            PlayerFakeUtil.spawnTemporaryPlayer(
+                    p,
+                    player.getStartLocation(),
+                    player.getSkinPlayer(),
+                    player.getName()
+            );
+        }
+
+        for (FakeXPOrb xpOrb : FakeRegister.getXpOrbLocationsFile().getFakeXPOrbFromFile()) {
+            XPOrbFakeUtil.spawnTemporaryXPOrb(
+                    p,
+                    xpOrb.getStartLocation(),
+                    xpOrb.getName());
         }
     }
 

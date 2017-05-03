@@ -49,20 +49,14 @@ public class PaintingFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakePainting}
      */
     public static FakePainting spawnPainting(Player p, Location loc, String name) {
-        try {
-            Object painting = entityPainting.newInstance(ReflectionUtil.getWorldServer(p.getWorld()));
+        FakePainting fP = spawnTemporaryPainting(p, loc, name);
 
-            setLocation().invoke(painting, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        if (fP == null)
+            return null;
 
-            ReflectionUtil.sendPacket(p, spawnPainting.newInstance(painting));
-
-            FakeRegister.getPaintingLocationsFile().addPaintingToFile(loc, name);
-            FakeAPI.addFakePainting(p, new FakePainting(loc, name, painting));
-            return new FakePainting(loc, name, painting);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakeRegister.getPaintingLocationsFile().addPaintingToFile(fP);
+        FakeAPI.addFakePainting(p, fP);
+        return fP;
     }
 
     /**
@@ -81,8 +75,10 @@ public class PaintingFakeUtil extends FakeUtilBase {
 
             ReflectionUtil.sendPacket(p, spawnPainting.newInstance(painting));
 
-            FakeAPI.addFakePainting(p, new FakePainting(loc, name, painting));
-            return new FakePainting(loc, name, painting);
+            FakePainting fP = new FakePainting(loc, name, painting);
+
+            FakeAPI.addFakePainting(p, fP);
+            return fP;
         } catch (Exception e) {
             e.printStackTrace();
         }

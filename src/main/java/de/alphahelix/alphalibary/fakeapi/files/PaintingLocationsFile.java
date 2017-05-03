@@ -17,39 +17,27 @@
 package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakePainting;
-import de.alphahelix.alphalibary.file.SimpleFile;
-import org.bukkit.Location;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class PaintingLocationsFile extends SimpleFile {
+public class PaintingLocationsFile extends SimpleJSONFile {
     public PaintingLocationsFile() {
-        super("plugins/AlphaLibary", "fake_painting.yml");
+        super("plugins/AlphaLibary", "fake_painting.json");
     }
 
-    /**
-     * Adds a new {@link FakePainting} to the file
-     *
-     * @param loc  {@link Location} where the {@link FakePainting} is located at
-     * @param name of the {@link FakePainting}
-     */
-    public void addPaintingToFile(Location loc, String name) {
-        if (!configContains(name)) {
-            setLocation(name.replace(" ", "_").replace("§", "&"), loc);
+    public void addPaintingToFile(FakePainting fakePainting) {
+        if (!contains(fakePainting.getUUID().toString())) {
+            setValue(fakePainting.getUUID().toString(), fakePainting);
         }
     }
 
-    /**
-     * Gets all {@link FakePainting} from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link Location}s as values
-     */
-    public HashMap<String, Location> getPacketPainting() {
-        HashMap<String, Location> paintingmap = new HashMap<>();
+    public ArrayList<FakePainting> getFakePaintingsFromFile() {
+        ArrayList<FakePainting> fakePaintings = new ArrayList<>();
 
-        for (String names : getKeys(false)) {
-            paintingmap.put(names.replace("_", " ").replace("&", "§"), getLocation(names, false));
+        for (String ids : getPaths()) {
+            fakePaintings.add(getValue(ids, FakePainting.class));
         }
-        return paintingmap;
+        return fakePaintings;
     }
 }

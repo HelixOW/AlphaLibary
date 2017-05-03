@@ -17,60 +17,28 @@
 package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakePlayer;
-import de.alphahelix.alphalibary.file.SimpleFile;
-import de.alphahelix.alphalibary.uuid.UUIDFetcher;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class PlayerLocationsFile extends SimpleFile {
+public class PlayerLocationsFile extends SimpleJSONFile {
 
     public PlayerLocationsFile() {
-        super("plugins/AlphaLibary", "fake_players.yml");
+        super("plugins/AlphaLibary", "fake_players.json");
     }
 
-    /**
-     * Adds a new {@link FakePlayer} to the file
-     *
-     * @param loc  {@link Location} where the {@link FakePlayer} is located at
-     * @param name of the {@link FakePlayer}
-     * @param skin Name of the {@link OfflinePlayer} (skin of the {@link FakePlayer})
-     */
-    public void addPlayerToFile(Location loc, String name, String skin) {
-        if (!configContains(name)) {
-            setDefault(name.replace(" ", "_").replace("§", "&") + ".skin", skin);
-            setLocation(name.replace(" ", "_").replace("§", "&") + ".loc", loc);
+    public void addPlayerToFile(FakePlayer fakePlayer) {
+        if (!contains(fakePlayer.getUUID().toString())) {
+            setValue(fakePlayer.getUUID().toString(), fakePlayer);
         }
     }
 
-    /**
-     * Gets all {@link Location}s of the {@link FakePlayer}s from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link Location}s as values
-     */
-    public HashMap<String, Location> getPacketPlayerLocations() {
-        HashMap<String, Location> locationMap = new HashMap<>();
+    public ArrayList<FakePlayer> getFakePlayersFromFile() {
+        ArrayList<FakePlayer> fakePlayers = new ArrayList<>();
 
-        for (String names : getKeys(false)) {
-            locationMap.put(names.replace("_", " ").replace("&", "§"), getLocation(names + ".loc", false));
+        for (String ids : getPaths()) {
+            fakePlayers.add(getValue(ids, FakePlayer.class));
         }
-        return locationMap;
+        return fakePlayers;
     }
-
-    /**
-     * Gets all {@link OfflinePlayer}s of the {@link FakePlayer}s from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link OfflinePlayer}s as values
-     */
-    public HashMap<String, OfflinePlayer> getPacketPlayerSkins() {
-        HashMap<String, OfflinePlayer> skinMap = new HashMap<>();
-
-        for (String names : getKeys(false)) {
-            skinMap.put(names.replace("_", " ").replace("&", "§"), Bukkit.getOfflinePlayer(UUIDFetcher.getUUID(getString(names + ".skin"))));
-        }
-        return skinMap;
-    }
-
 }

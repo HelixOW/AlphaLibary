@@ -49,20 +49,12 @@ public class XPOrbFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeXPOrb}
      */
     public static FakeXPOrb spawnXPOrb(Player p, Location loc, String name) {
-        try {
-            Object orb = entityXPOrb.newInstance(ReflectionUtil.getWorldServer(p.getWorld()));
+        FakeXPOrb fXO = spawnTemporaryXPOrb(p, loc, name);
 
-            setLocation().invoke(orb, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        FakeRegister.getXpOrbLocationsFile().addXPOrbToFile(fXO);
 
-            ReflectionUtil.sendPacket(p, spawnXPOrb.newInstance(orb));
-
-            FakeRegister.getXpOrbLocationsFile().addXPOrbToFile(loc, name);
-            FakeAPI.addFakeXPOrb(p, new FakeXPOrb(loc, name, orb));
-            return new FakeXPOrb(loc, name, orb);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakeAPI.addFakeXPOrb(p, fXO);
+        return fXO;
     }
 
     /**
@@ -81,8 +73,10 @@ public class XPOrbFakeUtil extends FakeUtilBase {
 
             ReflectionUtil.sendPacket(p, spawnXPOrb.newInstance(orb));
 
-            FakeAPI.addFakeXPOrb(p, new FakeXPOrb(loc, name, orb));
-            return new FakeXPOrb(loc, name, orb);
+            FakeXPOrb fXO = new FakeXPOrb(loc, name, orb);
+
+            FakeAPI.addFakeXPOrb(p, fXO);
+            return fXO;
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -94,7 +94,11 @@ public class PlayerFakeUtil extends FakeUtilBase {
      */
     public static FakePlayer spawnPlayer(final Player p, final Location loc, OfflinePlayer skin, final String customName) {
         FakePlayer tR = spawnTemporaryPlayer(p, loc, skin, customName);
-        FakeRegister.getPlayerLocationsFile().addPlayerToFile(loc, customName, skin.getName());
+
+        if (tR == null)
+            return null;
+
+        FakeRegister.getPlayerLocationsFile().addPlayerToFile(tR);
 
         return tR;
     }

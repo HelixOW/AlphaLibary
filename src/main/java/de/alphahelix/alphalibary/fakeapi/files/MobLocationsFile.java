@@ -16,59 +16,29 @@
 
 package de.alphahelix.alphalibary.fakeapi.files;
 
-import de.alphahelix.alphalibary.fakeapi.FakeMobType;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeMob;
-import de.alphahelix.alphalibary.file.SimpleFile;
-import org.bukkit.Location;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class MobLocationsFile extends SimpleFile {
+public class MobLocationsFile extends SimpleJSONFile {
 
     public MobLocationsFile() {
-        super("plugins/AlphaLibary", "fake_mobs.yml");
+        super("plugins/AlphaLibary", "fake_mobs.json");
     }
 
-    /**
-     * Adds a new {@link FakeMob} to the file
-     *
-     * @param loc         {@link Location} where the {@link FakeMob} is located at
-     * @param name        of the {@link FakeMob}
-     * @param fakeMobType the {@link FakeMobType} which is spawned
-     */
-    public void addMobToFile(Location loc, String name, FakeMobType fakeMobType) {
-        if (!configContains(name)) {
-            setDefault(name.replace(" ", "_").replace("§", "&") + ".type", fakeMobType.name());
-            setLocation(name.replace(" ", "_").replace("§", "&") + ".loc", loc);
+    public void addMobToFile(FakeMob fakeMob) {
+        if (!contains(fakeMob.getUUID().toString())) {
+            setValue(fakeMob.getUUID().toString(), fakeMob);
         }
     }
 
-    /**
-     * Gets all {@link FakeMob} from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link Location}s as values
-     */
-    public HashMap<String, Location> getPacketMobLocations() {
-        HashMap<String, Location> locationMap = new HashMap<>();
+    public ArrayList<FakeMob> getFakeMobsFromFile() {
+        ArrayList<FakeMob> fakeMobs = new ArrayList<>();
 
-        for (String names : getKeys(false)) {
-            locationMap.put(names.replace("_", " ").replace("&", "§"), getLocation(names + ".loc", false));
+        for (String ids : getPaths()) {
+            fakeMobs.add(getValue(ids, FakeMob.class));
         }
-        return locationMap;
+        return fakeMobs;
     }
-
-    /**
-     * Gets all {@link FakeMobType}s of the {@link FakeMob}s from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link FakeMobType}s as values
-     */
-    public HashMap<String, FakeMobType> getPacketMobTypes() {
-        HashMap<String, FakeMobType> typeMap = new HashMap<>();
-
-        for (String names : getKeys(false)) {
-            typeMap.put(names.replace("_", " ").replace("&", "§"), FakeMobType.valueOf(getString(names + ".type")));
-        }
-        return typeMap;
-    }
-
 }

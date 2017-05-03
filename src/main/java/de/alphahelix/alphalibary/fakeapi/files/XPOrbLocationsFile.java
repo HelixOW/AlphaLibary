@@ -17,40 +17,28 @@
 package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakeXPOrb;
-import de.alphahelix.alphalibary.file.SimpleFile;
-import org.bukkit.Location;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class XPOrbLocationsFile extends SimpleFile {
+public class XPOrbLocationsFile extends SimpleJSONFile {
 
     public XPOrbLocationsFile() {
-        super("plugins/AlphaLibary", "fake_xporb.yml");
+        super("plugins/AlphaLibary", "fake_xporb.json");
     }
 
-    /**
-     * Adds a new {@link FakeXPOrb} to the file
-     *
-     * @param loc  {@link Location} where the {@link FakeXPOrb} is located at
-     * @param name of the {@link FakeXPOrb}
-     */
-    public void addXPOrbToFile(Location loc, String name) {
-        if (!configContains(name)) {
-            setLocation(name.replace(" ", "_").replace("§", "&"), loc);
+    public void addXPOrbToFile(FakeXPOrb fakeXPOrb) {
+        if (!contains(fakeXPOrb.getUUID().toString())) {
+            setValue(fakeXPOrb.getUUID().toString(), fakeXPOrb);
         }
     }
 
-    /**
-     * Gets all {@link FakeXPOrb} from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link Location}s as values
-     */
-    public HashMap<String, Location> getPacketXPOrb() {
-        HashMap<String, Location> xpOrbmap = new HashMap<>();
+    public ArrayList<FakeXPOrb> getFakeXPOrbFromFile() {
+        ArrayList<FakeXPOrb> fakeXPOrbs = new ArrayList<>();
 
-        for (String names : getKeys(false)) {
-            xpOrbmap.put(names.replace("_", " ").replace("&", "§"), getLocation(names, false));
+        for (String ids : getPaths()) {
+            fakeXPOrbs.add(getValue(ids, FakeXPOrb.class));
         }
-        return xpOrbmap;
+        return fakeXPOrbs;
     }
 }

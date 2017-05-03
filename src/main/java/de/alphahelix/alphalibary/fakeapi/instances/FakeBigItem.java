@@ -32,4 +32,10 @@ public class FakeBigItem extends FakeEntity {
         return itemStack;
     }
 
+    @Override
+    public String toString() {
+        return "FakeBigItem{" +
+                "itemStack=" + itemStack +
+                "} " + super.toString();
+    }
 }

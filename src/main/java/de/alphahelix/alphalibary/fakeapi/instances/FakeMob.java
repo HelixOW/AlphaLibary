@@ -22,14 +22,27 @@ import org.bukkit.Location;
 public class FakeMob extends FakeEntity {
 
     private FakeMobType fakeMobType;
+    private boolean baby;
 
-    public FakeMob(Location location, String name, Object nmsEntity, FakeMobType type) {
+    public FakeMob(Location location, String name, Object nmsEntity, FakeMobType type, boolean baby) {
         super(location, name, nmsEntity);
         this.fakeMobType = type;
+        this.baby = baby;
     }
 
     public FakeMobType getFakeMobType() {
         return fakeMobType;
     }
 
+    public boolean isBaby() {
+        return baby;
+    }
+
+    @Override
+    public String toString() {
+        return "FakeMob{" +
+                "fakeMobType=" + fakeMobType +
+                ", baby=" + baby +
+                "} " + super.toString();
+    }
 }

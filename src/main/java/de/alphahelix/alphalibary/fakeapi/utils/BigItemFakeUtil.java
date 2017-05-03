@@ -53,25 +53,14 @@ public class BigItemFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeBigItem}
      */
     public static FakeBigItem spawnBigItem(Player p, Location loc, String name, ItemStack itemStack) {
-        try {
-            FakeMob fakeGiant = MobFakeUtil.spawnTemporaryMob(p, loc, name, FakeMobType.GIANT, false);
-            assert fakeGiant != null;
-            Object giant = fakeGiant.getNmsEntity();
-            Object dw = getDataWatcher().invoke(giant);
+        FakeBigItem fBI = spawnTemporaryBigItem(p, loc, name, itemStack);
 
-            setInvisible().invoke(giant, true);
+        if (fBI == null)
+            return null;
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(giant), dw, true));
+        FakeRegister.getBigItemLocationsFile().addBigItemToFile(fBI);
 
-            MobFakeUtil.equipMob(p, fakeGiant, itemStack, REnumEquipSlot.HAND);
-
-            FakeRegister.getBigItemLocationsFile().addBigItemToFile(loc, name, itemStack);
-            FakeAPI.addFakeBigItem(p, new FakeBigItem(loc, name, giant, itemStack));
-            return new FakeBigItem(loc, name, giant, itemStack);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return fBI;
     }
 
 
@@ -97,8 +86,10 @@ public class BigItemFakeUtil extends FakeUtilBase {
 
             MobFakeUtil.equipMob(p, fakeGiant, stack, REnumEquipSlot.HAND);
 
-            FakeAPI.addFakeBigItem(p, new FakeBigItem(loc, name, giant, stack));
-            return new FakeBigItem(loc, name, giant, stack);
+            FakeBigItem fBI = new FakeBigItem(loc, name, giant, stack);
+
+            FakeAPI.addFakeBigItem(p, fBI);
+            return fBI;
         } catch (Exception e) {
             e.printStackTrace();
         }

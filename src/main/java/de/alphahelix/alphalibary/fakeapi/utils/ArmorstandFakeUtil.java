@@ -62,23 +62,13 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeArmorstand}
      */
     public static FakeArmorstand spawnArmorstand(Player p, Location loc, String name) {
-        try {
-            Object armorstand = entityArmorstand.newInstance(ReflectionUtil.getWorldServer(p.getWorld()));
+        FakeArmorstand fakeA = spawnTemporaryArmorstand(p, loc, name);
 
-            setLocation().invoke(armorstand, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-            setInvisible().invoke(armorstand, true);
-            setCustomName().invoke(armorstand, name);
-            setCustomNameVisible().invoke(armorstand, true);
+        if (fakeA == null)
+            return null;
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntityLiving().newInstance(armorstand));
-
-            FakeRegister.getArmorstandLocationsFile().addArmorstandToFile(loc, name);
-            FakeAPI.addFakeArmorstand(p, new FakeArmorstand(loc, name, armorstand));
-            return new FakeArmorstand(loc, name, armorstand);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakeRegister.getArmorstandLocationsFile().addArmorstandToFile(fakeA);
+        return fakeA;
     }
 
     /**
@@ -100,8 +90,10 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
 
             ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntityLiving().newInstance(armorstand));
 
-            FakeAPI.addFakeArmorstand(p, new FakeArmorstand(loc, name, armorstand));
-            return new FakeArmorstand(loc, name, armorstand);
+            FakeArmorstand fA = new FakeArmorstand(loc, name, armorstand);
+
+            FakeAPI.addFakeArmorstand(p, fA);
+            return fA;
         } catch (Exception e) {
             e.printStackTrace();
         }

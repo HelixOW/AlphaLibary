@@ -17,40 +17,28 @@
 package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakeEndercrystal;
-import de.alphahelix.alphalibary.file.SimpleFile;
-import org.bukkit.Location;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class EndercrystalLocationsFile extends SimpleFile {
+public class EndercrystalLocationsFile extends SimpleJSONFile {
 
     public EndercrystalLocationsFile() {
-        super("plugins/AlphaLibary", "fake_endercrystals.yml");
+        super("plugins/AlphaLibary", "fake_endercrystals.json");
     }
 
-    /**
-     * Adds a new {@link FakeEndercrystal} to the file
-     *
-     * @param loc  {@link Location} where the {@link FakeEndercrystal} is located at
-     * @param name of the {@link FakeEndercrystal}
-     */
-    public void addEndercrystalToFile(Location loc, String name) {
-        if (!configContains(name)) {
-            setLocation(name.replace(" ", "_").replace("§", "&"), loc);
+    public void addEndercrystalToFile(FakeEndercrystal fakeEndercrystal) {
+        if (!contains(fakeEndercrystal.getUUID().toString())) {
+            setValue(fakeEndercrystal.getUUID().toString(), fakeEndercrystal);
         }
     }
 
-    /**
-     * Gets all {@link FakeEndercrystal} from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link Location}s as values
-     */
-    public HashMap<String, Location> getPacketEndercrystal() {
-        HashMap<String, Location> crystalMap = new HashMap<>();
+    public ArrayList<FakeEndercrystal> getFakeEndercrystalsFromFile() {
+        ArrayList<FakeEndercrystal> fakeEndercrystals = new ArrayList<>();
 
-        for (String names : getKeys(false)) {
-            crystalMap.put(names.replace("_", " ").replace("&", "§"), getLocation(names, false));
+        for (String ids : getPaths()) {
+            fakeEndercrystals.add(getValue(ids, FakeEndercrystal.class));
         }
-        return crystalMap;
+        return fakeEndercrystals;
     }
 }

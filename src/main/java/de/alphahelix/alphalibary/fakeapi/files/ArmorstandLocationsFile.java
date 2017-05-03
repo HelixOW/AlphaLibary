@@ -17,40 +17,29 @@
 package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakeArmorstand;
-import de.alphahelix.alphalibary.file.SimpleFile;
-import org.bukkit.Location;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
-public class ArmorstandLocationsFile extends SimpleFile {
+public class ArmorstandLocationsFile extends SimpleJSONFile {
 
     public ArmorstandLocationsFile() {
-        super("plugins/AlphaLibary", "fake_armorstand.yml");
+        super("plugins/AlphaLibary", "fake_armorstand.json");
     }
 
-    /**
-     * Adds a new {@link FakeArmorstand} to the file
-     *
-     * @param loc  {@link Location} where the {@link FakeArmorstand} is located at
-     * @param name of the {@link FakeArmorstand}
-     */
-    public void addArmorstandToFile(Location loc, String name) {
-        if (!configContains(name)) {
-            setLocation(name.replace(" ", "_").replace("§", "&"), loc);
+    public void addArmorstandToFile(FakeArmorstand armorstand) {
+        if (!contains(armorstand.getUUID().toString())) {
+            setValue(armorstand.getUUID().toString(), armorstand);
         }
     }
 
-    /**
-     * Gets all {@link FakeArmorstand} from the file and returns it as a {@link HashMap}
-     *
-     * @return the {@link HashMap} with the name as keys and {@link Location}s as values
-     */
-    public HashMap<String, Location> getPacketArmorstand() {
-        HashMap<String, Location> standsMap = new HashMap<>();
+    public ArrayList<FakeArmorstand> getFakeArmorstandFromFile() {
+        ArrayList<FakeArmorstand> armorstands = new ArrayList<>();
 
-        for (String names : getKeys(false)) {
-            standsMap.put(names.replace("_", " ").replace("&", "§"), getLocation(names, false));
+        for (String ids : getPaths()) {
+            armorstands.add(getValue(ids, FakeArmorstand.class));
         }
-        return standsMap;
+
+        return armorstands;
     }
 }

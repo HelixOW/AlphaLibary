@@ -57,20 +57,14 @@ public class EndercrystalFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeEndercrystal}
      */
     public static FakeEndercrystal spawnEndercrystal(Player p, Location loc, String name) {
-        try {
-            Object endercrystal = entityEndercrystal.newInstance(ReflectionUtil.getWorldServer(p.getWorld()));
+        FakeEndercrystal fE = spawnTemporaryEndercrystal(p, loc, name);
 
-            setLocation().invoke(endercrystal, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        if (fE == null)
+            return null;
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntity().newInstance(endercrystal, 51));
+        FakeRegister.getEndercrystalLocationsFile().addEndercrystalToFile(fE);
 
-            FakeRegister.getEndercrystalLocationsFile().addEndercrystalToFile(loc, name);
-            FakeAPI.addFakeEndercrystal(p, new FakeEndercrystal(loc, name, endercrystal));
-            return new FakeEndercrystal(loc, name, endercrystal);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return fE;
     }
 
     /**
@@ -89,8 +83,10 @@ public class EndercrystalFakeUtil extends FakeUtilBase {
 
             ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntity().newInstance(endercrystal, 51));
 
-            FakeAPI.addFakeEndercrystal(p, new FakeEndercrystal(loc, name, endercrystal));
-            return new FakeEndercrystal(loc, name, endercrystal);
+            FakeEndercrystal fE = new FakeEndercrystal(loc, name, endercrystal);
+
+            FakeAPI.addFakeEndercrystal(p, fE);
+            return fE;
         } catch (Exception e) {
             e.printStackTrace();
         }

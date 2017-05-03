@@ -18,18 +18,22 @@ package de.alphahelix.alphalibary.fakeapi.instances;
 
 import org.bukkit.Location;
 
+import java.util.UUID;
+
 public class FakeEntity {
 
     private Location startLocation;
     private Location currentlocation;
     private String name;
     private Object nmsEntity;
+    private UUID uuid;
 
     public FakeEntity(Location location, String name, Object nmsEntity) {
         this.startLocation = location;
         this.currentlocation = location;
         this.name = name;
         this.nmsEntity = nmsEntity;
+        this.uuid = UUID.randomUUID();
     }
 
 
@@ -78,13 +82,18 @@ public class FakeEntity {
         return startLocation;
     }
 
-    /**
-     * Converts the {@link FakeEntity} to a String
-     *
-     * @return the serialized {@link FakeEntity}
-     */
+    public UUID getUUID() {
+        return uuid;
+    }
+
     @Override
     public String toString() {
-        return "Name = (" + getName() + ") , CurrentLocation = (x[" + getCurrentlocation().getBlockX() + "] ; y[" + getCurrentlocation().getBlockY() + "] ; z[" + getCurrentlocation().getBlockZ() + "]) , StartLocation = (x[" + getStartLocation().getBlockX() + "] ; y[" + getStartLocation().getBlockY() + "] ; z[" + getStartLocation().getBlockZ() + "])";
+        return "FakeEntity{" +
+                "startLocation=" + startLocation +
+                ", currentlocation=" + currentlocation +
+                ", name='" + name + '\'' +
+                ", nmsEntity=" + nmsEntity +
+                ", uuid=" + uuid +
+                '}';
     }
 }

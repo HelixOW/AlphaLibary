@@ -58,17 +58,13 @@ public class MobFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeMob}
      */
     public static FakeMob spawnMob(Player p, Location loc, String name, FakeMobType type, boolean baby) {
-        try {
-            FakeMob mob = spawnTemporaryMob(p, loc, name, type, baby);
+        FakeMob fM = spawnTemporaryMob(p, loc, name, type, baby);
 
-            FakeRegister.getMobLocationsFile().addMobToFile(loc, name, type);
+        if (fM == null) return null;
 
-            FakeAPI.addFakeMob(p, mob);
-            return mob;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakeRegister.getMobLocationsFile().addMobToFile(fM);
+
+        return fM;
     }
 
     /**
@@ -99,8 +95,10 @@ public class MobFakeUtil extends FakeUtilBase {
             ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(mob, FakeAPI.toAngle(loc.getYaw())));
             ReflectionUtil.sendPacket(p, getPacketPlayOutEntityLook().newInstance(ReflectionUtil.getEntityID(mob), FakeAPI.toAngle(loc.getYaw()), FakeAPI.toAngle(loc.getPitch()), true));
 
-            FakeAPI.addFakeMob(p, new FakeMob(loc, name, mob, type));
-            return new FakeMob(loc, name, mob, type);
+            FakeMob fM = new FakeMob(loc, name, mob, type, baby);
+
+            FakeAPI.addFakeMob(p, fM);
+            return fM;
         } catch (Exception e) {
             e.printStackTrace();
         }

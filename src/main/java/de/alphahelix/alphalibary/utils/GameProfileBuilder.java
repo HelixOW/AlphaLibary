@@ -6,7 +6,7 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 import de.alphahelix.alphalibary.AlphaLibary;
-import de.alphahelix.alphalibary.file.SimpleFile;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.BufferedReader;
@@ -72,7 +72,8 @@ public class GameProfileBuilder {
 
                 GameProfile result = gson.fromJson(json, GameProfile.class);
                 cache.put(uuid, new CachedProfile(result));
-                AlphaLibary.getGameProfileFile().addProfile(json);
+
+                AlphaLibary.getGameProfileFile().addProfile(result);
 
                 return result;
             } else {
@@ -175,21 +176,33 @@ public class GameProfileBuilder {
         }
     }
 
-    public static class GameProfileFile extends SimpleFile {
+    public static class GameProfileFile extends SimpleJSONFile {
+        private static ArrayList<GameProfile> profiles = new ArrayList<>();
+
         public GameProfileFile() {
-            super("plugins/AlphaLibary", "profiles.yml");
+            super("plugins/AlphaLibary", "profiles.json");
         }
 
-        public void addProfile(String jsonProfile) {
-            addArgumentsToList("Profiles", jsonProfile);
+        void addProfile(GameProfile profile) {
+            if (profiles.isEmpty())
+                if (contains("Profiles"))
+                    profiles = getValue("Profiles", ArrayList.class);
+
+            profiles.add(profile);
+
+            setValue("Profiles", profiles);
         }
 
-        public GameProfile getProfile(UUID owner) {
-            for (String jsonProfile : getStringList("Profiles")) {
-                GameProfile result = gson.fromJson(jsonProfile, GameProfile.class);
+        GameProfile getProfile(UUID owner) {
 
-                if (result.getId().equals(owner)) return result;
-            }
+            ArrayList<Object> profs = getValue("Profiles", ArrayList.class);
+
+            if (profs == null)
+                return null;
+
+            for (Object profiles : profs)
+                if (((GameProfile) profiles).getId().equals(owner))
+                    return (GameProfile) profiles;
             return null;
         }
     }

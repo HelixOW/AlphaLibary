@@ -15,9 +15,9 @@ import java.util.ArrayList;
 
 public class SimpleJSONFile extends File {
 
-    private JSONParser parser = new JSONParser();
+    private static Gson gson = new GsonBuilder().create();
+    private static JSONParser parser = new JSONParser();
     private JSONObject head = new JSONObject();
-    private Gson gson = new GsonBuilder().create();
 
 
     public SimpleJSONFile(String parent, String child) {
@@ -53,6 +53,8 @@ public class SimpleJSONFile extends File {
     }
 
     public void removeValue(String path) {
+        if (!contains(path)) return;
+
         head.remove(path);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this))) {
@@ -65,6 +67,11 @@ public class SimpleJSONFile extends File {
 
     public <T> T getValue(String path, Class<T> definy) {
         try {
+            String file = FileUtils.readFileToString(this);
+
+            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
+                return null;
+
             JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
             Gson gson = new GsonBuilder().create();
 
@@ -77,7 +84,12 @@ public class SimpleJSONFile extends File {
 
     public <T> ArrayList<T> getValues(Class<T> definy) {
         try {
-            JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
+            String file = FileUtils.readFileToString(this);
+
+            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
+                return new ArrayList<>();
+
+            JSONObject obj = (JSONObject) parser.parse(file);
             ArrayList<T> list = new ArrayList<>();
 
             for (Object o : obj.keySet()) {
@@ -93,7 +105,12 @@ public class SimpleJSONFile extends File {
 
     public ArrayList<String> getPaths() {
         try {
-            JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
+            String file = FileUtils.readFileToString(this);
+
+            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
+                return new ArrayList<>();
+
+            JSONObject obj = (JSONObject) parser.parse(file);
             ArrayList<String> list = new ArrayList<>();
 
             for (Object o : obj.keySet()) {

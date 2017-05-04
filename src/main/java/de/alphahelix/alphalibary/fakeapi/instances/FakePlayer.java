@@ -26,7 +26,7 @@ public class FakePlayer extends FakeEntity {
 
     private String skin;
     private UUID skinUUID;
-    private OfflinePlayer skinPlayer;
+    private transient OfflinePlayer skinPlayer;
 
     public FakePlayer(Location location, String name, OfflinePlayer skin, Object fake) {
         super(location, name, fake);
@@ -63,7 +63,6 @@ public class FakePlayer extends FakeEntity {
         return "FakePlayer{" +
                 "skin='" + skin + '\'' +
                 ", skinUUID=" + skinUUID +
-                ", skinPlayer=" + skinPlayer +
                 "} " + super.toString();
     }
 }

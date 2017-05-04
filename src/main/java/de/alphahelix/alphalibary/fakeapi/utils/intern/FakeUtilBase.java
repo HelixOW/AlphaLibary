@@ -51,6 +51,7 @@ public class FakeUtilBase {
     private static Method stopRiding;
     private static Method setBaby;
     private static Method setVariant;
+    private static Method setGravity;
 
     static {
         try {
@@ -80,6 +81,7 @@ public class FakeUtilBase {
                 stopRiding = ReflectionUtil.getNmsClass("Entity").getMethod("stopRiding");
                 setBaby = ReflectionUtil.getNmsClass("EntityAgeable").getMethod("setAge", int.class);
                 setVariant = ReflectionUtil.getNmsClass("EntityLlama").getMethod("setVariant", int.class);
+                setGravity = ReflectionUtil.getNmsClass("Entity").getMethod("setNoGravity", boolean.class);
             } else {
                 packetPlayOutSpawnEntity = ReflectionUtil.getNmsClass("PacketPlayOutSpawnEntity").getConstructor(ReflectionUtil.getNmsClass("Entity"), int.class);
                 packetPlayOutSpawnEntityLiving = ReflectionUtil.getNmsClass("PacketPlayOutSpawnEntityLiving").getConstructor(ReflectionUtil.getNmsClass("EntityLiving"));
@@ -205,5 +207,9 @@ public class FakeUtilBase {
 
     public static Method setVariant() {
         return setVariant;
+    }
+
+    public static Method setGravity() {
+        return setGravity;
     }
 }

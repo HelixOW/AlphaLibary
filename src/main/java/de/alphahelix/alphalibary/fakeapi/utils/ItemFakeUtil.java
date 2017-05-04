@@ -135,4 +135,19 @@ public class ItemFakeUtil extends FakeUtilBase {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Experimental feature
+     */
+    public static void setGravity(Player p, boolean gravity, FakeItem item) {
+        try {
+            setGravity().invoke(item.getNmsEntity(), !gravity);
+
+            Object dw = getDataWatcher().invoke(item.getNmsEntity());
+
+            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(item.getNmsEntity()), dw, true));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

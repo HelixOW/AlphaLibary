@@ -16,21 +16,37 @@
 
 package de.alphahelix.alphalibary.fakeapi.instances;
 
+import com.google.gson.annotations.Expose;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.UUID;
 
 public class FakeEntity {
 
-    private Location startLocation;
-    private Location currentlocation;
+    private JSONLocationWrapper startLocation;
     private String name;
-    private Object nmsEntity;
     private UUID uuid;
 
-    public FakeEntity(Location location, String name, Object nmsEntity) {
-        this.startLocation = location;
-        this.currentlocation = location;
+
+    @Expose
+    private transient Object nmsEntity;
+    @Expose
+    private transient Location currentlocation;
+
+    public FakeEntity() {
+    }
+
+    public FakeEntity(Location startLocation, String name, Object nmsEntity) {
+        this.startLocation = new JSONLocationWrapper(
+                startLocation.getX(),
+                startLocation.getY(),
+                startLocation.getZ(),
+                startLocation.getYaw(),
+                startLocation.getPitch(),
+                startLocation.getWorld().getName()
+        );
+        this.currentlocation = startLocation;
         this.name = name;
         this.nmsEntity = nmsEntity;
         this.uuid = UUID.randomUUID();
@@ -79,7 +95,7 @@ public class FakeEntity {
      * @return the {@link Location} where the {@link FakeEntity} was spawned
      */
     public Location getStartLocation() {
-        return startLocation;
+        return startLocation.getLocation();
     }
 
     public UUID getUUID() {
@@ -89,11 +105,56 @@ public class FakeEntity {
     @Override
     public String toString() {
         return "FakeEntity{" +
-                "startLocation=" + startLocation +
-                ", currentlocation=" + currentlocation +
+//                "startLocation=" + startLocation +
                 ", name='" + name + '\'' +
-                ", nmsEntity=" + nmsEntity +
                 ", uuid=" + uuid +
                 '}';
+    }
+}
+
+class JSONLocationWrapper {
+
+    private double x;
+    private double y;
+    private double z;
+    private float yaw;
+    private float pitch;
+    private String world;
+
+    public JSONLocationWrapper(double x, double y, double z, float yaw, float pitch, String world) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.yaw = yaw;
+        this.pitch = pitch;
+        this.world = world;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
+    public String getWorld() {
+        return world;
+    }
+
+    public Location getLocation() {
+        return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
     }
 }

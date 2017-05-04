@@ -49,6 +49,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class PlayerFakeUtil extends FakeUtilBase {
 
@@ -115,6 +116,15 @@ public class PlayerFakeUtil extends FakeUtilBase {
     public static FakePlayer spawnTemporaryPlayer(final Player p, final Location loc, OfflinePlayer skin, final String customName) {
         try {
             return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(UUIDFetcher.getUUID(skin)), customName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static FakePlayer spawnTemporaryPlayer(Player p, Location loc, UUID skin, String customName) {
+        try {
+            return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(skin), customName);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

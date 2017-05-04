@@ -19,6 +19,7 @@ package de.alphahelix.alphalibary.fakeapi;
 import de.alphahelix.alphalibary.fakeapi.instances.*;
 import de.alphahelix.alphalibary.fakeapi.utils.*;
 import de.alphahelix.alphalibary.listener.SimpleListener;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -80,7 +81,7 @@ public class FakeEventListener extends SimpleListener {
             PlayerFakeUtil.spawnTemporaryPlayer(
                     p,
                     player.getStartLocation(),
-                    player.getSkinPlayer(),
+                    Bukkit.getOfflinePlayer(player.getSkinUUID()),
                     player.getName()
             );
         }

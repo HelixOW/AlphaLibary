@@ -99,4 +99,11 @@ public class LeatherItemBuilder extends ItemBuilder {
         }
         return s;
     }
+
+    @Override
+    public String toString() {
+        return "LeatherItemBuilder{" +
+                "color=" + color +
+                "} " + super.toString();
+    }
 }

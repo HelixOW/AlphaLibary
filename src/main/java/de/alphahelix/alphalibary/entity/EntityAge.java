@@ -1,6 +1,8 @@
 package de.alphahelix.alphalibary.entity;
 
-public enum EntityAge {
+import java.io.Serializable;
+
+public enum EntityAge implements Serializable {
 
     CHILD(0),
     ADULT(1);
@@ -13,5 +15,12 @@ public enum EntityAge {
 
     public int getBukkitAge() {
         return bukkitAge;
+    }
+
+    @Override
+    public String toString() {
+        return "EntityAge{" +
+                "bukkitAge=" + bukkitAge +
+                '}';
     }
 }

@@ -6,12 +6,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Kit {
+public class Kit implements Serializable {
 
-    private static ArrayList<Kit> kits = new ArrayList<>();
+    private static transient ArrayList<Kit> kits = new ArrayList<>();
 
     private String name;
     private String rawName;
@@ -71,5 +72,15 @@ public class Kit {
             p.getInventory().addItem(itemStack);
         }
         Bukkit.getPluginManager().callEvent(new KitReceiveEvent(p, this));
+    }
+
+    @Override
+    public String toString() {
+        return "Kit{" +
+                "name='" + name + '\'' +
+                ", rawName='" + rawName + '\'' +
+                ", price=" + price +
+                ", items=" + items +
+                '}';
     }
 }

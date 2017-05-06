@@ -40,4 +40,13 @@ class SimplePotionEffect {
     public PotionEffect createEffect() {
         return new PotionEffect(this.potionType, this.durationInSec * 20, this.amplifier);
     }
+
+    @Override
+    public String toString() {
+        return "SimplePotionEffect{" +
+                "durationInSec=" + durationInSec +
+                ", potionType=" + potionType +
+                ", amplifier=" + amplifier +
+                '}';
+    }
 }

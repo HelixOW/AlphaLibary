@@ -6,7 +6,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
-public class EntityBuilder {
+import java.io.Serializable;
+
+public class EntityBuilder implements Serializable {
 
     private EntityType type;
     private Class<? extends Entity> entityClazz;
@@ -119,5 +121,22 @@ public class EntityBuilder {
             }
         }
         return e;
+    }
+
+    @Override
+    public String toString() {
+        return "EntityBuilder{" +
+                "type=" + type +
+                ", entityClazz=" + entityClazz +
+                ", name='" + name + '\'' +
+                ", health=" + health +
+                ", move=" + move +
+                ", itemPickup=" + itemPickup +
+                ", glowing=" + glowing +
+                ", gravity=" + gravity +
+                ", invincible=" + invincible +
+                ", ageLock=" + ageLock +
+                ", age=" + age +
+                '}';
     }
 }

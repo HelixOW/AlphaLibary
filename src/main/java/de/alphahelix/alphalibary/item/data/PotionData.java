@@ -50,4 +50,11 @@ public class PotionData extends ItemData {
             throw new WrongDataException(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "PotionData{" +
+                "toApply=" + toApply +
+                '}';
+    }
 }

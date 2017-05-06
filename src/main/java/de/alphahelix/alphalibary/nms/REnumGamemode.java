@@ -19,7 +19,9 @@ package de.alphahelix.alphalibary.nms;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.utils.MinecraftVersion;
 
-public enum REnumGamemode {
+import java.io.Serializable;
+
+public enum REnumGamemode implements Serializable {
 
     NOT_SET(0),
     SURVIVAL(1),
@@ -39,5 +41,12 @@ public enum REnumGamemode {
             return ReflectionUtil.getNmsClass("WorldSettings$EnumGamemode").getEnumConstants()[c];
         else
             return ReflectionUtil.getNmsClass("EnumGamemode").getEnumConstants()[c];
+    }
+
+    @Override
+    public String toString() {
+        return "REnumGamemode{" +
+                "c=" + c +
+                '}';
     }
 }

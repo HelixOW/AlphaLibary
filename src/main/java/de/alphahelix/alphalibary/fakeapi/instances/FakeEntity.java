@@ -17,14 +17,14 @@
 package de.alphahelix.alphalibary.fakeapi.instances;
 
 import com.google.gson.annotations.Expose;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class FakeEntity {
+public class FakeEntity implements Serializable {
 
-    private JSONLocationWrapper startLocation;
+    private Location startLocation;
     private String name;
     private UUID uuid;
 
@@ -38,14 +38,7 @@ public class FakeEntity {
     }
 
     public FakeEntity(Location startLocation, String name, Object nmsEntity) {
-        this.startLocation = new JSONLocationWrapper(
-                startLocation.getX(),
-                startLocation.getY(),
-                startLocation.getZ(),
-                startLocation.getYaw(),
-                startLocation.getPitch(),
-                startLocation.getWorld().getName()
-        );
+        this.startLocation = startLocation;
         this.currentlocation = startLocation;
         this.name = name;
         this.nmsEntity = nmsEntity;
@@ -95,7 +88,7 @@ public class FakeEntity {
      * @return the {@link Location} where the {@link FakeEntity} was spawned
      */
     public Location getStartLocation() {
-        return startLocation.getLocation();
+        return startLocation;
     }
 
     public UUID getUUID() {
@@ -105,56 +98,9 @@ public class FakeEntity {
     @Override
     public String toString() {
         return "FakeEntity{" +
-//                "startLocation=" + startLocation +
+                "startLocation=" + startLocation +
                 ", name='" + name + '\'' +
                 ", uuid=" + uuid +
                 '}';
-    }
-}
-
-class JSONLocationWrapper {
-
-    private double x;
-    private double y;
-    private double z;
-    private float yaw;
-    private float pitch;
-    private String world;
-
-    public JSONLocationWrapper(double x, double y, double z, float yaw, float pitch, String world) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-        this.world = world;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getZ() {
-        return z;
-    }
-
-    public float getYaw() {
-        return yaw;
-    }
-
-    public float getPitch() {
-        return pitch;
-    }
-
-    public String getWorld() {
-        return world;
-    }
-
-    public Location getLocation() {
-        return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
     }
 }

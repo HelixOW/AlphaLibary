@@ -3,7 +3,9 @@ package de.alphahelix.alphalibary.airdrops;
 import de.alphahelix.alphalibary.utils.LocationUtil;
 import org.bukkit.Location;
 
-public class DropOffLocation {
+import java.io.Serializable;
+
+public class DropOffLocation implements Serializable {
 
     private Location center;
     private int radius;
@@ -20,5 +22,13 @@ public class DropOffLocation {
         int maxZ = (int) (center.getZ() + radius);
 
         return LocationUtil.getRandomLocation(center, minX, maxX, minZ, maxZ);
+    }
+
+    @Override
+    public String toString() {
+        return "DropOffLocation{" +
+                "center=" + center +
+                ", radius=" + radius +
+                '}';
     }
 }

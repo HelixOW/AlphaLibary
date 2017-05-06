@@ -17,13 +17,14 @@ package de.alphahelix.alphalibary.mysql;
 
 import de.alphahelix.alphalibary.file.SimpleFile;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MySQLAPI {
+public class MySQLAPI implements Serializable {
 
     private static ArrayList<MySQLAPI> mysqlDBs = new ArrayList<>();
     private static HashMap<String, Connection> cons = new HashMap<>();
@@ -142,7 +143,18 @@ public class MySQLAPI {
         return database;
     }
 
-    public enum MySQLDataType {
+    @Override
+    public String toString() {
+        return "MySQLAPI{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", database='" + database + '\'' +
+                ", host='" + host + '\'' +
+                ", port='" + port + '\'' +
+                '}';
+    }
+
+    public enum MySQLDataType implements Serializable {
         VARCHAR, CHAR, TEXT, INT, BIGINT, SMALLINT, TINYINT
     }
 }

@@ -18,7 +18,9 @@ package de.alphahelix.alphalibary.utils;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
-public enum MinecraftVersion {
+import java.io.Serializable;
+
+public enum MinecraftVersion implements Serializable {
 
     EIGHT,
     NINE,

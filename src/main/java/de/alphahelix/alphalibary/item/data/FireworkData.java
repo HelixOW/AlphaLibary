@@ -55,4 +55,11 @@ public class FireworkData extends ItemData {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "FireworkData{" +
+                "allEffects=" + allEffects +
+                '}';
+    }
 }

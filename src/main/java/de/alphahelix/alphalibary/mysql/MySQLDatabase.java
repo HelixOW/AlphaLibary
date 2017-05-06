@@ -18,6 +18,7 @@ package de.alphahelix.alphalibary.mysql;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
 import org.bukkit.entity.Player;
 
+import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,19 +26,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class MySQLDatabase {
-
-    /*
-       Column ||
-              \/
-
-       Row =>
-     */
-
+public class MySQLDatabase implements Serializable {
 
     // Tablename -> Columns
-    private static final HashMap<String, String> TABLEINFO = new HashMap<>();
-    private static final ArrayList<String> TABLENAMES = new ArrayList<>();
+    private static transient final HashMap<String, String> TABLEINFO = new HashMap<>();
+    private static transient final ArrayList<String> TABLENAMES = new ArrayList<>();
 
     private String table;
     private String database;
@@ -630,5 +623,13 @@ public class MySQLDatabase {
                 }
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "MySQLDatabase{" +
+                "table='" + table + '\'' +
+                ", database='" + database + '\'' +
+                '}';
     }
 }

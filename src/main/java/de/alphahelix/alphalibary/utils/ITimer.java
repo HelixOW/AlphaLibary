@@ -1,4 +1,4 @@
-package de.alphahelix.alphalibary.interfaces;
+package de.alphahelix.alphalibary.utils;
 
 public interface ITimer {
 

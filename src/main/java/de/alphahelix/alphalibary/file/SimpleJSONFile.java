@@ -1,8 +1,10 @@
 package de.alphahelix.alphalibary.file;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import org.apache.commons.io.FileUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -11,11 +13,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class SimpleJSONFile extends File {
 
-    private static Gson gson = new GsonBuilder().create();
+    private static Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationSerializer()).create();
     private static JSONParser parser = new JSONParser();
     private JSONObject head = new JSONObject();
 
@@ -52,6 +55,26 @@ public class SimpleJSONFile extends File {
         setDefault(path, value);
     }
 
+    public void addValuesToList(String path, Object... value) {
+        JSONArray array = new JSONArray();
+
+        if (contains(path)) {
+            array = getValue(path, JSONArray.class);
+        }
+
+        for (Object obj : value)
+            array.add(obj);
+
+        head.put(path, array);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this))) {
+            writer.write(gson.toJson(head));
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void removeValue(String path) {
         if (!contains(path)) return;
 
@@ -73,7 +96,6 @@ public class SimpleJSONFile extends File {
                 return null;
 
             JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
-            Gson gson = new GsonBuilder().create();
 
             return gson.fromJson(obj.get(path).toString(), definy);
         } catch (IOException | ParseException e) {
@@ -130,5 +152,44 @@ public class SimpleJSONFile extends File {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public boolean isEmpty() {
+        try {
+            return FileUtils.readFileToString(this).isEmpty();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+}
+
+class LocationSerializer implements JsonSerializer<Location>, JsonDeserializer<Location> {
+
+    @Override
+    public Location deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        JsonObject object = (JsonObject) json;
+
+        String world = object.has("world") ? object.getAsJsonPrimitive("world").getAsString() : Bukkit.getWorlds().get(0).getName();
+        double x = object.getAsJsonPrimitive("x").getAsDouble(), y = object.getAsJsonPrimitive("y").getAsDouble(), z = object.getAsJsonPrimitive("z").getAsDouble();
+        float yaw = object.getAsJsonPrimitive("yaw").getAsFloat(), pitch = object.getAsJsonPrimitive("pitch").getAsFloat();
+
+        return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
+    }
+
+    @Override
+    public JsonElement serialize(Location src, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject result = new JsonObject();
+
+        if (src.getWorld() != null)
+            result.addProperty("world", src.getWorld().getName());
+
+        result.addProperty("x", src.getX());
+        result.addProperty("y", src.getY());
+        result.addProperty("z", src.getZ());
+        result.addProperty("yaw", src.getYaw());
+        result.addProperty("pitch", src.getPitch());
+
+        return result;
     }
 }

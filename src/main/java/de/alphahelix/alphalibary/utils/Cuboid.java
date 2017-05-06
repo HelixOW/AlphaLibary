@@ -7,10 +7,11 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Level;
 
-public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializable {
+public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializable, Serializable {
     protected final String worldName;
     protected final int x1, y1, z1;
     protected final int x2, y2, z2;
@@ -688,8 +689,15 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
 
     @Override
     public String toString() {
-        return "Cuboid: " + this.worldName + "," + this.x1 + "," + this.y1 + "," + this.z1 + "=>" + this.x2
-                + "," + this.y2 + "," + this.z2;
+        return "Cuboid{" +
+                "worldName='" + worldName + '\'' +
+                ", x1=" + x1 +
+                ", y1=" + y1 +
+                ", z1=" + z1 +
+                ", x2=" + x2 +
+                ", y2=" + y2 +
+                ", z2=" + z2 +
+                '}';
     }
 
     public enum CuboidDirection {

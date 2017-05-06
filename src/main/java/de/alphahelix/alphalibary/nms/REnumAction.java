@@ -2,7 +2,9 @@ package de.alphahelix.alphalibary.nms;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
-public enum REnumAction {
+import java.io.Serializable;
+
+public enum REnumAction implements Serializable {
 
     INTERACT(0),
     ATTACK(1),
@@ -16,5 +18,12 @@ public enum REnumAction {
 
     public Object getEnumAction() {
         return ReflectionUtil.getNmsClass("PacketPlayInUseEntity$EnumEntityUseAction").getEnumConstants()[c];
+    }
+
+    @Override
+    public String toString() {
+        return "REnumAction{" +
+                "c=" + c +
+                '}';
     }
 }

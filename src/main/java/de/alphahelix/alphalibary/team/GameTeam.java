@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.team;
 
+import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.events.team.TeamJoinEvent;
 import de.alphahelix.alphalibary.events.team.TeamLeaveEvent;
 import org.bukkit.Bukkit;
@@ -9,11 +10,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class GameTeam {
+public class GameTeam implements Serializable {
 
-    private static ArrayList<GameTeam> teams = new ArrayList<>();
+    @Expose
+    private static transient ArrayList<GameTeam> teams = new ArrayList<>();
 
     private String teamName, rawTeamName;
     private ChatColor color;
@@ -188,5 +191,18 @@ public class GameTeam {
 
     public String getRawTeamName() {
         return rawTeamName;
+    }
+
+    @Override
+    public String toString() {
+        return "GameTeam{" +
+                "teamName='" + teamName + '\'' +
+                ", rawTeamName='" + rawTeamName + '\'' +
+                ", color=" + color +
+                ", spawn=" + spawn +
+                ", maximumPlayers=" + maximumPlayers +
+                ", friendlyFire=" + friendlyFire +
+                ", members=" + members +
+                '}';
     }
 }

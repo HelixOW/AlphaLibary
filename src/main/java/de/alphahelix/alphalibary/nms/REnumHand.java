@@ -2,7 +2,9 @@ package de.alphahelix.alphalibary.nms;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
-public enum REnumHand {
+import java.io.Serializable;
+
+public enum REnumHand implements Serializable {
 
     MAIN_HAND(0),
     OFF_HAND(1);
@@ -15,5 +17,12 @@ public enum REnumHand {
 
     public Object getEnumHand() {
         return ReflectionUtil.getNmsClass("EnumHand").getEnumConstants()[nms];
+    }
+
+    @Override
+    public String toString() {
+        return "REnumHand{" +
+                "nms=" + nms +
+                '}';
     }
 }

@@ -80,4 +80,13 @@ public class ColorData extends ItemData {
         }
     }
 
+    @Override
+    public String toString() {
+        return "ColorData{" +
+                "red=" + red +
+                ", blue=" + blue +
+                ", green=" + green +
+                ", dyeColor=" + dyeColor +
+                "}";
+    }
 }

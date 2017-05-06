@@ -1,15 +1,19 @@
 package de.alphahelix.alphalibary.status;
 
+import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.events.status.GameStatusChangeEvent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class GameStatus {
+public class GameStatus implements Serializable {
 
-    private static ArrayList<GameStatus> gameStatuses = new ArrayList<>();
-    private static GameStatus current = null;
+    @Expose
+    private static transient ArrayList<GameStatus> gameStatuses = new ArrayList<>();
+    @Expose
+    private static transient GameStatus current = null;
 
     private String name;
     private String rawName;
@@ -56,5 +60,13 @@ public class GameStatus {
 
     public String getRawName() {
         return rawName;
+    }
+
+    @Override
+    public String toString() {
+        return "GameStatus{" +
+                "name='" + name + '\'' +
+                ", rawName='" + rawName + '\'' +
+                '}';
     }
 }

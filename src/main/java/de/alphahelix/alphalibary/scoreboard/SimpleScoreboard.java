@@ -17,6 +17,7 @@ package de.alphahelix.alphalibary.scoreboard;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.AlphaLibary;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -28,17 +29,20 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SimpleScoreboard {
+public class SimpleScoreboard implements Serializable {
 
-    private static final List<ChatColor> colors = Arrays.asList(ChatColor.values());
+    @Expose
+    private transient static final List<ChatColor> colors = Arrays.asList(ChatColor.values());
     private final List<BoardLine> boardLines = new ArrayList<>();
+    @Expose
+    private transient AlphaLibary api;
     private Scoreboard scoreboard = null;
     private Objective objective = null;
-    private AlphaLibary api;
 
     /**
      * Creates a new {@link SimpleScoreboard} out of the {@link Scoreboard} of the {@link Player}
@@ -87,6 +91,30 @@ public class SimpleScoreboard {
 
         for (int i = 0; i < lines.length; i++)
             setValue(i, lines[i], iden);
+    }
+
+    private static String getFirstColors(String input) {
+        StringBuilder result = new StringBuilder();
+        int length = input.length();
+
+        for (int index = 0; index < length; index++) {
+            char section = input.charAt(index);
+
+            if (section == ChatColor.COLOR_CHAR && index < length - 1) {
+                char c = input.charAt(index + 1);
+                ChatColor color = ChatColor.getByChar(c);
+
+                if (color != null) {
+                    result.insert(0, color.toString());
+
+                    if (color.isColor() || color.equals(ChatColor.RESET)) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result.toString();
     }
 
     private BoardLine getBoardLine(final int line) {
@@ -331,28 +359,13 @@ public class SimpleScoreboard {
         return api;
     }
 
-    private static String getFirstColors(String input) {
-        StringBuilder result = new StringBuilder();
-        int length = input.length();
-
-        for (int index = 0; index < length; index++) {
-            char section = input.charAt(index);
-
-            if (section == ChatColor.COLOR_CHAR && index < length - 1) {
-                char c = input.charAt(index + 1);
-                ChatColor color = ChatColor.getByChar(c);
-
-                if (color != null) {
-                    result.insert(0, color.toString());
-
-                    if (color.isColor() || color.equals(ChatColor.RESET)) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        return result.toString();
+    @Override
+    public String toString() {
+        return "SimpleScoreboard{" +
+                "boardLines=" + boardLines +
+                ", scoreboard=" + scoreboard +
+                ", objective=" + objective +
+                '}';
     }
 }
 
@@ -380,4 +393,12 @@ class BoardLine {
         return team;
     }
 
+    @Override
+    public String toString() {
+        return "BoardLine{" +
+                "color=" + color +
+                ", line=" + line +
+                ", team=" + team +
+                '}';
+    }
 }

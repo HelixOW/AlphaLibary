@@ -53,4 +53,11 @@ public class SkullData extends ItemData {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "SkullData{" +
+                "ownerName='" + ownerName + '\'' +
+                '}';
+    }
 }

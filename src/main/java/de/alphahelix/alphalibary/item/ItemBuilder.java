@@ -23,10 +23,11 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class ItemBuilder {
+public class ItemBuilder implements Serializable {
 
     private Map<Enchantment, Integer> enchantments = new HashMap<>();
     private ArrayList<ItemFlag> itemflags = new ArrayList<>();
@@ -284,5 +285,20 @@ public class ItemBuilder {
             }
 
         return s;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemBuilder{" +
+                "enchantments=" + enchantments +
+                ", itemflags=" + itemflags +
+                ", itemData=" + itemData +
+                ", name='" + name + '\'' +
+                ", material=" + material +
+                ", amount=" + amount +
+                ", damage=" + damage +
+                ", lore=" + lore +
+                ", unbreakable=" + unbreakable +
+                '}';
     }
 }

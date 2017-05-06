@@ -37,7 +37,9 @@ public class SimpleMovingInventory implements Listener, Serializable {
 
     private static HashMap<UUID, SimpleMovingInventory> users = new HashMap<>();
     private static ArrayList<Inventory> pages = new ArrayList<>();
+    private ArrayList<ItemStack> items = new ArrayList<>();
     private String title;
+    private int size;
     private ItemStack nextPage = null;
     private ItemStack previousPage = null;
     private int currpage = 0;
@@ -54,8 +56,9 @@ public class SimpleMovingInventory implements Listener, Serializable {
      */
     public SimpleMovingInventory(Player p, int size, ArrayList<ItemStack> items, String name, ItemStack nextPage, ItemStack prevPage) {
         Bukkit.getPluginManager().registerEvents(this, AlphaLibary.getInstance());
-        title = name;
-
+        this.title = name;
+        this.items = items;
+        this.size = size;
         this.nextPage = nextPage;
         this.previousPage = prevPage;
 
@@ -65,6 +68,25 @@ public class SimpleMovingInventory implements Listener, Serializable {
             if (page.firstEmpty() == -1) {
                 pages.add(page);
                 page = getBlankPage(name, size);
+                page.addItem(item);
+            } else {
+                page.addItem(item);
+            }
+        }
+        pages.add(page);
+        p.openInventory(pages.get(currpage));
+        users.put(p.getUniqueId(), this);
+    }
+
+    public void construct(Player p) {
+        Bukkit.getPluginManager().registerEvents(this, AlphaLibary.getInstance());
+
+        Inventory page = getBlankPage(title, size);
+
+        for (ItemStack item : items) {
+            if (page.firstEmpty() == -1) {
+                pages.add(page);
+                page = getBlankPage(title, size);
                 page.addItem(item);
             } else {
                 page.addItem(item);
@@ -124,5 +146,17 @@ public class SimpleMovingInventory implements Listener, Serializable {
 
     public boolean sameName(ItemStack is1, ItemStack is2) {
         return ChatColor.stripColor(is1.getItemMeta().getDisplayName()).equals(ChatColor.stripColor(is2.getItemMeta().getDisplayName()));
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleMovingInventory{" +
+                "items=" + items +
+                ", title='" + title + '\'' +
+                ", size=" + size +
+                ", nextPage=" + nextPage +
+                ", previousPage=" + previousPage +
+                ", currpage=" + currpage +
+                '}';
     }
 }

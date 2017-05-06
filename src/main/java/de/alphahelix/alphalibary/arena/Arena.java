@@ -11,15 +11,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Arena {
+public class Arena implements Serializable {
 
     private String name;
     private String fileName;
     private ArenaFile.ArenaItem icon;
     private ArrayList<ArenaFile.NotInitLocation> spawns = new ArrayList<>();
-    private ArrayList<Location> realSpawns = new ArrayList<>();
+    private transient ArrayList<Location> realSpawns = new ArrayList<>();
 
     public Arena(String name, String fileName, ArenaFile.ArenaItem icon, ArrayList<ArenaFile.NotInitLocation> spawns) {
         this.name = name;
@@ -85,6 +86,17 @@ public class Arena {
 
     public String getFileName() {
         return fileName;
+    }
+
+    @Override
+    public String toString() {
+        return "Arena{" +
+                "name='" + name + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", icon=" + icon +
+                ", spawns=" + spawns +
+                ", realSpawns=" + realSpawns +
+                '}';
     }
 }
 

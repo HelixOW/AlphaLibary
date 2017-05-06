@@ -12,27 +12,25 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class AirDrop extends SimpleListener {
+public class AirDrop extends SimpleListener implements Serializable {
 
-    private static ArrayList<Entity> airDrops = new ArrayList<>();
+    private static transient ArrayList<Entity> airDrops = new ArrayList<>();
 
-    private World world;
     private DropOffLocation dropOff;
     private ArrayList<ItemStack> dropList = new ArrayList<>();
 
-    public AirDrop(World world, Location center, int radius, ItemStack... drops) {
+    public AirDrop(Location center, int radius, ItemStack... drops) {
         super();
-        this.world = world;
         this.dropOff = new DropOffLocation(center, radius);
         Collections.addAll(this.dropList, drops);
     }
 
     public AirDrop(World world, int radius, ItemStack... drops) {
         super();
-        this.world = world;
         this.dropOff = new DropOffLocation(world.getSpawnLocation(), radius);
         Collections.addAll(this.dropList, drops);
     }
@@ -59,7 +57,7 @@ public class AirDrop extends SimpleListener {
     }
 
     public void spawn() {
-        FallingBlock chest = world.spawnFallingBlock(dropOff.getDropOff(), Material.CHEST, (byte) 0);
+        FallingBlock chest = dropOff.getDropOff().getWorld().spawnFallingBlock(dropOff.getDropOff(), Material.CHEST, (byte) 0);
 
         airDrops.add(chest);
     }
@@ -78,5 +76,13 @@ public class AirDrop extends SimpleListener {
                 });
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "AirDrop{" +
+                "dropOff=" + dropOff +
+                ", dropList=" + dropList +
+                '}';
     }
 }

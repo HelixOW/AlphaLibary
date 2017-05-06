@@ -19,6 +19,8 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 
+import java.util.Arrays;
+
 public class SimpleFireworkEffect {
 
     private Type type = Type.BALL;
@@ -58,5 +60,16 @@ public class SimpleFireworkEffect {
 
     public FireworkEffect build() {
         return FireworkEffect.builder().flicker(flicker).trail(trail).withColor(color).withFade(fades).with(type).build();
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleFireworkEffect{" +
+                "type=" + type +
+                ", color=" + Arrays.toString(color) +
+                ", flicker=" + flicker +
+                ", trail=" + trail +
+                ", fades=" + Arrays.toString(fades) +
+                '}';
     }
 }

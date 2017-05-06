@@ -19,7 +19,9 @@ package de.alphahelix.alphalibary.nms;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.utils.MinecraftVersion;
 
-public enum REnumEquipSlot {
+import java.io.Serializable;
+
+public enum REnumEquipSlot implements Serializable {
 
     HELMET(4, 5),
     CHESTPLATE(3, 4),
@@ -45,5 +47,13 @@ public enum REnumEquipSlot {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "REnumEquipSlot{" +
+                "nmsSlot=" + nmsSlot +
+                ", past=" + past +
+                '}';
     }
 }

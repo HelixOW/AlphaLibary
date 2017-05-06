@@ -17,7 +17,9 @@ package de.alphahelix.alphalibary.item.data;
 
 import org.bukkit.inventory.ItemStack;
 
-public abstract class ItemData {
+import java.io.Serializable;
+
+public abstract class ItemData implements Serializable {
 
     /**
      * Applies the {@link ItemData} onto the {@link ItemStack}

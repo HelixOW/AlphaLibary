@@ -65,14 +65,7 @@ public class SimpleJSONFile extends File {
         for (Object obj : value)
             array.add(obj);
 
-        head.put(path, array);
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this))) {
-            writer.write(gson.toJson(head));
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setValue(path, array);
     }
 
     public void removeValue(String path) {
@@ -85,6 +78,27 @@ public class SimpleJSONFile extends File {
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public <T> ArrayList<T> getListValues(String path, Class<T> definy) {
+        try {
+            String file = FileUtils.readFileToString(this);
+
+            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
+                return null;
+
+            JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
+            ArrayList<T> typeList = new ArrayList<>();
+
+            for (Object jsonType : (ArrayList<T>) obj.get(path)) {
+                typeList.add(gson.fromJson(jsonType.toString(), definy));
+            }
+
+            return typeList;
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

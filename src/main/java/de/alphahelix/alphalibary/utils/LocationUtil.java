@@ -18,6 +18,7 @@ package de.alphahelix.alphalibary.utils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.util.EulerAngle;
 
 public class LocationUtil {
 
@@ -144,5 +145,15 @@ public class LocationUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static EulerAngle angleToEulerAngle(int degrees) {
+        return angleToEulerAngle(Math.toRadians(degrees));
+    }
+
+    public static EulerAngle angleToEulerAngle(double radians) {
+        double x = Math.cos(radians);
+        double z = Math.sin(radians);
+        return new EulerAngle(x, 0, z);
     }
 }

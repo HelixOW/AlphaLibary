@@ -160,13 +160,19 @@ public class PlayerFakeUtil extends FakeUtilBase {
                         ReflectionUtil.sendPacket(p, getPacketPlayOutNamedEntitySpawn().newInstance(npc));
                         ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(npc, FakeAPI.toAngle(loc.getYaw())));
                         ReflectionUtil.sendPacket(p, getPacketPlayOutEntityLook().newInstance(ReflectionUtil.getEntityID(npc), FakeAPI.toAngle(loc.getYaw()), FakeAPI.toAngle(loc.getPitch()), true));
-                        if (!id.equals(gameProfile.getId())) {
+                        ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
+                                REnumPlayerInfoAction.REMOVE_PLAYER,
+                                gameProfile,
+                                0,
+                                REnumGamemode.SURVIVAL,
+                                customName));
+                        if (id.equals(gameProfile.getId())) {
                             ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
                                     REnumPlayerInfoAction.REMOVE_PLAYER,
                                     gameProfile,
                                     0,
                                     REnumGamemode.SURVIVAL,
-                                    customName));
+                                    p.getName()));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

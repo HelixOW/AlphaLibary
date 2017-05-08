@@ -415,7 +415,7 @@ public class MobFakeUtil extends FakeUtilBase {
      * @param textureURL the URL where to find the plain 1.7 skin
      */
     public static void equipMobSkull(Player p, FakeMob mob, String textureURL) {
-        equipMob(p, mob, SkullItemBuilder.getSkull(textureURL), REnumEquipSlot.HELMET);
+        equipMob(p, mob, SkullItemBuilder.getCustomSkull(textureURL), REnumEquipSlot.HELMET);
     }
 
     /**
@@ -427,7 +427,7 @@ public class MobFakeUtil extends FakeUtilBase {
      * @param profile the {@link GameProfile} of the owner of the skull
      */
     public static void equipMobSkull(Player p, FakeMob mob, GameProfile profile) {
-        equipMob(p, mob, SkullItemBuilder.getSkull(profile), REnumEquipSlot.HELMET);
+        equipMob(p, mob, SkullItemBuilder.getPlayerSkull(profile.getName()), REnumEquipSlot.HELMET);
     }
 
 

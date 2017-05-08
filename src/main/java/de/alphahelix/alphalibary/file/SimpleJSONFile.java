@@ -1,6 +1,9 @@
 package de.alphahelix.alphalibary.file;
 
 import com.google.gson.*;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.PropertyMap;
+import de.alphahelix.alphalibary.utils.GameProfileBuilder;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,7 +21,7 @@ import java.util.ArrayList;
 
 public class SimpleJSONFile extends File {
 
-    private static Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationSerializer()).create();
+    private static Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationSerializer()).registerTypeAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
     private static JSONParser parser = new JSONParser();
     private JSONObject head = new JSONObject();
 
@@ -86,7 +89,7 @@ public class SimpleJSONFile extends File {
             String file = FileUtils.readFileToString(this);
 
             if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
-                return null;
+                return new ArrayList<>();
 
             JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
             ArrayList<T> typeList = new ArrayList<>();
@@ -98,7 +101,7 @@ public class SimpleJSONFile extends File {
             return typeList;
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -135,7 +138,7 @@ public class SimpleJSONFile extends File {
             return list;
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -156,7 +159,7 @@ public class SimpleJSONFile extends File {
             return list;
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
 

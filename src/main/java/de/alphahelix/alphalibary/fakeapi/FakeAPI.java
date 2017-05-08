@@ -16,6 +16,7 @@
 
 package de.alphahelix.alphalibary.fakeapi;
 
+import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.fakeapi.events.*;
 import de.alphahelix.alphalibary.fakeapi.instances.*;
@@ -24,13 +25,12 @@ import de.alphahelix.alphalibary.netty.handler.PacketHandler;
 import de.alphahelix.alphalibary.netty.handler.PacketOptions;
 import de.alphahelix.alphalibary.netty.handler.ReceivedPacket;
 import de.alphahelix.alphalibary.netty.handler.SentPacket;
+import de.alphahelix.alphalibary.nms.PlayerInfoDataWrapper;
 import de.alphahelix.alphalibary.nms.REnumAction;
 import de.alphahelix.alphalibary.nms.REnumHand;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import de.alphahelix.alphalibary.uuid.UUIDFetcher;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -38,6 +38,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.UUID;
 
 public class FakeAPI extends AlphaLibary {
 
@@ -45,12 +46,15 @@ public class FakeAPI extends AlphaLibary {
     private static final HashMap<String, ArrayList<FakeEntity>> FAKE_ENTITIES = new HashMap<>();
     private static final HashMap<String, ArrayList<FakePlayer>> FAKE_PLAYERS = new HashMap<>();
     private static final HashMap<String, ArrayList<FakeArmorstand>> FAKE_ARMORSTANDS = new HashMap<>();
-    private static final HashMap<String, ArrayList<FakeEndercrystal>> fakeEndercrystals = new HashMap<>();
+    private static final HashMap<String, ArrayList<FakeEndercrystal>> FAKE_ENDERCRYSTALS = new HashMap<>();
     private static final HashMap<String, ArrayList<FakeItem>> FAKE_ITEMS = new HashMap<>();
     private static final HashMap<String, ArrayList<FakeMob>> FAKE_MOBS = new HashMap<>();
     private static final HashMap<String, ArrayList<FakeBigItem>> FAKE_BIG_ITEMS = new HashMap<>();
     private static final HashMap<String, ArrayList<FakeXPOrb>> FAKE_XP_ORBS = new HashMap<>();
     private static final HashMap<String, ArrayList<FakePainting>> FAKE_PAINTINGS = new HashMap<>();
+    private static final HashMap<Integer, UUID> ENTITY_IDS = new HashMap<>();
+    private static final ArrayList<String> NPCS = new ArrayList<>();
+    private static final int[] UUID_SPLIT = {0, 8, 12, 16, 20, 32};
 
     /**
      * Gets all {@link FakeEntity}s a {@link Player} can see
@@ -337,6 +341,22 @@ public class FakeAPI extends AlphaLibary {
     }
 
     /**
+     * Gets a {@link FakePlayer} by its Unique ID
+     *
+     * @param p    the {@link Player} who can see this {@link FakePlayer}
+     * @param uuid the {@link UUID} of the {@link FakePlayer}
+     * @return the {@link FakePlayer} at his {@link Location}
+     * @throws NoSuchFakeEntityException when there is no {@link FakePlayer} with this {@link UUID}
+     */
+    public static FakePlayer getFakePlayerByID(Player p, UUID uuid) throws NoSuchFakeEntityException {
+        if (!getFakePlayers().containsKey(p.getName())) throw new NoSuchFakeEntityException();
+        for (FakePlayer fakePlayer : getFakePlayers().get(p.getName())) {
+            if (fakePlayer.getSkinUUID() == uuid) return fakePlayer;
+        }
+        throw new NoSuchFakeEntityException();
+    }
+
+    /**
      * Gets a {@link HashMap} with all {@link Player}s and which {@link FakeArmorstand}s they can see
      *
      * @return a {@link HashMap} with all {@link Player}s and which {@link FakeArmorstand}s they can see
@@ -525,7 +545,7 @@ public class FakeAPI extends AlphaLibary {
      * @return a {@link HashMap} with all {@link Player}s and which {@link FakeEndercrystal}s they can see
      */
     public static HashMap<String, ArrayList<FakeEndercrystal>> getFakeEndercrystals() {
-        return fakeEndercrystals;
+        return FAKE_ENDERCRYSTALS;
     }
 
     /**
@@ -1659,6 +1679,14 @@ public class FakeAPI extends AlphaLibary {
         }
     }
 
+    public static HashMap<Integer, UUID> getEntityIds() {
+        return ENTITY_IDS;
+    }
+
+    public static ArrayList<String> getNPCS() {
+        return NPCS;
+    }
+
     /**
      * Loads the Netty Injection
      */
@@ -1675,9 +1703,43 @@ public class FakeAPI extends AlphaLibary {
 
         Bukkit.getPluginManager().registerEvents(PACKET_LISTENER_API, AlphaLibary.getInstance());
 
-        PacketListenerAPI.addPacketHandler(new PacketHandler() {
-            public void onSend(SentPacket packet) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            getEntityIds().put(p.getEntityId(), UUIDFetcher.getUUID(p));
+        }
 
+        PacketListenerAPI.addPacketHandler(new PacketHandler() {
+            @PacketOptions(forcePlayer = true)
+            public void onSend(SentPacket packet) {
+                if (packet.getPacketName().equals("PacketPlayOutPlayerInfo")) {
+                    Object enumAction = packet.getPacketValue("a");
+
+                    if (!enumAction.toString().equals("ADD_PLAYER")) return;
+
+                    ArrayList<Object> newPlayerInfo = new ArrayList<>();
+
+                    for (Object playerInfo : (ArrayList) packet.getPacketValue("b")) {
+
+                        if (PlayerInfoDataWrapper.isUnknown(playerInfo)) {
+                            newPlayerInfo.add(playerInfo);
+                            continue;
+                        }
+
+                        PlayerInfoDataWrapper wrapper = PlayerInfoDataWrapper.getPlayerInfo(playerInfo);
+                        OfflinePlayer p = Bukkit.getOfflinePlayer(wrapper.getProfile().getId());
+
+                        if (getNPCS().contains(wrapper.getName())) {
+                            ReflectionUtil.getDeclaredField("name", GameProfile.class).set(wrapper.getProfile(), "§6Test", true);
+
+                            newPlayerInfo.add(new PlayerInfoDataWrapper(
+                                    wrapper.getProfile(), wrapper.getPing(), wrapper.getGameMode(), p.getName(), packet.getPacket()
+                            ).getPlayerInfoData());
+                        } else {
+                            newPlayerInfo.add(playerInfo);
+                        }
+
+                    }
+                    packet.setPacketValue("b", newPlayerInfo);
+                }
             }
 
             @PacketOptions(forcePlayer = true)

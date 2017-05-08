@@ -16,7 +16,7 @@
 
 package de.alphahelix.alphalibary.fakeapi.instances;
 
-import de.alphahelix.alphalibary.uuid.UUIDFetcher;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
@@ -24,25 +24,15 @@ import java.util.UUID;
 
 public class FakePlayer extends FakeEntity {
 
-    private String skin;
     private UUID skinUUID;
     private transient OfflinePlayer skinPlayer;
 
-    public FakePlayer(Location location, String name, OfflinePlayer skin, Object fake) {
+    public FakePlayer(Location location, String name, UUID skin, Object fake) {
         super(location, name, fake);
-        this.skin = skin.getName();
-        this.skinPlayer = skin;
-        this.skinUUID = UUIDFetcher.getUUID(skin.getName());
+        this.skinPlayer = Bukkit.getOfflinePlayer(skin);
+        this.skinUUID = skin;
     }
 
-    /**
-     * Gets the name of the owner of the skin for this {@link FakePlayer}
-     *
-     * @return the name of the owner of this {@link FakePlayer}
-     */
-    public String getSkin() {
-        return skin;
-    }
 
     /**
      * Gets the {@link UUID} of the owner of this {@link FakePlayer}'s skin
@@ -61,7 +51,6 @@ public class FakePlayer extends FakeEntity {
     @Override
     public String toString() {
         return "FakePlayer{" +
-                "skin='" + skin + '\'' +
                 ", skinUUID=" + skinUUID +
                 "} " + super.toString();
     }

@@ -17,137 +17,96 @@
 package de.alphahelix.alphalibary.item;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import de.alphahelix.alphalibary.reflection.ReflectionUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import de.alphahelix.alphalibary.utils.SkinChangeUtil;
+import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.UUID;
 
 public class SkullItemBuilder {
 
-    private static Class<?> skullMetaClass, tileEntityClass, blockPositionClass;
-    private static int mcVersion;
+    private static final Base64 BASE_64 = new Base64();
 
-    static {
-        String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        mcVersion = Integer.parseInt(version.replaceAll("[^0-9]", ""));
+    public enum Skulls {
+        ARROW_LEFT("MHF_ArrowLeft"),
+        ARROW_RIGHT("MHF_ArrowRight"),
+        ARROW_UP("MHF_ArrowUp"),
+        ARROW_DOWN("MHF_ArrowDown"),
+        QUESTION("MHF_Question"),
+        EXCLAMATION("MHF_Exclamation"),
+        CAMERA("FHG_Cam"),
 
-        skullMetaClass = ReflectionUtil.getCraftBukkitClass("inventory.CraftMetaSkull");
-        tileEntityClass = ReflectionUtil.getNmsClass("TileEntitySkull");
-        if (mcVersion > 174) {
-            blockPositionClass = ReflectionUtil.getNmsClass("BlockPosition");
+        ZOMBIE_PIGMAN("MHF_PigZombie"),
+        PIG("MHF_Pig"),
+        SHEEP("MHF_Sheep"),
+        BLAZE("MHF_Blaze"),
+        CHICKEN("MHF_Chicken"),
+        COW("MHF_Cow"),
+        SLIME("MHF_Slime"),
+        SPIDER("MHF_Spider"),
+        SQUID("MHF_Squid"),
+        VILLAGER("MHF_Villager"),
+        OCELOT("MHF_Ocelot"),
+        HEROBRINE("MHF_Herobrine"),
+        LAVA_SLIME("MHF_LavaSlime"),
+        MOOSHROOM("MHF_MushroomCow"),
+        GOLEM("MHF_Golem"),
+        GHAST("MHF_Ghast"),
+        ENDERMAN("MHF_Enderman"),
+        CAVE_SPIDER("MHF_CaveSpider"),
+
+        CACTUS("MHF_Cactus"),
+        CAKE("MHF_Cake"),
+        CHEST("MHF_Chest"),
+        MELON("MHF_Melon"),
+        LOG("MHF_OakLog"),
+        PUMPKIN("MHF_Pumpkin"),
+        TNT("MHF_TNT"),
+        DYNAMITE("MHF_TNT2");
+
+        private String id;
+
+        Skulls(String id) {
+            this.id = id;
+        }
+
+        public ItemStack getSkull() {
+            ItemStack itemStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+            SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+            meta.setOwner(id);
+            itemStack.setItemMeta(meta);
+            return itemStack;
         }
     }
 
-    /**
-     * @param skinURL the URL to the skin-image (full skin)
-     * @return The {@link ItemStack} (SKULL_ITEM) with the given look (skin-image)
-     */
-    public static ItemStack getSkull(String skinURL) {
-        return getSkull(skinURL, 1);
-    }
+    public static ItemStack getCustomSkull(String url) {
+        GameProfile profile = SkinChangeUtil.changeSkin(url);
 
-    /**
-     * @param skinURL The URL to the skin-image (full skin)
-     * @param amount  The amount of skulls (for {@link ItemStack})
-     * @return The {@link ItemStack} (SKULL_ITEM) with the given look (skin-image)
-     */
-    public static ItemStack getSkull(String skinURL, int amount) {
-        ItemStack skull = new ItemStack(Material.SKULL_ITEM, amount, (short) 3);
-        SkullMeta meta = (SkullMeta) skull.getItemMeta();
+        ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        ItemMeta headMeta = head.getItemMeta();
+        Class<?> headMetaClass = headMeta.getClass();
+
         try {
-            Field profileField = skullMetaClass.getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(meta, getProfile(skinURL));
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            Field f = headMetaClass.getDeclaredField("profile");
+            f.setAccessible(true);
+
+            f.set(headMeta, profile);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
         }
-        skull.setItemMeta(meta);
-        return skull;
+
+        head.setItemMeta(headMeta);
+        return head;
     }
 
-    /**
-     * @param gameProfile the {@link GameProfile} of the player s skin
-     * @return the {@link ItemStack} (SKULL_ITEM) with the given look (skin-image)
-     */
-    public static ItemStack getSkull(GameProfile gameProfile) {
-        ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-        SkullMeta meta = (SkullMeta) skull.getItemMeta();
-        try {
-            Field profileField = skullMetaClass.getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(meta, gameProfile);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        skull.setItemMeta(meta);
-        return skull;
+    public static ItemStack getPlayerSkull(String name) {
+        ItemStack itemStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+        meta.setOwner(name);
+        itemStack.setItemMeta(meta);
+        return itemStack;
     }
-
-    /**
-     * @param loc     the {@link Location} to place the skull
-     * @param skinURL the URL to the skin-image
-     * @return If the {@link Block} at the given {@link Location} was replaced with a {@link org.bukkit.block.Skull}
-     */
-    public static boolean setBlock(Location loc, String skinURL) {
-        return setBlock(loc.getBlock(), skinURL);
-    }
-
-    /**
-     * @param block   The {@link Block} to set to a {@link org.bukkit.block.Skull}
-     * @param skinURL The URL to the skin-image
-     * @return If the {@link Block} at the given {@link Location} was replaced with a {@link org.bukkit.block.Skull}
-     */
-    public static boolean setBlock(Block block, String skinURL) {
-        boolean flag = block.getType() == Material.SKULL;
-        if (!flag) {
-            block.setType(Material.SKULL);
-        }
-        try {
-            Object nmsWorld = block.getWorld().getClass().getMethod("getHandle").invoke(block.getWorld());
-            Object tileEntity;
-            if (mcVersion <= 174) {
-                Method getTileEntity = nmsWorld.getClass().getMethod("getTileEntity", int.class, int.class, int.class);
-                tileEntity = tileEntityClass.cast(getTileEntity.invoke(nmsWorld, block.getX(), block.getY(), block.getZ()));
-            } else {
-                Method getTileEntity = nmsWorld.getClass().getMethod("getTileEntity", blockPositionClass);
-                tileEntity =
-                        tileEntityClass.cast(getTileEntity.invoke(nmsWorld,
-                                getBlockPositionFor(block.getX(), block.getY(), block.getZ())));
-            }
-            tileEntityClass.getMethod("setGameProfile", GameProfile.class).invoke(tileEntity, getProfile(skinURL));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return !flag;
-    }
-
-    private static GameProfile getProfile(String skinURL) {
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-        String base64encoded = Base64Coder.encodeString("{textures:{SKIN:{url:\"" + skinURL + "\"}}}");
-        Property property = new Property("textures", base64encoded);
-        profile.getProperties().put("textures", property);
-        return profile;
-    }
-
-    private static Object getBlockPositionFor(int x, int y, int z) {
-        Object blockPosition = null;
-        try {
-            Constructor<?> cons = blockPositionClass.getConstructor(int.class, int.class, int.class);
-            blockPosition = cons.newInstance(x, y, z);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return blockPosition;
-    }
-
 }

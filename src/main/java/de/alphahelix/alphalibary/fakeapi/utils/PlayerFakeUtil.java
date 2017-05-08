@@ -17,7 +17,6 @@
 package de.alphahelix.alphalibary.fakeapi.utils;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
@@ -43,11 +42,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -57,16 +53,17 @@ public class PlayerFakeUtil extends FakeUtilBase {
     private static HashMap<String, BukkitTask> stareMap = new HashMap<>();
     private static HashMap<String, BukkitTask> splitMap = new HashMap<>();
 
-    private static Constructor<?> entitPlayer;
+    private static Constructor<?> entityPlayer;
 
     private static Field listName;
     private static Field displayName;
     private static Field gameProfileName;
+    private static Field gameProfileID;
 
     static {
         try {
             Class<?> entityPlayerClass = ReflectionUtil.getNmsClass("EntityPlayer");
-            entitPlayer = entityPlayerClass.getConstructor(
+            entityPlayer = entityPlayerClass.getConstructor(
                     ReflectionUtil.getNmsClass("MinecraftServer"),
                     ReflectionUtil.getNmsClass("WorldServer"),
                     GameProfile.class,
@@ -75,10 +72,12 @@ public class PlayerFakeUtil extends FakeUtilBase {
             listName = entityPlayerClass.getField("listName");
             displayName = entityPlayerClass.getField("displayName");
             gameProfileName = GameProfile.class.getDeclaredField("name");
+            gameProfileID = GameProfile.class.getDeclaredField("id");
 
             listName.setAccessible(true);
             displayName.setAccessible(true);
             gameProfileName.setAccessible(true);
+            gameProfileID.setAccessible(true);
         } catch (NoSuchMethodException | NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -116,7 +115,7 @@ public class PlayerFakeUtil extends FakeUtilBase {
     public static FakePlayer spawnTemporaryPlayer(final Player p, final Location loc, OfflinePlayer skin, final String customName) {
         try {
             return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(UUIDFetcher.getUUID(skin)), customName);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -125,7 +124,7 @@ public class PlayerFakeUtil extends FakeUtilBase {
     public static FakePlayer spawnTemporaryPlayer(Player p, Location loc, UUID skin, String customName) {
         try {
             return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(skin), customName);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -133,9 +132,10 @@ public class PlayerFakeUtil extends FakeUtilBase {
 
     public static FakePlayer spawnTemporaryPlayer(final Player p, final Location loc, GameProfile skin, final String customName) {
         try {
-            final GameProfile gameProfile = skin;
+            UUID id = UUIDFetcher.getUUID(p);
+            GameProfile gameProfile = skin;
 
-            final Object npc = entitPlayer.newInstance(
+            Object npc = entityPlayer.newInstance(
                     ReflectionUtil.getMinecraftServer(Bukkit.getServer()),
                     ReflectionUtil.getWorldServer(loc.getWorld()),
                     gameProfile,
@@ -145,45 +145,41 @@ public class PlayerFakeUtil extends FakeUtilBase {
 
             setLocation().invoke(npc, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 
-            listName.set(npc, ReflectionUtil.serializeString(customName));
-            displayName.set(npc, customName);
-            gameProfileName.set(gameProfile, customName);
-
-            Collection<Property> props = skin.getProperties().get("textures");
-
-            gameProfile.getProperties().removeAll("textures");
-            gameProfile.getProperties().putAll("textures", props);
+            FakeAPI.getNPCS().add(customName);
 
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     try {
-                        ReflectionUtil.sendPackets(p, PacketUtil.createPlayerInfoPacket(
+                        ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
                                 REnumPlayerInfoAction.ADD_PLAYER,
                                 gameProfile,
                                 0,
-                                REnumGamemode.CREATIVE,
+                                REnumGamemode.SURVIVAL,
                                 customName));
                         ReflectionUtil.sendPacket(p, getPacketPlayOutNamedEntitySpawn().newInstance(npc));
                         ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(npc, FakeAPI.toAngle(loc.getYaw())));
                         ReflectionUtil.sendPacket(p, getPacketPlayOutEntityLook().newInstance(ReflectionUtil.getEntityID(npc), FakeAPI.toAngle(loc.getYaw()), FakeAPI.toAngle(loc.getPitch()), true));
-
-                        ReflectionUtil.sendPackets(p, PacketUtil.createPlayerInfoPacket(
-                                REnumPlayerInfoAction.REMOVE_PLAYER,
-                                gameProfile,
-                                0,
-                                REnumGamemode.CREATIVE,
-                                customName));
+                        if (!id.equals(gameProfile.getId())) {
+                            ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
+                                    REnumPlayerInfoAction.REMOVE_PLAYER,
+                                    gameProfile,
+                                    0,
+                                    REnumGamemode.SURVIVAL,
+                                    customName));
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }.runTaskLater(AlphaLibary.getInstance(), 4);
 
-            FakeAPI.addFakePlayer(p, new FakePlayer(loc, customName, Bukkit.getOfflinePlayer(skin.getId()), npc));
+            FakePlayer fakePlayer = new FakePlayer(loc, customName, skin.getId(), npc);
 
-            return new FakePlayer(loc, customName, Bukkit.getOfflinePlayer(skin.getId()), npc);
-        } catch (IllegalAccessException | InstantiationException | SecurityException | NoSuchMethodException | InvocationTargetException e) {
+            FakeAPI.addFakePlayer(p, fakePlayer);
+
+            return fakePlayer;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -197,7 +193,7 @@ public class PlayerFakeUtil extends FakeUtilBase {
      */
     public static void removePlayer(Player p, FakePlayer npc) {
         try {
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityDestroy().newInstance(new int[]{ReflectionUtil.getEntityID(npc.getNmsEntity())}));
+            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityDestroy().newInstance(ReflectionUtil.getEntityID(npc.getNmsEntity())));
 
             FakeAPI.removeFakePlayer(p, npc);
         } catch (Exception e) {
@@ -476,7 +472,7 @@ public class PlayerFakeUtil extends FakeUtilBase {
      */
     public static void equipPlayerSkull(Player p, FakePlayer mob, String textureURL) {
         try {
-            equipPlayer(p, mob, SkullItemBuilder.getSkull(textureURL), REnumEquipSlot.HELMET);
+            equipPlayer(p, mob, SkullItemBuilder.getCustomSkull(textureURL), REnumEquipSlot.HELMET);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -492,7 +488,7 @@ public class PlayerFakeUtil extends FakeUtilBase {
      */
     public static void equipPlayerSkull(Player p, FakePlayer mob, GameProfile profile) {
         try {
-            equipPlayer(p, mob, SkullItemBuilder.getSkull(profile), REnumEquipSlot.HELMET);
+            equipPlayer(p, mob, SkullItemBuilder.getPlayerSkull(profile.getName()), REnumEquipSlot.HELMET);
         } catch (Exception e) {
             e.printStackTrace();
         }

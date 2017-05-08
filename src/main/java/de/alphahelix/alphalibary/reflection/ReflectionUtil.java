@@ -255,7 +255,12 @@ public class ReflectionUtil {
     private static String fromIChatBaseComponent(Object component) {
 
         try {
-            Class<?> chatSerelizer = getCraftBukkitClass("interfaces.CraftChatMessage");
+            Class<?> chatSerelizer;
+            if (MinecraftVersion.getServer() == MinecraftVersion.EIGHT) {
+                chatSerelizer = getCraftBukkitClass("interfaces.CraftChatMessage");
+            } else {
+                chatSerelizer = getCraftBukkitClass("util.CraftChatMessage");
+            }
 
             Method mSerelize = chatSerelizer.getMethod("fromComponent",
                     ReflectionUtil.getNmsClass("IChatBaseComponent"));

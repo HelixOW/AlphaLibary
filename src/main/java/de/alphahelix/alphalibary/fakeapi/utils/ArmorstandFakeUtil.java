@@ -243,7 +243,7 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      * @param textureURL the URL where to find the plain 1.7 skin
      */
     public static void equipArmorstandSkull(Player p, FakeArmorstand armorstand, String textureURL) {
-        equipArmorstand(p, armorstand, SkullItemBuilder.getSkull(textureURL), REnumEquipSlot.HELMET);
+        equipArmorstand(p, armorstand, SkullItemBuilder.getCustomSkull(textureURL), REnumEquipSlot.HELMET);
     }
 
     /**
@@ -256,7 +256,7 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      */
     public static void equipArmorstandSkull(Player p, FakeArmorstand armorstand, GameProfile profile) {
         try {
-            equipArmorstand(p, armorstand, SkullItemBuilder.getSkull(profile), REnumEquipSlot.HELMET);
+            equipArmorstand(p, armorstand, SkullItemBuilder.getPlayerSkull(profile.getName()), REnumEquipSlot.HELMET);
         } catch (Exception e) {
             e.printStackTrace();
         }

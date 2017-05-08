@@ -19,6 +19,8 @@ package de.alphahelix.alphalibary.fakeapi;
 import de.alphahelix.alphalibary.fakeapi.instances.*;
 import de.alphahelix.alphalibary.fakeapi.utils.*;
 import de.alphahelix.alphalibary.listener.SimpleListener;
+import de.alphahelix.alphalibary.uuid.UUIDFetcher;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -29,6 +31,13 @@ public class FakeEventListener extends SimpleListener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
+
+        FakeAPI.getEntityIds().put(p.getEntityId(), UUIDFetcher.getUUID(p));
+
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            p.hidePlayer(online);
+            p.showPlayer(online);
+        }
 
         for (FakeArmorstand stands : FakeRegister.getArmorstandLocationsFile().getFakeArmorstandFromFile()) {
             ArmorstandFakeUtil.spawnTemporaryArmorstand(

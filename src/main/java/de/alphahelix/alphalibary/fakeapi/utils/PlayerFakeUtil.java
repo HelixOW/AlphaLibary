@@ -168,7 +168,7 @@ public class PlayerFakeUtil extends FakeUtilBase {
                                 customName));
                         if (id.equals(gameProfile.getId())) {
                             ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
-                                    REnumPlayerInfoAction.REMOVE_PLAYER,
+                                    REnumPlayerInfoAction.ADD_PLAYER,
                                     gameProfile,
                                     0,
                                     REnumGamemode.SURVIVAL,

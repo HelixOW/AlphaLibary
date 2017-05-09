@@ -1728,7 +1728,7 @@ public class FakeAPI extends AlphaLibary {
                         OfflinePlayer p = Bukkit.getOfflinePlayer(wrapper.getProfile().getId());
 
                         if (getNPCS().contains(wrapper.getName())) {
-                            ReflectionUtil.getDeclaredField("name", GameProfile.class).set(wrapper.getProfile(), "§6Test", true);
+                            ReflectionUtil.getDeclaredField("name", GameProfile.class).set(wrapper.getProfile(), wrapper.getName(), true);
 
                             newPlayerInfo.add(new PlayerInfoDataWrapper(
                                     wrapper.getProfile(), wrapper.getPing(), wrapper.getGameMode(), p.getName(), packet.getPacket()

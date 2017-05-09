@@ -55,11 +55,6 @@ public class PlayerFakeUtil extends FakeUtilBase {
 
     private static Constructor<?> entityPlayer;
 
-    private static Field listName;
-    private static Field displayName;
-    private static Field gameProfileName;
-    private static Field gameProfileID;
-
     static {
         try {
             Class<?> entityPlayerClass = ReflectionUtil.getNmsClass("EntityPlayer");
@@ -68,17 +63,7 @@ public class PlayerFakeUtil extends FakeUtilBase {
                     ReflectionUtil.getNmsClass("WorldServer"),
                     GameProfile.class,
                     ReflectionUtil.getNmsClass("PlayerInteractManager"));
-
-            listName = entityPlayerClass.getField("listName");
-            displayName = entityPlayerClass.getField("displayName");
-            gameProfileName = GameProfile.class.getDeclaredField("name");
-            gameProfileID = GameProfile.class.getDeclaredField("id");
-
-            listName.setAccessible(true);
-            displayName.setAccessible(true);
-            gameProfileName.setAccessible(true);
-            gameProfileID.setAccessible(true);
-        } catch (NoSuchMethodException | NoSuchFieldException e) {
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
     }

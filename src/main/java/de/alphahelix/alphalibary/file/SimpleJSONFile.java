@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class SimpleJSONFile extends File {
 
-    private static Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationSerializer()).registerTypeAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
+    public static Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationSerializer()).registerTypeAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
     private static JSONParser parser = new JSONParser();
     private JSONObject head = new JSONObject();
 
@@ -114,6 +114,7 @@ public class SimpleJSONFile extends File {
 
             JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
 
+
             return gson.fromJson(obj.get(path).toString(), definy);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
@@ -168,6 +169,21 @@ public class SimpleJSONFile extends File {
             return FileUtils.readFileToString(this).contains(path);
         } catch (IOException e) {
             return false;
+        }
+    }
+
+    public boolean jsonContains(String path) {
+        try {
+            String file = FileUtils.readFileToString(this);
+
+            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
+                return false;
+
+            JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
+
+            return obj.containsKey(path);
+        } catch (Exception e) {
+            return contains(path);
         }
     }
 

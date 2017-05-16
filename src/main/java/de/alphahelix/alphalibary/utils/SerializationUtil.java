@@ -55,13 +55,13 @@ public class SerializationUtil<T> {
         }
 
         JsonObject object = new JsonObject();
-        object.addProperty("item-data", base64);
+        object.addProperty("data", base64);
         return object;
     }
 
     public T deserialize(JsonObject object) {
         T result = null;
-        String itemData = object.get("item-data").getAsString();
+        String itemData = object.get("data").getAsString();
         ByteArrayInputStream in = new ByteArrayInputStream(Base64Coder.decodeLines(itemData));
         try {
             BukkitObjectInputStream bukkitIn = new BukkitObjectInputStream(in);

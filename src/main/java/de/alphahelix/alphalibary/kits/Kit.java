@@ -69,6 +69,7 @@ public class Kit implements Serializable {
 
     public void giveItems(Player p) {
         for (ItemStack itemStack : items) {
+            if (itemStack == null) continue;
             p.getInventory().addItem(itemStack);
         }
         Bukkit.getPluginManager().callEvent(new KitReceiveEvent(p, this));

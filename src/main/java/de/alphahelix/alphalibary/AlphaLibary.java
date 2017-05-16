@@ -34,6 +34,10 @@ public class AlphaLibary extends JavaPlugin {
         playersTotal.add(p.getName());
     }
 
+    public static void addPlayerTotal(String p) {
+        playersTotal.add(p);
+    }
+
     public static void removePlayerTotal(Player p) {
         if (playersTotal.contains(p.getName()))
             playersTotal.remove(p.getName());
@@ -45,12 +49,27 @@ public class AlphaLibary extends JavaPlugin {
             playersDead.remove(p.getName());
     }
 
+    public static void removePlayerTotal(String p) {
+        if (playersTotal.contains(p))
+            playersTotal.remove(p);
+
+        if (playersInGame.contains(p))
+            playersInGame.remove(p);
+
+        if (playersDead.contains(p))
+            playersDead.remove(p);
+    }
+
     public static ArrayList<String> getPlayersInGame() {
         return playersInGame;
     }
 
     public static void addPlayerInGame(Player p) {
         playersInGame.add(p.getName());
+    }
+
+    public static void addPlayerInGame(String p) {
+        playersInGame.add(p);
     }
 
     public static void removePlayerInGame(Player p) {
@@ -61,8 +80,20 @@ public class AlphaLibary extends JavaPlugin {
             playersDead.remove(p.getName());
     }
 
+    public static void removePlayerInGame(String p) {
+        if (playersInGame.contains(p))
+            playersInGame.remove(p);
+
+        if (playersDead.contains(p))
+            playersDead.remove(p);
+    }
+
     public static boolean isPlayerInGame(Player p) {
         return playersInGame.contains(p.getName());
+    }
+
+    public static boolean isPlayerInGame(String p) {
+        return playersInGame.contains(p);
     }
 
     public static ArrayList<String> getPlayersDead() {
@@ -73,13 +104,26 @@ public class AlphaLibary extends JavaPlugin {
         playersDead.add(p.getName());
     }
 
+    public static void addPlayerDead(String p) {
+        playersDead.add(p);
+    }
+
     public static void removePlayerDead(Player p) {
         if (playersDead.contains(p.getName()))
             playersDead.remove(p.getName());
     }
 
+    public static void removePlayerDead(String p) {
+        if (playersDead.contains(p))
+            playersDead.remove(p);
+    }
+
     public static boolean isPlayerDead(Player p) {
         return playersDead.contains(p.getName());
+    }
+
+    public static boolean isPlayerDead(String p) {
+        return playersDead.contains(p);
     }
 
     public static ArenaFile getArenaFile() {

@@ -42,6 +42,13 @@ public class GameTeam implements Serializable {
         this.friendlyFire = friendlyFire;
     }
 
+    public static void initTeam(GameTeam team) {
+        if (getTeamByName(team.getTeamName()) != null)
+            teams.remove(getTeamByName(team.getTeamName()));
+
+        teams.add(team);
+    }
+
     public static GameTeam getTeamByName(String teamName) {
         for (GameTeam gt : teams) {
             if (ChatColor.stripColor(gt.getTeamName()).equals(ChatColor.stripColor(teamName))) return gt;

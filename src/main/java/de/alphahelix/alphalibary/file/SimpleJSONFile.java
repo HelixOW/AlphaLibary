@@ -1,6 +1,7 @@
 package de.alphahelix.alphalibary.file;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
 import de.alphahelix.alphalibary.utils.GameProfileBuilder;
@@ -116,6 +117,22 @@ public class SimpleJSONFile extends File {
 
 
             return gson.fromJson(obj.get(path).toString(), definy);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public <T> T getValue(String path, TypeToken<T> token) {
+        try {
+            String file = FileUtils.readFileToString(this);
+
+            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
+                return null;
+
+            JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
+
+            return gson.fromJson(obj.get(path).toString(), token.getType());
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             return null;

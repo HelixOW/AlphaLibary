@@ -1,9 +1,9 @@
 package de.alphahelix.alphalibary.text;
 
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public interface TextAction {
 
-    void run(CommandSender p);
+    void run(Player p);
 
 }

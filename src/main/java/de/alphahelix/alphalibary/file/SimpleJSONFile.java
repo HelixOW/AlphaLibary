@@ -4,14 +4,16 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
+import de.alphahelix.alphalibary.item.ItemBuilder;
 import de.alphahelix.alphalibary.utils.GameProfileBuilder;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,12 +21,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SimpleJSONFile extends File {
 
-    public static Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationSerializer()).registerTypeAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
-    private static JSONParser parser = new JSONParser();
-    private JSONObject head = new JSONObject();
+    public static Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationSerializer()).registerTypeAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).registerTypeAdapter(ItemStack.class, new ItemStackSerializer()).create();
+    private JsonObject head = new JsonObject();
 
 
     public SimpleJSONFile(String parent, String child) {
@@ -45,7 +49,7 @@ public class SimpleJSONFile extends File {
         if (value instanceof String)
             enteredValue = ((String) value).replace("§", "&");
 
-        head.put(path, enteredValue);
+        head.add(path, gson.toJsonTree(enteredValue));
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this))) {
             writer.write(gson.toJson(head));
@@ -60,14 +64,14 @@ public class SimpleJSONFile extends File {
     }
 
     public void addValuesToList(String path, Object... value) {
-        JSONArray array = new JSONArray();
+        JsonArray array = new JsonArray();
 
         if (contains(path)) {
-            array = getValue(path, JSONArray.class);
+            array = getValue(path, JsonArray.class);
         }
 
         for (Object obj : value)
-            array.add(obj);
+            array.add(gson.toJsonTree(obj));
 
         setValue(path, array);
     }
@@ -92,15 +96,17 @@ public class SimpleJSONFile extends File {
             if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
                 return new ArrayList<>();
 
-            JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
+
+            JsonObject obj = gson.fromJson(FileUtils.readFileToString(this), JsonObject.class);
+            JsonArray array = obj.getAsJsonArray(path);
             ArrayList<T> typeList = new ArrayList<>();
 
-            for (Object jsonType : (ArrayList<T>) obj.get(path)) {
-                typeList.add(gson.fromJson(jsonType.toString(), definy));
+            for (int i = 0; i < array.size(); i++) {
+                typeList.add(gson.fromJson(array.get(i), definy));
             }
 
             return typeList;
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -113,11 +119,10 @@ public class SimpleJSONFile extends File {
             if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
                 return null;
 
-            JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
+            JsonObject obj = gson.fromJson(FileUtils.readFileToString(this), JsonObject.class);
 
-
-            return gson.fromJson(obj.get(path).toString(), definy);
-        } catch (IOException | ParseException e) {
+            return gson.fromJson(obj.get(path), definy);
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -130,10 +135,10 @@ public class SimpleJSONFile extends File {
             if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
                 return null;
 
-            JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
+            JsonObject obj = gson.fromJson(FileUtils.readFileToString(this), JsonObject.class);
 
-            return gson.fromJson(obj.get(path).toString(), token.getType());
-        } catch (IOException | ParseException e) {
+            return gson.fromJson(obj.get(path), token.getType());
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -146,15 +151,15 @@ public class SimpleJSONFile extends File {
             if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
                 return new ArrayList<>();
 
-            JSONObject obj = (JSONObject) parser.parse(file);
+            JsonObject obj = gson.fromJson(FileUtils.readFileToString(this), JsonObject.class);
             ArrayList<T> list = new ArrayList<>();
 
-            for (Object o : obj.keySet()) {
-                list.add(gson.fromJson(obj.get(o.toString()).toString(), definy));
+            for (Map.Entry<String, JsonElement> o : obj.entrySet()) {
+                list.add(gson.fromJson(o.getValue(), definy));
             }
 
             return list;
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -167,15 +172,15 @@ public class SimpleJSONFile extends File {
             if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
                 return new ArrayList<>();
 
-            JSONObject obj = (JSONObject) parser.parse(file);
+            JsonObject obj = gson.fromJson(FileUtils.readFileToString(this), JsonObject.class);
             ArrayList<String> list = new ArrayList<>();
 
-            for (Object o : obj.keySet()) {
-                list.add(o.toString());
+            for (Map.Entry<String, JsonElement> o : obj.entrySet()) {
+                list.add(o.getKey());
             }
 
             return list;
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -196,9 +201,9 @@ public class SimpleJSONFile extends File {
             if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
                 return false;
 
-            JSONObject obj = (JSONObject) parser.parse(FileUtils.readFileToString(this));
+            JsonObject obj = gson.fromJson(FileUtils.readFileToString(this), JsonObject.class);
 
-            return obj.containsKey(path);
+            return obj.entrySet().contains(path);
         } catch (Exception e) {
             return contains(path);
         }
@@ -239,6 +244,97 @@ class LocationSerializer implements JsonSerializer<Location>, JsonDeserializer<L
         result.addProperty("z", src.getZ());
         result.addProperty("yaw", src.getYaw());
         result.addProperty("pitch", src.getPitch());
+
+        return result;
+    }
+}
+
+class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {
+
+    @Override
+    public ItemStack deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        JsonObject object = (JsonObject) json;
+
+        Material type = Material.getMaterial(object.getAsJsonPrimitive("type").getAsString());
+        int amount = object.getAsJsonPrimitive("amount").getAsInt();
+        short durability = object.getAsJsonPrimitive("durability").getAsShort();
+
+        String name = null;
+        List<String> lore = null;
+        Set<String> flags = null;
+
+
+        if (object.has("meta")) {
+            JsonObject meta = object.getAsJsonObject("meta");
+
+            if (meta.has("displayName")) {
+                name = meta.getAsJsonPrimitive("displayName").getAsString();
+            }
+
+            if (meta.has("lore")) {
+                lore = SimpleJSONFile.gson.fromJson(meta.getAsJsonArray("lore"), List.class);
+            }
+
+            flags = SimpleJSONFile.gson.fromJson(meta.getAsJsonArray("flags"), Set.class);
+
+        }
+
+        ItemBuilder builder = new ItemBuilder(type).setAmount(amount).setDamage(durability);
+
+        if (name != null)
+            builder.setName(name);
+
+        if (lore != null)
+            builder.setLore(lore.toArray(new String[lore.size()]));
+
+        if (flags != null)
+            for (String flag : flags)
+                builder.addItemFlags(ItemFlag.valueOf(flag));
+
+        JsonArray enchantments = object.getAsJsonArray("enchantments");
+
+        for (int i = 0; i < enchantments.size(); i++) {
+            builder.addEnchantment(
+                    Enchantment.getByName(enchantments.get(i).getAsJsonObject().getAsJsonPrimitive("id").getAsString()),
+                    enchantments.get(i).getAsJsonObject().getAsJsonPrimitive("lvl").getAsInt());
+        }
+
+        return builder.build();
+    }
+
+    @Override
+    public JsonElement serialize(ItemStack src, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject result = new JsonObject();
+        JsonArray enchantments = new JsonArray();
+
+        for (Enchantment e : src.getEnchantments().keySet()) {
+            JsonObject ench = new JsonObject();
+
+            ench.addProperty("id", e.getName());
+            ench.addProperty("lvl", src.getEnchantments().get(e));
+
+            enchantments.add(ench);
+        }
+
+        result.addProperty("type", src.getType().name());
+        result.addProperty("amount", src.getAmount());
+        result.addProperty("durability", src.getDurability());
+        result.add("enchantments", enchantments);
+
+        if (src.hasItemMeta()) {
+            JsonObject meta = new JsonObject();
+            ItemMeta itemMeta = src.getItemMeta();
+
+            if (itemMeta.hasDisplayName())
+                meta.addProperty("displayName", itemMeta.getDisplayName());
+
+            if (itemMeta.hasLore())
+                meta.add("lore", SimpleJSONFile.gson.toJsonTree(itemMeta.getLore()));
+
+            meta.add("flags", SimpleJSONFile.gson.toJsonTree(itemMeta.getItemFlags()));
+
+            result.add("meta", meta);
+        }
 
         return result;
     }

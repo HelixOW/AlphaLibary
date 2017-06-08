@@ -167,6 +167,7 @@ class MySQLFileManager extends SimpleFile {
     }
 
     public void addValues() {
+        if (getKeys(false).size() > 0) return;
         setDefault("database.username", "root");
         setDefault("database.password", "password");
         setDefault("database.host", "localhost");

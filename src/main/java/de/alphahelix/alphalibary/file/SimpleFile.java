@@ -17,7 +17,6 @@ package de.alphahelix.alphalibary.file;
 
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.item.ItemBuilder;
-import de.alphahelix.alphalibary.storage.StorageItem;
 import de.alphahelix.alphalibary.utils.SerializationUtil;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -37,7 +36,6 @@ public class SimpleFile extends YamlConfiguration {
 
     private static final SerializationUtil<InventoryItem> INVENTORY_ITEM_SERIALIZATION_UTIL = new SerializationUtil<>();
     private static final SerializationUtil<ItemStack[]> ITEMSTACK_ARRAY_SERIALIZATION_UTIL = new SerializationUtil<>();
-    private static final SerializationUtil<StorageItem> STORAGE_ITEM_SERIALIZATION_UTIL = new SerializationUtil<>();
 
     private File source = null;
 
@@ -156,14 +154,6 @@ public class SimpleFile extends YamlConfiguration {
         } catch (Exception e) {
             return new ArrayList<>();
         }
-    }
-
-    public void setBase64Item(String path, StorageItem toSave) {
-        setDefault(path, SerializationUtil.jsonToString(STORAGE_ITEM_SERIALIZATION_UTIL.serialize(toSave)));
-    }
-
-    public StorageItem getBase64Item(String path) {
-        return STORAGE_ITEM_SERIALIZATION_UTIL.deserialize(SerializationUtil.stringToJson(getString(path)));
     }
 
     /**

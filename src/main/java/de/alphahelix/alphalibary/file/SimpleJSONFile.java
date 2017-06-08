@@ -30,7 +30,6 @@ public class SimpleJSONFile extends File {
     public static Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationSerializer()).registerTypeAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).registerTypeAdapter(ItemStack.class, new ItemStackSerializer()).create();
     private JsonObject head = new JsonObject();
 
-
     public SimpleJSONFile(String parent, String child) {
         super(parent, child);
         if (!this.exists() && !isDirectory()) {

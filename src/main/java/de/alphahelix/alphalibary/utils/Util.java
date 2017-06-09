@@ -16,7 +16,6 @@
 package de.alphahelix.alphalibary.utils;
 
 import de.alphahelix.alphalibary.AlphaLibary;
-import de.alphahelix.alphalibary.interfaces.ITimer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -112,7 +111,7 @@ public class Util {
         return result;
     }
 
-    public static void runLater(long ticks, boolean async, ITimer timer) {
+    public static void runLater(long ticks, boolean async, Runnable timer) {
         if (async)
             new BukkitRunnable() {
                 public void run() {
@@ -127,7 +126,7 @@ public class Util {
             }.runTaskLater(AlphaLibary.getInstance(), ticks);
     }
 
-    public static void runTimer(long wait, long ticks, boolean async, ITimer timer) {
+    public static void runTimer(long wait, long ticks, boolean async, Runnable timer) {
         if (async)
             new BukkitRunnable() {
                 public void run() {

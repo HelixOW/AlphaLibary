@@ -28,7 +28,6 @@ import de.alphahelix.alphalibary.item.SkullItemBuilder;
 import de.alphahelix.alphalibary.nms.REnumEquipSlot;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.utils.LocationUtil;
-import de.alphahelix.alphalibary.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -133,22 +132,12 @@ public class MobFakeUtil extends FakeUtilBase {
      */
     public static void moveMob(Player p, double x, double y, double z, float yaw, float pitch, FakeMob mob) {
         try {
-            if (VERSION != MinecraftVersion.EIGHT) {
-
-                ReflectionUtil.sendPacket(p, getPacketPlayOutRelEntityMove().newInstance(
-                        ReflectionUtil.getEntityID(mob.getNmsEntity()),
-                        FakeAPI.toDelta((long) x),
-                        FakeAPI.toDelta((long) y),
-                        FakeAPI.toDelta((long) z),
-                        false));
-            } else {
-                ReflectionUtil.sendPacket(p, getPacketPlayOutRelEntityMove().newInstance(
-                        ReflectionUtil.getEntityID(mob.getNmsEntity()),
-                        ((byte) (x * 32)),
-                        ((byte) (y * 32)),
-                        ((byte) (z * 32)),
-                        false));
-            }
+            ReflectionUtil.sendPacket(p, getPacketPlayOutRelEntityMove().newInstance(
+                    ReflectionUtil.getEntityID(mob.getNmsEntity()),
+                    FakeAPI.toDelta((long) x),
+                    FakeAPI.toDelta((long) y),
+                    FakeAPI.toDelta((long) z),
+                    false));
 
             ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(mob, FakeAPI.toAngle(yaw)));
 
@@ -169,34 +158,22 @@ public class MobFakeUtil extends FakeUtilBase {
      */
     public static void teleportMob(Player p, Location loc, FakeMob mob) {
         try {
-            if (VERSION != MinecraftVersion.EIGHT) {
+            Field x = ReflectionUtil.getNmsClass("Entity").getField("locX"), y = ReflectionUtil.getNmsClass("Entity").getField("locY"), z = ReflectionUtil.getNmsClass("Entity").getField("locZ"), yaw = ReflectionUtil.getNmsClass("Entity").getField("yaw"), pitch = ReflectionUtil.getNmsClass("Entity").getField("pitch");
+            Object a = mob.getNmsEntity();
 
-                Field x = ReflectionUtil.getNmsClass("Entity").getField("locX"), y = ReflectionUtil.getNmsClass("Entity").getField("locY"), z = ReflectionUtil.getNmsClass("Entity").getField("locZ"), yaw = ReflectionUtil.getNmsClass("Entity").getField("yaw"), pitch = ReflectionUtil.getNmsClass("Entity").getField("pitch");
-                Object a = mob.getNmsEntity();
+            x.setAccessible(true);
+            y.setAccessible(true);
+            z.setAccessible(true);
+            yaw.setAccessible(true);
+            pitch.setAccessible(true);
 
-                x.setAccessible(true);
-                y.setAccessible(true);
-                z.setAccessible(true);
-                yaw.setAccessible(true);
-                pitch.setAccessible(true);
+            x.set(a, loc.getX());
+            y.set(a, loc.getY());
+            z.set(a, loc.getZ());
+            yaw.set(a, loc.getYaw());
+            pitch.set(a, loc.getPitch());
 
-                x.set(a, loc.getX());
-                y.set(a, loc.getY());
-                z.set(a, loc.getZ());
-                yaw.set(a, loc.getYaw());
-                pitch.set(a, loc.getPitch());
-
-                ReflectionUtil.sendPacket(p, getPacketPlayOutEntityTeleport().newInstance(a));
-            } else {
-                ReflectionUtil.sendPacket(p, getPacketPlayOutEntityTeleport().newInstance(
-                        ReflectionUtil.getEntityID(mob.getNmsEntity()),
-                        FakeAPI.floor(loc.getBlockX() * 32.0D),
-                        FakeAPI.floor(loc.getBlockY() * 32.0D),
-                        FakeAPI.floor(loc.getBlockZ() * 32.0D),
-                        (byte) ((int) (loc.getYaw() * 256.0F / 360.0F)),
-                        (byte) ((int) (loc.getPitch() * 256.0F / 360.0F)),
-                        true));
-            }
+            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityTeleport().newInstance(a));
 
             ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(mob, FakeAPI.toAngle(loc.getYaw())));
 

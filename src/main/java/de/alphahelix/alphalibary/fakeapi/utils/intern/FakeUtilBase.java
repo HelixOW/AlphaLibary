@@ -17,14 +17,12 @@
 package de.alphahelix.alphalibary.fakeapi.utils.intern;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
-import de.alphahelix.alphalibary.utils.MinecraftVersion;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 public class FakeUtilBase {
 
-    public static final MinecraftVersion VERSION = MinecraftVersion.getServer();
     private static Constructor<?> packetPlayOutSpawnEntity;
     private static Constructor<?> packetPlayOutSpawnEntityLiving;
     private static Constructor<?> packetPlayOutNamedEntitySpawn;
@@ -55,7 +53,6 @@ public class FakeUtilBase {
 
     static {
         try {
-            if (VERSION != MinecraftVersion.EIGHT) {
                 packetPlayOutRelEntityMove = ReflectionUtil.getNmsClass("PacketPlayOutEntity$PacketPlayOutRelEntityMove").getConstructor(int.class, long.class, long.class, long.class, boolean.class);
                 packetPlayOutEntityTeleport = ReflectionUtil.getNmsClass("PacketPlayOutEntityTeleport").getConstructor(ReflectionUtil.getNmsClass("Entity"));
                 packetPlayOutEntityEquipment = ReflectionUtil.getNmsClass("PacketPlayOutEntityEquipment").getConstructor(int.class, ReflectionUtil.getNmsClass("EnumItemSlot"), ReflectionUtil.getNmsClass("ItemStack"));
@@ -82,27 +79,6 @@ public class FakeUtilBase {
                 setBaby = ReflectionUtil.getNmsClass("EntityAgeable").getMethod("setAge", int.class);
                 setVariant = ReflectionUtil.getNmsClass("EntityLlama").getMethod("setVariant", int.class);
                 setGravity = ReflectionUtil.getNmsClass("Entity").getMethod("setNoGravity", boolean.class);
-            } else {
-                packetPlayOutSpawnEntity = ReflectionUtil.getNmsClass("PacketPlayOutSpawnEntity").getConstructor(ReflectionUtil.getNmsClass("Entity"), int.class);
-                packetPlayOutSpawnEntityLiving = ReflectionUtil.getNmsClass("PacketPlayOutSpawnEntityLiving").getConstructor(ReflectionUtil.getNmsClass("EntityLiving"));
-                packetPlayOutRelEntityMove = ReflectionUtil.getNmsClass("PacketPlayOutEntity$PacketPlayOutRelEntityMove").getConstructor(int.class, byte.class, byte.class, byte.class, boolean.class);
-                packetPlayOutEntityTeleport = ReflectionUtil.getNmsClass("PacketPlayOutEntityTeleport").getConstructor(int.class, int.class, int.class, int.class, byte.class, byte.class, boolean.class);
-                packetPlayOutEntityEquipment = ReflectionUtil.getNmsClass("PacketPlayOutEntityEquipment").getConstructor(int.class, int.class, ReflectionUtil.getNmsClass("ItemStack"));
-                packetPlayOutEntityDestroy = ReflectionUtil.getNmsClass("PacketPlayOutEntityDestroy").getConstructor(int[].class);
-                packetPlayOutEntityMetadata = ReflectionUtil.getNmsClass("PacketPlayOutEntityMetadata").getConstructor(int.class, ReflectionUtil.getNmsClass("DataWatcher"), boolean.class);
-                packetPlayOutEntityHeadRotation = ReflectionUtil.getNmsClass("PacketPlayOutEntityHeadRotation").getConstructor(ReflectionUtil.getNmsClass("Entity"), byte.class);
-                packetPlayOutEntityLook = ReflectionUtil.getNmsClass("PacketPlayOutEntity$PacketPlayOutEntityLook").getConstructor(int.class, byte.class, byte.class, boolean.class);
-                packetPlayOutAnimation = ReflectionUtil.getNmsClass("PacketPlayOutAnimation").getConstructor(ReflectionUtil.getNmsClass("Entity"), int.class);
-                packetPlayOutNamedEntitySpawn = ReflectionUtil.getNmsClass("PacketPlayOutNamedEntitySpawn").getConstructor(ReflectionUtil.getNmsClass("EntityHuman"));
-
-                setLocation = ReflectionUtil.getNmsClass("Entity").getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
-                setInvisible = ReflectionUtil.getNmsClass("Entity").getMethod("setInvisible", boolean.class);
-                setCustomName = ReflectionUtil.getNmsClass("Entity").getMethod("setCustomName", String.class);
-                setCustomNameVisible = ReflectionUtil.getNmsClass("Entity").getMethod("setCustomNameVisible", boolean.class);
-                getDataWatcher = ReflectionUtil.getNmsClass("Entity").getMethod("getDataWatcher");
-                watch = ReflectionUtil.getNmsClass("DataWatcher").getMethod("watch", int.class, Object.class);
-                update = ReflectionUtil.getNmsClass("DataWatcher").getMethod("update", int.class);
-            }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }

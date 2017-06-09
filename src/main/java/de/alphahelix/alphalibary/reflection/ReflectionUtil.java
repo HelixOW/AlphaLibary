@@ -16,7 +16,6 @@
 
 package de.alphahelix.alphalibary.reflection;
 
-import de.alphahelix.alphalibary.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -236,12 +235,7 @@ public class ReflectionUtil {
      */
     public static Object serializeString(String s) {
         try {
-            Class<?> chatSerelizer;
-            if (MinecraftVersion.getServer() == MinecraftVersion.EIGHT) {
-                chatSerelizer = getCraftBukkitClass("interfaces.CraftChatMessage");
-            } else {
-                chatSerelizer = getCraftBukkitClass("util.CraftChatMessage");
-            }
+            Class<?> chatSerelizer = getCraftBukkitClass("util.CraftChatMessage");
 
             Method mSerelize = chatSerelizer.getMethod("fromString", String.class);
 
@@ -255,12 +249,7 @@ public class ReflectionUtil {
     private static String fromIChatBaseComponent(Object component) {
 
         try {
-            Class<?> chatSerelizer;
-            if (MinecraftVersion.getServer() == MinecraftVersion.EIGHT) {
-                chatSerelizer = getCraftBukkitClass("interfaces.CraftChatMessage");
-            } else {
-                chatSerelizer = getCraftBukkitClass("util.CraftChatMessage");
-            }
+            Class<?> chatSerelizer = getCraftBukkitClass("util.CraftChatMessage");
 
             Method mSerelize = chatSerelizer.getMethod("fromComponent",
                     ReflectionUtil.getNmsClass("IChatBaseComponent"));

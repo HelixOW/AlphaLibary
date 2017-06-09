@@ -17,7 +17,6 @@
 package de.alphahelix.alphalibary.nms;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
-import de.alphahelix.alphalibary.utils.MinecraftVersion;
 
 import java.io.Serializable;
 
@@ -39,8 +38,6 @@ public enum REnumEquipSlot implements Serializable {
     }
 
     public Object getNmsSlot() {
-        if (MinecraftVersion.getServer() == MinecraftVersion.EIGHT)
-            return nmsSlot;
         try {
             return ReflectionUtil.getNmsClass("EnumItemSlot").getEnumConstants()[past];
         } catch (Exception e) {

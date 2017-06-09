@@ -23,7 +23,6 @@ import de.alphahelix.alphalibary.fakeapi.instances.FakeEndercrystal;
 import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.utils.LocationUtil;
-import de.alphahelix.alphalibary.utils.MinecraftVersion;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -145,35 +144,22 @@ public class EndercrystalFakeUtil extends FakeUtilBase {
      */
     public static void teleportEndercrystal(Player p, Location loc, FakeEndercrystal endercrystal) {
         try {
-            if (VERSION != MinecraftVersion.EIGHT) {
+            Field x = ReflectionUtil.getNmsClass("Entity").getField("locX"), y = ReflectionUtil.getNmsClass("Entity").getField("locY"), z = ReflectionUtil.getNmsClass("Entity").getField("locZ"), yaw = ReflectionUtil.getNmsClass("Entity").getField("yaw"), pitch = ReflectionUtil.getNmsClass("Entity").getField("pitch");
+            Object a = endercrystal.getNmsEntity();
 
-                Field x = ReflectionUtil.getNmsClass("Entity").getField("locX"), y = ReflectionUtil.getNmsClass("Entity").getField("locY"), z = ReflectionUtil.getNmsClass("Entity").getField("locZ"), yaw = ReflectionUtil.getNmsClass("Entity").getField("yaw"), pitch = ReflectionUtil.getNmsClass("Entity").getField("pitch");
-                Object a = endercrystal.getNmsEntity();
+            x.setAccessible(true);
+            y.setAccessible(true);
+            z.setAccessible(true);
+            yaw.setAccessible(true);
+            pitch.setAccessible(true);
 
-                x.setAccessible(true);
-                y.setAccessible(true);
-                z.setAccessible(true);
-                yaw.setAccessible(true);
-                pitch.setAccessible(true);
+            x.set(a, loc.getX());
+            y.set(a, loc.getY());
+            z.set(a, loc.getZ());
+            yaw.set(a, loc.getYaw());
+            pitch.set(a, loc.getPitch());
 
-                x.set(a, loc.getX());
-                y.set(a, loc.getY());
-                z.set(a, loc.getZ());
-                yaw.set(a, loc.getYaw());
-                pitch.set(a, loc.getPitch());
-
-                ReflectionUtil.sendPacket(p, getPacketPlayOutEntityTeleport().newInstance(a));
-            } else {
-                ReflectionUtil.sendPacket(p, getPacketPlayOutEntityTeleport().newInstance(
-                        ReflectionUtil.getEntityID(endercrystal.getNmsEntity()),
-                        FakeAPI.floor(loc.getBlockX() * 32.0D),
-                        FakeAPI.floor(loc.getBlockY() * 32.0D),
-                        FakeAPI.floor(loc.getBlockZ() * 32.0D),
-                        (byte) ((int) (loc.getYaw() * 256.0F / 360.0F)),
-                        (byte) ((int) (loc.getPitch() * 256.0F / 360.0F)),
-                        true));
-            }
-
+            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityTeleport().newInstance(a));
             endercrystal.setCurrentlocation(loc);
         } catch (Exception e) {
             e.printStackTrace();

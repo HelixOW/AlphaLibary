@@ -49,7 +49,11 @@ public enum FakeMobType {
     IRON_GOLEM("EntityIronGolem"),
     RABBIT("EntityRabbit"),
     VILLAGER("EntityVillager"),
-    LLAMA("EntityLlama");
+    LLAMA("EntityLlama"),
+    ILLAGER("EntityIllagerWizard"),
+    VINDICATOR("EntityVindicator"),
+    EVOKER("EntityEvoker"),
+    ILLUSIONER("EntityIllagerIllusioner");
 
     private String nmsClass;
 

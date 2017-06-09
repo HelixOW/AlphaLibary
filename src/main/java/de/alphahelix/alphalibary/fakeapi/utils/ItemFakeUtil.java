@@ -21,7 +21,6 @@ import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeItem;
 import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
-import de.alphahelix.alphalibary.utils.MinecraftVersion;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -80,12 +79,7 @@ public class ItemFakeUtil extends FakeUtilBase {
 
             Object dw = getDataWatcher().invoke(item);
 
-            if (VERSION != MinecraftVersion.EIGHT) {
-                setItemStack().invoke(item, ReflectionUtil.getObjectNMSItemStack(new ItemStack(type)));
-            } else {
-                watch().invoke(dw, 10, ReflectionUtil.getObjectNMSItemStack(new ItemStack(type)));
-                update().invoke(dw, 10);
-            }
+            setItemStack().invoke(item, ReflectionUtil.getObjectNMSItemStack(new ItemStack(type)));
 
             ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntity().newInstance(item, 2));
             ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(item), dw, true));

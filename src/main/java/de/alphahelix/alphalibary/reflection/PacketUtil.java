@@ -18,7 +18,6 @@ package de.alphahelix.alphalibary.reflection;
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.nms.REnumGamemode;
 import de.alphahelix.alphalibary.nms.REnumPlayerInfoAction;
-import de.alphahelix.alphalibary.utils.MinecraftVersion;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -42,11 +41,7 @@ public class PacketUtil {
         Class<?> cPlayerInfoData = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");
 
         Class<?> cEnumGamemode;
-        if (MinecraftVersion.getServer() == MinecraftVersion.NINE || MinecraftVersion.getServer() == MinecraftVersion.EIGHT) {
-            cEnumGamemode = ReflectionUtil.getNmsClass("WorldSettings$EnumGamemode");
-        } else {
-            cEnumGamemode = ReflectionUtil.getNmsClass("EnumGamemode");
-        }
+        cEnumGamemode = ReflectionUtil.getNmsClass("EnumGamemode");
 
         try {
             Object pPacketPlayOutInfo = cPacketPlayOutPlayerInfo.getConstructor().newInstance();

@@ -19,11 +19,13 @@ import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 
 public class SimpleActionBar {
+
+    private static Class<?> packetPlayOutChatClazz = ReflectionUtil.getNmsClass("PacketPlayOutChat");
+    private static Class<?> iChatBaseComponent = ReflectionUtil.getNmsClass("IChatBaseComponent");
 
     /**
      * Sends a {@link Player} a actionbar
@@ -33,22 +35,8 @@ public class SimpleActionBar {
      */
     public static void send(Player p, String message) {
         try {
-            Class<?> packetPlayOutChatClazz = ReflectionUtil.getNmsClass("PacketPlayOutChat");
-            Class<?> iChatBaseComponent = ReflectionUtil.getNmsClass("IChatBaseComponent");
-
-            Object packetPlayOutChat;
-
-            if (ReflectionUtil.getVersion().equalsIgnoreCase("v1_8_R1")) {
-                Class<?> chatSerializer = ReflectionUtil.getNmsClass("ChatSerializer");
-
-                Method a = chatSerializer.getDeclaredMethod("a", String.class);
-                Object cbc = iChatBaseComponent.cast(a.invoke(chatSerializer, "{\"text\": \"" + message + "\"}"));
-
-                packetPlayOutChat = packetPlayOutChatClazz.getConstructor(iChatBaseComponent, byte.class).newInstance(cbc, (byte) 2);
-            } else {
-                Object o = ReflectionUtil.getNmsClass("ChatComponentText").getConstructor(String.class).newInstance(message);
-                packetPlayOutChat = packetPlayOutChatClazz.getConstructor(iChatBaseComponent, byte.class).newInstance(o, (byte) 2);
-            }
+            Object o = ReflectionUtil.getNmsClass("ChatComponentText").getConstructor(String.class).newInstance(message);
+            Object packetPlayOutChat = packetPlayOutChatClazz.getConstructor(iChatBaseComponent, ReflectionUtil.getNmsClass("ChatMessageType")).newInstance(o, RChatMessageType.GAME_INFO.getNMSChatMessageType());
 
             ReflectionUtil.sendPacket(p, packetPlayOutChat);
         } catch (Exception e) {

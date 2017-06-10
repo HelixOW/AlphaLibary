@@ -15,62 +15,16 @@
  */
 package de.alphahelix.alphalibary.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+public class SerializationUtil {
 
-public class SerializationUtil<T> {
-
-    private static Gson gson = new Gson();
-    private static JsonParser parser = new JsonParser();
-
-    public static String jsonToString(JsonObject object) {
-        return gson.toJson(object);
+    public static <T> String encodeBase64(T instance) {
+        return Base64Coder.encodeString(JSONUtil.toJson(instance));
     }
 
-    public static JsonObject stringToJson(String json) {
-        try {
-            return (JsonObject) parser.parse(json);
-        } catch (Exception e) {
-            return new JsonObject();
-        }
-    }
-
-    public JsonObject serialize(T toSerialize) {
-        String base64 = null;
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            BukkitObjectOutputStream bukkitOut = new BukkitObjectOutputStream(out);
-            bukkitOut.writeObject(toSerialize);
-            bukkitOut.close();
-            base64 = Base64Coder.encodeLines(out.toByteArray());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        JsonObject object = new JsonObject();
-        object.addProperty("data", base64);
-        return object;
-    }
-
-    public T deserialize(JsonObject object) {
-        T result = null;
-        String itemData = object.get("data").getAsString();
-        ByteArrayInputStream in = new ByteArrayInputStream(Base64Coder.decodeLines(itemData));
-        try {
-            BukkitObjectInputStream bukkitIn = new BukkitObjectInputStream(in);
-            result = (T) bukkitIn.readObject();
-            bukkitIn.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return result;
+    public static <T> T decodeBase64(String base64, Class<T> identifier) {
+        return SimpleJSONFile.gson.fromJson(Base64Coder.decodeString(base64), identifier);
     }
 }

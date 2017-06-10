@@ -17,7 +17,6 @@ package de.alphahelix.alphalibary.file;
 
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.item.ItemBuilder;
-import de.alphahelix.alphalibary.utils.SerializationUtil;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;

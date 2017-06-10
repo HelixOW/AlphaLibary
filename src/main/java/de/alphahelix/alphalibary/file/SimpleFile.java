@@ -17,6 +17,7 @@ package de.alphahelix.alphalibary.file;
 
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.item.ItemBuilder;
+import de.alphahelix.alphalibary.utils.SerializationUtil;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -32,9 +33,6 @@ import java.io.Serializable;
 import java.util.*;
 
 public class SimpleFile extends YamlConfiguration {
-
-    private static final SerializationUtil<InventoryItem> INVENTORY_ITEM_SERIALIZATION_UTIL = new SerializationUtil<>();
-    private static final SerializationUtil<ItemStack[]> ITEMSTACK_ARRAY_SERIALIZATION_UTIL = new SerializationUtil<>();
 
     private File source = null;
 
@@ -162,7 +160,7 @@ public class SimpleFile extends YamlConfiguration {
      * @param toSave the {@link ItemStack}[] to save
      */
     public void setBase64ItemStackArray(String path, ItemStack... toSave) {
-        setDefault(path, SerializationUtil.jsonToString(ITEMSTACK_ARRAY_SERIALIZATION_UTIL.serialize(toSave)));
+        setDefault(path, SerializationUtil.encodeBase64(toSave));
     }
 
     /**
@@ -175,7 +173,7 @@ public class SimpleFile extends YamlConfiguration {
         ArrayList<String> items = new ArrayList<>();
 
         for (InventoryItem item : toSave) {
-            items.add(SerializationUtil.jsonToString(INVENTORY_ITEM_SERIALIZATION_UTIL.serialize(item)));
+            items.add(SerializationUtil.encodeBase64(item));
         }
 
         override(path, items);
@@ -191,7 +189,7 @@ public class SimpleFile extends YamlConfiguration {
         ArrayList<InventoryItem> items = new ArrayList<>();
 
         for (String base64 : getStringList(path)) {
-            items.add(INVENTORY_ITEM_SERIALIZATION_UTIL.deserialize(SerializationUtil.stringToJson(base64)));
+            items.add(SerializationUtil.decodeBase64(base64, InventoryItem.class));
         }
 
         return items.toArray(new InventoryItem[items.size()]);
@@ -204,7 +202,7 @@ public class SimpleFile extends YamlConfiguration {
      * @return the {@link ItemStack}[] which was saved
      */
     public ItemStack[] getBase64ItemStackArray(String path) {
-        return ITEMSTACK_ARRAY_SERIALIZATION_UTIL.deserialize(SerializationUtil.stringToJson(getString(path)));
+        return SerializationUtil.decodeBase64(getString(path), ItemStack[].class);
     }
 
     /**
@@ -420,9 +418,7 @@ public class SimpleFile extends YamlConfiguration {
      * @param loc  the {@link Location} to save
      */
     public void setBase64Location(String path, Location loc) {
-        SerializationUtil<Location> serializer = new SerializationUtil<>();
-
-        override(path, SerializationUtil.jsonToString(serializer.serialize(loc)));
+        override(path, SerializationUtil.encodeBase64(loc));
     }
 
     /**
@@ -432,11 +428,9 @@ public class SimpleFile extends YamlConfiguration {
      * @return the {@link Location} which is saved
      */
     public Location getBase64Location(String path) {
-        SerializationUtil serializer = new SerializationUtil<>();
-
         if (getString(path) == null) return null;
 
-        return (Location) serializer.deserialize(SerializationUtil.stringToJson(getString(path)));
+        return SerializationUtil.decodeBase64(getString(path), Location.class);
     }
 
     /**
@@ -487,10 +481,9 @@ public class SimpleFile extends YamlConfiguration {
     @SafeVarargs
     private final <T> void setBase64ArgumentList(String path, T... listArguments) {
         List<String> argsAtBase64 = new ArrayList<>();
-        SerializationUtil<T> serializer = new SerializationUtil<>();
 
         for (T arg : listArguments) {
-            argsAtBase64.add(SerializationUtil.jsonToString(serializer.serialize(arg)));
+            argsAtBase64.add(SerializationUtil.encodeBase64(arg));
         }
 
         override(path, argsAtBase64);
@@ -503,13 +496,12 @@ public class SimpleFile extends YamlConfiguration {
      * @param <T>  the type of the arguments
      * @return
      */
-    public <T> ArrayList<T> getBase64ArgumentList(String path) {
+    public <T> ArrayList<T> getBase64ArgumentList(String path, Class<?> objectClazz) {
         ArrayList<T> args = new ArrayList<>();
-        SerializationUtil<T> serializer = new SerializationUtil<>();
 
         if (configContains(path))
-            for (Object base64arg : getList(path)) {
-                args.add(serializer.deserialize(SerializationUtil.stringToJson((String) base64arg)));
+            for (String base64arg : getStringList(path)) {
+                args.add(SerializationUtil.decodeBase64(base64arg, (Class<T>) objectClazz));
             }
 
         return args;
@@ -523,11 +515,11 @@ public class SimpleFile extends YamlConfiguration {
      */
     @SafeVarargs
     public final <T> void addBase64ArgumentsToList(String path, T... arguments) {
-        ArrayList<T> args = getBase64ArgumentList(path);
+        ArrayList<T> args = getBase64ArgumentList(path, arguments.getClass());
 
         Collections.addAll(args, arguments);
 
-        setBase64ArgumentList(path, true, args.toArray());
+        setBase64ArgumentList(path, args.toArray());
     }
 
     /**
@@ -538,7 +530,7 @@ public class SimpleFile extends YamlConfiguration {
      */
     @SafeVarargs
     public final <T> void removeBase64ArgumentsFromList(String path, T... arguments) {
-        ArrayList<T> args = getBase64ArgumentList(path);
+        ArrayList<T> args = getBase64ArgumentList(path, arguments.getClass());
 
         for (T arg : arguments) {
             if (args.contains(arg)) {
@@ -548,7 +540,7 @@ public class SimpleFile extends YamlConfiguration {
         }
 
         if (!args.isEmpty())
-            setBase64ArgumentList(path, true, args.toArray());
+            setBase64ArgumentList(path, args.toArray());
         else
             override(path, null);
     }

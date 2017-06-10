@@ -203,7 +203,8 @@ public class SimpleJSONFile extends File {
 
             JsonObject obj = gson.fromJson(file, JsonObject.class);
 
-            return obj.entrySet().contains(path);
+
+            return obj.get(path) != null;
         } catch (Exception e) {
             return contains(path);
         }

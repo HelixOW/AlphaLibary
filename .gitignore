@@ -7,3 +7,6 @@ target/
 null/
 AlphaBungeeLibary/AlphaBungeeLibary.iml
 AlphaBungeeLibary/src/test
+AlphaBungeeLibary/target
+AlphaBungeeLibary/.idea
+AlphaBungeeLibary/dependency-reduced-pom.xml

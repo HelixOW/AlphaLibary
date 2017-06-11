@@ -1,219 +1,172 @@
 package de.alphahelix.alphalibary.utils;
 
-import de.alphahelix.alphalibary.AlphaLibary;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+enum DefaultFontInfo {
 
-public class MessageUtil implements Listener {
+    A('A', 5),
+    a('a', 5),
+    B('B', 5),
+    b('b', 5),
+    C('C', 5),
+    c('c', 5),
+    D('D', 5),
+    d('d', 5),
+    E('E', 5),
+    e('e', 5),
+    F('F', 5),
+    f('f', 4),
+    G('G', 5),
+    g('g', 5),
+    H('H', 5),
+    h('h', 5),
+    I('I', 3),
+    i('i', 1),
+    J('J', 5),
+    j('j', 5),
+    K('K', 5),
+    k('k', 4),
+    L('L', 5),
+    l('l', 1),
+    M('M', 5),
+    m('m', 5),
+    N('N', 5),
+    n('n', 5),
+    O('O', 5),
+    o('o', 5),
+    P('P', 5),
+    p('p', 5),
+    Q('Q', 5),
+    q('q', 5),
+    R('R', 5),
+    r('r', 5),
+    S('S', 5),
+    s('s', 5),
+    T('T', 5),
+    t('t', 4),
+    U('U', 5),
+    u('u', 5),
+    V('V', 5),
+    v('v', 5),
+    W('W', 5),
+    w('w', 5),
+    X('X', 5),
+    x('x', 5),
+    Y('Y', 5),
+    y('y', 5),
+    Z('Z', 5),
+    z('z', 5),
+    NUM_1('1', 5),
+    NUM_2('2', 5),
+    NUM_3('3', 5),
+    NUM_4('4', 5),
+    NUM_5('5', 5),
+    NUM_6('6', 5),
+    NUM_7('7', 5),
+    NUM_8('8', 5),
+    NUM_9('9', 5),
+    NUM_0('0', 5),
+    EXCLAMATION_POINT('!', 1),
+    AT_SYMBOL('@', 6),
+    NUM_SIGN('#', 5),
+    DOLLAR_SIGN('$', 5),
+    PERCENT('%', 5),
+    UP_ARROW('^', 5),
+    AMPERSAND('&', 5),
+    ASTERISK('*', 5),
+    LEFT_PARENTHESIS('(', 4),
+    RIGHT_PERENTHESIS(')', 4),
+    MINUS('-', 5),
+    UNDERSCORE('_', 5),
+    PLUS_SIGN('+', 5),
+    EQUALS_SIGN('=', 5),
+    LEFT_CURL_BRACE('{', 4),
+    RIGHT_CURL_BRACE('}', 4),
+    LEFT_BRACKET('[', 3),
+    RIGHT_BRACKET(']', 3),
+    COLON(':', 1),
+    SEMI_COLON(';', 1),
+    DOUBLE_QUOTE('"', 3),
+    SINGLE_QUOTE('\'', 1),
+    LEFT_ARROW('<', 4),
+    RIGHT_ARROW('>', 4),
+    QUESTION_MARK('?', 5),
+    SLASH('/', 5),
+    BACK_SLASH('\\', 5),
+    LINE('|', 1),
+    TILDE('~', 5),
+    TICK('`', 2),
+    PERIOD('.', 1),
+    COMMA(',', 1),
+    SPACE(' ', 3),
+    DEFAULT('a', 4);
 
-    /**
-     * The instance of the main class
-     */
-    private static Plugin plugin = AlphaLibary.getInstance();
-    /**
-     * Map linking an action UUID and the action
-     */
-    private Map<UUID, ActionData> actionMap = new HashMap<>();
+    private char character;
+    private int length;
 
-    /**
-     * Private constructor
-     * No new instances of the class
-     * are needed to be created outside
-     */
-    public MessageUtil() {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+    DefaultFontInfo(char character, int length) {
+        this.character = character;
+        this.length = length;
     }
 
-    /**
-     * Sends a clickable action message to a player
-     *
-     * @param player The player to send the message to
-     * @param msg    The message to send to the player
-     * @param expire Whether the action should expire after being used once
-     * @param action The action to execute when the player clicks the message
-     */
-    public void sendActionMessage(Player player, String msg, boolean expire, PlayerAction action) {
-        sendActionMessage(player, new TextComponent(msg), expire, action);
-    }
-
-    /**
-     * Sends a clickable action message to a player
-     *
-     * @param player    The player to send the message to
-     * @param component The text component to send to the player
-     * @param expire    Whether the action should expire after being used once
-     * @param action    The action to execute when the player clicks the message
-     */
-    public void sendActionMessage(Player player, TextComponent component, boolean expire, PlayerAction action) {
-        sendActionMessage(player, new TextComponent[]{component}, expire, action);
-    }
-
-    /**
-     * Sends clickable action messages to a player
-     *
-     * @param player     The player to send the message to
-     * @param components The text components to send to the player
-     * @param expire     Whether the action should expire after being used once
-     * @param action     The action to execute when the player clicks the message
-     */
-    public void sendActionMessage(Player player, TextComponent[] components, boolean expire, PlayerAction action) {
-        Validate.notNull(player, "Player cannot be null");
-        Validate.notNull(components, "Components cannot be null");
-        Validate.notNull(action, "Action cannot be null");
-
-        UUID id = UUID.randomUUID();
-
-        while (actionMap.keySet().contains(id)) {
-            id = UUID.randomUUID();
+    public static DefaultFontInfo getDefaultFontInfo(char c) {
+        for (DefaultFontInfo dFI : DefaultFontInfo.values()) {
+            if (dFI.getCharacter() == c) return dFI;
         }
-
-        actionMap.put(id, new ActionData(player.getUniqueId(), action, expire));
-
-        for (BaseComponent component : components) {
-            component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + id.toString()));
-        }
-
-        player.spigot().sendMessage(components);
+        return DefaultFontInfo.DEFAULT;
     }
 
-    /**
-     * Remove all the action messages associated with a player
-     *
-     * @param player The player who's actions should be removed
-     */
-    public void removeActionMessages(Player player) {
-        for (Map.Entry<UUID, ActionData> entry : actionMap.entrySet()) {
-            if (entry.getValue().getPlayerId().equals(player.getUniqueId())) {
-                actionMap.remove(entry.getKey());
+    public char getCharacter() {
+        return this.character;
+    }
+
+    public int getLength() {
+        return this.length;
+    }
+
+    public int getBoldLength() {
+        if (this == DefaultFontInfo.SPACE) return this.getLength();
+        return this.length + 1;
+    }
+}
+
+public class MessageUtil {
+
+    private final static int CENTER_PX = 154;
+
+    public static void sendCenteredMessage(Player player, String message) {
+        if (message == null || message.equals("")) return;
+        message = ChatColor.translateAlternateColorCodes('&', message);
+
+        int messagePxSize = 0;
+        boolean previousCode = false;
+        boolean isBold = false;
+
+        for (char c : message.toCharArray()) {
+            if (c == '§') {
+                previousCode = true;
+            } else if (previousCode) {
+                previousCode = false;
+                if (c == 'l' || c == 'L') {
+                    isBold = true;
+                } else isBold = false;
+            } else {
+                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
+                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
+                messagePxSize++;
             }
         }
+
+        int halvedMessageSize = messagePxSize / 2;
+        int toCompensate = CENTER_PX - halvedMessageSize;
+        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
+        int compensated = 0;
+        StringBuilder sb = new StringBuilder();
+        while (compensated < toCompensate) {
+            sb.append(" ");
+            compensated += spaceLength;
+        }
+        player.sendMessage(sb.toString() + message);
     }
-
-    /* Listeners */
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
-        removeActionMessages(event.getPlayer());
-    }
-
-    @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
-        // The command entered
-        String command = event.getMessage().split(" ")[0].substring(1);
-
-        UUID id;
-
-        try {
-            id = UUID.fromString(command);
-        } catch (IllegalArgumentException expected) {
-            // They didn't enter a valid UUID
-            return;
-        }
-
-        // The data associated with the UUID they entered
-        ActionData data = actionMap.get(id);
-
-        if (data == null) {
-            return;
-        }
-
-        event.setCancelled(true);
-
-        Player player = event.getPlayer();
-
-        if (player.getUniqueId().equals(id)) {
-            // They entered a command linked with their data
-            data.getAction().run(player);
-
-            // This action should expire after being used once
-            if (data.shouldExpire()) {
-                actionMap.remove(id);
-            }
-        }
-    }
-
-    /**
-     * Functional interface for executing actions with a player
-     */
-    @FunctionalInterface
-    public interface PlayerAction {
-        /**
-         * Executes the desired action on a player based upon implementation
-         *
-         * @param player The player to run the action for
-         */
-        void run(Player player);
-    }
-
-    /**
-     * Class holding information about an action
-     */
-    private class ActionData {
-        /**
-         * The player to execute the action on
-         */
-        private UUID playerId;
-
-        /**
-         * The action to execute
-         */
-        private PlayerAction action;
-
-        /**
-         * Whether the action should expire
-         */
-        private boolean expire;
-
-        /**
-         * ActionData constructor
-         *
-         * @param playerId The {@link UUID} of the player to execute the action on
-         * @param action   The {@link PlayerAction} to execute
-         */
-        private ActionData(UUID playerId, PlayerAction action, boolean expire) {
-            this.playerId = playerId;
-            this.action = action;
-            this.expire = expire;
-        }
-
-        /**
-         * Gets the UUID of the player to execute the action upon
-         *
-         * @return The stored {@link UUID}
-         */
-        private UUID getPlayerId() {
-            return playerId;
-        }
-
-        /**
-         * Gets the action associated with this ActionData object
-         *
-         * @return The stored {@link PlayerAction}
-         */
-        private PlayerAction getAction() {
-            return action;
-        }
-
-        /**
-         * Whether the action should expire after being used once
-         *
-         * @return Whether the action should expire
-         */
-        private boolean shouldExpire() {
-            return expire;
-        }
-    }
-
 }

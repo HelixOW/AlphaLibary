@@ -32,16 +32,17 @@ public class CommandWatcher {
     }
 
     public boolean isSameLenght() {
-        if (this.args.size() != argsGiven.length) {
-            return false;
-        }
+        return this.args.size() == argsGiven.length;
+    }
+
+    public boolean isSame() {
+        if (!isSameLenght()) return false;
 
         for (Argument<?> givenArgument : this.args.values()) {
             if (!givenArgument.matches()) {
                 return false;
             }
         }
-
         return true;
     }
 

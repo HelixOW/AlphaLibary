@@ -79,7 +79,7 @@ public abstract class InventoryBuilder extends SimpleListener implements Seriali
 
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent e) {
-        Validate.notNull(based, "The Inventory hasn't been built yet!");
+        if (based == null) return;
 
         if (based.getTitle().equals(e.getInventory().getTitle())) {
             if (based.getSize() == e.getInventory().getSize())
@@ -89,11 +89,21 @@ public abstract class InventoryBuilder extends SimpleListener implements Seriali
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
-        Validate.notNull(based, "The Inventory hasn't been built yet!");
+        if (based == null) return;
 
         if (based.getTitle().equals(e.getInventory().getTitle()))
             if (based.getSize() == e.getInventory().getSize())
                 onClose(e);
+    }
+
+    @Override
+    public String toString() {
+        return "InventoryBuilder{" +
+                "based=" + based +
+                ", name='" + name + '\'' +
+                ", size=" + size +
+                ", items=" + items +
+                '}';
     }
 
     public static abstract class SimpleItem extends ItemBuilder implements Listener {
@@ -134,15 +144,5 @@ public abstract class InventoryBuilder extends SimpleListener implements Seriali
                     "slot=" + slot +
                     "} " + super.toString();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "InventoryBuilder{" +
-                "based=" + based +
-                ", name='" + name + '\'' +
-                ", size=" + size +
-                ", items=" + items +
-                '}';
     }
 }

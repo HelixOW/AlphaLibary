@@ -1,6 +1,5 @@
 package de.alphahelix.alphalibary.utils;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 enum DefaultFontInfo {
@@ -137,14 +136,13 @@ public class MessageUtil {
 
     public static void sendCenteredMessage(Player player, String message) {
         if (message == null || message.equals("")) return;
-        message = ChatColor.translateAlternateColorCodes('&', message);
 
         int messagePxSize = 0;
         boolean previousCode = false;
         boolean isBold = false;
 
         for (char c : message.toCharArray()) {
-            if (c == '§') {
+            if (c == '&') {
                 previousCode = true;
             } else if (previousCode) {
                 previousCode = false;
@@ -167,6 +165,6 @@ public class MessageUtil {
             sb.append(" ");
             compensated += spaceLength;
         }
-        player.sendMessage(sb.toString() + message);
+        player.sendMessage(sb.toString().replace("&", "§") + message.replace("&", "§"));
     }
 }

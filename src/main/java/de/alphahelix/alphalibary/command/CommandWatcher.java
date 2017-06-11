@@ -18,6 +18,13 @@ public class CommandWatcher {
         return this;
     }
 
+    public CommandWatcher addArguments(IArgument<?>... args) {
+        for (IArgument<?> arg : args) {
+            addArgument(arg);
+        }
+        return this;
+    }
+
     public boolean isComperable() {
         if (this.arguments.size() != argumentsGiven.length)
             return false;

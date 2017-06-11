@@ -41,7 +41,11 @@ public class CommandWatcher {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getArgument(int index) {
-        return ((IArgument<T>) arguments.get(index)).get(argumentsGiven[index]);
+    public <T> IArgument<T> getArgument(int index) {
+        return (IArgument<T>) arguments.get(index);
+    }
+
+    public boolean matches(int index) {
+        return getArgument(index).isCorrect(argumentsGiven[index]);
     }
 }

@@ -83,10 +83,10 @@ public class UUIDFetcher {
                             PlayerUUID.class);
 
             if (player == null)
-                return null;
+                return Bukkit.getOfflinePlayer(name).getUniqueId();
 
             if (player.getId() == null)
-                return null;
+                return Bukkit.getOfflinePlayer(name).getUniqueId();
 
             uuids.put(name, player.getId());
 
@@ -94,7 +94,7 @@ public class UUIDFetcher {
         } catch (Exception e) {
             Bukkit.getConsoleSender()
                     .sendMessage("Your server has no connection to the mojang servers or is runnig slowly.");
-            return null;
+            return Bukkit.getOfflinePlayer(name).getUniqueId();
         }
     }
 

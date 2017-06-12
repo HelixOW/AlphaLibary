@@ -17,12 +17,14 @@ public class Kit implements Serializable {
     private String name;
     private String rawName;
     private int price;
+    private ItemStack icon;
     private ArrayList<ItemStack> items = new ArrayList<>();
 
-    public Kit(String name, int price, ItemStack... items) {
+    public Kit(String name, int price, ItemStack icon, ItemStack... items) {
         this.name = name;
         this.rawName = ChatColor.stripColor(name).replace(" ", "_");
         this.price = price;
+        this.icon = icon;
         Collections.addAll(this.items, items);
 
         if (getKitByName(name) == null) kits.add(this);
@@ -59,6 +61,15 @@ public class Kit implements Serializable {
         this.price = price;
     }
 
+    public ItemStack getIcon() {
+        return icon;
+    }
+
+    public Kit setIcon(ItemStack icon) {
+        this.icon = icon;
+        return this;
+    }
+
     public ArrayList<ItemStack> getItems() {
         return items;
     }
@@ -81,6 +92,7 @@ public class Kit implements Serializable {
                 "name='" + name + '\'' +
                 ", rawName='" + rawName + '\'' +
                 ", price=" + price +
+                ", icon=" + icon +
                 ", items=" + items +
                 '}';
     }

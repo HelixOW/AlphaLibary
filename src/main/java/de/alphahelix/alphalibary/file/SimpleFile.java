@@ -214,7 +214,7 @@ public class SimpleFile extends YamlConfiguration {
     public void setItemStackArray(String path, ItemStack... toSave) {
         List<ItemStack> items = Arrays.asList(toSave);
         for (ItemStack saved : items) {
-            setInventoryItem(path + "." + items.indexOf(saved), saved, 0);
+            setInventoryItem(path + "" + items.indexOf(saved), saved, 0);
         }
     }
 
@@ -228,7 +228,7 @@ public class SimpleFile extends YamlConfiguration {
         ArrayList<ItemStack> items = new ArrayList<>();
 
         for (String id : getConfigurationSection(path).getKeys(false)) {
-            items.add(getInventoryItem(path + "." + id).getItemStack());
+            items.add(getInventoryItem(path + "" + id).getItemStack());
         }
         return items.toArray(new ItemStack[items.size()]);
     }

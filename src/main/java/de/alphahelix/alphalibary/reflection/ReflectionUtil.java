@@ -34,7 +34,7 @@ public class ReflectionUtil {
 
     static {
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        version = packageName.substring(packageName.lastIndexOf(".") + 1);
+        version = packageName.substring(packageName.lastIndexOf("") + 1);
     }
 
     public static String getVersion() {
@@ -162,14 +162,14 @@ public class ReflectionUtil {
      * @return the n.m.s.version {@link String}
      */
     public static String getNmsPrefix() {
-        return "net.minecraft.server." + version + ".";
+        return "net.minecraft.server." + version + "";
     }
 
     /**
      * @return the o.b.c version {@link String}
      */
     public static String getCraftBukkitPrefix() {
-        return "org.bukkit.craftbukkit." + version + ".";
+        return "org.bukkit.craftbukkit." + version + "";
     }
 
     /**

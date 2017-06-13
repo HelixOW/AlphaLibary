@@ -1,9 +1,7 @@
-# Created by .ignore support plugin (hsz.mobi)
-.idea/
-AlphaLibary.iml
+.idea
+null
+src/test
+target
+AlphaLibaryX.iml
 dependency-reduced-pom.xml
-src/test/
-target/
-null/
-AlphaBungeeLibary/AlphaBungeeLibary.iml
-AlphaBungeeLibary/src/test
+

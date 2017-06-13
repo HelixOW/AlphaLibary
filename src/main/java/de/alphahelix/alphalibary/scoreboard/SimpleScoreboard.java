@@ -352,7 +352,7 @@ public class SimpleScoreboard implements Serializable {
 
     public void removeLine(int line) {
         final BoardLine boardLine = getBoardLine(line);
-        Validate.notNull(boardLine, "Unable to find BoardLine with index of " + line + ".");
+        Validate.notNull(boardLine, "Unable to find BoardLine with index of " + line + "");
         scoreboard.resetScores(boardLine.getColor().toString());
     }
 

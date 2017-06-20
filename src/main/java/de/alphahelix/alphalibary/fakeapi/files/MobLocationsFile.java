@@ -19,8 +19,6 @@ package de.alphahelix.alphalibary.fakeapi.files;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeMob;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.ArrayList;
-
 public class MobLocationsFile extends SimpleJSONFile {
 
     public MobLocationsFile() {
@@ -28,17 +26,11 @@ public class MobLocationsFile extends SimpleJSONFile {
     }
 
     public void addMobToFile(FakeMob fakeMob) {
-        if (!contains(fakeMob.getUUID().toString())) {
-            setValue(fakeMob.getUUID().toString(), fakeMob);
-        }
+        addValuesToList("Mobs", fakeMob);
     }
 
-    public ArrayList<FakeMob> getFakeMobsFromFile() {
-        ArrayList<FakeMob> fakeMobs = new ArrayList<>();
-
-        for (String ids : getPaths()) {
-            fakeMobs.add(getValue(ids, FakeMob.class));
-        }
-        return fakeMobs;
+    public FakeMob[] getFakeMobsFromFile() {
+        if (jsonContains("Mobs")) return getListValues("Mobs", FakeMob[].class);
+        return new FakeMob[]{};
     }
 }

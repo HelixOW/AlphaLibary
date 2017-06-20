@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.kits;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.events.kit.KitReceiveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -7,33 +8,32 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.WeakHashMap;
 
 public class Kit implements Serializable {
 
-    private static transient ArrayList<Kit> kits = new ArrayList<>();
+    private static WeakHashMap<String, Kit> kits = new WeakHashMap<>();
 
     private String name;
     private String rawName;
     private int price;
     private ItemStack icon;
-    private ArrayList<ItemStack> items = new ArrayList<>();
+    private ItemStack[] items;
 
     public Kit(String name, int price, ItemStack icon, ItemStack... items) {
         this.name = name;
         this.rawName = ChatColor.stripColor(name).replace(" ", "_");
         this.price = price;
         this.icon = icon;
-        Collections.addAll(this.items, items);
+        this.items = items;
 
-        if (getKitByName(name) == null) kits.add(this);
+        kits.put(rawName, this);
     }
 
     public static Kit getKitByName(String name) {
-        for (Kit k : kits) {
-            if (k.getRawName().equalsIgnoreCase(ChatColor.stripColor(name))) return k;
-        }
+        if (kits.containsKey(name))
+            return kits.get(name);
         return null;
     }
 
@@ -70,12 +70,8 @@ public class Kit implements Serializable {
         return this;
     }
 
-    public ArrayList<ItemStack> getItems() {
+    public ItemStack[] getItems() {
         return items;
-    }
-
-    public void setItems(ArrayList<ItemStack> items) {
-        this.items = items;
     }
 
     public void giveItems(Player p) {
@@ -87,13 +83,29 @@ public class Kit implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Kit kit = (Kit) o;
+        return getPrice() == kit.getPrice() &&
+                Objects.equal(getName(), kit.getName()) &&
+                Objects.equal(getRawName(), kit.getRawName()) &&
+                Objects.equal(getIcon(), kit.getIcon());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), getRawName(), getPrice(), getIcon());
+    }
+
+    @Override
     public String toString() {
         return "Kit{" +
                 "name='" + name + '\'' +
                 ", rawName='" + rawName + '\'' +
                 ", price=" + price +
                 ", icon=" + icon +
-                ", items=" + items +
+                ", items=" + Arrays.toString(items) +
                 '}';
     }
 }

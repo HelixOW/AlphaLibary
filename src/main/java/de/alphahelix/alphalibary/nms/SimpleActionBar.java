@@ -26,6 +26,7 @@ public class SimpleActionBar {
 
     private static Class<?> packetPlayOutChatClazz = ReflectionUtil.getNmsClass("PacketPlayOutChat");
     private static Class<?> iChatBaseComponent = ReflectionUtil.getNmsClass("IChatBaseComponent");
+    private static Class<?> chatComponentText = ReflectionUtil.getNmsClass("ChatComponentText");
 
     /**
      * Sends a {@link Player} a actionbar
@@ -35,7 +36,7 @@ public class SimpleActionBar {
      */
     public static void send(Player p, String message) {
         try {
-            Object o = ReflectionUtil.getNmsClass("ChatComponentText").getConstructor(String.class).newInstance(message);
+            Object o = chatComponentText.getConstructor(String.class).newInstance(message);
             Object packetPlayOutChat = packetPlayOutChatClazz.getConstructor(iChatBaseComponent, ReflectionUtil.getNmsClass("ChatMessageType")).newInstance(o, RChatMessageType.GAME_INFO.getNMSChatMessageType());
 
             ReflectionUtil.sendPacket(p, packetPlayOutChat);

@@ -12,11 +12,12 @@ import org.bukkit.scoreboard.Team;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.WeakHashMap;
 
 public class GameTeam implements Serializable {
 
     @Expose
-    private static transient ArrayList<GameTeam> teams = new ArrayList<>();
+    private static final transient WeakHashMap<String, GameTeam> TEAMS = new WeakHashMap<>();
 
     private String teamName, rawTeamName;
     private ChatColor color;
@@ -43,28 +44,24 @@ public class GameTeam implements Serializable {
     }
 
     public static void initTeam(GameTeam team) {
-        if (getTeamByName(team.getTeamName()) != null)
-            teams.remove(getTeamByName(team.getTeamName()));
-
-        teams.add(team);
+        TEAMS.put(team.getRawTeamName(), team);
     }
 
-    public static GameTeam getTeamByName(String teamName) {
-        for (GameTeam gt : teams) {
-            if (ChatColor.stripColor(gt.getTeamName()).equals(ChatColor.stripColor(teamName))) return gt;
-        }
+    public static GameTeam getTeamByName(String rawTeamName) {
+        if (TEAMS.containsKey(rawTeamName))
+            return TEAMS.get(rawTeamName);
         return null;
     }
 
     public static GameTeam getTeamByPlayer(Player p) {
-        for (GameTeam gt : teams) {
+        for (GameTeam gt : TEAMS.values()) {
             if (gt.containsPlayer(p)) return gt;
         }
         return null;
     }
 
     public static GameTeam getTeamByColor(ChatColor chatColor) {
-        for (GameTeam gt : teams) {
+        for (GameTeam gt : TEAMS.values()) {
             if (gt.getColor() == chatColor) return gt;
         }
 
@@ -73,11 +70,12 @@ public class GameTeam implements Serializable {
 
     public static GameTeam getTeamWithLowestAmountOfMembers() {
         int lowest = 0;
-        for (GameTeam gt : teams) {
-            if (lowest < gt.getMembers().size()) lowest = gt.getMembers().size();
+        for (GameTeam gt : TEAMS.values()) {
+            if (lowest < gt.getMembers().size())
+                lowest = gt.getMembers().size();
         }
 
-        for (GameTeam gt : teams) {
+        for (GameTeam gt : TEAMS.values()) {
             if (lowest == gt.getMembers().size()) return gt;
         }
         return null;

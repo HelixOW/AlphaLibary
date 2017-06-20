@@ -19,25 +19,17 @@ package de.alphahelix.alphalibary.fakeapi.files;
 import de.alphahelix.alphalibary.fakeapi.instances.FakePainting;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.ArrayList;
-
 public class PaintingLocationsFile extends SimpleJSONFile {
     public PaintingLocationsFile() {
         super("plugins/AlphaLibary", "fake_painting.json");
     }
 
     public void addPaintingToFile(FakePainting fakePainting) {
-        if (!contains(fakePainting.getUUID().toString())) {
-            setValue(fakePainting.getUUID().toString(), fakePainting);
-        }
+        addValuesToList("Paintings", fakePainting);
     }
 
-    public ArrayList<FakePainting> getFakePaintingsFromFile() {
-        ArrayList<FakePainting> fakePaintings = new ArrayList<>();
-
-        for (String ids : getPaths()) {
-            fakePaintings.add(getValue(ids, FakePainting.class));
-        }
-        return fakePaintings;
+    public FakePainting[] getFakePaintingsFromFile() {
+        if (jsonContains("Paintings")) return getListValues("Paintings", FakePainting[].class);
+        return new FakePainting[]{};
     }
 }

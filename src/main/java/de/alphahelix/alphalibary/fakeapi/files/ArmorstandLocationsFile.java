@@ -19,8 +19,6 @@ package de.alphahelix.alphalibary.fakeapi.files;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeArmorstand;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.ArrayList;
-
 public class ArmorstandLocationsFile extends SimpleJSONFile {
 
     public ArmorstandLocationsFile() {
@@ -28,18 +26,12 @@ public class ArmorstandLocationsFile extends SimpleJSONFile {
     }
 
     public void addArmorstandToFile(FakeArmorstand armorstand) {
-        if (!contains(armorstand.getUUID().toString())) {
-            setValue(armorstand.getUUID().toString(), armorstand);
-        }
+        addValuesToList("Armorstands", armorstand);
     }
 
-    public ArrayList<FakeArmorstand> getFakeArmorstandFromFile() {
-        ArrayList<FakeArmorstand> armorstands = new ArrayList<>();
-
-        for (String ids : getPaths()) {
-            armorstands.add(getValue(ids, FakeArmorstand.class));
-        }
-
-        return armorstands;
+    public FakeArmorstand[] getFakeArmorstandFromFile() {
+        if (jsonContains("Armorstands"))
+            return getListValues("Armorstands", FakeArmorstand[].class);
+        return new FakeArmorstand[]{};
     }
 }

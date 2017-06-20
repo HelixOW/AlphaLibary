@@ -725,7 +725,7 @@ public class SimpleFile extends YamlConfiguration {
     /**
      * Modified version of an {@link Inventory} to save it inside the {@link SimpleFile}
      */
-    public class ItemInventory implements Serializable {
+    public static class ItemInventory implements Serializable {
 
         private Inventory inventory;
         private InventoryItem[] items;

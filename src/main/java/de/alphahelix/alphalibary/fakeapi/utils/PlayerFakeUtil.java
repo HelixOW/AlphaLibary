@@ -87,6 +87,28 @@ public class PlayerFakeUtil extends FakeUtilBase {
         return tR;
     }
 
+    public static FakePlayer spawnPlayer(Player p, Location loc, UUID skin, String name) {
+        FakePlayer tR = spawnTemporaryPlayer(p, loc, skin, name);
+
+        if (tR == null)
+            return null;
+
+        FakeRegister.getPlayerLocationsFile().addPlayerToFile(tR);
+
+        return tR;
+    }
+
+    public static FakePlayer spawnPlayer(Player p, Location loc, GameProfile skin, String name) {
+        FakePlayer tR = spawnTemporaryPlayer(p, loc, skin, name);
+
+        if (tR == null)
+            return null;
+
+        FakeRegister.getPlayerLocationsFile().addPlayerToFile(tR);
+
+        return tR;
+    }
+
     /**
      * Spawns in a temporary {@link FakePlayer} (disappears after rejoin) for the {@link Player}
      *
@@ -150,14 +172,6 @@ public class PlayerFakeUtil extends FakeUtilBase {
                                 0,
                                 REnumGamemode.SURVIVAL,
                                 customName));
-                        if (id.equals(gameProfile.getId())) {
-                            ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
-                                    REnumPlayerInfoAction.ADD_PLAYER,
-                                    gameProfile,
-                                    0,
-                                    REnumGamemode.SURVIVAL,
-                                    p.getName()));
-                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

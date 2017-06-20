@@ -19,8 +19,6 @@ package de.alphahelix.alphalibary.fakeapi.files;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeItem;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.ArrayList;
-
 public class ItemLocationsFile extends SimpleJSONFile {
 
     public ItemLocationsFile() {
@@ -28,17 +26,11 @@ public class ItemLocationsFile extends SimpleJSONFile {
     }
 
     public void addItemToFile(FakeItem fakeItem) {
-        if (!contains(fakeItem.getUUID().toString())) {
-            setValue(fakeItem.getUUID().toString(), fakeItem);
-        }
+        addValuesToList("Items", fakeItem);
     }
 
-    public ArrayList<FakeItem> getFakeItemsFromFile() {
-        ArrayList<FakeItem> fakeItems = new ArrayList<>();
-
-        for (String ids : getPaths()) {
-            fakeItems.add(getValue(ids, FakeItem.class));
-        }
-        return fakeItems;
+    public FakeItem[] getFakeItemsFromFile() {
+        if (jsonContains("Items")) return getListValues("Items", FakeItem[].class);
+        return new FakeItem[]{};
     }
 }

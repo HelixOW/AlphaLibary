@@ -23,6 +23,21 @@ import java.lang.reflect.InvocationTargetException;
 
 public class SimpleTitle {
 
+    private static Class<?> cEnumTitleAction = ReflectionUtil.getNmsClass("PacketPlayOutTitle$EnumTitleAction");
+    private static Class<?> cIChatBaseComponent = ReflectionUtil.getNmsClass("IChatBaseComponent");
+
+    private static Constructor<?> titleConstructor;
+    private static Constructor<?> timingConstructor;
+
+    static {
+        try {
+            titleConstructor = ReflectionUtil.getNmsClass("PacketPlayOutTitle").getConstructor(cEnumTitleAction, cIChatBaseComponent);
+            timingConstructor = ReflectionUtil.getNmsClass("PacketPlayOutTitle").getConstructor(int.class, int.class, int.class);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Send a title and subtitle to a {@link Player}
      *
@@ -35,13 +50,6 @@ public class SimpleTitle {
      */
     public static void sendTitle(Player p, String title, String sub, int fadeIn, int stay, int fadeOut) {
         try {
-
-            Class<?> cEnumTitleAction = de.alphahelix.alphalibary.reflection.ReflectionUtil.getNmsClass("PacketPlayOutTitle$EnumTitleAction");
-            Class<?> cIChatBaseComponent = de.alphahelix.alphalibary.reflection.ReflectionUtil.getNmsClass("IChatBaseComponent");
-
-            Constructor<?> titleConstructor = de.alphahelix.alphalibary.reflection.ReflectionUtil.getNmsClass("PacketPlayOutTitle").getConstructor(cEnumTitleAction, cIChatBaseComponent);
-            Constructor<?> timingConstructor = de.alphahelix.alphalibary.reflection.ReflectionUtil.getNmsClass("PacketPlayOutTitle").getConstructor(int.class, int.class, int.class);
-
             Object pTitle = titleConstructor.newInstance(TitleAction.getNmsEnumObject(TitleAction.TITLE), de.alphahelix.alphalibary.reflection.ReflectionUtil.serializeString(title));
             Object pSubTitle = titleConstructor.newInstance(TitleAction.getNmsEnumObject(TitleAction.SUBTITLE), de.alphahelix.alphalibary.reflection.ReflectionUtil.serializeString(sub));
             Object pTimings = timingConstructor.newInstance(fadeIn * 20, stay * 20, fadeOut * 20);
@@ -52,7 +60,7 @@ public class SimpleTitle {
 
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException e) {
+                | SecurityException e) {
             e.printStackTrace();
         }
     }

@@ -19,8 +19,6 @@ package de.alphahelix.alphalibary.fakeapi.files;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeXPOrb;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.ArrayList;
-
 public class XPOrbLocationsFile extends SimpleJSONFile {
 
     public XPOrbLocationsFile() {
@@ -28,17 +26,11 @@ public class XPOrbLocationsFile extends SimpleJSONFile {
     }
 
     public void addXPOrbToFile(FakeXPOrb fakeXPOrb) {
-        if (!contains(fakeXPOrb.getUUID().toString())) {
-            setValue(fakeXPOrb.getUUID().toString(), fakeXPOrb);
-        }
+        addValuesToList("XPOrbs", fakeXPOrb);
     }
 
-    public ArrayList<FakeXPOrb> getFakeXPOrbFromFile() {
-        ArrayList<FakeXPOrb> fakeXPOrbs = new ArrayList<>();
-
-        for (String ids : getPaths()) {
-            fakeXPOrbs.add(getValue(ids, FakeXPOrb.class));
-        }
-        return fakeXPOrbs;
+    public FakeXPOrb[] getFakeXPOrbFromFile() {
+        if (jsonContains("XPOrbs")) return getListValues("XPOrbs", FakeXPOrb[].class);
+        return new FakeXPOrb[]{};
     }
 }

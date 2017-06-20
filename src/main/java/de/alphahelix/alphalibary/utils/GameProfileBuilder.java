@@ -187,9 +187,10 @@ public class GameProfileBuilder {
         }
 
         public GameProfile getProfile(UUID owner) {
-            for (GameProfile profile : getListValues("Profiles", GameProfile.class)) {
-                if (profile.getId().equals(owner)) return profile;
-            }
+            if (getListValues("Profiles", GameProfile[].class) != null)
+                for (GameProfile profile : getListValues("Profiles", GameProfile[].class)) {
+                    if (profile.getId().equals(owner)) return profile;
+                }
             return null;
         }
     }

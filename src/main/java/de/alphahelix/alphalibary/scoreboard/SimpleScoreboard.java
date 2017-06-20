@@ -19,65 +19,46 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.AlphaLibary;
+import de.alphahelix.alphalibary.utils.Util;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class SimpleScoreboard implements Serializable {
 
     @Expose
     private transient static final List<ChatColor> colors = Arrays.asList(ChatColor.values());
+
+    private static WeakHashMap<String, SimpleScoreboard> scoreboards = new WeakHashMap<>();
+
+    private final WeakHashMap<String, List<StringLine>> stringLines = new WeakHashMap<>();
     private final List<BoardLine> boardLines = new ArrayList<>();
-    private final List<StringLine> lineValues = new ArrayList<>();
-    @Expose
-    private transient AlphaLibary api;
+    private final String owner;
     private Scoreboard scoreboard = null;
     private Objective objective = null;
 
     /**
-     * Creates a new {@link SimpleScoreboard} out of the {@link Scoreboard} of the {@link Player}
-     *
-     * @param p                      the {@link Player} who has a {@link Scoreboard}
-     * @param scoreboardRegisterName the name of the {@link Objective} to register on the {@link Scoreboard}
-     */
-    public SimpleScoreboard(Player p, String scoreboardRegisterName) {
-        this.api = AlphaLibary.getInstance();
-        scoreboard = p.getScoreboard();
-        objective = scoreboard.getObjective(scoreboardRegisterName);
-
-        for (int i = 0; i < colors.size(); i++) {
-            final ChatColor color = colors.get(i);
-            final Team team = scoreboard.getTeam("line" + i);
-            boardLines.add(new BoardLine(color, i, team));
-        }
-    }
-
-    /**
      * Creates a new {@link SimpleScoreboard}
      *
-     * @param scoreboardRegisterName the name of the {@link Objective} to register on the {@link Scoreboard}
-     * @param displayName            the title of the {@link Scoreboard}
-     * @param lines                  the amount of lines the {@link Scoreboard} should have (Highest = 16)
+     * @param displayName the title of the {@link Scoreboard}
+     * @param lines       the amount of lines the {@link Scoreboard} should have (Highest = 16)
      */
-    public SimpleScoreboard(String scoreboardRegisterName, String displayName, StringLine... lines) {
+    public SimpleScoreboard(Player p, String displayName, StringLine... lines) {
         Validate.isTrue(lines.length < colors.size(), "Too many lines!");
 
-        this.api = AlphaLibary.getInstance();
-
-        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        objective = scoreboard.registerNewObjective(scoreboardRegisterName, "dummy");
+        this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        this.objective = scoreboard.registerNewObjective(Util.generateRandomString(15), "dummy");
+        this.owner = (p == null ? "ALL" : p.getName());
 
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(displayName);
@@ -92,8 +73,24 @@ public class SimpleScoreboard implements Serializable {
 
         for (StringLine line : lines) {
             setValue(line);
-            lineValues.add(line);
+            addStringLine(line);
         }
+
+        if (p == null) {
+            scoreboards.put("ALL", this);
+        } else {
+            scoreboards.put(p.getName(), this);
+        }
+    }
+
+    /**
+     * @param key ALL for everybody or a player name
+     * @return
+     */
+    public static SimpleScoreboard getScoreboard(String key) {
+        if (scoreboards.containsKey(key))
+            return scoreboards.get(key);
+        return null;
     }
 
     private static String getFirstColors(String input) {
@@ -120,7 +117,20 @@ public class SimpleScoreboard implements Serializable {
         return result.toString();
     }
 
-    private BoardLine getBoardLine(final int line) {
+    private void addStringLine(StringLine line) {
+        List<StringLine> list = new ArrayList<>();
+
+        if (stringLines.containsKey(owner))
+            list = stringLines.get(owner);
+
+
+        if (!list.contains(line)) {
+            list.add(line);
+            stringLines.put(owner, list);
+        }
+    }
+
+    private BoardLine getBoardLine(int line) {
         for (BoardLine lines : boardLines) {
             if (lines.getLine() == line) {
                 return lines;
@@ -130,10 +140,14 @@ public class SimpleScoreboard implements Serializable {
     }
 
     public StringLine getStringLine(int line) {
-        for (StringLine lines : lineValues) {
+        for (StringLine lines : stringLines.get(owner)) {
             if (lines.getLine() == line) return lines;
         }
         return null;
+    }
+
+    public List<StringLine> getLines() {
+        return stringLines.get(owner);
     }
 
     /**
@@ -142,6 +156,7 @@ public class SimpleScoreboard implements Serializable {
      * @param value the text at this line
      */
     public void setValue(StringLine value) {
+        addStringLine(value);
         if (!value.getValue().contains(value.getSplitter())) {
             Iterable<String> res = Splitter.fixedLength(value.getValue().length() / 2).split(value.getValue());
             String[] text = Iterables.toArray(res, String.class);
@@ -158,18 +173,21 @@ public class SimpleScoreboard implements Serializable {
             BoardLine bl = getBoardLine(value.getLine());
 
             String firstLeftColors = getFirstColors(text[0]);
-            String lastRightColors = ChatColor.getLastColors(text[1]);
+            String firstRightColors = getFirstColors(text[1]);
 
             String leftText = text[0].replace(firstLeftColors, "");
-            String rightText = text[1].replace(lastRightColors, "");
+            String rightText = text[1].replace(firstRightColors, "");
 
             if (objective == null) return;
-            assert bl != null;
+            if (bl == null) return;
             if (objective.getScore(bl.getColor().toString()) == null) return;
             objective.getScore(bl.getColor().toString()).setScore(value.getLine());
 
-            if (leftText.length() > 12) {
-                if (rightText.length() > 12) {
+            int lefTextLenght = leftText.length();
+            int rightTextLengt = (value.getSplitter() + rightText).length();
+
+            if (lefTextLenght > 12) {
+                if (rightTextLengt > 12) {
 
                     Scroller left = new Scroller(leftText, 10, 3, '?');
                     Scroller right = new Scroller(rightText, 8, 3, '?');
@@ -183,17 +201,17 @@ public class SimpleScoreboard implements Serializable {
                     }
 
                     bl.getTeam().setPrefix(firstLeftColors + left.next());
-                    bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + right.next());
+                    bl.getTeam().setSuffix(value.getSplitter() + firstRightColors + right.next());
 
                     Scroller finalLeft = left;
                     Scroller finalRight = right;
 
-                    new BukkitRunnable() {
+                    value.setMoving(new BukkitRunnable() {
                         public void run() {
                             bl.getTeam().setPrefix(firstLeftColors + finalLeft.next());
-                            bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + finalRight.next());
+                            bl.getTeam().setSuffix(value.getSplitter() + firstRightColors + finalRight.next());
                         }
-                    }.runTaskTimerAsynchronously(getApi(), 0, 10);
+                    }.runTaskTimerAsynchronously(AlphaLibary.getInstance(), 0, 10));
                 }
 
                 // When only left is too long
@@ -204,47 +222,44 @@ public class SimpleScoreboard implements Serializable {
                         left = new Scroller(leftText, 10, 2, '?');
                     }
 
-                    assert bl != null;
                     bl.getTeam().setPrefix(firstLeftColors + left.next());
-                    bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + rightText);
+                    bl.getTeam().setSuffix(value.getSplitter() + firstRightColors + rightText);
 
                     Scroller finalLeft = left;
 
-                    new BukkitRunnable() {
+                    value.setMoving(new BukkitRunnable() {
                         public void run() {
                             bl.getTeam().setPrefix(firstLeftColors + finalLeft.next());
                         }
-                    }.runTaskTimerAsynchronously(getApi(), 0, 10);
+                    }.runTaskTimerAsynchronously(AlphaLibary.getInstance(), 0, 10));
                 }
             }
 
             // When left is correct
             else {
-                if (rightText.length() > 12) {
+                if (rightTextLengt > 12) {
                     Scroller right = new Scroller(rightText, 8, 3, '?');
 
                     if ((rightText.length() % 2) == 0) {
                         right = new Scroller(rightText, 8, 2, '?');
                     }
 
-                    assert bl != null;
                     bl.getTeam().setPrefix(firstLeftColors + leftText);
-                    bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + right.next());
+                    bl.getTeam().setSuffix(value.getSplitter() + firstRightColors + right.next());
 
                     Scroller finalRight = right;
 
-                    new BukkitRunnable() {
+                    value.setMoving(new BukkitRunnable() {
                         public void run() {
-                            bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + finalRight.next());
+                            bl.getTeam().setSuffix(value.getSplitter() + firstRightColors + finalRight.next());
                         }
-                    }.runTaskTimerAsynchronously(getApi(), 0, 10);
+                    }.runTaskTimerAsynchronously(AlphaLibary.getInstance(), 0, 10));
                 }
 
                 // When everything is perfect
                 else {
-                    assert bl != null;
                     bl.getTeam().setPrefix(firstLeftColors + text[0]);
-                    bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + text[1]);
+                    bl.getTeam().setSuffix(value.getSplitter() + firstRightColors + text[1]);
                 }
             }
         }
@@ -262,14 +277,19 @@ public class SimpleScoreboard implements Serializable {
         String[] text = value.getValue().split(value.getSplitter());
         BoardLine bl = getBoardLine(value.getLine());
 
+        if (bl == null) return;
+
         String firstLeftColors = getFirstColors(text[0]);
-        String lastRightColors = ChatColor.getLastColors(text[1]);
+        String lastRightColors = getFirstColors(text[1]);
 
         String leftText = text[0].replace(firstLeftColors, "");
         String rightText = text[1].replace(lastRightColors, "");
 
-        if (leftText.length() > 12) {
-            if (rightText.length() > 12) {
+        int lefTextLenght = leftText.length();
+        int rightTextLengt = (value.getSplitter() + rightText).length();
+
+        if (lefTextLenght >= 12) {
+            if (rightTextLengt >= 12) {
 
                 Scroller left = new Scroller(leftText, 10, 3, '?');
                 Scroller right = new Scroller(rightText, 8, 3, '?');
@@ -282,19 +302,20 @@ public class SimpleScoreboard implements Serializable {
                     right = new Scroller(rightText, 8, 2, '?');
                 }
 
-                assert bl != null;
                 bl.getTeam().setPrefix(firstLeftColors + left.next());
                 bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + right.next());
 
                 Scroller finalLeft = left;
                 Scroller finalRight = right;
 
-                new BukkitRunnable() {
+                if (value.getMoving() != null) value.getMoving().cancel();
+
+                value.setMoving(new BukkitRunnable() {
                     public void run() {
                         bl.getTeam().setPrefix(firstLeftColors + finalLeft.next());
                         bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + finalRight.next());
                     }
-                }.runTaskTimerAsynchronously(getApi(), 0, 10);
+                }.runTaskTimerAsynchronously(AlphaLibary.getInstance(), 0, 10));
             }
 
             // When only left is too long
@@ -305,45 +326,48 @@ public class SimpleScoreboard implements Serializable {
                     left = new Scroller(leftText, 10, 2, '?');
                 }
 
-                assert bl != null;
                 bl.getTeam().setPrefix(firstLeftColors + left.next());
                 bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + rightText);
 
                 Scroller finalLeft = left;
 
-                new BukkitRunnable() {
+                if (value.getMoving() != null) value.getMoving().cancel();
+
+                value.setMoving(new BukkitRunnable() {
                     public void run() {
                         bl.getTeam().setPrefix(firstLeftColors + finalLeft.next());
                     }
-                }.runTaskTimerAsynchronously(getApi(), 0, 10);
+                }.runTaskTimerAsynchronously(AlphaLibary.getInstance(), 0, 10));
             }
         }
 
         // When left is correct
         else {
-            if (rightText.length() > 12) {
+            if (rightTextLengt >= 12) {
                 Scroller right = new Scroller(rightText, 8, 3, '?');
 
                 if ((rightText.length() % 2) == 0) {
                     right = new Scroller(rightText, 8, 2, '?');
                 }
 
-                assert bl != null;
                 bl.getTeam().setPrefix(firstLeftColors + leftText);
                 bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + right.next());
 
                 Scroller finalRight = right;
 
-                new BukkitRunnable() {
+                if (value.getMoving() != null) value.getMoving().cancel();
+
+                value.setMoving(new BukkitRunnable() {
                     public void run() {
                         bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + finalRight.next());
                     }
-                }.runTaskTimerAsynchronously(getApi(), 0, 10);
+                }.runTaskTimerAsynchronously(AlphaLibary.getInstance(), 0, 10));
             }
 
             // When everything is perfect
             else {
-                assert bl != null;
+                if (value.getMoving() != null) value.getMoving().cancel();
+
                 bl.getTeam().setPrefix(firstLeftColors + text[0]);
                 bl.getTeam().setSuffix(value.getSplitter() + lastRightColors + text[1]);
             }
@@ -353,15 +377,12 @@ public class SimpleScoreboard implements Serializable {
     public void removeLine(int line) {
         final BoardLine boardLine = getBoardLine(line);
         Validate.notNull(boardLine, "Unable to find BoardLine with index of " + line + "");
+
         scoreboard.resetScores(boardLine.getColor().toString());
     }
 
     public Scoreboard buildScoreboard() {
         return scoreboard;
-    }
-
-    public AlphaLibary getApi() {
-        return api;
     }
 
     @Override
@@ -375,13 +396,18 @@ public class SimpleScoreboard implements Serializable {
 
     public static class StringLine implements Serializable {
 
+        private final String startValue, startSplitter;
         private int line;
-        private String startValue, startSplitter, value, splitter;
+        private String value, splitter;
+        @Expose
+        private transient BukkitTask moving;
 
         public StringLine(int line, String value, String splitter) {
             setLine(line);
+
             this.startValue = value;
             setValue(value);
+
             this.startSplitter = splitter;
             setSplitter(splitter);
         }
@@ -405,7 +431,7 @@ public class SimpleScoreboard implements Serializable {
 
         public String getValue() {
             if (value == null) value = startValue;
-            return value.replace("$", "§");
+            return value;
         }
 
         public StringLine setValue(String value) {
@@ -423,10 +449,21 @@ public class SimpleScoreboard implements Serializable {
             return this;
         }
 
+        public BukkitTask getMoving() {
+            return moving;
+        }
+
+        public StringLine setMoving(BukkitTask moving) {
+            this.moving = moving;
+            return this;
+        }
+
         @Override
         public String toString() {
             return "StringLine{" +
                     "line=" + line +
+                    ", startValue='" + startValue + '\'' +
+                    ", startSplitter='" + startSplitter + '\'' +
                     ", value='" + value + '\'' +
                     ", splitter='" + splitter + '\'' +
                     '}';

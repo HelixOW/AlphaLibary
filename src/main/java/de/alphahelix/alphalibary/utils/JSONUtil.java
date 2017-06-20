@@ -1,11 +1,11 @@
 package de.alphahelix.alphalibary.utils;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
 public class JSONUtil {
 
-    private static Gson gson = new GsonBuilder().create();
+    private static Gson gson = SimpleJSONFile.gson;
 
     public static <T> String toJson(T toConvert) {
         return gson.toJson(toConvert);

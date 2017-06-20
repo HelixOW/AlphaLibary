@@ -18,9 +18,12 @@ package de.alphahelix.alphalibary.utils;
 import de.alphahelix.alphalibary.AlphaLibary;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Util {
 
@@ -139,5 +142,74 @@ public class Util {
                     timer.run();
                 }
             }.runTaskTimer(AlphaLibary.getInstance(), wait, ticks);
+    }
+
+    public static boolean isSame(ItemStack a, ItemStack b) {
+        if (a == null || b == null) return false;
+
+        boolean type = a.getType() == b.getType();
+        boolean amount = a.getAmount() == b.getAmount();
+        boolean dura = a.getDurability() == b.getDurability();
+        boolean itemMeta = a.hasItemMeta() == b.hasItemMeta();
+
+        return (type) &&
+                (amount) &&
+                (dura) &&
+                (itemMeta) && isSameMeta(a.getItemMeta(), b.getItemMeta());
+    }
+
+    private static boolean isSameMeta(ItemMeta a, ItemMeta b) {
+        if (a == null || b == null) return false;
+
+        boolean dn = a.hasDisplayName() == b.hasDisplayName();
+        boolean l = a.hasLore() == b.hasLore();
+        boolean hdn = a.hasDisplayName();
+        boolean hl = a.hasLore();
+
+        if (dn) {
+            if (l) {
+                if (hdn) {
+                    if (hl) {
+                        return a.getDisplayName().equals(b.getDisplayName()) && a.getLore().equals(b.getLore());
+                    } else { //only name
+                        return a.getDisplayName().equals(b.getDisplayName());
+                    }
+                } else { //maybe lore
+                    if (hl) {
+                        return a.getLore().equals(b.getLore());
+                    } else { //nothing
+                        return true;
+                    }
+                }
+            } else { //maybe name
+                if (hdn) {
+                    return a.getDisplayName().equals(b.getDisplayName());
+                } else { //nothing
+                    return true;
+                }
+            }
+        } else if (l) {
+            if (hl) {
+                return a.getLore().equals(b.getLore());
+            } else { //nothing
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String generateRandomString(int size) {
+        char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            char c = chars[ThreadLocalRandom.current().nextInt(chars.length)];
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    public static int toMultipleOfNine(int val) {
+        return ((val / 9) + 1) * 9;
     }
 }

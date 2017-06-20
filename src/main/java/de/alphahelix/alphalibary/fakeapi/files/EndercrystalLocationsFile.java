@@ -19,8 +19,6 @@ package de.alphahelix.alphalibary.fakeapi.files;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeEndercrystal;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
-import java.util.ArrayList;
-
 public class EndercrystalLocationsFile extends SimpleJSONFile {
 
     public EndercrystalLocationsFile() {
@@ -28,17 +26,12 @@ public class EndercrystalLocationsFile extends SimpleJSONFile {
     }
 
     public void addEndercrystalToFile(FakeEndercrystal fakeEndercrystal) {
-        if (!contains(fakeEndercrystal.getUUID().toString())) {
-            setValue(fakeEndercrystal.getUUID().toString(), fakeEndercrystal);
-        }
+        addValuesToList("Endercrystals", fakeEndercrystal);
     }
 
-    public ArrayList<FakeEndercrystal> getFakeEndercrystalsFromFile() {
-        ArrayList<FakeEndercrystal> fakeEndercrystals = new ArrayList<>();
-
-        for (String ids : getPaths()) {
-            fakeEndercrystals.add(getValue(ids, FakeEndercrystal.class));
-        }
-        return fakeEndercrystals;
+    public FakeEndercrystal[] getFakeEndercrystalsFromFile() {
+        if (jsonContains("Endercrystals"))
+            return getListValues("Endercrystals", FakeEndercrystal[].class);
+        return new FakeEndercrystal[]{};
     }
 }

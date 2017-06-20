@@ -63,19 +63,6 @@ public class SimpleJSONFile extends File {
         setDefault(path, value);
     }
 
-    public void addValuesToList(String path, Object... value) {
-        JsonArray array = new JsonArray();
-
-        if (contains(path)) {
-            array = getValue(path, JsonArray.class);
-        }
-
-        for (Object obj : value)
-            array.add(gson.toJsonTree(obj));
-
-        setValue(path, array);
-    }
-
     public void removeValue(String path) {
         if (!contains(path)) return;
 
@@ -89,27 +76,20 @@ public class SimpleJSONFile extends File {
         }
     }
 
-    public <T> ArrayList<T> getListValues(String path, Class<T> definy) {
-        try {
-            String file = FileUtils.readFileToString(this, Charset.defaultCharset());
+    public <T> void addValuesToList(String path, T... value) {
+        JsonArray array = new JsonArray();
 
-            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
-                return new ArrayList<>();
+        if (jsonContains(path))
+            array = getValue(path, JsonArray.class);
 
+        for (T obj : value)
+            array.add(gson.toJsonTree(obj));
 
-            JsonObject obj = gson.fromJson(file, JsonObject.class);
-            JsonArray array = obj.getAsJsonArray(path);
-            ArrayList<T> typeList = new ArrayList<>();
+        setValue(path, array);
+    }
 
-            for (int i = 0; i < array.size(); i++) {
-                typeList.add(gson.fromJson(array.get(i), definy));
-            }
-
-            return typeList;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+    public <T> T[] getListValues(String path, Class<T[]> definy) {
+        return getValue(path, definy);
     }
 
     public <T> T getValue(String path, Class<T> definy) {

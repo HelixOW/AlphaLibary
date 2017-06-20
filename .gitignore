@@ -1,7 +1,6 @@
-.idea
-null
-src/test
-target
-AlphaLibaryX.iml
+.idea/
+null/
+src/test/
+target/
 dependency-reduced-pom.xml
-
+AlphaLibary.iml

@@ -19,11 +19,22 @@ import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 
 public class SimpleTablist {
+
+    private static Constructor<?> chatComponentText, ppoPlayerListHeaderFooter;
+
+    static {
+        try {
+            chatComponentText = ReflectionUtil.getNmsClass("ChatComponentText").getConstructor(String.class);
+            ppoPlayerListHeaderFooter = ReflectionUtil.getNmsClass("PacketPlayOutPlayerListHeaderFooter").getConstructor();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Set the tablist of the {@link Player}
@@ -40,22 +51,20 @@ public class SimpleTablist {
             footer = "";
 
         try {
-            Object headerComponent = ReflectionUtil.getNmsClass("ChatComponentText").getConstructor(String.class)
-                    .newInstance(ChatColor.translateAlternateColorCodes('&', header));
-            Object footerComponent = ReflectionUtil.getNmsClass("ChatComponentText").getConstructor(String.class)
-                    .newInstance(ChatColor.translateAlternateColorCodes('&', footer));
+            Object headerComponent = chatComponentText.newInstance(ChatColor.translateAlternateColorCodes('&', header));
+            Object footerComponent = chatComponentText.newInstance(ChatColor.translateAlternateColorCodes('&', footer));
 
-            Object packetPlayOutPlayerListHeaderFooter = ReflectionUtil.getNmsClass("PacketPlayOutPlayerListHeaderFooter")
-                    .getConstructor(ReflectionUtil.getNmsClass("IChatBaseComponent"))
-                    .newInstance(headerComponent);
+            Object packetPlayOutPlayerListHeaderFooter = ppoPlayerListHeaderFooter.newInstance();
 
-            Field f = packetPlayOutPlayerListHeaderFooter.getClass().getDeclaredField("b");
-            f.setAccessible(true);
-            f.set(packetPlayOutPlayerListHeaderFooter, footerComponent);
+            ReflectionUtil.SaveField h = ReflectionUtil.getDeclaredField("a", packetPlayOutPlayerListHeaderFooter.getClass());
+            ReflectionUtil.SaveField f = ReflectionUtil.getDeclaredField("b", packetPlayOutPlayerListHeaderFooter.getClass());
+
+            h.set(packetPlayOutPlayerListHeaderFooter, headerComponent, true);
+            f.set(packetPlayOutPlayerListHeaderFooter, footerComponent, true);
 
             ReflectionUtil.sendPacket(p, packetPlayOutPlayerListHeaderFooter);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
+                | SecurityException e) {
             e.printStackTrace();
         }
     }

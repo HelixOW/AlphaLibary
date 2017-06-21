@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary;
 
+import de.alphahelix.alphalibary.addons.AddonCore;
 import de.alphahelix.alphalibary.arena.ArenaFile;
 import de.alphahelix.alphalibary.events.ArmorChangeEvent;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
@@ -47,6 +48,7 @@ public class AlphaLibary extends JavaPlugin {
     public void onEnable() {
         instance = this;
         FakeAPI.enable();
+        AddonCore.enable();
 
         gameProfileFile = new GameProfileBuilder.GameProfileFile();
         arenaFile = new ArenaFile();

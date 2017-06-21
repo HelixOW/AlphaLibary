@@ -18,7 +18,7 @@ package de.alphahelix.alphalibary.item.data;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-class SimplePotionEffect {
+public class SimplePotionEffect {
 
     private int durationInSec = 0;
     private PotionEffectType potionType = PotionEffectType.SPEED;

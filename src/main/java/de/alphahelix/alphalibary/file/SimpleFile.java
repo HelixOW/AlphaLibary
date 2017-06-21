@@ -16,7 +16,8 @@
 package de.alphahelix.alphalibary.file;
 
 import de.alphahelix.alphalibary.AlphaLibary;
-import de.alphahelix.alphalibary.item.ItemBuilder;
+import de.alphahelix.alphalibary.inventorys.ItemInventory;
+import de.alphahelix.alphalibary.item.InventoryItem;
 import de.alphahelix.alphalibary.utils.SerializationUtil;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,7 +30,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.*;
 
 public class SimpleFile extends YamlConfiguration {
@@ -303,7 +303,17 @@ public class SimpleFile extends YamlConfiguration {
 
         stack.setItemMeta(meta);
 
-        return new InventoryItem(stack, getInt(path + ".slot"));
+        return new InventoryItem() {
+            @Override
+            public ItemStack getItemStack() {
+                return stack;
+            }
+
+            @Override
+            public int getSlot() {
+                return getInt(path + ".slot");
+            }
+        };
     }
 
     /**
@@ -696,73 +706,5 @@ public class SimpleFile extends YamlConfiguration {
             addDefault(path, value);
         save();
     }
-
-    /**
-     * Modified version of an {@link ItemStack} to save it inside the {@link SimpleFile}
-     */
-    public static class InventoryItem implements Serializable {
-
-        private ItemStack itemStack;
-        private int slot;
-
-        public InventoryItem(ItemStack itemStack, int slot) {
-            if (itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() && itemStack.getItemMeta().getDisplayName().equals("_"))
-                this.itemStack = new ItemBuilder(itemStack).setName(" ").build();
-            else
-                this.itemStack = itemStack;
-            this.slot = slot;
-        }
-
-        public ItemStack getItemStack() {
-            return itemStack;
-        }
-
-        public int getSlot() {
-            return slot;
-        }
-    }
-
-    /**
-     * Modified version of an {@link Inventory} to save it inside the {@link SimpleFile}
-     */
-    public static class ItemInventory implements Serializable {
-
-        private Inventory inventory;
-        private InventoryItem[] items;
-
-        public ItemInventory(Inventory inventory, InventoryItem... items) {
-            this.inventory = inventory;
-            this.items = items;
-        }
-
-        public ItemInventory(Inventory inventory) {
-            this.inventory = inventory;
-            ArrayList<InventoryItem> iitems = new ArrayList<>();
-
-            int slot = 0;
-
-            for (ItemStack stack : inventory.getContents()) {
-                if (stack != null && inventory.getItem(slot) != null) {
-                    iitems.add(new InventoryItem(stack, inventory.first(stack)));
-                    inventory.removeItem(inventory.getItem(slot));
-                }
-                slot++;
-            }
-
-            this.items = iitems.toArray(new InventoryItem[iitems.size()]);
-        }
-
-        public ItemInventory(String name, int size, InventoryItem... items) {
-            this.inventory = Bukkit.createInventory(null, size, name);
-            this.items = items;
-        }
-
-        public Inventory getInventory() {
-            return inventory;
-        }
-
-        public InventoryItem[] getItems() {
-            return items;
-        }
-    }
 }
+

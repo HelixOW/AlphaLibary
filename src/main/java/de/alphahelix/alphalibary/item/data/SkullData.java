@@ -19,7 +19,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-public class SkullData extends ItemData {
+public class SkullData implements ItemData {
 
     private String ownerName = null;
 

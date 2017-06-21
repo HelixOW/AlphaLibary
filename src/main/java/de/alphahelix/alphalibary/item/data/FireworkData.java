@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.item.data;
 
+import de.alphahelix.alphalibary.item.SimpleFireworkEffect;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +24,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FireworkData extends ItemData {
+public class FireworkData implements ItemData {
     private final List<FireworkEffect> allEffects = new ArrayList<>();
 
     /**

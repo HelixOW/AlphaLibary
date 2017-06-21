@@ -28,7 +28,6 @@ public class FakeEntity implements Serializable {
     private String name;
     private UUID uuid;
 
-
     @Expose
     private transient Object nmsEntity;
     @Expose

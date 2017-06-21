@@ -21,7 +21,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 
-public class PotionData extends ItemData {
+public class PotionData implements ItemData {
 
     private final ArrayList<PotionEffect> toApply = new ArrayList<>();
 

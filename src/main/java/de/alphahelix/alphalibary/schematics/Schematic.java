@@ -1,80 +1,25 @@
 package de.alphahelix.alphalibary.schematics;
 
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
-public class Schematic implements Serializable {
+public interface Schematic extends Serializable {
 
-    private String name;
-    private ArrayList<LocationDiff> blocks = new ArrayList<>();
+    String getName();
 
-    public Schematic(String name, ArrayList<LocationDiff> blocks) {
-        this.name = name;
-        this.blocks = blocks;
-    }
+    List<LocationDiff> getBlocks();
 
-    public String getName() {
-        return name;
-    }
+    interface LocationDiff {
+        Material getBlockType();
 
-    public ArrayList<LocationDiff> getBlocks() {
-        return blocks;
-    }
+        byte getBlockData();
 
-    @Override
-    public String toString() {
-        return "Schematic{" +
-                "name='" + name + '\'' +
-                ", blocks=" + blocks +
-                '}';
-    }
+        int getX();
 
-    public static class LocationDiff {
+        int getY();
 
-        private Material blockType;
-        private byte blockData;
-        private int x, y, z;
-
-        public LocationDiff(Block block, int x, int y, int z) {
-            this.blockType = block.getType();
-            this.blockData = block.getData();
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public Material getBlockType() {
-            return blockType;
-        }
-
-        public byte getBlockData() {
-            return blockData;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public int getZ() {
-            return z;
-        }
-
-        @Override
-        public String toString() {
-            return "LocationDiff{" +
-                    "blockType=" + blockType +
-                    ", blockData=" + blockData +
-                    ", x=" + x +
-                    ", y=" + y +
-                    ", z=" + z +
-                    '}';
-        }
+        int getZ();
     }
 }

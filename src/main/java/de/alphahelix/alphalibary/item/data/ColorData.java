@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-public class ColorData extends ItemData {
+public class ColorData implements ItemData {
 
     private int red = 0;
     private int blue = 0;

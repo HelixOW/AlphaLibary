@@ -13,12 +13,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+interface UndoSave {
+    Material getType();
+
+    byte getData();
+
+    Location getOld();
+}
+
 public class SchematicManager {
 
     private static HashMap<String, ArrayList<UndoSave>> saveMap = new HashMap<>();
 
     public static void save(Location location1, Location location2, String name) {
-        new SchematicFile(new Schematic(name, getBlocks(location1, location2)));
+
+        new SchematicFile(new Schematic() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public List<LocationDiff> getBlocks() {
+                return SchematicManager.getBlocks(location1, location2);
+            }
+        });
     }
 
     public static void paste(String name, Location loc) {
@@ -28,7 +47,22 @@ public class SchematicManager {
         for (Schematic.LocationDiff diff : schematic.getBlocks()) {
             Block toEdit = loc.clone().add(diff.getX(), diff.getY(), diff.getZ()).getBlock();
 
-            save.add(new UndoSave(toEdit));
+            save.add(new UndoSave() {
+                @Override
+                public Material getType() {
+                    return toEdit.getType();
+                }
+
+                @Override
+                public byte getData() {
+                    return toEdit.getData();
+                }
+
+                @Override
+                public Location getOld() {
+                    return toEdit.getLocation();
+                }
+            });
 
             toEdit.setType(diff.getBlockType());
             toEdit.setData(diff.getBlockData());
@@ -40,8 +74,8 @@ public class SchematicManager {
     public static void undo(String name) {
         if (saveMap.containsKey(name))
             for (UndoSave us : saveMap.get(name)) {
-                us.getOld().getBlock().setType(us.getBlockType());
-                us.getOld().getBlock().setData(us.getBlockData());
+                us.getOld().getBlock().setType(us.getType());
+                us.getOld().getBlock().setData(us.getData());
             }
     }
 
@@ -51,10 +85,33 @@ public class SchematicManager {
 
         for (Block block : blocks) {
             if (block.getType() == Material.AIR) continue;
-            b.add(new Schematic.LocationDiff(block,
-                    block.getX() - l1.getBlockX(),
-                    block.getY() - l1.getBlockY(),
-                    block.getZ() - l1.getBlockZ()));
+
+            b.add(new Schematic.LocationDiff() {
+                @Override
+                public Material getBlockType() {
+                    return block.getType();
+                }
+
+                @Override
+                public byte getBlockData() {
+                    return block.getData();
+                }
+
+                @Override
+                public int getX() {
+                    return block.getX() - l1.getBlockX();
+                }
+
+                @Override
+                public int getY() {
+                    return block.getY() - l1.getBlockY();
+                }
+
+                @Override
+                public int getZ() {
+                    return block.getZ() - l1.getBlockZ();
+                }
+            });
         }
 
         return b;
@@ -77,30 +134,5 @@ class SchematicFile extends SimpleJSONFile {
         String json = Base64Coder.decodeString(jsonInBase64);
 
         return gson.fromJson(json, Schematic.class);
-    }
-}
-
-class UndoSave {
-
-    private Material blockType;
-    private byte blockData;
-    private Location old;
-
-    public UndoSave(Block block) {
-        this.blockType = block.getType();
-        this.blockData = block.getData();
-        this.old = block.getLocation();
-    }
-
-    public Material getBlockType() {
-        return blockType;
-    }
-
-    public byte getBlockData() {
-        return blockData;
-    }
-
-    public Location getOld() {
-        return old;
     }
 }

@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.spectator;
 
-import de.alphahelix.alphalibary.AlphaLibary;
+import de.alphahelix.alphalibary.utils.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -39,7 +39,7 @@ public class Spectator {
             p.hidePlayer(player);
         }
 
-        AlphaLibary.addPlayerDead(player);
+        PlayerUtil.addDeadPlayer(player);
     }
 
     public static void removeSpectator(Player player) {
@@ -67,6 +67,6 @@ public class Spectator {
             p.showPlayer(player);
         }
 
-        AlphaLibary.removePlayerDead(player);
+        PlayerUtil.removeDeadPlayer(player);
     }
 }

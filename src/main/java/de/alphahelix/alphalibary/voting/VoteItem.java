@@ -18,5 +18,14 @@
 
 package de.alphahelix.alphalibary.voting;
 
-public interface VoteItem {
+import org.bukkit.inventory.ItemStack;
+
+public interface VoteItem<T> {
+
+	String name();
+
+	ItemStack icon();
+
+	T toVoteFor();
+
 }

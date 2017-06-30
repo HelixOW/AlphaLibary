@@ -1,17 +1,19 @@
 /*
- * Copyright (C) <2017>  <AlphaHelixDev>
  *
- *       This program is free software: you can redistribute it under the
- *       terms of the GNU General Public License as published by
- *       the Free Software Foundation, either version 3 of the License.
+ *  * Copyright (C) <2017>  <AlphaHelixDev>
+ *  *
+ *  *       This program is free software: you can redistribute it under the
+ *  *       terms of the GNU General Public License as published by
+ *  *       the Free Software Foundation, either version 3 of the License.
+ *  *
+ *  *       This program is distributed in the hope that it will be useful,
+ *  *       but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  *       GNU General Public License for more details.
+ *  *
+ *  *       You should have received a copy of the GNU General Public License
+ *  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *       This program is distributed in the hope that it will be useful,
- *       but WITHOUT ANY WARRANTY; without even the implied warranty of
- *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *       GNU General Public License for more details.
- *
- *       You should have received a copy of the GNU General Public License
- *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package de.alphahelix.alphalibary.fakeapi.utils.intern;
@@ -36,6 +38,8 @@ public class FakeUtilBase {
     private static Constructor<?> packetPlayOutAnimation;
     private static Constructor<?> packetPlayOutMount;
     private static Constructor<?> packetPlayOutEntityStatus;
+	private static Constructor<?> packetPlayOutOpenSignEditor;
+	private static Constructor<?> packetPlayOutTileEntityData;
 
     private static Method setLocation;
     private static Method setInvisible;
@@ -50,6 +54,8 @@ public class FakeUtilBase {
     private static Method setBaby;
     private static Method setVariant;
     private static Method setGravity;
+	private static Method packetDataSerializerA;
+	private static Method itemstackAsBukkitCopy;
 
     static {
         try {
@@ -66,6 +72,8 @@ public class FakeUtilBase {
                 packetPlayOutNamedEntitySpawn = ReflectionUtil.getNmsClass("PacketPlayOutNamedEntitySpawn").getConstructor(ReflectionUtil.getNmsClass("EntityHuman"));
                 packetPlayOutMount = ReflectionUtil.getNmsClass("PacketPlayOutMount").getConstructor(ReflectionUtil.getNmsClass("Entity"));
                 packetPlayOutEntityStatus = ReflectionUtil.getNmsClass("PacketPlayOutEntityStatus").getConstructor(ReflectionUtil.getNmsClass("Entity"), byte.class);
+	        packetPlayOutOpenSignEditor = ReflectionUtil.getNmsClass("PacketPlayOutOpenSignEditor").getConstructor(ReflectionUtil.getNmsClass("BlockPosition"));
+	        packetPlayOutTileEntityData = ReflectionUtil.getNmsClass("PacketPlayOutTileEntityData").getConstructor(ReflectionUtil.getNmsClass("BlockPosition"), int.class, ReflectionUtil.getNmsClass("NBTTagCompound"));
 
                 setLocation = ReflectionUtil.getNmsClass("Entity").getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
                 setInvisible = ReflectionUtil.getNmsClass("Entity").getMethod("setInvisible", boolean.class);
@@ -79,6 +87,8 @@ public class FakeUtilBase {
                 setBaby = ReflectionUtil.getNmsClass("EntityAgeable").getMethod("setAge", int.class);
                 setVariant = ReflectionUtil.getNmsClass("EntityLlama").getMethod("setVariant", int.class);
                 setGravity = ReflectionUtil.getNmsClass("Entity").getMethod("setNoGravity", boolean.class);
+	        packetDataSerializerA = ReflectionUtil.getNmsClass("PacketDataSerializer").getMethod("a");
+	        itemstackAsBukkitCopy = ReflectionUtil.getCraftBukkitClass("inventory.CraftItemStack").getMethod("asBukkitCopy", ReflectionUtil.getNmsClass("ItemStack"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -137,8 +147,16 @@ public class FakeUtilBase {
         return packetPlayOutEntityStatus;
     }
 
-    public static Method setLocation() {
-        return setLocation;
+	public static Constructor<?> getPacketPlayOutOpenSignEditor() {
+		return packetPlayOutOpenSignEditor;
+	}
+
+	public static Constructor<?> getPacketPlayOutTileEntityData() {
+		return packetPlayOutTileEntityData;
+	}
+
+	public static Method setLocation() {
+		return setLocation;
     }
 
     public static Method setInvisible() {
@@ -188,4 +206,12 @@ public class FakeUtilBase {
     public static Method setGravity() {
         return setGravity;
     }
+
+	public static Method packetDataSerializerA() {
+		return packetDataSerializerA;
+	}
+
+	public static Method itemstackAsBukkitCopy() {
+		return itemstackAsBukkitCopy;
+	}
 }

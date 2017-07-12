@@ -64,10 +64,6 @@ public class ItemBuilder implements Serializable {
         this.material = Material.getMaterial(material.toUpperCase());
     }
 
-    public void setMaterial(Material material) {
-        this.material = material;
-    }
-
     /**
      * Add a new {@link Enchantment} to the {@link ItemStack}
      *
@@ -180,6 +176,10 @@ public class ItemBuilder implements Serializable {
      */
     public Material getMaterial() {
         return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 
     /**

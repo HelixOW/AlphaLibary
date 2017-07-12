@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) <2017>  <AlphaHelixDev>
+ *  *
+ *  *       This program is free software: you can redistribute it under the
+ *  *       terms of the GNU General Public License as published by
+ *  *       the Free Software Foundation, either version 3 of the License.
+ *  *
+ *  *       This program is distributed in the hope that it will be useful,
+ *  *       but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  *       GNU General Public License for more details.
+ *  *
+ *  *       You should have received a copy of the GNU General Public License
+ *  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package de.alphahelix.alphalibary.file;
 
 import com.google.gson.Gson;
@@ -33,37 +51,29 @@ public class SimpleJSONFile extends File {
         }
     }
 
-    public void setDefault(String path, Object value) {
-        Object enteredValue = value;
-
-        if (value instanceof String)
-            enteredValue = ((String) value).replace("§", "&");
-
-        head.add(path, gson.toJsonTree(enteredValue));
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this))) {
-            writer.write(gson.toJson(head));
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void setValue(String path, Object value) {
-        setDefault(path, value);
-    }
-
     public void removeValue(String path) {
         if (!contains(path)) return;
 
         head.remove(path);
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this))) {
-            writer.write(gson.toJson(head));
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+	
+	    update();
+    }
+	
+	public boolean contains (String path) {
+		try {
+			return FileUtils.readFileToString(this, Charset.defaultCharset()).contains(path);
+		} catch(IOException e) {
+			return false;
+		}
+	}
+	
+	private void update () {
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(this))) {
+			writer.write(gson.toJson(head));
+			writer.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
     }
 
     public <T> void addValuesToList(String path, T... value) {
@@ -77,41 +87,58 @@ public class SimpleJSONFile extends File {
 
         setValue(path, array);
     }
-
-    public <T> T[] getListValues(String path, Class<T[]> definy) {
-        return getValue(path, definy);
-    }
+	
+	public boolean jsonContains (String path) {
+		
+		JsonObject obj = read();
+		
+		if(obj == null) return false;
+		
+		return obj.get(path) != null;
+	}
 
     public <T> T getValue(String path, Class<T> definy) {
-        try {
-            String file = FileUtils.readFileToString(this, Charset.defaultCharset());
-
-            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
-                return null;
-
-            JsonObject obj = gson.fromJson(file, JsonObject.class);
-
-            return gson.fromJson(obj.get(path), definy);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+	    JsonObject obj = read();
+	
+	    if(obj == null) return null;
+	
+	    return gson.fromJson(obj.get(path), definy);
     }
+	
+	public void setValue (String path, Object value) {
+		setDefault(path, value);
+	}
+	
+	private JsonObject read () {
+		try {
+			String file = FileUtils.readFileToString(this, Charset.defaultCharset());
+			
+			if(file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
+				return null;
+			
+			return gson.fromJson(file, JsonObject.class);
+		} catch(IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+    }
+	
+	public void setDefault (String path, Object value) {
+		head.add(path, gson.toJsonTree(value));
+		
+		update();
+	}
+	
+	public <T> T[] getListValues (String path, Class<T[]> definy) {
+		return getValue(path, definy);
+	}
 
     public <T> T getValue(String path, TypeToken<T> token) {
-        try {
-            String file = FileUtils.readFileToString(this, Charset.defaultCharset());
-
-            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
-                return null;
-
-            JsonObject obj = gson.fromJson(file, JsonObject.class);
-
-            return gson.fromJson(obj.get(path), token.getType());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+	    JsonObject obj = read();
+	
+	    if(obj == null) return null;
+	
+	    return gson.fromJson(obj.get(path), token.getType());
     }
 
     public <T> ArrayList<T> getValues(Class<T> definy) {
@@ -134,53 +161,22 @@ public class SimpleJSONFile extends File {
             return new ArrayList<>();
         }
     }
-
-    public ArrayList<String> getPaths() {
-        try {
-            String file = FileUtils.readFileToString(this, Charset.defaultCharset());
-
-            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
-                return new ArrayList<>();
-
-            JsonObject obj = gson.fromJson(file, JsonObject.class);
-            ArrayList<String> list = new ArrayList<>();
-
-            for (Map.Entry<String, JsonElement> o : obj.entrySet()) {
-                list.add(o.getKey());
-            }
-
-            return list;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
-    public boolean contains(String path) {
-        try {
-            return FileUtils.readFileToString(this, Charset.defaultCharset()).contains(path);
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    public boolean jsonContains(String path) {
-        try {
-            String file = FileUtils.readFileToString(this, Charset.defaultCharset());
-
-            if (file.isEmpty() || !(file.startsWith("{") || file.endsWith("}")))
-                return false;
-
-            JsonObject obj = gson.fromJson(file, JsonObject.class);
-
-
-            return obj.get(path) != null;
-        } catch (Exception e) {
-            return contains(path);
-        }
-    }
-
-    public boolean isEmpty() {
+	
+	public ArrayList<String> getPaths() {
+		JsonObject obj = read();
+		
+		if(obj == null) return new ArrayList<>();
+		
+		ArrayList<String> list = new ArrayList<>();
+		
+		for(Map.Entry<String, JsonElement> o : obj.entrySet()) {
+			list.add(o.getKey());
+		}
+		
+		return list;
+	}
+	
+	public boolean isEmpty() {
         try {
             return FileUtils.readFileToString(this, Charset.defaultCharset()).isEmpty();
         } catch (IOException e) {

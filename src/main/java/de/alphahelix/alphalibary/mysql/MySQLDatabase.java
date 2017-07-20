@@ -23,6 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -153,12 +154,6 @@ public class MySQLDatabase implements Serializable {
      * @param values the values to insert in the correct order.
      */
     public void insert(String... values) {
-
-        StringBuilder tableinfostr = new StringBuilder();
-        for (int i = 1; i <= getColumnAmount(); i++) {
-            tableinfostr.append(", ").append(getColumnName(i));
-        }
-
         StringBuilder builder = new StringBuilder();
         for (String str : values) {
             builder.append(", '").append(str).append("'");
@@ -327,8 +322,8 @@ public class MySQLDatabase implements Serializable {
      * @param size the size of the column
      * @return the mysql query string to create a column
      */
-    public String createColumn(String name, MySQLAPI.MySQLDataType type, long size) {
-        return name + " " + type.name() + "(" + size + ")";
+    public String createColumn(String name, MySQLAPI.MySQLDataType type, long size, String... arg) {
+        return name + " " + type.name() + "(" + size + ") " + Arrays.toString(arg).replace(", ", " ").replace("[", "").replace("]", "");
     }
 
     /**

@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import de.alphahelix.alphalibary.utils.JSONUtil;
 import org.apache.commons.io.FileUtils;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -49,6 +50,10 @@ public class SimpleJSONFile extends File {
                 e.printStackTrace();
             }
         }
+    }
+
+    public SimpleJSONFile(JavaPlugin pl, String child) {
+        this(pl.getDataFolder().getAbsolutePath(), child);
     }
 
     public void removeValue(String path) {

@@ -16,6 +16,7 @@
 package de.alphahelix.alphalibary.mysql;
 
 import de.alphahelix.alphalibary.file.SimpleFile;
+import org.bukkit.Bukkit;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -23,6 +24,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class MySQLAPI implements Serializable {
 
@@ -91,7 +93,7 @@ public class MySQLAPI implements Serializable {
 
                 return c;
             } catch (SQLException ignore) {
-                System.out.println("AlphaLibary konnte keine Verbindung zur Datenbank " + database + " aufbauen");
+                Bukkit.getLogger().log(Level.WARNING, "Failed to reconnect to " + database + "! Check your mysql.yml inside AlphaGameLibary");
                 return null;
             }
         }
@@ -117,7 +119,7 @@ public class MySQLAPI implements Serializable {
 
 
             } catch (SQLException ignore) {
-                System.out.println("AlphaLibary konnte keine Verbindung zur Datenbank " + database + " aufbauen");
+                Bukkit.getLogger().log(Level.WARNING, "Failed to reconnect to " + database + "! Check your mysql.yml inside AlphaGameLibary");
             }
         }
     }

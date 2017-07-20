@@ -138,7 +138,6 @@ public class PlayerFakeUtil extends FakeUtilBase {
 
     public static FakePlayer spawnTemporaryPlayer(final Player p, final Location loc, GameProfile skin, final String customName) {
         try {
-            UUID id = UUIDFetcher.getUUID(p);
             GameProfile gameProfile = skin;
 
             Object npc = entityPlayer.newInstance(
@@ -218,11 +217,14 @@ public class PlayerFakeUtil extends FakeUtilBase {
      */
     public static void movePlayer(Player p, double x, double y, double z, float yaw, float pitch, FakePlayer npc) {
         try {
+            Location old = npc.getCurrentlocation();
+            Location ne = old.clone().add(x, y, z);
+
             ReflectionUtil.sendPacket(p, getPacketPlayOutRelEntityMove().newInstance(
                     ReflectionUtil.getEntityID(npc.getNmsEntity()),
-                    FakeAPI.toDelta((long) x),
-                    FakeAPI.toDelta((long) y),
-                    FakeAPI.toDelta((long) z),
+                    FakeAPI.toDelta(old.getX() - ne.getX()),
+                    FakeAPI.toDelta(old.getY() - ne.getY()),
+                    FakeAPI.toDelta(old.getZ() - ne.getZ()),
                     false));
 
             ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(npc.getNmsEntity(), FakeAPI.toAngle(yaw)));

@@ -78,6 +78,17 @@ public class Util {
         return playerArrayList.toArray(new Player[playerArrayList.size()]);
     }
 
+    public static Player[] makePlayerArray(Set<String> types) {
+        ArrayList<Player> playerArrayList = new ArrayList<>();
+
+        for (String type : types) {
+            if (Bukkit.getPlayer(type) == null) continue;
+            playerArrayList.add(Bukkit.getPlayer(type));
+        }
+
+        return playerArrayList.toArray(new Player[playerArrayList.size()]);
+    }
+
     public static <T, E> Set<T> getKeysByValue(Map<T, E> map, E value) {
         Set<T> keys = new HashSet<>();
         for (Map.Entry<T, E> entry : map.entrySet()) {

@@ -110,12 +110,15 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      */
     public static void moveArmorstand(Player p, double x, double y, double z, FakeArmorstand armorstand) {
         try {
+            Location old = armorstand.getCurrentlocation();
+            Location ne = old.clone().add(x, y, z);
+
             ReflectionUtil.sendPacket(p, getPacketPlayOutRelEntityMove().newInstance(
                     ReflectionUtil.getEntityID(armorstand.getNmsEntity()),
-                    (long) FakeAPI.toDelta(x),
-                    (long) FakeAPI.toDelta(y),
-                    (long) FakeAPI.toDelta(z),
-                    true));
+                    FakeAPI.toDelta(old.getX() - ne.getX()),
+                    FakeAPI.toDelta(old.getY() - ne.getY()),
+                    FakeAPI.toDelta(old.getZ() - ne.getZ()),
+                    false));
             armorstand.setCurrentlocation(armorstand.getCurrentlocation().add(x, y, z));
         } catch (Exception e) {
             e.printStackTrace();

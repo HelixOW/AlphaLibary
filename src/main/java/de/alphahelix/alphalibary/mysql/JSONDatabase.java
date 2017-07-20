@@ -31,7 +31,20 @@ public class JSONDatabase {
         this.id = id;
         this.database = new MySQLDatabase(table, database);
 
-        this.database.create(this.database.createColumn(id.name(), MySQLAPI.MySQLDataType.VARCHAR, 50), this.database.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
+        this.database.create(
+                this.database.createColumn(id.name(), MySQLAPI.MySQLDataType.VARCHAR, 50, "PRIMARY KEY"),
+                this.database.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
+    }
+
+    public JSONDatabase(String table, String database) {
+        this.database = new MySQLDatabase(table, database);
+
+        this.database.create(
+                this.database.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
+    }
+
+    public void addValue(Object val) {
+        this.database.insert(JSONUtil.toJson(val));
     }
 
     public void setValue(String idValue, Object val) {

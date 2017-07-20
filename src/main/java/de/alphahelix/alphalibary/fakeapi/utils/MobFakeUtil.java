@@ -132,11 +132,14 @@ public class MobFakeUtil extends FakeUtilBase {
      */
     public static void moveMob(Player p, double x, double y, double z, float yaw, float pitch, FakeMob mob) {
         try {
+            Location old = mob.getCurrentlocation();
+            Location ne = old.clone().add(x, y, z);
+
             ReflectionUtil.sendPacket(p, getPacketPlayOutRelEntityMove().newInstance(
                     ReflectionUtil.getEntityID(mob.getNmsEntity()),
-                    FakeAPI.toDelta((long) x),
-                    FakeAPI.toDelta((long) y),
-                    FakeAPI.toDelta((long) z),
+                    FakeAPI.toDelta(old.getX() - ne.getX()),
+                    FakeAPI.toDelta(old.getY() - ne.getY()),
+                    FakeAPI.toDelta(old.getZ() - ne.getZ()),
                     false));
 
             ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(mob, FakeAPI.toAngle(yaw)));

@@ -6,12 +6,13 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.WeakHashMap;
 
 public class GameStatus implements Serializable {
 
     @Expose
-    private static transient ArrayList<GameStatus> gameStatuses = new ArrayList<>();
+    private static transient WeakHashMap<String, GameStatus> gameStatuses = new WeakHashMap<>();
+
     @Expose
     private static transient GameStatus current = null;
 
@@ -19,24 +20,17 @@ public class GameStatus implements Serializable {
     private String rawName;
 
     public GameStatus(String name) {
-        this.name = name;
-        this.rawName = ChatColor.stripColor(name).replace(" ", "_");
+        setName(name);
 
-        gameStatuses.add(this);
+        gameStatuses.put(rawName, this);
     }
 
     public static GameStatus getGameState(String name) {
-        for (GameStatus status : gameStatuses) {
-            if (status.rawName.equalsIgnoreCase(ChatColor.stripColor(name).replace(" ", "_"))) return status;
-        }
-        return null;
+        return gameStatuses.get(ChatColor.stripColor(name).replace(" ", "_"));
     }
 
-    public static boolean isState(String name) {
-        if (current != null) {
-            if (current.getRawName().equalsIgnoreCase(ChatColor.stripColor(name).replace(" ", "_"))) return true;
-        }
-        return false;
+    public static boolean isState(GameStatus state) {
+        return (current != null && current.equals(state));
     }
 
     public static GameStatus getCurrentStatus() {
@@ -58,15 +52,16 @@ public class GameStatus implements Serializable {
         this.rawName = ChatColor.stripColor(name).replace(" ", "_");
     }
 
-    public String getRawName() {
-        return rawName;
-    }
-
     @Override
     public String toString() {
         return "GameStatus{" +
                 "name='" + name + '\'' +
                 ", rawName='" + rawName + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof GameStatus && ((GameStatus) obj).rawName.equals(this.rawName);
     }
 }

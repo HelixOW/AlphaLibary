@@ -22,33 +22,37 @@ import de.alphahelix.alphalibary.fakeapi.instances.FakeArmorstand;
 import de.alphahelix.alphalibary.fakeapi.utils.ArmorstandFakeUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
-public class Hologram {
+public class Hologram implements Listener {
 
-	private String name;
-	private Location location;
+    private String name;
+    private Location location;
 
-	public Hologram(String name, Location location) {
-		this.name = name; this.location = location;
-	}
+    public Hologram(String name, Location location) {
+        this.name = name;
+        this.location = location;
+    }
 
-	public FakeArmorstand spawn(Player player) {
-		return ArmorstandFakeUtil.spawnArmorstand(player, getLocation(), getName());
-	}
+    public FakeArmorstand spawn(Player player) {
+        return ArmorstandFakeUtil.spawnArmorstand(player, getLocation(), getName());
+    }
 
-	public Location getLocation() {
-		return location;
-	}
+    public Location getLocation() {
+        return location;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Hologram setLocation(Location location) {
+        this.location = location;
+        return this;
+    }
 
-	public Hologram setName(String name) {
-		this.name = name; return this;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Hologram setLocation(Location location) {
-		this.location = location; return this;
-	}
+    public Hologram setName(String name) {
+        this.name = name;
+        return this;
+    }
 }

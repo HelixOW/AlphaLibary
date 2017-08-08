@@ -331,7 +331,7 @@ public class MySQLDatabase implements Serializable {
      *
      * @return the amount of columns inside the table
      */
-    private int getColumnAmount() {
+    public int getColumnAmount() {
         if (TABLEINFO.get(table) == null) {
             return 0;
         }
@@ -348,7 +348,7 @@ public class MySQLDatabase implements Serializable {
      * @param column the id of the column
      * @return the column name
      */
-    private String getColumnName(int column) {
+    public String getColumnName(int column) {
         if (TABLEINFO.get(table) == null) {
             return null;
         }

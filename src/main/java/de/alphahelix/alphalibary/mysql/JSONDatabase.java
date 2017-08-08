@@ -25,58 +25,113 @@ import java.util.ArrayList;
 public class JSONDatabase {
 
     private UniqueIdentifier id;
-    private MySQLDatabase database;
+    private DatabaseType type;
 
-    public JSONDatabase(UniqueIdentifier id, String table, String database) {
+    private AsyncMySQLDatabase mySQLDatabase;
+    private SQLiteDatabase sqliteDatabase;
+
+    public JSONDatabase(UniqueIdentifier id, String table, String database, DatabaseType type) {
         this.id = id;
-        this.database = new MySQLDatabase(table, database);
+        this.type = type;
 
-        this.database.create(
-                this.database.createColumn(id.name(), MySQLAPI.MySQLDataType.VARCHAR, 50, "PRIMARY KEY"),
-                this.database.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
+        if (type == DatabaseType.MYSQL) {
+            this.mySQLDatabase = new AsyncMySQLDatabase(table, database);
+            this.mySQLDatabase.create(
+                    AsyncMySQLDatabase.createColumn(id.name().toLowerCase(), MySQLAPI.MySQLDataType.VARCHAR, 50, "PRIMARY KEY"),
+                    AsyncMySQLDatabase.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
+        } else if (type == DatabaseType.SQLITE) {
+            this.sqliteDatabase = new SQLiteDatabase(table, database);
+            this.sqliteDatabase.create(
+                    SQLiteDatabase.createColumn(id.name().toLowerCase(), SQLiteAPI.SQLiteDataType.TEXT, "PRIMARY KEY"),
+                    SQLiteDatabase.createColumn("val", SQLiteAPI.SQLiteDataType.TEXT)
+            );
+        }
     }
 
-    public JSONDatabase(String table, String database) {
-        this.database = new MySQLDatabase(table, database);
-
-        this.database.create(
-                this.database.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
+    public JSONDatabase(String table, String database, DatabaseType type) {
+        if (type == DatabaseType.MYSQL) {
+            this.mySQLDatabase = new AsyncMySQLDatabase(table, database);
+            this.mySQLDatabase.create(
+                    AsyncMySQLDatabase.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
+        } else if (type == DatabaseType.SQLITE) {
+            this.sqliteDatabase = new SQLiteDatabase(table, database);
+            this.sqliteDatabase.create(
+                    SQLiteDatabase.createColumn("val", SQLiteAPI.SQLiteDataType.TEXT)
+            );
+        }
     }
 
     public void addValue(Object val) {
-        this.database.insert(JSONUtil.toJson(val));
+        if (type == DatabaseType.MYSQL)
+            this.mySQLDatabase.insert(JSONUtil.toJson(val));
+        else if (type == DatabaseType.SQLITE)
+            this.sqliteDatabase.insert(JSONUtil.toJson(val));
     }
 
     public void setValue(String idValue, Object val) {
-        if (this.database.contains(id.name(), idValue)) {
-            this.database.update(id.name(), idValue, "val", JSONUtil.toJson(val));
-        } else {
-            this.database.insert(idValue, JSONUtil.toJson(val));
+        if (type == DatabaseType.MYSQL) {
+            this.mySQLDatabase.contains(id.name().toLowerCase(), idValue, result -> {
+                if (result)
+                    this.mySQLDatabase.update(id.name().toLowerCase(), idValue, "val", JSONUtil.toJson(val));
+                else
+                    this.mySQLDatabase.insert(idValue, JSONUtil.toJson(val));
+            });
+        } else if (type == DatabaseType.SQLITE) {
+            this.sqliteDatabase.contains(id.name().toLowerCase(), idValue, result -> {
+                if (result)
+                    this.sqliteDatabase.update(id.name().toLowerCase(), idValue, "val", JSONUtil.toJson(val));
+                else
+                    this.sqliteDatabase.insert(idValue, JSONUtil.toJson(val));
+            });
         }
     }
 
-    public <T> T getValue(String idValue, Class<T> define) {
-        if (this.database.contains(id.name(), idValue)) {
-            return JSONUtil.getValue(this.database.getResult(id.name(), idValue, "val").toString(), define);
+    public <T> void getValue(String idValue, Class<T> define, DatabaseCallback<T> callback) {
+        if (type == DatabaseType.MYSQL) {
+            this.mySQLDatabase.contains(id.name().toLowerCase(), idValue, result -> {
+                if (result)
+                    this.mySQLDatabase.getResult(id.name().toLowerCase(), idValue, "val", result1 -> callback.done(JSONUtil.getValue(result1.toString(), define)));
+            });
+        } else if (type == DatabaseType.SQLITE) {
+            this.sqliteDatabase.contains(id.name().toLowerCase(), idValue, result -> {
+                if (result)
+                    this.sqliteDatabase.getResult(id.name().toLowerCase(), idValue, "val", result1 -> callback.done(JSONUtil.getValue(result1.toString(), define)));
+            });
         }
-        return null;
     }
-    
-    public <T> ArrayList<T> getValues (Class<T> define) {
+
+    public <T> ArrayList<T> getValues(Class<T> define) {
         ArrayList<T> vals = new ArrayList<>();
-        
-        for(String json : this.database.getList("val")) {
-            vals.add(JSONUtil.getValue(json, define));
+
+        if (type == DatabaseType.MYSQL) {
+            this.mySQLDatabase.getList("val", result -> {
+                for (String json : result) {
+                    vals.add(JSONUtil.getValue(json, define));
+                }
+            });
+        } else if (type == DatabaseType.SQLITE) {
+            this.sqliteDatabase.getList("val", result -> {
+                for (String json : result) {
+                    vals.add(JSONUtil.getValue(json, define));
+                }
+            });
         }
-        
+
         return vals;
     }
 
-    public boolean hasValue(String idValue) {
-        return this.database.contains(id.name(), idValue);
+    public void hasValue(String idValue, DatabaseCallback<Boolean> callback) {
+        if (type == DatabaseType.MYSQL)
+            this.mySQLDatabase.contains(id.name().toLowerCase(), idValue, callback);
+        else if (type == DatabaseType.SQLITE)
+            this.sqliteDatabase.contains(id.name().toLowerCase(), idValue, callback);
     }
 
     public enum UniqueIdentifier {
         NAME, NUMBER, UUID
+    }
+
+    public enum DatabaseType {
+        MYSQL, SQLITE
     }
 }

@@ -1,7 +1,7 @@
 package de.alphahelix.alphalibary.arena;
 
 import de.alphahelix.alphalibary.AlphaLibary;
-import de.alphahelix.alphalibary.utils.ZIPUtil;
+import de.alphahelix.alphalibary.utils.Util;
 import org.apache.commons.io.FileDeleteStrategy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,7 +43,7 @@ public class Arena implements Serializable {
      * Transforms the arena into a world
      */
     public void loadArena() {
-        ZIPUtil.unzip("plugins/AlphaGameLibary/arenas/" + fileName + ".zip", Bukkit.getWorlds().get(0).getWorldFolder().getParent());
+        Util.unzip("plugins/AlphaGameLibary/arenas/" + fileName + ".zip", Bukkit.getWorlds().get(0).getWorldFolder().getParent());
         new BukkitRunnable() {
             public void run() {
                 Bukkit.createWorld(new WorldCreator(fileName));

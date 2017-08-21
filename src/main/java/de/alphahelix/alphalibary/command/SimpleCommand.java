@@ -50,6 +50,14 @@ public abstract class SimpleCommand extends Command {
         this.register();
     }
 
+    public SimpleCommand(String command) {
+        this(command, "");
+    }
+
+    public SimpleCommand(String command, String description) {
+        this(command, description, new String[]{});
+    }
+
     private void register() {
         try {
             Field f = ReflectionUtil.getCraftBukkitClass("CraftServer")
@@ -73,7 +81,9 @@ public abstract class SimpleCommand extends Command {
      * Suggestions in the chat when you press TAB
      */
     @Override
-    public abstract List<String> tabComplete(CommandSender cs, String label, String[] args);
+    public List<String> tabComplete(CommandSender cs, String label, String[] args) {
+        return new ArrayList<>();
+    }
 
     /**
      * Create a {@link String} out of a {@link String[]}
@@ -83,14 +93,25 @@ public abstract class SimpleCommand extends Command {
      * @return the new created {@link String}
      */
     public String buildString(String[] args, int start) {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         if (args.length > start) {
-            str += args[start];
+            str.append(args[start]);
             for (int i = start + 1; i < args.length; i++) {
-                str += " " + args[i];
+                str.append(" ").append(args[i]);
             }
         }
-        return str;
+        return str.toString();
+    }
+
+    public String buildString(String[] args, int start, int end) {
+        StringBuilder str = new StringBuilder();
+        if (args.length > start) {
+            str.append(args[start]);
+            for (int i = start + 1; i < end; i++) {
+                str.append(" ").append(args[i]);
+            }
+        }
+        return str.toString();
     }
 
     /**

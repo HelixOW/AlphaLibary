@@ -22,8 +22,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class Util {
 
@@ -87,42 +96,6 @@ public class Util {
         }
 
         return playerArrayList.toArray(new Player[playerArrayList.size()]);
-    }
-
-    public static <T, E> Set<T> getKeysByValue(Map<T, E> map, E value) {
-        Set<T> keys = new HashSet<>();
-        for (Map.Entry<T, E> entry : map.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                keys.add(entry.getKey());
-            }
-        }
-        return keys;
-    }
-
-    /**
-     * Gets the key by its value
-     *
-     * @param map   the {@link Map} where the key & value is inside
-     * @param value the value of the key
-     * @return the key
-     */
-    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
-        for (Map.Entry<T, E> entry : map.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-        List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
-        list.sort(Comparator.comparing(o -> (o.getValue())));
-        Map<K, V> result = new LinkedHashMap<>();
-        for (Map.Entry<K, V> entry : list) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-        return result;
     }
 
     public static void runLater(long ticks, boolean async, Runnable timer) {
@@ -222,5 +195,48 @@ public class Util {
 
     public static int toMultipleOfNine(int val) {
         return ((val / 9) + 1) * 9;
+    }
+
+    public static void unzip(String zipPath, String outputFolder) {
+        try {
+            ZipFile zipFile = new ZipFile(zipPath);
+            Enumeration<?> enu = zipFile.entries();
+
+            File folder = new File(outputFolder);
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+
+            while (enu.hasMoreElements()) {
+                ZipEntry zipEntry = (ZipEntry) enu.nextElement();
+
+                String name = zipEntry.getName();
+
+                File file = new File(outputFolder + File.separator + name);
+                if (name.endsWith("/")) {
+                    file.mkdirs();
+                    continue;
+                }
+
+                File parent = file.getParentFile();
+                if (parent != null) {
+                    parent.mkdirs();
+                }
+
+                InputStream is = zipFile.getInputStream(zipEntry);
+                FileOutputStream fos = new FileOutputStream(file);
+                byte[] bytes = new byte[1024];
+                int length;
+                while ((length = is.read(bytes)) >= 0) {
+                    fos.write(bytes, 0, length);
+                }
+
+                is.close();
+                fos.close();
+            }
+            zipFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

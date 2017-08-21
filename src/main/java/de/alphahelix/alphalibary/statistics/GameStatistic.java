@@ -1,11 +1,20 @@
 package de.alphahelix.alphalibary.statistics;
 
-import com.google.gson.JsonElement;
+public class GameStatistic {
 
-import java.io.Serializable;
+    private String name;
+    private Object value;
 
-public interface GameStatistic extends Serializable {
-    String getName();
+    public GameStatistic(String name, Object value) {
+        this.name = name;
+        this.value = value;
+    }
 
-    JsonElement save();
+    public String getName() {
+        return name;
+    }
+
+    public Object getValue() {
+        return value;
+    }
 }

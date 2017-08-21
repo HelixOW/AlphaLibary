@@ -2,10 +2,12 @@ package de.alphahelix.alphalibary.schematics;
 
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 import de.alphahelix.alphalibary.utils.Cuboid;
+import de.alphahelix.alphalibary.utils.JSONUtil;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.material.MaterialData;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.File;
@@ -16,7 +18,7 @@ import java.util.List;
 interface UndoSave {
     Material getType();
 
-    byte getData();
+    MaterialData getData();
 
     Location getOld();
 }
@@ -54,8 +56,8 @@ public class SchematicManager {
                 }
 
                 @Override
-                public byte getData() {
-                    return toEdit.getData();
+                public MaterialData getData() {
+                    return toEdit.getState().getData();
                 }
 
                 @Override
@@ -65,7 +67,7 @@ public class SchematicManager {
             });
 
             toEdit.setType(diff.getBlockType());
-            toEdit.setData(diff.getBlockData());
+            toEdit.getState().setData(diff.getBlockData());
         }
 
         saveMap.put(name, save);
@@ -75,7 +77,7 @@ public class SchematicManager {
         if (saveMap.containsKey(name))
             for (UndoSave us : saveMap.get(name)) {
                 us.getOld().getBlock().setType(us.getType());
-                us.getOld().getBlock().setData(us.getData());
+                us.getOld().getBlock().getState().setData(us.getData());
             }
     }
 
@@ -93,8 +95,8 @@ public class SchematicManager {
                 }
 
                 @Override
-                public byte getBlockData() {
-                    return block.getData();
+                public MaterialData getBlockData() {
+                    return block.getState().getData();
                 }
 
                 @Override
@@ -122,7 +124,7 @@ class SchematicFile extends SimpleJSONFile {
 
     public SchematicFile(Schematic schematic) {
         super("plugins/AlphaLibary/schematics", schematic.getName() + ".json");
-        setValue(schematic.getName(), Base64Coder.encodeString(gson.toJson(schematic)));
+        setValue(schematic.getName(), Base64Coder.encodeString(JSONUtil.getGson().toJson(schematic)));
     }
 
     public static Schematic getSchematic(String name) {
@@ -133,6 +135,6 @@ class SchematicFile extends SimpleJSONFile {
         String jsonInBase64 = schemFile.getValue(name, String.class);
         String json = Base64Coder.decodeString(jsonInBase64);
 
-        return gson.fromJson(json, Schematic.class);
+        return JSONUtil.getGson().fromJson(json, Schematic.class);
     }
 }

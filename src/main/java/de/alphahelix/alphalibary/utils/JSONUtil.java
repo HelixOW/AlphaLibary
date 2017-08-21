@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
 import de.alphahelix.alphalibary.achievements.Achievement;
-import de.alphahelix.alphalibary.file.SimpleJSONFile;
 import de.alphahelix.alphalibary.item.InventoryItem;
 import de.alphahelix.alphalibary.item.ItemBuilder;
 import de.alphahelix.alphalibary.schematics.Schematic;
@@ -15,6 +14,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -22,18 +22,29 @@ import java.util.Set;
 
 public class JSONUtil {
 
-    private static Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Location.class, new LocationSerializer())
-            .registerTypeAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer())
-            .registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer())
-            .registerTypeAdapter(ItemStack.class, new ItemStackSerializer())
-            .registerTypeAdapter(Achievement.class, new AchievementSerializer())
-            .registerTypeAdapter(Schematic.LocationDiff.class, new LocationDiffSerializer())
-            .registerTypeAdapter(Schematic.class, new SchematicSerializer())
-            .create();
+    private static GsonBuilder builder = new GsonBuilder()
+            .registerTypeHierarchyAdapter(Location.class, new LocationSerializer())
+            .registerTypeHierarchyAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer())
+            .registerTypeHierarchyAdapter(PropertyMap.class, new PropertyMap.Serializer())
+            .registerTypeHierarchyAdapter(ItemStack.class, new ItemStackSerializer())
+            .registerTypeHierarchyAdapter(Achievement.class, new AchievementSerializer())
+            .registerTypeHierarchyAdapter(Schematic.LocationDiff.class, new LocationDiffSerializer())
+            .registerTypeHierarchyAdapter(Schematic.class, new SchematicSerializer())
+            .registerTypeHierarchyAdapter(InventoryItem.class, new InventoryItemSerializer());
 
-    public static <T> String toJson(T toConvert) {
+    private static Gson gson = builder.create();
+
+    public static void addTypeAdapter(Class<?> clazz, Object adapter) {
+        builder.registerTypeHierarchyAdapter(clazz, adapter);
+        gson = builder.create();
+    }
+
+    public static String toJson(Object toConvert) {
         return gson.toJson(toConvert);
+    }
+
+    public static String toJson(Object obj, Class<?> type) {
+        return gson.toJson(obj, type);
     }
 
     public static <T> T getValue(String json, Class<T> definy) {
@@ -98,10 +109,10 @@ class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer
             }
 
             if (meta.has("lore")) {
-                lore = SimpleJSONFile.gson.fromJson(meta.getAsJsonArray("lore"), List.class);
+                lore = JSONUtil.getGson().fromJson(meta.getAsJsonArray("lore"), List.class);
             }
 
-            flags = SimpleJSONFile.gson.fromJson(meta.getAsJsonArray("flags"), Set.class);
+            flags = JSONUtil.getGson().fromJson(meta.getAsJsonArray("flags"), Set.class);
 
         }
 
@@ -155,9 +166,9 @@ class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer
                 meta.addProperty("displayName", itemMeta.getDisplayName());
 
             if (itemMeta.hasLore())
-                meta.add("lore", SimpleJSONFile.gson.toJsonTree(itemMeta.getLore()));
+                meta.add("lore", JSONUtil.getGson().toJsonTree(itemMeta.getLore()));
 
-            meta.add("flags", SimpleJSONFile.gson.toJsonTree(itemMeta.getItemFlags()));
+            meta.add("flags", JSONUtil.getGson().toJsonTree(itemMeta.getItemFlags()));
 
             result.add("meta", meta);
         }
@@ -179,12 +190,12 @@ class AchievementSerializer implements JsonSerializer<Achievement>, JsonDeserial
 
             @Override
             public InventoryItem getIcon() {
-                return SimpleJSONFile.gson.fromJson(obj.getAsJsonObject("icon"), InventoryItem.class);
+                return JSONUtil.getGson().fromJson(obj.getAsJsonObject("icon"), InventoryItem.class);
             }
 
             @Override
             public List<String> getDescription() {
-                return SimpleJSONFile.gson.fromJson(obj.getAsJsonArray("description"), List.class);
+                return JSONUtil.getGson().fromJson(obj.getAsJsonArray("description"), List.class);
             }
         };
     }
@@ -194,8 +205,8 @@ class AchievementSerializer implements JsonSerializer<Achievement>, JsonDeserial
         JsonObject obj = new JsonObject();
 
         obj.addProperty("name", achievement.getName());
-        obj.add("icon", SimpleJSONFile.gson.toJsonTree(achievement.getIcon()));
-        obj.add("description", SimpleJSONFile.gson.toJsonTree(achievement.getDescription()));
+        obj.add("icon", JSONUtil.getGson().toJsonTree(achievement.getIcon(), InventoryItem.class));
+        obj.add("description", JSONUtil.getGson().toJsonTree(achievement.getDescription()));
 
         return obj;
     }
@@ -214,7 +225,7 @@ class SchematicSerializer implements JsonSerializer<Schematic>, JsonDeserializer
 
             @Override
             public List<LocationDiff> getBlocks() {
-                return SimpleJSONFile.gson.fromJson(obj.getAsJsonArray("locationDiffs"), List.class);
+                return JSONUtil.getGson().fromJson(obj.getAsJsonArray("locationDiffs"), List.class);
             }
         };
     }
@@ -224,7 +235,7 @@ class SchematicSerializer implements JsonSerializer<Schematic>, JsonDeserializer
         JsonObject obj = new JsonObject();
 
         obj.addProperty("name", schematic.getName());
-        obj.add("locationDiffs", SimpleJSONFile.gson.toJsonTree(schematic.getBlocks()));
+        obj.add("locationDiffs", JSONUtil.getGson().toJsonTree(schematic.getBlocks()));
 
         return obj;
     }
@@ -237,7 +248,7 @@ class LocationDiffSerializer implements JsonSerializer<Schematic.LocationDiff>, 
         JsonObject obj = (JsonObject) jsonElement;
 
         Material mat = Material.getMaterial(obj.getAsJsonPrimitive("type").getAsString());
-        byte data = obj.getAsJsonPrimitive("data").getAsByte();
+        MaterialData data = JSONUtil.getGson().fromJson(obj.getAsJsonObject("data"), MaterialData.class);
         int x = obj.getAsJsonPrimitive("x").getAsInt();
         int y = obj.getAsJsonPrimitive("y").getAsInt();
         int z = obj.getAsJsonPrimitive("z").getAsInt();
@@ -249,7 +260,7 @@ class LocationDiffSerializer implements JsonSerializer<Schematic.LocationDiff>, 
             }
 
             @Override
-            public byte getBlockData() {
+            public MaterialData getBlockData() {
                 return data;
             }
 
@@ -275,7 +286,7 @@ class LocationDiffSerializer implements JsonSerializer<Schematic.LocationDiff>, 
         JsonObject obj = new JsonObject();
 
         obj.addProperty("type", locationDiff.getBlockType().name());
-        obj.addProperty("data", locationDiff.getBlockData());
+        obj.add("data", JSONUtil.getGson().toJsonTree(locationDiff.getBlockData()));
         obj.addProperty("x", locationDiff.getX());
         obj.addProperty("y", locationDiff.getY());
         obj.addProperty("z", locationDiff.getZ());
@@ -289,7 +300,6 @@ class InventoryItemSerializer implements JsonSerializer<InventoryItem>, JsonDese
     @Override
     public InventoryItem deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject obj = (JsonObject) jsonElement;
-
 
         return new InventoryItem() {
             @Override

@@ -1,54 +1,73 @@
 package de.alphahelix.alphalibary.statistics;
 
-import com.google.gson.JsonElement;
 import de.alphahelix.alphalibary.utils.SerializationUtil;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class PlayerStatistic implements Serializable {
 
     private final UUID player;
-    private ArrayList<JsonElement> statistics = new ArrayList<>();
+    private HashMap<String, GameStatistic> statistics = new HashMap<>();
 
-    public PlayerStatistic(UUID player) {
+    public PlayerStatistic(UUID player, GameStatistic... array) {
         this.player = player;
+        for (GameStatistic gameStatistic : array) {
+            this.statistics.put(gameStatistic.getName(), gameStatistic);
+        }
     }
 
-    public PlayerStatistic(Player player) {
-        this.player = UUIDFetcher.getUUID(player);
+    public PlayerStatistic(Player player, GameStatistic... array) {
+        this(UUIDFetcher.getUUID(player), array);
     }
 
-    public PlayerStatistic(OfflinePlayer player) {
-        this.player = UUIDFetcher.getUUID(player);
+    public PlayerStatistic(OfflinePlayer player, GameStatistic... array) {
+        this(UUIDFetcher.getUUID(player), array);
     }
 
-    public PlayerStatistic(String player) {
-        this.player = UUIDFetcher.getUUID(player);
+    public PlayerStatistic(String player, GameStatistic... array) {
+        this(UUIDFetcher.getUUID(player), array);
     }
 
-    public ArrayList<JsonElement> getStatistics() {
-        return statistics;
+    public static PlayerStatistic decode(String base64) {
+        return SerializationUtil.decodeBase64(base64, PlayerStatistic.class);
+    }
+
+    public UUID getPlayer() {
+        return player;
+    }
+
+    public Collection<GameStatistic> getStatistics() {
+        return statistics.values();
+    }
+
+    public Object getStatistic(String name) {
+        return statistics.get(name).getValue();
     }
 
     public PlayerStatistic addStatistics(GameStatistic... gameStatistics) {
         for (GameStatistic gameStatistic : gameStatistics)
-            this.statistics.add(gameStatistic.save());
+            statistics.put(gameStatistic.getName(), gameStatistic);
         return this;
     }
 
     public PlayerStatistic removeStatistics(GameStatistic... gameStatistics) {
         for (GameStatistic gameStatistic : gameStatistics)
-            this.statistics.remove(gameStatistic.save());
+            statistics.remove(gameStatistic.getName());
         return this;
     }
 
     public boolean hasStatistic(GameStatistic gameStatistic) {
-        return this.statistics.contains(gameStatistic.save());
+        return getStatistic(gameStatistic.getName()) != null;
+    }
+
+    public boolean hasStatistic(String name) {
+        return getStatistic(name) != null;
     }
 
     public String encodeInBase64() {

@@ -1,6 +1,5 @@
 package de.alphahelix.alphalibary.utils;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
@@ -31,13 +30,11 @@ public class Updater {
     }
 
     public String getLatestVersion() {
-        Gson gson = new Gson();
-
         try {
             String latestVersion = readFrom(updateURL + "/versions/latest");
             Type type = new TypeToken<JsonObject>() {
             }.getType();
-            JsonObject object = gson.fromJson(latestVersion, type);
+            JsonObject object = JSONUtil.getGson().fromJson(latestVersion, type);
 
             return object.get("name").getAsString();
         } catch (IOException e) {
@@ -68,7 +65,7 @@ public class Updater {
 
                 byte[] data = new byte[1024];
                 long downloadedFileSize = 0;
-                int i = 0;
+                int i;
 
                 while ((i = in.read(data, 0, 1024)) >= 0) {
                     downloadedFileSize += i;

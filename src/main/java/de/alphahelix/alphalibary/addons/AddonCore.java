@@ -28,7 +28,7 @@ public class AddonCore {
     public static void enable() {
         logger = new AddonLogger();
 
-        addonFolder = new File("plugins/UHC/Addons");
+        addonFolder = new File("plugins/AlphaLibary/Addons");
         if (!addonFolder.exists())
             addonFolder.mkdirs();
 

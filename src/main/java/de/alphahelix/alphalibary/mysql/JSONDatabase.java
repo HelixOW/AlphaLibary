@@ -120,6 +120,18 @@ public class JSONDatabase {
         return vals;
     }
 
+    public ArrayList<String> getKeys() {
+        ArrayList<String> keys = new ArrayList<>();
+
+        if (type == DatabaseType.MYSQL) {
+            this.mySQLDatabase.getList(id.name(), keys::addAll);
+        } else if (type == DatabaseType.SQLITE) {
+            this.sqliteDatabase.getList(id.name(), keys::addAll);
+        }
+
+        return keys;
+    }
+
     public void hasValue(String idValue, DatabaseCallback<Boolean> callback) {
         if (type == DatabaseType.MYSQL)
             this.mySQLDatabase.contains(id.name().toLowerCase(), idValue, callback);

@@ -24,7 +24,7 @@
 
     <groupId>de.alphahelix</groupId>
     <artifactId>alphalibary</artifactId>
-    <version>1.8</version>
+    <version>1.8.1</version>
     <packaging>jar</packaging>
 
     <name>AlphaLibary</name>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.12-R0.1-SNAPSHOT</version>
+            <version>1.12.1-RO.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

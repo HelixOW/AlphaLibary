@@ -23,15 +23,33 @@ public class PlayerStatistic implements Serializable {
     }
 
     public PlayerStatistic(Player player, GameStatistic... array) {
-        this(UUIDFetcher.getUUID(player), array);
+        final UUID[] id = new UUID[1];
+        UUIDFetcher.getUUID(player, id1 -> id[0] = id1);
+
+        this.player = id[0];
+        for (GameStatistic gameStatistic : array) {
+            this.statistics.put(gameStatistic.getName(), gameStatistic);
+        }
     }
 
     public PlayerStatistic(OfflinePlayer player, GameStatistic... array) {
-        this(UUIDFetcher.getUUID(player), array);
+        final UUID[] id = new UUID[1];
+        UUIDFetcher.getUUID(player, id1 -> id[0] = id1);
+
+        this.player = id[0];
+        for (GameStatistic gameStatistic : array) {
+            this.statistics.put(gameStatistic.getName(), gameStatistic);
+        }
     }
 
     public PlayerStatistic(String player, GameStatistic... array) {
-        this(UUIDFetcher.getUUID(player), array);
+        final UUID[] id = new UUID[1];
+        UUIDFetcher.getUUID(player, id1 -> id[0] = id1);
+
+        this.player = id[0];
+        for (GameStatistic gameStatistic : array) {
+            this.statistics.put(gameStatistic.getName(), gameStatistic);
+        }
     }
 
     public static PlayerStatistic decode(String base64) {

@@ -51,6 +51,8 @@ import java.util.UUID;
 
 public class AlphaLibary extends JavaPlugin {
 
+    //Java networking!
+
     private static AlphaLibary instance;
     private static GameProfileBuilder.GameProfileFile gameProfileFile;
     private static ArenaFile arenaFile;
@@ -99,22 +101,23 @@ public class AlphaLibary extends JavaPlugin {
                     Player p = packet.getPlayer();
 
                     if ((int) packet.getPacketValue("a") == p.getEntityId()) {
-                        UUID id = UUIDFetcher.getUUID(p);
-                        double nV = p.getAttribute(Attribute.GENERIC_ARMOR).getValue();
-                        double oV;
+                        UUIDFetcher.getUUID(p, id -> {
+                            double nV = p.getAttribute(Attribute.GENERIC_ARMOR).getValue();
+                            double oV;
 
-                        if (oldValues.containsKey(id)) {
-                            if (oldValues.get(id) != nV) {
-                                oV = oldValues.get(id);
+                            if (oldValues.containsKey(id)) {
+                                if (oldValues.get(id) != nV) {
+                                    oV = oldValues.get(id);
+                                    oldValues.put(id, nV);
+                                    ArmorChangeEvent ace = new ArmorChangeEvent(p, oV, nV);
+                                    Bukkit.getPluginManager().callEvent(ace);
+                                }
+                            } else {
                                 oldValues.put(id, nV);
-                                ArmorChangeEvent ace = new ArmorChangeEvent(p, oV, nV);
+                                ArmorChangeEvent ace = new ArmorChangeEvent(p, 0.0, nV);
                                 Bukkit.getPluginManager().callEvent(ace);
                             }
-                        } else {
-                            oldValues.put(id, nV);
-                            ArmorChangeEvent ace = new ArmorChangeEvent(p, 0.0, nV);
-                            Bukkit.getPluginManager().callEvent(ace);
-                        }
+                        });
                     }
                 }
             }

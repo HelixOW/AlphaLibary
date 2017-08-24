@@ -74,28 +74,19 @@ public class PlayerFakeUtil extends FakeUtilBase {
      * @param loc        {@link Location} where the {@link FakePlayer} should be spawned at
      * @param skin       the {@link OfflinePlayer} which has the skin for the {@link FakePlayer}
      * @param customName of the {@link FakePlayer} inside the file and above his head
-     * @return the new spawned {@link FakePlayer}
      */
-    public static FakePlayer spawnPlayer(final Player p, final Location loc, OfflinePlayer skin, final String customName) {
-        FakePlayer tR = spawnTemporaryPlayer(p, loc, skin, customName);
-
-        if (tR == null)
-            return null;
-
-        FakeRegister.getPlayerLocationsFile().addPlayerToFile(tR);
-
-        return tR;
+    public static void spawnPlayer(Player p, Location loc, OfflinePlayer skin, String customName, SpawnCallback<FakePlayer> callback) {
+        spawnTemporaryPlayer(p, loc, skin, customName, entity -> {
+            FakeRegister.getPlayerLocationsFile().addPlayerToFile(entity);
+            callback.done(entity);
+        });
     }
 
-    public static FakePlayer spawnPlayer(Player p, Location loc, UUID skin, String name) {
-        FakePlayer tR = spawnTemporaryPlayer(p, loc, skin, name);
-
-        if (tR == null)
-            return null;
-
-        FakeRegister.getPlayerLocationsFile().addPlayerToFile(tR);
-
-        return tR;
+    public static void spawnPlayer(Player p, Location loc, UUID skin, String name, SpawnCallback<FakePlayer> callback) {
+        spawnTemporaryPlayer(p, loc, skin, name, entity -> {
+            FakeRegister.getPlayerLocationsFile().addPlayerToFile(entity);
+            callback.done(entity);
+        });
     }
 
     public static FakePlayer spawnPlayer(Player p, Location loc, GameProfile skin, String name) {
@@ -116,24 +107,15 @@ public class PlayerFakeUtil extends FakeUtilBase {
      * @param loc        {@link Location} where the {@link FakePlayer} should be spawned at
      * @param skin       the {@link OfflinePlayer} which has the skin for the {@link FakePlayer}
      * @param customName of the {@link FakePlayer} inside the file and above his head
-     * @return the new spawned {@link FakePlayer}
      */
-    public static FakePlayer spawnTemporaryPlayer(final Player p, final Location loc, OfflinePlayer skin, final String customName) {
-        try {
-            return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(UUIDFetcher.getUUID(skin)), customName);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static void spawnTemporaryPlayer(Player p, Location loc, OfflinePlayer skin, String customName, SpawnCallback<FakePlayer> callback) {
+        UUIDFetcher.getUUID(skin, id ->
+                GameProfileBuilder.fetch(id, gameProfile -> callback.done(spawnTemporaryPlayer(p, loc, gameProfile, customName)))
+        );
     }
 
-    public static FakePlayer spawnTemporaryPlayer(Player p, Location loc, UUID skin, String customName) {
-        try {
-            return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(skin), customName);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static void spawnTemporaryPlayer(Player p, Location loc, UUID skin, String customName, SpawnCallback<FakePlayer> callback) {
+        GameProfileBuilder.fetch(skin, gameProfile -> callback.done(spawnTemporaryPlayer(p, loc, gameProfile, customName)));
     }
 
     public static FakePlayer spawnTemporaryPlayer(final Player p, final Location loc, GameProfile skin, final String customName) {

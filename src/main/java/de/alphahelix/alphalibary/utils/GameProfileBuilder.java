@@ -7,7 +7,7 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
-import org.json.simple.parser.JSONParser;
+import org.bukkit.Bukkit;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.BufferedReader;
@@ -27,9 +27,7 @@ public class GameProfileBuilder {
     private static final String SERVICE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false";
     private static final String JSON_SKIN = "{\"timestamp\":%d,\"profileId\":\"%s\",\"profileName\":\"%s\",\"isPublic\":true,\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}";
     private static final String JSON_CAPE = "{\"timestamp\":%d,\"profileId\":\"%s\",\"profileName\":\"%s\",\"isPublic\":true,\"textures\":{\"SKIN\":{\"url\":\"%s\"},\"CAPE\":{\"url\":\"%s\"}}}";
-
-    private static Gson gson = new GsonBuilder().disableHtmlEscaping().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).registerTypeAdapter(GameProfile.class, new GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
-    private static JSONParser parser = new JSONParser();
+    private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).registerTypeAdapter(GameProfile.class, new GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
 
     private static HashMap<UUID, CachedProfile> cache = new HashMap<>();
 
@@ -41,12 +39,10 @@ public class GameProfileBuilder {
      * Fetches the GameProfile from the Mojang servers
      *
      * @param uuid The player uuid
-     * @return The GameProfile
-     * @throws IOException If something wents wrong while fetching
      * @see GameProfile
      */
-    public static GameProfile fetch(UUID uuid) throws Exception {
-        return fetch(uuid, false);
+    public static void fetch(UUID uuid, GameProfileCallback callback) {
+        fetch(uuid, false, callback);
     }
 
     /**
@@ -56,35 +52,41 @@ public class GameProfileBuilder {
      *
      * @param uuid     The player uuid
      * @param forceNew If true the cache is ignored
-     * @return The GameProfile
-     * @throws IOException If something wents wrong while fetching
      * @see GameProfile
      */
-    public static GameProfile fetch(UUID uuid, boolean forceNew) throws Exception {
-        if (!forceNew && cache.containsKey(uuid) && cache.get(uuid).isValid()) {
-            return cache.get(uuid).profile;
-        } else if (AlphaLibary.getGameProfileFile().getProfile(uuid) != null)
-            return AlphaLibary.getGameProfileFile().getProfile(uuid);
-        else {
-            HttpURLConnection connection = (HttpURLConnection) new URL(String.format(SERVICE_URL, UUIDTypeAdapter.fromUUID(uuid))).openConnection();
-            connection.setReadTimeout(5000);
+    public static void fetch(UUID uuid, boolean forceNew, GameProfileCallback callback) {
+        if (!forceNew && cache.containsKey(uuid) && cache.get(uuid).isValid())
+            callback.done(cache.get(uuid).profile);
+        else if (AlphaLibary.getGameProfileFile().getProfile(uuid) != null)
+            callback.done(AlphaLibary.getGameProfileFile().getProfile(uuid));
+        else Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
+                HttpURLConnection connection = null;
 
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
-
-                GameProfile result = gson.fromJson(json, GameProfile.class);
-                cache.put(uuid, new CachedProfile(result));
-
-                AlphaLibary.getGameProfileFile().addProfile(result);
-
-                return result;
-            } else {
-                if (!forceNew && cache.containsKey(uuid)) {
-                    return cache.get(uuid).profile;
+                try {
+                    connection = (HttpURLConnection) new URL(String.format(SERVICE_URL, UUIDTypeAdapter.fromUUID(uuid))).openConnection();
+                } catch (IOException ignored) {
                 }
-                throw new Exception("Can't retrieve GameProfile for UUID " + uuid);
-            }
-        }
+
+                if (connection == null) return;
+
+                connection.setReadTimeout(5000);
+
+                try {
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
+
+                        GameProfile result = GSON.fromJson(json, GameProfile.class);
+                        cache.put(uuid, new CachedProfile(result));
+
+                        AlphaLibary.getGameProfileFile().addProfile(result);
+
+                        callback.done(result);
+                    } else if (!forceNew && cache.containsKey(uuid))
+                        callback.done(cache.get(uuid).profile);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
     }
 
     /**

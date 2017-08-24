@@ -42,7 +42,7 @@ public abstract class PacketAbstract {
     }
 
     /**
-     * Modify a value of the packet (without throwing an exception)
+     * Modify a value of the packet (without throwing an exceptions)
      *
      * @param field Name of the field to modify
      * @param value Value to be assigned to the field
@@ -70,7 +70,7 @@ public abstract class PacketAbstract {
     }
 
     /**
-     * Modify a value of the packet (without throwing an exception)
+     * Modify a value of the packet (without throwing an exceptions)
      *
      * @param index field-index in the packet class
      * @param value value to be assigned to the field
@@ -97,7 +97,7 @@ public abstract class PacketAbstract {
     }
 
     /**
-     * Get a value of the packet (without throwing an exception)
+     * Get a value of the packet (without throwing an exceptions)
      *
      * @param field Name of the field
      * @return current value of the field
@@ -125,7 +125,7 @@ public abstract class PacketAbstract {
     }
 
     /**
-     * Get a value of the packet (without throwing an exception)
+     * Get a value of the packet (without throwing an exceptions)
      *
      * @param index field-index in the packet class
      * @return value of the field

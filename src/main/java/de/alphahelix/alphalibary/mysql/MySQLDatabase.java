@@ -114,7 +114,13 @@ public class MySQLDatabase implements Serializable {
      * @return if the {@link Player} is inside the table
      */
     public boolean containsPlayer(Player p) {
-        return getResult("uuid", UUIDFetcher.getUUID(p).toString(), "uuid") != null;
+        final UUID[] id = new UUID[1];
+
+        UUIDFetcher.getUUID(p, id1 ->
+                id[0] = id1
+        );
+
+        return getResult("uuid", id[0].toString(), "uuid") != null;
     }
 
     /**
@@ -124,7 +130,13 @@ public class MySQLDatabase implements Serializable {
      * @return if the {@link Player} is inside the table
      */
     public boolean containsPlayer(String playername) {
-        return getResult("uuid", UUIDFetcher.getUUID(playername).toString(), "uuid") != null;
+        final UUID[] id = new UUID[1];
+
+        UUIDFetcher.getUUID(playername, id1 ->
+                id[0] = id1
+        );
+
+        return getResult("uuid", id[0].toString(), "uuid") != null;
     }
 
     /**

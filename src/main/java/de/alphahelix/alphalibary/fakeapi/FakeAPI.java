@@ -30,14 +30,16 @@ import de.alphahelix.alphalibary.nms.REnumAction;
 import de.alphahelix.alphalibary.nms.REnumHand;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.UUID;
 
 public class FakeAPI extends AlphaLibary {
@@ -90,7 +92,7 @@ public class FakeAPI extends AlphaLibary {
 
     public static boolean isFakeEntityInRange(Player p, int range) {
         if (!getFakeEntities().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeEntity fakeEntity : getFakeEntities().get(p.getName())) {
                 if ((b.getX() == fakeEntity.getCurrentlocation().getBlockX()
                         && b.getY() == fakeEntity.getCurrentlocation().getBlockY()
@@ -107,7 +109,7 @@ public class FakeAPI extends AlphaLibary {
     public static FakeEntity getLookedAtFakeEntity(Player p, int range) throws NoSuchFakeEntityException {
         if (!getFakeEntities().containsKey(p.getName())) throw new NoSuchFakeEntityException();
 
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeEntity fakeEntity : getFakeEntities().get(p.getName())) {
                 if ((b.getX() == fakeEntity.getCurrentlocation().getBlockX()
                         && b.getY() == fakeEntity.getCurrentlocation().getBlockY()
@@ -212,7 +214,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static boolean isFakePlayerInRange(Player p, int range) {
         if (!getFakePlayers().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakePlayer fakePlayer : getFakePlayers().get(p.getName())) {
                 if ((b.getX() == fakePlayer.getCurrentlocation().getBlockX()
                         && b.getY() == fakePlayer.getCurrentlocation().getBlockY()
@@ -237,7 +239,7 @@ public class FakeAPI extends AlphaLibary {
     public static FakePlayer getLookedAtFakePlayer(Player p, int range) throws NoSuchFakeEntityException {
         if (!getFakePlayers().containsKey(p.getName())) throw new NoSuchFakeEntityException();
 
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakePlayer fakePlayer : getFakePlayers().get(p.getName())) {
                 if ((b.getX() == fakePlayer.getCurrentlocation().getBlockX()
                         && b.getY() == fakePlayer.getCurrentlocation().getBlockY()
@@ -411,7 +413,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static boolean isFakeArmorstandInRange(Player p, int range) {
         if (!getFakeArmorstands().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeArmorstand fakeArmorstand : getFakeArmorstands().get(p.getName())) {
                 if ((b.getX() == fakeArmorstand.getCurrentlocation().getBlockX()
                         && b.getY() == fakeArmorstand.getCurrentlocation().getBlockY()
@@ -435,7 +437,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static FakeArmorstand getLookedAtFakeArmorstand(Player p, int range) throws NoSuchFakeEntityException {
         if (!getFakeArmorstands().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeArmorstand fakeArmorstand : getFakeArmorstands().get(p.getName())) {
                 if ((b.getX() == fakeArmorstand.getCurrentlocation().getBlockX()
                         && b.getY() == fakeArmorstand.getCurrentlocation().getBlockY()
@@ -594,7 +596,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static boolean isFakeEndercrystalInRange(Player p, int range) {
         if (!getFakeEndercrystals().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeEndercrystal fakeEndercrystal : getFakeEndercrystals().get(p.getName())) {
                 if ((b.getX() == fakeEndercrystal.getCurrentlocation().getBlockX()
                         && b.getY() == fakeEndercrystal.getCurrentlocation().getBlockY()
@@ -621,7 +623,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static FakeEndercrystal getLookedAtFakeEndercrystal(Player p, int range) throws NoSuchFakeEntityException {
         if (!getFakeEndercrystals().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeEndercrystal fakeEndercrystal : getFakeEndercrystals().get(p.getName())) {
                 if ((b.getX() == fakeEndercrystal.getCurrentlocation().getBlockX()
                         && b.getY() == fakeEndercrystal.getCurrentlocation().getBlockY()
@@ -783,7 +785,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static boolean isFakeItemInRange(Player p, int range) {
         if (!getFakeItems().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeItem fakeItem : getFakeItems().get(p.getName())) {
                 if ((b.getX() == fakeItem.getCurrentlocation().getBlockX()
                         && b.getY() == fakeItem.getCurrentlocation().getBlockY()
@@ -807,7 +809,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static FakeItem getFakeItemInRange(Player p, int range) throws NoSuchFakeEntityException {
         if (!getFakeItems().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeItem fakeItem : getFakeItems().get(p.getName())) {
                 if ((b.getX() == fakeItem.getCurrentlocation().getBlockX()
                         && b.getY() == fakeItem.getCurrentlocation().getBlockY()
@@ -965,7 +967,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static boolean isFakeMobInRange(Player p, int range) {
         if (!getFakeMobs().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeMob fakeMob : getFakeMobs().get(p.getName())) {
                 if ((b.getX() == fakeMob.getCurrentlocation().getBlockX()
                         && b.getY() == fakeMob.getCurrentlocation().getBlockY()
@@ -989,7 +991,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static FakeMob getLookedAtFakeMob(Player p, int range) throws NoSuchFakeEntityException {
         if (!getFakeMobs().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeMob fakeMob : getFakeMobs().get(p.getName())) {
                 if ((b.getX() == fakeMob.getCurrentlocation().getBlockX()
                         && b.getY() == fakeMob.getCurrentlocation().getBlockY()
@@ -1147,7 +1149,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static boolean isFakeBigItemInRange(Player p, int range) {
         if (!getFakeBigItems().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeBigItem fakeBigItem : getFakeBigItems().get(p.getName())) {
                 if ((b.getX() == fakeBigItem.getCurrentlocation().getBlockX()
                         && b.getY() == fakeBigItem.getCurrentlocation().getBlockY()
@@ -1171,7 +1173,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static FakeBigItem getFakeBigItemInRange(Player p, int range) throws NoSuchFakeEntityException {
         if (!getFakeBigItems().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeBigItem fakeBigItem : getFakeBigItems().get(p.getName())) {
                 if ((b.getX() == fakeBigItem.getCurrentlocation().getBlockX()
                         && b.getY() == fakeBigItem.getCurrentlocation().getBlockY()
@@ -1329,7 +1331,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static boolean isFakeXPOrbInRange(Player p, int range) {
         if (!getFakeXpOrbs().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeXPOrb fakeXPOrb : getFakeXpOrbs().get(p.getName())) {
                 if ((b.getX() == fakeXPOrb.getCurrentlocation().getBlockX()
                         && b.getY() == fakeXPOrb.getCurrentlocation().getBlockY()
@@ -1353,7 +1355,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static FakeXPOrb getFakeXPOrbInRange(Player p, int range) throws NoSuchFakeEntityException {
         if (!getFakeXpOrbs().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakeXPOrb fakeXPOrb : getFakeXpOrbs().get(p.getName())) {
                 if ((b.getX() == fakeXPOrb.getCurrentlocation().getBlockX()
                         && b.getY() == fakeXPOrb.getCurrentlocation().getBlockY()
@@ -1511,7 +1513,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static boolean isFakePaintingInRange(Player p, int range) {
         if (!getFakePaintings().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakePainting fakePainting : getFakePaintings().get(p.getName())) {
                 if ((b.getX() == fakePainting.getCurrentlocation().getBlockX()
                         && b.getY() == fakePainting.getCurrentlocation().getBlockY()
@@ -1535,7 +1537,7 @@ public class FakeAPI extends AlphaLibary {
      */
     public static FakePainting getFakePaintingInRange(Player p, int range) throws NoSuchFakeEntityException {
         if (!getFakePaintings().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (Block b : p.getLineOfSight((Set<Material>) null, range)) {
+        for (Block b : p.getLineOfSight(null, range)) {
             for (FakePainting fakePainting : getFakePaintings().get(p.getName())) {
                 if ((b.getX() == fakePainting.getCurrentlocation().getBlockX()
                         && b.getY() == fakePainting.getCurrentlocation().getBlockY()
@@ -1703,9 +1705,8 @@ public class FakeAPI extends AlphaLibary {
 
         Bukkit.getPluginManager().registerEvents(PACKET_LISTENER_API, AlphaLibary.getInstance());
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            getEntityIds().put(p.getEntityId(), UUIDFetcher.getUUID(p));
-        }
+
+        Bukkit.getOnlinePlayers().forEach(o -> UUIDFetcher.getUUID(o, id -> getEntityIds().put(o.getEntityId(), id)));
 
         PacketListenerAPI.addPacketHandler(new PacketHandler() {
             @PacketOptions(forcePlayer = true)

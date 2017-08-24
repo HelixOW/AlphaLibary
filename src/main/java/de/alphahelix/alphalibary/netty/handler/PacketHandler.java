@@ -78,7 +78,7 @@ public abstract class PacketHandler {
                 }
                 handler.onSend(packet);
             } catch (Exception e) {
-                System.err.println("[PacketListenerAPI] An exception occured while trying to execute 'onSend': " + e.getMessage());
+                System.err.println("[PacketListenerAPI] An exceptions occured while trying to execute 'onSend': " + e.getMessage());
                 e.printStackTrace(System.err);
             }
         }
@@ -100,7 +100,7 @@ public abstract class PacketHandler {
                 }
                 handler.onReceive(packet);
             } catch (Exception e) {
-                System.err.println("[PacketListenerAPI] An exception occured while trying to execute 'onReceive': " + e.getMessage());
+                System.err.println("[PacketListenerAPI] An exceptions occured while trying to execute 'onReceive': " + e.getMessage());
                 e.printStackTrace(System.err);
             }
         }

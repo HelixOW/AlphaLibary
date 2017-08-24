@@ -31,7 +31,7 @@ public class FakeEventListener extends SimpleListener {
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
-        FakeAPI.getEntityIds().put(p.getEntityId(), UUIDFetcher.getUUID(p));
+        UUIDFetcher.getUUID(p, id -> FakeAPI.getEntityIds().put(p.getEntityId(), id));
 
         for (FakeArmorstand stands : FakeRegister.getArmorstandLocationsFile().getFakeArmorstandFromFile()) {
             ArmorstandFakeUtil.spawnTemporaryArmorstand(
@@ -84,7 +84,9 @@ public class FakeEventListener extends SimpleListener {
                     p,
                     player.getStartLocation(),
                     player.getSkinUUID(),
-                    player.getName()
+                    player.getName(),
+                    entity -> {
+                    }
             );
         }
 

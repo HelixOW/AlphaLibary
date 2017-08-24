@@ -117,7 +117,9 @@ public class AsyncMySQLDatabase {
      * @return if the {@link Player} is inside the table
      */
     public void containsPlayer(Player p, DatabaseCallback<Boolean> callback) {
-        getResult("uuid", UUIDFetcher.getUUID(p).toString(), "uuid", result -> callback.done(result != null));
+        UUIDFetcher.getUUID(p, id ->
+                getResult("uuid", id.toString(), "uuid", result -> callback.done(result != null))
+        );
     }
 
     /**
@@ -127,7 +129,9 @@ public class AsyncMySQLDatabase {
      * @return if the {@link Player} is inside the table
      */
     public void containsPlayer(String playername, DatabaseCallback<Boolean> callback) {
-        getResult("uuid", UUIDFetcher.getUUID(playername).toString(), "uuid", result -> callback.done(result != null));
+        UUIDFetcher.getUUID(playername, id ->
+                getResult("uuid", id.toString(), "uuid", result -> callback.done(result != null))
+        );
     }
 
     /**

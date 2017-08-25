@@ -17,7 +17,10 @@ public class ItemAnnotations implements IAnnotation {
 
             if (item == null) continue;
 
-            AnnotatedItem annotatedItem = new AnnotatedItem(clazzObj, field, item);
+            Skull skull = field.getAnnotation(Skull.class);
+            Color color = field.getAnnotation(Color.class);
+
+            AnnotatedItem annotatedItem = new AnnotatedItem(clazzObj, field, item, skull, color);
             registeredItems.add(annotatedItem.apply());
         }
 

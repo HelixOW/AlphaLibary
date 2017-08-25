@@ -90,22 +90,25 @@ public class UUIDFetcher {
                                 PlayerUUID.class);
 
                 if (player == null) {
-                    callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId());
+                    Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
+                            callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId()));
                     return;
                 }
 
                 if (player.getId() == null) {
-                    callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId());
+                    Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
+                            callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId()));
                     return;
                 }
 
                 uuids.put(finalName, player.getId());
 
-                callback.done(player.getId());
+                Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
+                        callback.done(player.getId()));
             } catch (Exception e) {
                 Bukkit.getLogger().log(Level.SEVERE, "Your server has no connection to the mojang servers or is runnig slowly. Using offline UUID now");
-                callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId());
-                callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId());
+                Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
+                        callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId()));
             }
         });
     }
@@ -133,23 +136,129 @@ public class UUIDFetcher {
                 PlayerUUID currentName = allUserNames[allUserNames.length - 1];
 
                 if (currentName == null) {
-                    callback.done(Bukkit.getOfflinePlayer(uuid).getName());
+                    Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
+                            callback.done(Bukkit.getOfflinePlayer(uuid).getName()));
                     return;
                 }
 
                 if (currentName.getName() == null) {
-                    callback.done(Bukkit.getOfflinePlayer(uuid).getName());
+                    Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
+                            callback.done(Bukkit.getOfflinePlayer(uuid).getName()));
                     return;
                 }
 
                 names.put(uuid, currentName.getName());
 
-                callback.done(currentName.getName());
+                Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
+                        callback.done(currentName.getName()));
             } catch (Exception e) {
                 Bukkit.getLogger().log(Level.SEVERE, "Your server has no connection to the mojang servers or is runnig slowly. Using offline UUID now");
-                callback.done(Bukkit.getOfflinePlayer(uuid).getName());
+                Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
+                        callback.done(Bukkit.getOfflinePlayer(uuid).getName()));
             }
         });
+    }
+
+    /**
+     * Gets the {@link UUID} of a {@link String}
+     *
+     * @param p the {@link Player}
+     * @see UUIDFetcher#getUUID(Player, UUIDCallback)
+     * @deprecated not async
+     */
+    public static UUID getUUID(Player p) {
+        return getUUID(p.getName());
+    }
+
+    /**
+     * Gets the {@link UUID} of a {@link String}
+     *
+     * @param p the {@link OfflinePlayer}
+     * @see UUIDFetcher#getUUID(OfflinePlayer, UUIDCallback)
+     * @deprecated not async
+     */
+    public static UUID getUUID(OfflinePlayer p) {
+        return getUUID(p.getName());
+    }
+
+    /**
+     * Gets the {@link UUID} of a {@link String}
+     *
+     * @param name the name of the {@link Player}
+     * @see UUIDFetcher#getName(UUID, NameCallback)
+     * @deprecated not async
+     */
+    public static UUID getUUID(String name) {
+        if (name == null)
+            return null;
+
+        name = name.toLowerCase();
+
+        if (uuids.containsKey(name))
+            return uuids.get(name);
+
+        String finalName = name;
+
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(
+                    String.format(UUID_URL, finalName, System.currentTimeMillis() / 1000)).openConnection();
+            connection.setReadTimeout(5000);
+
+            PlayerUUID player =
+                    GSON.fromJson(new BufferedReader(new InputStreamReader(connection.getInputStream())),
+                            PlayerUUID.class);
+
+            if (player == null)
+                return Bukkit.getOfflinePlayer(finalName).getUniqueId();
+
+
+            if (player.getId() == null)
+                return Bukkit.getOfflinePlayer(finalName).getUniqueId();
+
+
+            uuids.put(finalName, player.getId());
+
+            return player.getId();
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "Your server has no connection to the mojang servers or is runnig slowly. Using offline UUID now");
+
+            return Bukkit.getOfflinePlayer(finalName).getUniqueId();
+        }
+    }
+
+    /**
+     * Gets the name of a {@link UUID}
+     *
+     * @param uuid the {@link UUID} of the {@link Player}
+     * @see UUIDFetcher#getName(UUID, NameCallback)
+     * @deprecated not async
+     */
+    public static String getName(UUID uuid) {
+        if (names.containsKey(uuid))
+            return names.get(uuid);
+
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(
+                    String.format(NAME_URL, UUIDTypeAdapter.fromUUID(uuid))).openConnection();
+            connection.setReadTimeout(5000);
+
+            PlayerUUID[] allUserNames = GSON.fromJson(
+                    new BufferedReader(new InputStreamReader(connection.getInputStream())), PlayerUUID[].class);
+            PlayerUUID currentName = allUserNames[allUserNames.length - 1];
+
+            if (currentName == null)
+                return Bukkit.getOfflinePlayer(uuid).getName();
+
+            if (currentName.getName() == null)
+                return Bukkit.getOfflinePlayer(uuid).getName();
+
+            names.put(uuid, currentName.getName());
+
+            return currentName.getName();
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "Your server has no connection to the mojang servers or is runnig slowly. Using offline UUID now");
+            return Bukkit.getOfflinePlayer(uuid).getName();
+        }
     }
 }
 

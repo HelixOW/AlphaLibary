@@ -40,6 +40,7 @@ public class ColorData implements ItemData {
         this.red = red;
         this.blue = blue;
         this.green = green;
+        dyeColor = DyeColor.getByColor(Color.fromRGB(red, green, blue));
     }
 
     /**
@@ -62,6 +63,8 @@ public class ColorData implements ItemData {
                 LeatherArmorMeta armor = (LeatherArmorMeta) meta;
 
                 armor.setColor(Color.fromRGB(red, green, blue));
+
+                applyOn.setItemMeta(armor);
             } catch (IllegalArgumentException e) {
                 throw new WrongDataException(this);
             }

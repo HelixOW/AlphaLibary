@@ -25,6 +25,8 @@ import java.lang.reflect.Method;
 
 public class FakeUtilBase {
 
+    private static Class<?> pathfnderGoalSelector;
+
     private static Constructor<?> packetPlayOutSpawnEntity;
     private static Constructor<?> packetPlayOutSpawnEntityLiving;
     private static Constructor<?> packetPlayOutNamedEntitySpawn;
@@ -38,8 +40,8 @@ public class FakeUtilBase {
     private static Constructor<?> packetPlayOutAnimation;
     private static Constructor<?> packetPlayOutMount;
     private static Constructor<?> packetPlayOutEntityStatus;
-	private static Constructor<?> packetPlayOutOpenSignEditor;
-	private static Constructor<?> packetPlayOutTileEntityData;
+    private static Constructor<?> packetPlayOutOpenSignEditor;
+    private static Constructor<?> packetPlayOutTileEntityData;
 
     private static Method setLocation;
     private static Method setInvisible;
@@ -54,45 +56,51 @@ public class FakeUtilBase {
     private static Method setBaby;
     private static Method setVariant;
     private static Method setGravity;
-	private static Method packetDataSerializerA;
-	private static Method itemstackAsBukkitCopy;
+    private static Method packetDataSerializerA;
+    private static Method itemstackAsBukkitCopy;
 
     static {
         try {
-                packetPlayOutRelEntityMove = ReflectionUtil.getNmsClass("PacketPlayOutEntity$PacketPlayOutRelEntityMove").getConstructor(int.class, long.class, long.class, long.class, boolean.class);
-                packetPlayOutEntityTeleport = ReflectionUtil.getNmsClass("PacketPlayOutEntityTeleport").getConstructor(ReflectionUtil.getNmsClass("Entity"));
-                packetPlayOutEntityEquipment = ReflectionUtil.getNmsClass("PacketPlayOutEntityEquipment").getConstructor(int.class, ReflectionUtil.getNmsClass("EnumItemSlot"), ReflectionUtil.getNmsClass("ItemStack"));
-                packetPlayOutSpawnEntity = ReflectionUtil.getNmsClass("PacketPlayOutSpawnEntity").getConstructor(ReflectionUtil.getNmsClass("Entity"), int.class);
-                packetPlayOutSpawnEntityLiving = ReflectionUtil.getNmsClass("PacketPlayOutSpawnEntityLiving").getConstructor(ReflectionUtil.getNmsClass("EntityLiving"));
-                packetPlayOutEntityDestroy = ReflectionUtil.getNmsClass("PacketPlayOutEntityDestroy").getConstructor(int[].class);
-                packetPlayOutEntityMetadata = ReflectionUtil.getNmsClass("PacketPlayOutEntityMetadata").getConstructor(int.class, ReflectionUtil.getNmsClass("DataWatcher"), boolean.class);
-                packetPlayOutEntityHeadRotation = ReflectionUtil.getNmsClass("PacketPlayOutEntityHeadRotation").getConstructor(ReflectionUtil.getNmsClass("Entity"), byte.class);
-                packetPlayOutEntityLook = ReflectionUtil.getNmsClass("PacketPlayOutEntity$PacketPlayOutEntityLook").getConstructor(int.class, byte.class, byte.class, boolean.class);
-                packetPlayOutAnimation = ReflectionUtil.getNmsClass("PacketPlayOutAnimation").getConstructor(ReflectionUtil.getNmsClass("Entity"), int.class);
-                packetPlayOutNamedEntitySpawn = ReflectionUtil.getNmsClass("PacketPlayOutNamedEntitySpawn").getConstructor(ReflectionUtil.getNmsClass("EntityHuman"));
-                packetPlayOutMount = ReflectionUtil.getNmsClass("PacketPlayOutMount").getConstructor(ReflectionUtil.getNmsClass("Entity"));
-                packetPlayOutEntityStatus = ReflectionUtil.getNmsClass("PacketPlayOutEntityStatus").getConstructor(ReflectionUtil.getNmsClass("Entity"), byte.class);
-	        packetPlayOutOpenSignEditor = ReflectionUtil.getNmsClass("PacketPlayOutOpenSignEditor").getConstructor(ReflectionUtil.getNmsClass("BlockPosition"));
-	        packetPlayOutTileEntityData = ReflectionUtil.getNmsClass("PacketPlayOutTileEntityData").getConstructor(ReflectionUtil.getNmsClass("BlockPosition"), int.class, ReflectionUtil.getNmsClass("NBTTagCompound"));
+            pathfnderGoalSelector = ReflectionUtil.getNmsClass("PathfinderGoalSelector");
 
-                setLocation = ReflectionUtil.getNmsClass("Entity").getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
-                setInvisible = ReflectionUtil.getNmsClass("Entity").getMethod("setInvisible", boolean.class);
-                setCustomName = ReflectionUtil.getNmsClass("Entity").getMethod("setCustomName", String.class);
-                setCustomNameVisible = ReflectionUtil.getNmsClass("Entity").getMethod("setCustomNameVisible", boolean.class);
-                getDataWatcher = ReflectionUtil.getNmsClass("Entity").getMethod("getDataWatcher");
-                watch = ReflectionUtil.getNmsClass("DataWatcher").getMethod("set", ReflectionUtil.getNmsClass("DataWatcherObject"), Object.class);
-                setItemStack = ReflectionUtil.getNmsClass("EntityItem").getMethod("setItemStack", ReflectionUtil.getNmsClass("ItemStack"));
-                setPassenger = ReflectionUtil.getNmsClass("Entity").getMethod("startRiding", ReflectionUtil.getNmsClass("Entity"));
-                stopRiding = ReflectionUtil.getNmsClass("Entity").getMethod("stopRiding");
-                setBaby = ReflectionUtil.getNmsClass("EntityAgeable").getMethod("setAge", int.class);
-                setVariant = ReflectionUtil.getNmsClass("EntityLlama").getMethod("setVariant", int.class);
-                setGravity = ReflectionUtil.getNmsClass("Entity").getMethod("setNoGravity", boolean.class);
-	        packetDataSerializerA = ReflectionUtil.getNmsClass("PacketDataSerializer").getMethod("a");
-	        itemstackAsBukkitCopy = ReflectionUtil.getCraftBukkitClass("inventory.CraftItemStack").getMethod("asBukkitCopy", ReflectionUtil.getNmsClass("ItemStack"));
-        } catch (NoSuchMethodException e) {
+            packetPlayOutRelEntityMove = ReflectionUtil.getNmsClass("PacketPlayOutEntity$PacketPlayOutRelEntityMove").getConstructor(int.class, long.class, long.class, long.class, boolean.class);
+            packetPlayOutEntityTeleport = ReflectionUtil.getNmsClass("PacketPlayOutEntityTeleport").getConstructor(ReflectionUtil.getNmsClass("Entity"));
+            packetPlayOutEntityEquipment = ReflectionUtil.getNmsClass("PacketPlayOutEntityEquipment").getConstructor(int.class, ReflectionUtil.getNmsClass("EnumItemSlot"), ReflectionUtil.getNmsClass("ItemStack"));
+            packetPlayOutSpawnEntity = ReflectionUtil.getNmsClass("PacketPlayOutSpawnEntity").getConstructor(ReflectionUtil.getNmsClass("Entity"), int.class);
+            packetPlayOutSpawnEntityLiving = ReflectionUtil.getNmsClass("PacketPlayOutSpawnEntityLiving").getConstructor(ReflectionUtil.getNmsClass("EntityLiving"));
+            packetPlayOutEntityDestroy = ReflectionUtil.getNmsClass("PacketPlayOutEntityDestroy").getConstructor(int[].class);
+            packetPlayOutEntityMetadata = ReflectionUtil.getNmsClass("PacketPlayOutEntityMetadata").getConstructor(int.class, ReflectionUtil.getNmsClass("DataWatcher"), boolean.class);
+            packetPlayOutEntityHeadRotation = ReflectionUtil.getNmsClass("PacketPlayOutEntityHeadRotation").getConstructor(ReflectionUtil.getNmsClass("Entity"), byte.class);
+            packetPlayOutEntityLook = ReflectionUtil.getNmsClass("PacketPlayOutEntity$PacketPlayOutEntityLook").getConstructor(int.class, byte.class, byte.class, boolean.class);
+            packetPlayOutAnimation = ReflectionUtil.getNmsClass("PacketPlayOutAnimation").getConstructor(ReflectionUtil.getNmsClass("Entity"), int.class);
+            packetPlayOutNamedEntitySpawn = ReflectionUtil.getNmsClass("PacketPlayOutNamedEntitySpawn").getConstructor(ReflectionUtil.getNmsClass("EntityHuman"));
+            packetPlayOutMount = ReflectionUtil.getNmsClass("PacketPlayOutMount").getConstructor(ReflectionUtil.getNmsClass("Entity"));
+            packetPlayOutEntityStatus = ReflectionUtil.getNmsClass("PacketPlayOutEntityStatus").getConstructor(ReflectionUtil.getNmsClass("Entity"), byte.class);
+            packetPlayOutOpenSignEditor = ReflectionUtil.getNmsClass("PacketPlayOutOpenSignEditor").getConstructor(ReflectionUtil.getNmsClass("BlockPosition"));
+            packetPlayOutTileEntityData = ReflectionUtil.getNmsClass("PacketPlayOutTileEntityData").getConstructor(ReflectionUtil.getNmsClass("BlockPosition"), int.class, ReflectionUtil.getNmsClass("NBTTagCompound"));
+
+            setLocation = ReflectionUtil.getNmsClass("Entity").getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
+            setInvisible = ReflectionUtil.getNmsClass("Entity").getMethod("setInvisible", boolean.class);
+            setCustomName = ReflectionUtil.getNmsClass("Entity").getMethod("setCustomName", String.class);
+            setCustomNameVisible = ReflectionUtil.getNmsClass("Entity").getMethod("setCustomNameVisible", boolean.class);
+            getDataWatcher = ReflectionUtil.getNmsClass("Entity").getMethod("getDataWatcher");
+            watch = ReflectionUtil.getNmsClass("DataWatcher").getMethod("set", ReflectionUtil.getNmsClass("DataWatcherObject"), Object.class);
+            setItemStack = ReflectionUtil.getNmsClass("EntityItem").getMethod("setItemStack", ReflectionUtil.getNmsClass("ItemStack"));
+            setPassenger = ReflectionUtil.getNmsClass("Entity").getMethod("startRiding", ReflectionUtil.getNmsClass("Entity"));
+            stopRiding = ReflectionUtil.getNmsClass("Entity").getMethod("stopRiding");
+            setBaby = ReflectionUtil.getNmsClass("EntityAgeable").getMethod("setAge", int.class);
+            setVariant = ReflectionUtil.getNmsClass("EntityLlama").getMethod("setVariant", int.class);
+            setGravity = ReflectionUtil.getNmsClass("Entity").getMethod("setNoGravity", boolean.class);
+            packetDataSerializerA = ReflectionUtil.getNmsClass("PacketDataSerializer").getMethod("a");
+            itemstackAsBukkitCopy = ReflectionUtil.getCraftBukkitClass("inventory.CraftItemStack").getMethod("asBukkitCopy", ReflectionUtil.getNmsClass("ItemStack"));
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public static Class<?> getPathfnderGoalSelector() {
+        return pathfnderGoalSelector;
     }
 
     public static Constructor<?> getPacketPlayOutSpawnEntity() {
@@ -147,16 +155,16 @@ public class FakeUtilBase {
         return packetPlayOutEntityStatus;
     }
 
-	public static Constructor<?> getPacketPlayOutOpenSignEditor() {
-		return packetPlayOutOpenSignEditor;
-	}
+    public static Constructor<?> getPacketPlayOutOpenSignEditor() {
+        return packetPlayOutOpenSignEditor;
+    }
 
-	public static Constructor<?> getPacketPlayOutTileEntityData() {
-		return packetPlayOutTileEntityData;
-	}
+    public static Constructor<?> getPacketPlayOutTileEntityData() {
+        return packetPlayOutTileEntityData;
+    }
 
-	public static Method setLocation() {
-		return setLocation;
+    public static Method setLocation() {
+        return setLocation;
     }
 
     public static Method setInvisible() {
@@ -207,11 +215,11 @@ public class FakeUtilBase {
         return setGravity;
     }
 
-	public static Method packetDataSerializerA() {
-		return packetDataSerializerA;
-	}
+    public static Method packetDataSerializerA() {
+        return packetDataSerializerA;
+    }
 
-	public static Method itemstackAsBukkitCopy() {
-		return itemstackAsBukkitCopy;
-	}
+    public static Method itemstackAsBukkitCopy() {
+        return itemstackAsBukkitCopy;
+    }
 }

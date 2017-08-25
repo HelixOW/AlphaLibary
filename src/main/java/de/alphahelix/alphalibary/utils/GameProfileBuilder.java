@@ -34,8 +34,6 @@ public class GameProfileBuilder {
     private static long cacheTime = -1;
 
     /**
-     * Don't run in main thread!
-     * <p>
      * Fetches the GameProfile from the Mojang servers
      *
      * @param uuid The player uuid
@@ -48,6 +46,17 @@ public class GameProfileBuilder {
     /**
      * Don't run in main thread!
      * <p>
+     * Fetches the GameProfile from the Mojang servers
+     *
+     * @param uuid The player uuid
+     * @see GameProfileBuilder#fetch(UUID, GameProfileCallback)
+     * @deprecated not async!
+     */
+    public static GameProfile fetch(UUID uuid) {
+        return fetch(uuid, false);
+    }
+
+    /**
      * Fetches the GameProfile from the Mojang servers
      *
      * @param uuid     The player uuid
@@ -80,13 +89,57 @@ public class GameProfileBuilder {
 
                         AlphaLibary.getGameProfileFile().addProfile(result);
 
-                        callback.done(result);
+                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(result));
                     } else if (!forceNew && cache.containsKey(uuid))
-                        callback.done(cache.get(uuid).profile);
+                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(cache.get(uuid).profile));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
+    }
+
+    /**
+     * Fetches the GameProfile from the Mojang servers
+     *
+     * @param uuid     The player uuid
+     * @param forceNew If true the cache is ignored
+     * @see GameProfileBuilder#fetch(UUID, boolean, GameProfileCallback)
+     * @deprecated not async!
+     */
+    public static GameProfile fetch(UUID uuid, boolean forceNew) {
+        if (!forceNew && cache.containsKey(uuid) && cache.get(uuid).isValid())
+            return cache.get(uuid).profile;
+        else if (AlphaLibary.getGameProfileFile().getProfile(uuid) != null)
+            return AlphaLibary.getGameProfileFile().getProfile(uuid);
+        else {
+            HttpURLConnection connection = null;
+
+            try {
+                connection = (HttpURLConnection) new URL(String.format(SERVICE_URL, UUIDTypeAdapter.fromUUID(uuid))).openConnection();
+            } catch (IOException ignored) {
+            }
+
+            if (connection == null) return null;
+
+            connection.setReadTimeout(5000);
+
+            try {
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
+
+                    GameProfile result = GSON.fromJson(json, GameProfile.class);
+                    cache.put(uuid, new CachedProfile(result));
+
+                    AlphaLibary.getGameProfileFile().addProfile(result);
+
+                    return result;
+                } else if (!forceNew && cache.containsKey(uuid))
+                    return cache.get(uuid).profile;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     /**

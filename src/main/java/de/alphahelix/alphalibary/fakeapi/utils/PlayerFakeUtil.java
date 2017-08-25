@@ -82,6 +82,39 @@ public class PlayerFakeUtil extends FakeUtilBase {
         });
     }
 
+    /**
+     * Spawns in a {@link FakePlayer} for the {@link Player}
+     *
+     * @param p          the {@link Player} to spawn the {@link FakePlayer} for
+     * @param loc        {@link Location} where the {@link FakePlayer} should be spawned at
+     * @param skin       the {@link OfflinePlayer} which has the skin for the {@link FakePlayer}
+     * @param customName of the {@link FakePlayer} inside the file and above his head
+     * @see PlayerFakeUtil#spawnPlayer(Player, Location, OfflinePlayer, String, SpawnCallback)
+     * @deprecated not async {@link UUID} retrieving
+     */
+    public static FakePlayer spawnPlayer(Player p, Location loc, OfflinePlayer skin, String customName) {
+        FakePlayer player = spawnTemporaryPlayer(p, loc, skin, customName);
+
+        if (player != null)
+            FakeRegister.getPlayerLocationsFile().addPlayerToFile(player);
+
+        return player;
+    }
+
+    /**
+     * @see PlayerFakeUtil#spawnPlayer(Player, Location, UUID, String, SpawnCallback)
+     * @deprecated not async {@link UUID} retrieving
+     */
+    public static FakePlayer spawnPlayer(Player p, Location loc, UUID skin, String name) {
+        FakePlayer player = spawnTemporaryPlayer(p, loc, skin, name);
+
+        if (player != null)
+            FakeRegister.getPlayerLocationsFile().addPlayerToFile(player);
+
+        return player;
+    }
+
+
     public static void spawnPlayer(Player p, Location loc, UUID skin, String name, SpawnCallback<FakePlayer> callback) {
         spawnTemporaryPlayer(p, loc, skin, name, entity -> {
             FakeRegister.getPlayerLocationsFile().addPlayerToFile(entity);
@@ -114,8 +147,30 @@ public class PlayerFakeUtil extends FakeUtilBase {
         );
     }
 
+    /**
+     * Spawns in a temporary {@link FakePlayer} (disappears after rejoin) for the {@link Player}
+     *
+     * @param p          the {@link Player} to spawn the {@link FakePlayer} for
+     * @param loc        {@link Location} where the {@link FakePlayer} should be spawned at
+     * @param skin       the {@link OfflinePlayer} which has the skin for the {@link FakePlayer}
+     * @param customName of the {@link FakePlayer} inside the file and above his head
+     * @see PlayerFakeUtil#spawnTemporaryPlayer(Player, Location, OfflinePlayer, String, SpawnCallback)
+     * @deprecated not async UUID retrieving
+     */
+    public static FakePlayer spawnTemporaryPlayer(Player p, Location loc, OfflinePlayer skin, String customName) {
+        return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(UUIDFetcher.getUUID(skin)), customName);
+    }
+
     public static void spawnTemporaryPlayer(Player p, Location loc, UUID skin, String customName, SpawnCallback<FakePlayer> callback) {
         GameProfileBuilder.fetch(skin, gameProfile -> callback.done(spawnTemporaryPlayer(p, loc, gameProfile, customName)));
+    }
+
+    /**
+     * @see PlayerFakeUtil#spawnTemporaryPlayer(Player, Location, UUID, String, SpawnCallback)
+     * @deprecated not async UUID retrieving
+     */
+    public static FakePlayer spawnTemporaryPlayer(Player p, Location loc, UUID skin, String customName) {
+        return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(skin), customName);
     }
 
     public static FakePlayer spawnTemporaryPlayer(final Player p, final Location loc, GameProfile skin, final String customName) {

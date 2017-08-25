@@ -4,6 +4,10 @@ import de.alphahelix.alphalibary.command.arguments.Argument;
 
 import java.util.WeakHashMap;
 
+/**
+ * @see de.alphahelix.alphalibary.annotations.command.Command
+ * @deprecated
+ */
 public class CommandWatcher {
 
     private WeakHashMap<Integer, Argument<?>> args = new WeakHashMap<>();

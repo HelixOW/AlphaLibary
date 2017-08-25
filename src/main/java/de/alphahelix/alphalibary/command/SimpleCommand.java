@@ -27,6 +27,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @see SimpleAnnotatedCommand
+ * @deprecated
+ */
 public abstract class SimpleCommand extends Command {
 
     private final AlphaLibary plugin;

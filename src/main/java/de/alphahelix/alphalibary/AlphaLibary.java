@@ -27,6 +27,7 @@ import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
 import de.alphahelix.alphalibary.input.AnvilGUI;
 import de.alphahelix.alphalibary.input.SignGUI;
+import de.alphahelix.alphalibary.listener.SimpleLoader;
 import de.alphahelix.alphalibary.netty.PacketListenerAPI;
 import de.alphahelix.alphalibary.netty.handler.PacketHandler;
 import de.alphahelix.alphalibary.netty.handler.PacketOptions;
@@ -43,6 +44,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.reflections.Reflections;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -51,12 +53,11 @@ import java.util.UUID;
 
 public class AlphaLibary extends JavaPlugin {
 
-    //Java networking!
-
     private static AlphaLibary instance;
     private static GameProfileBuilder.GameProfileFile gameProfileFile;
     private static ArenaFile arenaFile;
     private static HashMap<UUID, Double> oldValues = new HashMap<>();
+    private static Reflections reflections = new Reflections();
 
     public static AlphaLibary getInstance() {
         return instance;
@@ -68,6 +69,10 @@ public class AlphaLibary extends JavaPlugin {
 
     public static ArenaFile getArenaFile() {
         return arenaFile;
+    }
+
+    public static Reflections getReflections() {
+        return reflections;
     }
 
     @Override
@@ -92,6 +97,13 @@ public class AlphaLibary extends JavaPlugin {
         File arenaFolder = new File("plugins/AlphaGameLibary/arenas");
 
         if (!arenaFolder.exists()) arenaFolder.mkdirs();
+
+        for (Class<? extends SimpleLoader> clazz : getReflections().getSubTypesOf(SimpleLoader.class)) {
+            try {
+                Bukkit.getPluginManager().registerEvents(clazz.newInstance(), this);
+            } catch (InstantiationException | IllegalAccessException ignored) {
+            }
+        }
 
         PacketListenerAPI.addPacketHandler(new PacketHandler() {
             @Override
@@ -124,43 +136,49 @@ public class AlphaLibary extends JavaPlugin {
 
             @Override
             public void onReceive(ReceivedPacket packet) {
-	            if(packet.getPacketName().equals("PacketPlayInUpdateSign")) {
-		            if(packet.getPlayer() == null) return;
-		            BlockPos bp = ReflectionUtil.fromBlockPostition(packet.getPacketValue("a"));
-		            if(bp.getX() == 0 && bp.getY() == 0 && bp.getZ() == 0) {
-			            if(!SignGUI.getOpenGUIS().contains(packet.getPlayer().getName())) return; int i = 0;
-			            for(String line : (String[]) packet.getPacketValue(1)) {
-				            if(i == 1)
-					            Bukkit.getPluginManager().callEvent(new PlayerInputEvent(packet.getPlayer(), line)); i++;
-			            } SignGUI.getOpenGUIS().remove(packet.getPlayer().getName());
-		            }
-	            } else if(packet.getPacketName().equals("PacketPlayInWindowClick")) {
-		            if(packet.getPlayer() == null) return;
-		            if(!AnvilGUI.getOpenGUIS().contains(packet.getPlayer().getName())) return;
-		            InventoryView view = packet.getPlayer().getOpenInventory();
+                if (packet.getPacketName().equals("PacketPlayInUpdateSign")) {
+                    if (packet.getPlayer() == null) return;
+                    BlockPos bp = ReflectionUtil.fromBlockPostition(packet.getPacketValue("a"));
+                    if (bp.getX() == 0 && bp.getY() == 0 && bp.getZ() == 0) {
+                        if (!SignGUI.getOpenGUIS().contains(packet.getPlayer().getName())) return;
+                        int i = 0;
+                        for (String line : (String[]) packet.getPacketValue(1)) {
+                            if (i == 1)
+                                Bukkit.getPluginManager().callEvent(new PlayerInputEvent(packet.getPlayer(), line));
+                            i++;
+                        }
+                        SignGUI.getOpenGUIS().remove(packet.getPlayer().getName());
+                    }
+                } else if (packet.getPacketName().equals("PacketPlayInWindowClick")) {
+                    if (packet.getPlayer() == null) return;
+                    if (!AnvilGUI.getOpenGUIS().contains(packet.getPlayer().getName())) return;
+                    InventoryView view = packet.getPlayer().getOpenInventory();
 
-		            if(view != null && view.getTopInventory().getType() == InventoryType.ANVIL) {
-			            int slot = (int) packet.getPacketValue("slot");
+                    if (view != null && view.getTopInventory().getType() == InventoryType.ANVIL) {
+                        int slot = (int) packet.getPacketValue("slot");
 
-			            if(slot == 2) {
-				            ItemStack is = null; try {
-					            is = (ItemStack) FakeUtilBase.itemstackAsBukkitCopy().invoke(null, packet.getPacketValue("item"));
-				            } catch(IllegalAccessException | InvocationTargetException e) {
-					            e.printStackTrace();
-				            } if(is == null) return; if(is.hasItemMeta()) {
-					            if(is.getItemMeta().hasDisplayName()) {
-						            ItemRenameEvent event = new ItemRenameEvent(packet.getPlayer(), view, is.getItemMeta().getDisplayName());
-						            Bukkit.getPluginManager().callEvent(event);
-						            Bukkit.getPluginManager().callEvent(new PlayerInputEvent(packet.getPlayer(), is.getItemMeta().getDisplayName()));
+                        if (slot == 2) {
+                            ItemStack is = null;
+                            try {
+                                is = (ItemStack) FakeUtilBase.itemstackAsBukkitCopy().invoke(null, packet.getPacketValue("item"));
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                            if (is == null) return;
+                            if (is.hasItemMeta()) {
+                                if (is.getItemMeta().hasDisplayName()) {
+                                    ItemRenameEvent event = new ItemRenameEvent(packet.getPlayer(), view, is.getItemMeta().getDisplayName());
+                                    Bukkit.getPluginManager().callEvent(event);
+                                    Bukkit.getPluginManager().callEvent(new PlayerInputEvent(packet.getPlayer(), is.getItemMeta().getDisplayName()));
 
-						            AnvilGUI.getOpenGUIS().remove(packet.getPlayer().getName());
+                                    AnvilGUI.getOpenGUIS().remove(packet.getPlayer().getName());
 
-						            if(event.isCancelled()) packet.getPlayer().closeInventory();
-					            }
-				            }
-			            }
-		            }
-	            }
+                                    if (event.isCancelled()) packet.getPlayer().closeInventory();
+                                }
+                            }
+                        }
+                    }
+                }
             }
         });
     }

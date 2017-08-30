@@ -109,6 +109,12 @@ public class SimpleJSONFile extends File {
         return JSONUtil.getGson().fromJson(obj.get(path.toString()), definy);
     }
 
+    public void setDefaultValue(Object path, Object value) {
+        if (jsonContains(path)) return;
+
+        setValue(path, value);
+    }
+
     public void setValue(Object path, Object value) {
         setDefault(path, value);
     }

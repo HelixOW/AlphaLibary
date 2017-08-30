@@ -19,26 +19,19 @@ package de.alphahelix.alphalibary.fakeapi.utils;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeXPOrb;
-import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
+import de.alphahelix.alphalibary.nms.packets.PPOEntityDestroy;
+import de.alphahelix.alphalibary.nms.packets.PPOEntityMetadata;
+import de.alphahelix.alphalibary.nms.wrappers.EntityWrapper;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Constructor;
+public class XPOrbFakeUtil {
 
-public class XPOrbFakeUtil extends FakeUtilBase {
-
-    private static Constructor<?> entityXPOrb;
-    private static Constructor<?> spawnXPOrb;
-
-    static {
-        try {
-            entityXPOrb = ReflectionUtil.getNmsClass("EntityExperienceOrb").getConstructor(ReflectionUtil.getNmsClass("World"));
-            spawnXPOrb = ReflectionUtil.getNmsClass("PacketPlayOutSpawnEntityExperienceOrb").getConstructor(ReflectionUtil.getNmsClass("EntityExperienceOrb"));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
+    private static ReflectionUtil.SaveConstructor entityXPOrb =
+            ReflectionUtil.getDeclaredConstructor("EntityExperienceOrb", ReflectionUtil.getNmsClass("World"));
+    private static ReflectionUtil.SaveConstructor spawnXPOrb =
+            ReflectionUtil.getDeclaredConstructor("PacketPlayOutSpawnEntityExperienceOrb", ReflectionUtil.getNmsClass("EntityExperienceOrb"));
 
     /**
      * Spawns in a {@link FakeXPOrb} for the {@link Player}
@@ -66,21 +59,17 @@ public class XPOrbFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeXPOrb}
      */
     public static FakeXPOrb spawnTemporaryXPOrb(Player p, Location loc, String name) {
-        try {
-            Object orb = entityXPOrb.newInstance(ReflectionUtil.getWorldServer(p.getWorld()));
+        Object orb = entityXPOrb.newInstance(false, ReflectionUtil.getWorldServer(p.getWorld()));
+        EntityWrapper o = new EntityWrapper(orb);
 
-            setLocation().invoke(orb, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        o.setLocation(loc);
 
-            ReflectionUtil.sendPacket(p, spawnXPOrb.newInstance(orb));
+        ReflectionUtil.sendPacket(p, spawnXPOrb.newInstance(false, orb));
 
-            FakeXPOrb fXO = new FakeXPOrb(loc, name, orb);
+        FakeXPOrb fXO = new FakeXPOrb(loc, name, orb);
 
-            FakeAPI.addFakeXPOrb(p, fXO);
-            return fXO;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakeAPI.addFakeXPOrb(p, fXO);
+        return fXO;
     }
 
     /**
@@ -90,12 +79,8 @@ public class XPOrbFakeUtil extends FakeUtilBase {
      * @param orb the {@link FakeXPOrb} to remove
      */
     public static void destroyOrb(Player p, FakeXPOrb orb) {
-        try {
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityDestroy().newInstance(new int[]{ReflectionUtil.getEntityID(orb.getNmsEntity())}));
-            FakeAPI.removeFakeXPOrb(p, orb);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(orb.getNmsEntity())));
+        FakeAPI.removeFakeXPOrb(p, orb);
     }
 
     /**
@@ -106,16 +91,11 @@ public class XPOrbFakeUtil extends FakeUtilBase {
      * @param orb  the {@link FakeXPOrb} to change the name for
      */
     public static void setOrbname(Player p, String name, FakeXPOrb orb) {
-        try {
-            setCustomName().invoke(orb.getNmsEntity(), name.replace("&", "§").replace("_", " "));
-            setCustomNameVisible().invoke(orb.getNmsEntity(), true);
+        EntityWrapper o = new EntityWrapper(orb.getNmsEntity());
 
-            Object dw = getDataWatcher().invoke(orb.getNmsEntity());
+        o.setCustomName(name.replace("&", "§").replace("_", " "));
+        o.setCustomNameVisible(true);
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(orb.getNmsEntity()), dw, true));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityMetadata(o.getEntityID(), o.getDataWatcher()));
     }
 }

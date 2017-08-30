@@ -72,13 +72,6 @@ public class FakeEventListener implements SimpleLoader {
                     mob.isBaby());
         }
 
-        for (FakePainting painting : FakeRegister.getPaintingLocationsFile().getFakePaintingsFromFile()) {
-            PaintingFakeUtil.spawnTemporaryPainting(
-                    p,
-                    painting.getStartLocation(),
-                    painting.getName());
-        }
-
         for (FakePlayer player : FakeRegister.getPlayerLocationsFile().getFakePlayersFromFile()) {
             PlayerFakeUtil.spawnTemporaryPlayer(
                     p,

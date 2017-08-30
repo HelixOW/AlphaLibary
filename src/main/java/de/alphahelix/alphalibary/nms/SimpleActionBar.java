@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.nms;
 
+import de.alphahelix.alphalibary.nms.enums.RChatMessageType;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

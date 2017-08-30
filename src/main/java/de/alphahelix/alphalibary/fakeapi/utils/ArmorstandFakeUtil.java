@@ -21,9 +21,10 @@ import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeArmorstand;
-import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
 import de.alphahelix.alphalibary.item.SkullItemBuilder;
-import de.alphahelix.alphalibary.nms.REnumEquipSlot;
+import de.alphahelix.alphalibary.nms.enums.REnumEquipSlot;
+import de.alphahelix.alphalibary.nms.packets.*;
+import de.alphahelix.alphalibary.nms.wrappers.EntityWrapper;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.utils.LocationUtil;
 import org.bukkit.Location;
@@ -33,24 +34,17 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-public class ArmorstandFakeUtil extends FakeUtilBase {
+public class ArmorstandFakeUtil {
 
     private static HashMap<String, BukkitTask> followMap = new HashMap<>();
     private static HashMap<String, BukkitTask> splitMap = new HashMap<>();
 
-    private static Constructor<?> entityArmorstand;
 
-    static {
-        try {
-            entityArmorstand = ReflectionUtil.getNmsClass("EntityArmorStand").getConstructor(ReflectionUtil.getNmsClass("World"));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
+    private static ReflectionUtil.SaveConstructor entityArmorstand =
+            ReflectionUtil.getDeclaredConstructor("EntityArmorStand", ReflectionUtil.getNmsClass("World"));
 
     /**
      * Spawns in a {@link FakeArmorstand} for the {@link Player}
@@ -79,24 +73,20 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeArmorstand}
      */
     public static FakeArmorstand spawnTemporaryArmorstand(Player p, Location loc, String name) {
-        try {
-            Object armorstand = entityArmorstand.newInstance(ReflectionUtil.getWorldServer(p.getWorld()));
+        Object armorstand = entityArmorstand.newInstance(false, ReflectionUtil.getWorldServer(loc.getWorld()));
+        EntityWrapper aW = new EntityWrapper(armorstand);
 
-            setLocation().invoke(armorstand, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-            setInvisible().invoke(armorstand, true);
-            setCustomName().invoke(armorstand, name);
-            setCustomNameVisible().invoke(armorstand, true);
+        aW.setLocation(loc);
+        aW.setInvisible(true);
+        aW.setCustomName(name);
+        aW.setCustomNameVisible(true);
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntityLiving().newInstance(armorstand));
+        ReflectionUtil.sendPacket(p, new PPOSpawnEntityLiving(armorstand).getPacket(false));
 
-            FakeArmorstand fA = new FakeArmorstand(loc, name, armorstand);
+        FakeArmorstand fA = new FakeArmorstand(loc, name, armorstand);
 
-            FakeAPI.addFakeArmorstand(p, fA);
-            return fA;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakeAPI.addFakeArmorstand(p, fA);
+        return fA;
     }
 
     /**
@@ -109,20 +99,15 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      * @param armorstand the {@link FakeArmorstand} which should be moved
      */
     public static void moveArmorstand(Player p, double x, double y, double z, FakeArmorstand armorstand) {
-        try {
-            Location old = armorstand.getCurrentlocation();
-            Location ne = old.clone().add(x, y, z);
+        Location old = armorstand.getCurrentlocation();
+        Location ne = old.clone().add(x, y, z);
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutRelEntityMove().newInstance(
-                    ReflectionUtil.getEntityID(armorstand.getNmsEntity()),
-                    FakeAPI.toDelta(old.getX() - ne.getX()),
-                    FakeAPI.toDelta(old.getY() - ne.getY()),
-                    FakeAPI.toDelta(old.getZ() - ne.getZ()),
-                    false));
-            armorstand.setCurrentlocation(armorstand.getCurrentlocation().add(x, y, z));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPORelEntityMove(
+                ReflectionUtil.getEntityID(armorstand.getNmsEntity()),
+                old.getX() - ne.getX(), old.getY() - ne.getY(), old.getZ() - ne.getZ(), false
+        ).getPacket(false));
+
+        armorstand.setCurrentlocation(armorstand.getCurrentlocation().add(x, y, z));
     }
 
     /**
@@ -188,7 +173,7 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
             yaw.set(a, loc.getYaw());
             pitch.set(a, loc.getPitch());
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityTeleport().newInstance(a));
+            ReflectionUtil.sendPacket(p, new PPOEntityTeleport(a).getPacket(false));
 
             armorstand.setCurrentlocation(loc);
         } catch (Exception e) {
@@ -205,14 +190,10 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      * @param slot       the {@link REnumEquipSlot} where the {@link ItemStack} should be placed at
      */
     public static void equipArmorstand(Player p, FakeArmorstand armorstand, ItemStack item, REnumEquipSlot slot) {
-        try {
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityEquipment().newInstance(
-                    ReflectionUtil.getEntityID(armorstand.getNmsEntity()),
-                    slot.getNmsSlot(),
-                    ReflectionUtil.getObjectNMSItemStack(item)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityEquipment(
+                ReflectionUtil.getEntityID(armorstand.getNmsEntity()),
+                item, slot
+        ).getPacket(false));
     }
 
     /**
@@ -236,11 +217,7 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      * @param profile    the {@link GameProfile} of the owner of the skull
      */
     public static void equipArmorstandSkull(Player p, FakeArmorstand armorstand, GameProfile profile) {
-        try {
-            equipArmorstand(p, armorstand, SkullItemBuilder.getPlayerSkull(profile.getName()), REnumEquipSlot.HELMET);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        equipArmorstand(p, armorstand, SkullItemBuilder.getPlayerSkull(profile.getName()), REnumEquipSlot.HELMET);
     }
 
     /**
@@ -278,12 +255,8 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      * @param armorstand the {@link FakeArmorstand} to remove
      */
     public static void destroyArmorstand(Player p, FakeArmorstand armorstand) {
-        try {
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityDestroy().newInstance(new int[]{ReflectionUtil.getEntityID(armorstand.getNmsEntity())}));
-            FakeAPI.removeFakeArmorstand(p, armorstand);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(armorstand.getNmsEntity())).getPacket(false));
+        FakeAPI.removeFakeArmorstand(p, armorstand);
     }
 
     /**
@@ -294,14 +267,15 @@ public class ArmorstandFakeUtil extends FakeUtilBase {
      * @param armorstand the {@link FakeArmorstand} to change the name for
      */
     public static void setArmorstandname(Player p, String name, FakeArmorstand armorstand) {
-        try {
-            setCustomName().invoke(armorstand.getNmsEntity(), name.replace("&", "§").replace("_", " "));
+        EntityWrapper a = new EntityWrapper(armorstand.getNmsEntity());
 
-            Object dw = getDataWatcher().invoke(armorstand.getNmsEntity());
+        a.setCustomName(name.replace("&", "§").replace("_", " "));
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(armorstand.getNmsEntity()), dw, true));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Object dw = a.getDataWatcher();
+
+        ReflectionUtil.sendPacket(p, new PPOEntityMetadata(
+                ReflectionUtil.getEntityID(armorstand.getNmsEntity()),
+                dw
+        ).getPacket(false));
     }
 }

@@ -22,11 +22,12 @@ import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeEntity;
 import de.alphahelix.alphalibary.fakeapi.instances.FakePlayer;
-import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
 import de.alphahelix.alphalibary.item.SkullItemBuilder;
-import de.alphahelix.alphalibary.nms.REnumEquipSlot;
-import de.alphahelix.alphalibary.nms.REnumGamemode;
-import de.alphahelix.alphalibary.nms.REnumPlayerInfoAction;
+import de.alphahelix.alphalibary.nms.enums.REnumEquipSlot;
+import de.alphahelix.alphalibary.nms.enums.REnumGamemode;
+import de.alphahelix.alphalibary.nms.enums.REnumPlayerInfoAction;
+import de.alphahelix.alphalibary.nms.packets.*;
+import de.alphahelix.alphalibary.nms.wrappers.EntityWrapper;
 import de.alphahelix.alphalibary.reflection.PacketUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.utils.GameProfileBuilder;
@@ -41,31 +42,21 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PlayerFakeUtil extends FakeUtilBase {
+public class PlayerFakeUtil {
 
     private static HashMap<String, BukkitTask> followMap = new HashMap<>();
     private static HashMap<String, BukkitTask> stareMap = new HashMap<>();
     private static HashMap<String, BukkitTask> splitMap = new HashMap<>();
 
-    private static Constructor<?> entityPlayer;
-
-    static {
-        try {
-            Class<?> entityPlayerClass = ReflectionUtil.getNmsClass("EntityPlayer");
-            entityPlayer = entityPlayerClass.getConstructor(
-                    ReflectionUtil.getNmsClass("MinecraftServer"),
+    private static ReflectionUtil.SaveConstructor entityPlayer =
+            ReflectionUtil.getDeclaredConstructor("EntityPlayer", ReflectionUtil.getNmsClass("MinecraftServer"),
                     ReflectionUtil.getNmsClass("WorldServer"),
                     GameProfile.class,
                     ReflectionUtil.getNmsClass("PlayerInteractManager"));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Spawns in a {@link FakePlayer} for the {@link Player}
@@ -174,55 +165,47 @@ public class PlayerFakeUtil extends FakeUtilBase {
     }
 
     public static FakePlayer spawnTemporaryPlayer(final Player p, final Location loc, GameProfile skin, final String customName) {
-        try {
-            GameProfile gameProfile = skin;
+        GameProfile gameProfile = skin;
 
-            Object npc = entityPlayer.newInstance(
-                    ReflectionUtil.getMinecraftServer(Bukkit.getServer()),
-                    ReflectionUtil.getWorldServer(loc.getWorld()),
-                    gameProfile,
-                    ReflectionUtil.getNmsClass("PlayerInteractManager")
-                            .getConstructor(ReflectionUtil.getNmsClass("World"))
-                            .newInstance(ReflectionUtil.getWorldServer(loc.getWorld())));
+        Object npc = entityPlayer.newInstance(false,
+                ReflectionUtil.getMinecraftServer(Bukkit.getServer()),
+                ReflectionUtil.getWorldServer(loc.getWorld()),
+                gameProfile,
+                ReflectionUtil.getDeclaredConstructor("PlayerInteractManager", ReflectionUtil.getNmsClass("World"))
+                        .newInstance(false, ReflectionUtil.getWorldServer(loc.getWorld())));
+        EntityWrapper e = new EntityWrapper(npc);
 
-            setLocation().invoke(npc, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        e.setLocation(loc);
 
-            FakeAPI.getNPCS().add(customName);
+        FakeAPI.getNPCS().add(customName);
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    try {
-                        ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
-                                REnumPlayerInfoAction.ADD_PLAYER,
-                                gameProfile,
-                                0,
-                                REnumGamemode.SURVIVAL,
-                                customName));
-                        ReflectionUtil.sendPacket(p, getPacketPlayOutNamedEntitySpawn().newInstance(npc));
-                        ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(npc, FakeAPI.toAngle(loc.getYaw())));
-                        ReflectionUtil.sendPacket(p, getPacketPlayOutEntityLook().newInstance(ReflectionUtil.getEntityID(npc), FakeAPI.toAngle(loc.getYaw()), FakeAPI.toAngle(loc.getPitch()), true));
-                        ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
-                                REnumPlayerInfoAction.REMOVE_PLAYER,
-                                gameProfile,
-                                0,
-                                REnumGamemode.SURVIVAL,
-                                customName));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.runTaskLater(AlphaLibary.getInstance(), 4);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
+                        REnumPlayerInfoAction.ADD_PLAYER,
+                        gameProfile,
+                        0,
+                        REnumGamemode.SURVIVAL,
+                        customName));
 
-            FakePlayer fakePlayer = new FakePlayer(loc, customName, skin.getId(), npc);
+                ReflectionUtil.sendPacket(p, new PPONamedEntitySpawn(npc));
+                ReflectionUtil.sendPacket(p, new PPOEntityLook(e.getEntityID(), loc.getYaw(), loc.getPitch(), true));
 
-            FakeAPI.addFakePlayer(p, fakePlayer);
+                ReflectionUtil.sendPacket(p, PacketUtil.createPlayerInfoPacket(
+                        REnumPlayerInfoAction.REMOVE_PLAYER,
+                        gameProfile,
+                        0,
+                        REnumGamemode.SURVIVAL,
+                        customName));
+            }
+        }.runTaskLater(AlphaLibary.getInstance(), 4);
 
-            return fakePlayer;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakePlayer fakePlayer = new FakePlayer(loc, customName, skin.getId(), npc);
+
+        FakeAPI.addFakePlayer(p, fakePlayer);
+
+        return fakePlayer;
     }
 
     /**
@@ -232,13 +215,9 @@ public class PlayerFakeUtil extends FakeUtilBase {
      * @param npc the {@link FakePlayer} to remove
      */
     public static void removePlayer(Player p, FakePlayer npc) {
-        try {
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityDestroy().newInstance(ReflectionUtil.getEntityID(npc.getNmsEntity())));
+        ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(npc.getNmsEntity())));
 
-            FakeAPI.removeFakePlayer(p, npc);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        FakeAPI.removeFakePlayer(p, npc);
     }
 
     /**
@@ -253,25 +232,21 @@ public class PlayerFakeUtil extends FakeUtilBase {
      * @param npc   the {@link FakePlayer} which should be moved
      */
     public static void movePlayer(Player p, double x, double y, double z, float yaw, float pitch, FakePlayer npc) {
-        try {
-            Location old = npc.getCurrentlocation();
-            Location ne = old.clone().add(x, y, z);
+        Location old = npc.getCurrentlocation();
+        Location ne = old.clone().add(x, y, z);
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutRelEntityMove().newInstance(
-                    ReflectionUtil.getEntityID(npc.getNmsEntity()),
-                    FakeAPI.toDelta(old.getX() - ne.getX()),
-                    FakeAPI.toDelta(old.getY() - ne.getY()),
-                    FakeAPI.toDelta(old.getZ() - ne.getZ()),
-                    false));
+        ReflectionUtil.sendPacket(p, new PPORelEntityMove(
+                ReflectionUtil.getEntityID(npc.getNmsEntity()),
+                old.getX() - ne.getX(),
+                old.getY() - ne.getY(),
+                old.getZ() - ne.getZ(),
+                false
+        ));
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(npc.getNmsEntity(), FakeAPI.toAngle(yaw)));
+        ReflectionUtil.sendPacket(p, new PPOEntityLook(ReflectionUtil.getEntityID(npc.getNmsEntity()),
+                yaw, pitch, false));
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityLook().newInstance(ReflectionUtil.getEntityID(npc.getNmsEntity()), FakeAPI.toAngle(yaw), FakeAPI.toAngle(pitch), true));
-
-            npc.setCurrentlocation(npc.getCurrentlocation().add(x, y, z));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        npc.setCurrentlocation(npc.getCurrentlocation().add(x, y, z));
     }
 
     /**
@@ -298,11 +273,10 @@ public class PlayerFakeUtil extends FakeUtilBase {
             yaw.set(a, loc.getYaw());
             pitch.set(a, loc.getPitch());
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityTeleport().newInstance(a));
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(npc.getNmsEntity(), FakeAPI.toAngle(loc.getYaw())));
+            ReflectionUtil.sendPacket(p, new PPOEntityTeleport(a));
+            ReflectionUtil.sendPacket(p, new PPOEntityLook(ReflectionUtil.getEntityID(a), loc.getYaw(), loc.getPitch(), false));
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityLook().newInstance(ReflectionUtil.getEntityID(npc.getNmsEntity()), FakeAPI.toAngle(loc.getYaw()), FakeAPI.toAngle(loc.getPitch()), true));
-            FakeAPI.getFakePlayerByObject(p, npc).setCurrentlocation(loc);
+            npc.setCurrentlocation(loc);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -317,14 +291,9 @@ public class PlayerFakeUtil extends FakeUtilBase {
      * @param slot the {@link REnumEquipSlot} where the {@link ItemStack} should be placed at
      */
     public static void equipPlayer(Player p, FakePlayer npc, ItemStack item, REnumEquipSlot slot) {
-        try {
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityEquipment().newInstance(
-                    ReflectionUtil.getEntityID(npc.getNmsEntity()),
-                    slot.getNmsSlot(),
-                    ReflectionUtil.getObjectNMSItemStack(item)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityEquipment(
+                ReflectionUtil.getEntityID(npc.getNmsEntity()), item, slot
+        ));
     }
 
     /**
@@ -373,18 +342,12 @@ public class PlayerFakeUtil extends FakeUtilBase {
      * @param npc      the {@link FakePlayer} who should watch the {@link Player}
      */
     public static void lookAtPlayer(Player p, Player toLookAt, FakePlayer npc) {
-        try {
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityHeadRotation().newInstance(npc.getNmsEntity(), FakeAPI.toAngle(LocationUtil.lookAt(npc.getCurrentlocation(), toLookAt.getLocation()).getYaw())));
-
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityLook().newInstance(
-                    ReflectionUtil.getEntityID(npc.getNmsEntity()),
-                    FakeAPI.toAngle(LocationUtil.lookAt(npc.getCurrentlocation(), toLookAt.getLocation()).getYaw()),
-                    FakeAPI.toAngle(LocationUtil.lookAt(npc.getCurrentlocation(), toLookAt.getLocation()).getPitch()),
-                    true));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityLook(
+                ReflectionUtil.getEntityID(npc.getNmsEntity()),
+                LocationUtil.lookAt(npc.getCurrentlocation(), toLookAt.getLocation()).getYaw(),
+                LocationUtil.lookAt(npc.getCurrentlocation(), toLookAt.getLocation()).getPitch(),
+                true
+        ));
     }
 
     /**
@@ -395,16 +358,12 @@ public class PlayerFakeUtil extends FakeUtilBase {
      * @param npc       the {@link FakePlayer} who should stare at the {@link Player}
      */
     public static void stareAtPlayer(final Player p, final Player toStareAt, final FakePlayer npc) {
-        try {
-            stareMap.put(p.getName(), new BukkitRunnable() {
-                @Override
-                public void run() {
-                    lookAtPlayer(p, toStareAt, npc);
-                }
-            }.runTaskTimer(AlphaLibary.getInstance(), 0, 1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        stareMap.put(p.getName(), new BukkitRunnable() {
+            @Override
+            public void run() {
+                lookAtPlayer(p, toStareAt, npc);
+            }
+        }.runTaskTimer(AlphaLibary.getInstance(), 0, 1));
     }
 
     /**
@@ -428,17 +387,13 @@ public class PlayerFakeUtil extends FakeUtilBase {
      * @param damage   the damage which should be done by the {@link FakePlayer}
      */
     public static void attackPlayer(Player p, Player toAttack, FakePlayer npc, double damage) {
-        try {
-            if (!FakeAPI.getFakePlayersInRadius(toAttack, 4).contains(npc)) return;
+        if (!FakeAPI.getFakePlayersInRadius(toAttack, 4).contains(npc)) return;
 
-            lookAtPlayer(p, toAttack, npc);
+        lookAtPlayer(p, toAttack, npc);
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutAnimation().newInstance(npc.getNmsEntity(), 0));
+        ReflectionUtil.sendPacket(p, new PPOAnimation(npc.getNmsEntity(), 0));
 
-            toAttack.damage(damage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        toAttack.damage(damage);
     }
 
     /**
@@ -517,22 +472,18 @@ public class PlayerFakeUtil extends FakeUtilBase {
     }
 
     public static void stopRide(Player p, FakePlayer player) {
-        try {
-            stopRiding().invoke(player.getNmsEntity());
+        EntityWrapper e = new EntityWrapper(player.getNmsEntity());
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutMount().newInstance(player.getNmsEntity()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        e.stopRiding();
+
+        ReflectionUtil.sendPacket(p, new PPOMount(player.getNmsEntity()));
     }
 
     public static void ride(Player p, FakePlayer player, FakeEntity entity) {
-        try {
-            setPassenger().invoke(player.getNmsEntity(), entity.getNmsEntity());
+        EntityWrapper e = new EntityWrapper(player.getNmsEntity());
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutMount().newInstance(entity.getNmsEntity()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        e.startRiding(entity.getNmsEntity());
+
+        ReflectionUtil.sendPacket(p, new PPOMount(player.getNmsEntity()));
     }
 }

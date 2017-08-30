@@ -3,14 +3,18 @@ package de.alphahelix.alphalibary.annotations.item;
 import de.alphahelix.alphalibary.annotations.Accessor;
 import de.alphahelix.alphalibary.item.ItemBuilder;
 import de.alphahelix.alphalibary.item.SkullItemBuilder;
-import de.alphahelix.alphalibary.item.data.ColorData;
-import de.alphahelix.alphalibary.item.data.SkullData;
+import de.alphahelix.alphalibary.item.data.*;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Field;
+import java.util.*;
 
 class AnnotatedItem {
 
@@ -20,6 +24,10 @@ class AnnotatedItem {
 
     private final Skull skullAnnotation;
     private final Color colorAnnotation;
+    private final Banner bannerAnnotation;
+    private final Map mapAnnotation;
+    private final Potion potionAnnotation;
+    private final SpawnEgg spawnEggAnnotation;
 
     private String[] enchantments = {};
     private ItemFlag[] itemflags = {};
@@ -31,12 +39,16 @@ class AnnotatedItem {
     private boolean unbreakable = false;
 
 
-    AnnotatedItem(Object itemClass, Field itemField, Item itemAnnotation, Skull skullAnnotation, Color colorAnnotation) {
+    AnnotatedItem(Object itemClass, Field itemField, Item itemAnnotation, Skull skullAnnotation, Color colorAnnotation, Banner bannerAnnotation, Map mapAnnotation, Potion potionAnnotation, SpawnEgg spawnEggAnnotation) {
         this.itemClass = itemClass;
         this.itemField = itemField;
         this.itemAnnotation = itemAnnotation;
         this.skullAnnotation = skullAnnotation;
         this.colorAnnotation = colorAnnotation;
+        this.bannerAnnotation = bannerAnnotation;
+        this.mapAnnotation = mapAnnotation;
+        this.potionAnnotation = potionAnnotation;
+        this.spawnEggAnnotation = spawnEggAnnotation;
 
         this.name = itemAnnotation.name();
         this.enchantments = itemAnnotation.enchantments();
@@ -90,6 +102,50 @@ class AnnotatedItem {
             if (rgb.length == 3)
                 builder.addItemData(new ColorData(rgb[0], rgb[1], rgb[2]));
         }
+
+        if (bannerAnnotation != null) {
+            DyeColor[] colors = bannerAnnotation.color();
+            PatternType[] types = bannerAnnotation.type();
+            Set<Pattern> patterns = new HashSet<>();
+
+            if (colors.length == types.length) {
+                for (int i = 0; i < colors.length; i++) {
+                    patterns.add(new Pattern(colors[i], types[i]));
+                }
+
+                builder.addItemData(new BannerData(patterns.toArray(new Pattern[patterns.size()])));
+            }
+        }
+
+        if (mapAnnotation != null) {
+            org.bukkit.Color c = org.bukkit.Color.fromRGB(mapAnnotation.color()[0], mapAnnotation.color()[1], mapAnnotation.color()[2]);
+            String locationName = mapAnnotation.locationName();
+            boolean scaling = mapAnnotation.scaling();
+
+            builder.addItemData(new MapData(c, locationName).setScaling(scaling));
+        }
+
+        if (potionAnnotation != null) {
+            int[] dura = potionAnnotation.duration();
+            int[] amp = potionAnnotation.amplifier();
+            String[] types = potionAnnotation.type();
+
+            List<PotionEffectType> effectTypes = new LinkedList<>();
+            Set<SimplePotionEffect> effectSet = new HashSet<>();
+
+            if ((dura.length == amp.length) && (dura.length == types.length)) {
+                Arrays.stream(types).forEach(s -> effectTypes.add(PotionEffectType.getByName(s)));
+
+                for (int i = 0; i < dura.length; i++) {
+                    effectSet.add(new SimplePotionEffect(dura[i], effectTypes.get(i), amp[i]));
+                }
+
+                builder.addItemData(new PotionData(effectSet.toArray(new SimplePotionEffect[effectSet.size()])));
+            }
+        }
+
+        if (spawnEggAnnotation != null)
+            builder.addItemData(new SpawnEggData(spawnEggAnnotation.spawned()));
 
         try {
             Accessor.access(itemField).set(itemClass, builder.build());

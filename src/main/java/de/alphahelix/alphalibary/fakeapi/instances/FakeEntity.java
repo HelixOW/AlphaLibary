@@ -64,7 +64,7 @@ public class FakeEntity implements Serializable {
     }
 
     /**
-     * Gets the name of the {@link FakeEntity} which is saved inside the File
+     * Gets the name of the {@link FakeEntity} which is saved inside the FileHelp
      *
      * @return the name of the {@link FakeEntity} inside the file
      */
@@ -73,7 +73,7 @@ public class FakeEntity implements Serializable {
     }
 
     /**
-     * Gets the NMS Class of the {@link FakeEntity} which is saved inside the File
+     * Gets the NMS Class of the {@link FakeEntity} which is saved inside the FileHelp
      *
      * @return the instance of the NMS Class of the {@link FakeEntity}
      */

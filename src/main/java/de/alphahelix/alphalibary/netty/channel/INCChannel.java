@@ -23,13 +23,11 @@ public class INCChannel extends ChannelAbstract {
     public void addChannel(final Player player) {
         try {
             final Channel channel = getChannel(player);
-            this.addChannelExecutor.execute(new Runnable() {
-                public void run() {
-                    try {
-                        channel.pipeline().addBefore(KEY_HANDLER, KEY_PLAYER, INCChannel.this.new ChannelHandler(player));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+            this.addChannelExecutor.execute(() -> {
+                try {
+                    channel.pipeline().addBefore(KEY_HANDLER, KEY_PLAYER, INCChannel.this.new ChannelHandler(player));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
             });
         } catch (ReflectiveOperationException e) {
@@ -54,7 +52,7 @@ public class INCChannel extends ChannelAbstract {
         }
     }
 
-    Channel getChannel(Player player)
+    private Channel getChannel(Player player)
             throws ReflectiveOperationException {
         Object handle = ReflectionUtil.getDeclaredMethod("getHandle", ReflectionUtil.getCraftBukkitClass("entity.CraftPlayer")).invoke(player, false);
         Object connection = playerConnection.get(handle);

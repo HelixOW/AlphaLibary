@@ -14,34 +14,43 @@
  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.alphahelix.alphalibary.nms;
+package de.alphahelix.alphalibary.nms.enums;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 import java.io.Serializable;
 
-public enum REnumGamemode implements Serializable {
+public enum REnumEquipSlot implements Serializable {
 
-    NOT_SET(0),
-    SURVIVAL(1),
-    CREATIVE(2),
-    ADVENTURE(3),
-    SPECTATOR(4);
+    HELMET(4, 5),
+    CHESTPLATE(3, 4),
+    LEGGINGS(2, 3),
+    BOOTS(1, 2),
+    OFF_HAND(0, 1),
+    HAND(0, 0);
 
-    private int c;
+    private int nmsSlot;
+    private int past;
 
-    REnumGamemode(int c) {
-        this.c = c;
+    REnumEquipSlot(int nmsSlot, int past) {
+        this.nmsSlot = nmsSlot;
+        this.past = past;
     }
 
-    public Object getEnumGamemode() {
-        return ReflectionUtil.getNmsClass("EnumGamemode").getEnumConstants()[c];
+    public Object getNmsSlot() {
+        try {
+            return ReflectionUtil.getNmsClass("EnumItemSlot").getEnumConstants()[past];
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     @Override
     public String toString() {
-        return "REnumGamemode{" +
-                "c=" + c +
+        return "REnumEquipSlot{" +
+                "nmsSlot=" + nmsSlot +
+                ", past=" + past +
                 '}';
     }
 }

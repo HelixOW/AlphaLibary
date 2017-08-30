@@ -16,8 +16,8 @@
 package de.alphahelix.alphalibary.reflection;
 
 import com.mojang.authlib.GameProfile;
-import de.alphahelix.alphalibary.nms.REnumGamemode;
-import de.alphahelix.alphalibary.nms.REnumPlayerInfoAction;
+import de.alphahelix.alphalibary.nms.enums.REnumGamemode;
+import de.alphahelix.alphalibary.nms.enums.REnumPlayerInfoAction;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

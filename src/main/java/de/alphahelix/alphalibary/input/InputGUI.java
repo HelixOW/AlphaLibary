@@ -18,12 +18,11 @@
 
 package de.alphahelix.alphalibary.input;
 
-import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public abstract class InputGUI extends FakeUtilBase {
+public abstract class InputGUI {
 
 	private static ArrayList<String> openGUIS = new ArrayList<>();
 

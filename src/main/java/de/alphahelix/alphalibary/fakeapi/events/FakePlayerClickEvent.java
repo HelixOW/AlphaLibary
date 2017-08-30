@@ -17,8 +17,8 @@
 package de.alphahelix.alphalibary.fakeapi.events;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakePlayer;
-import de.alphahelix.alphalibary.nms.REnumAction;
-import de.alphahelix.alphalibary.nms.REnumHand;
+import de.alphahelix.alphalibary.nms.enums.REnumAction;
+import de.alphahelix.alphalibary.nms.enums.REnumHand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;

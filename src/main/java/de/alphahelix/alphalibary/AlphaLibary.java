@@ -24,7 +24,6 @@ import de.alphahelix.alphalibary.events.ArmorChangeEvent;
 import de.alphahelix.alphalibary.events.ItemRenameEvent;
 import de.alphahelix.alphalibary.events.PlayerInputEvent;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
-import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
 import de.alphahelix.alphalibary.input.AnvilGUI;
 import de.alphahelix.alphalibary.input.SignGUI;
 import de.alphahelix.alphalibary.listener.SimpleLoader;
@@ -47,7 +46,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -105,6 +103,8 @@ public class AlphaLibary extends JavaPlugin {
             }
         }
 
+        new TestAnno();
+
         PacketListenerAPI.addPacketHandler(new PacketHandler() {
             @Override
             @PacketOptions(forcePlayer = true)
@@ -158,12 +158,7 @@ public class AlphaLibary extends JavaPlugin {
                         int slot = (int) packet.getPacketValue("slot");
 
                         if (slot == 2) {
-                            ItemStack is = null;
-                            try {
-                                is = (ItemStack) FakeUtilBase.itemstackAsBukkitCopy().invoke(null, packet.getPacketValue("item"));
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
+                            ItemStack is = ReflectionUtil.getBukkitItemStack(packet.getPacketValue("item"));
                             if (is == null) return;
                             if (is.hasItemMeta()) {
                                 if (is.getItemMeta().hasDisplayName()) {

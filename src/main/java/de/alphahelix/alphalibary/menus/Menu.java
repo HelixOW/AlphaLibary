@@ -3,6 +3,7 @@ package de.alphahelix.alphalibary.menus;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +57,11 @@ public class Menu {
     }
 
     public void open(Player p) {
-        Inventory inv = Bukkit.createInventory(p, getSize(), getTitle());
+        open(p, p);
+    }
+
+    public void open(Player p, InventoryHolder holder) {
+        Inventory inv = Bukkit.createInventory(holder, getSize(), getTitle());
 
         for (Map.Entry<Integer, MenuElement> element : this.elements.entrySet()) {
             inv.setItem(element.getKey(), element.getValue().getIcon(p));

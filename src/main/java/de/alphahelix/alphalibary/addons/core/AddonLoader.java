@@ -21,7 +21,7 @@ public class AddonLoader {
     private static Map<String, AddonClassLoader> loaders = new HashMap<>();
 
     public static AddonDescriptionFile getAddonDescriptionFile(File file) throws InvalidAddonDescriptionException {
-        Validate.notNull(file, "File cannot be null");
+        Validate.notNull(file, "FileHelp cannot be null");
 
         JarFile jar = null;
         InputStream stream = null;
@@ -57,7 +57,7 @@ public class AddonLoader {
     }
 
     public static Addon loadAddon(File file) throws InvalidAddonException {
-        Validate.notNull(file, "File cannot be null");
+        Validate.notNull(file, "FileHelp cannot be null");
 
         if (!file.exists())
             throw new InvalidAddonException(new FileNotFoundException((new StringBuilder(String.valueOf(file.getPath()))).append(

@@ -1,4 +1,4 @@
-package de.alphahelix.alphalibary.nms;
+package de.alphahelix.alphalibary.nms.enums;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 

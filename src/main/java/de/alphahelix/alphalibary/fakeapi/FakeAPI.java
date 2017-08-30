@@ -26,8 +26,8 @@ import de.alphahelix.alphalibary.netty.handler.PacketOptions;
 import de.alphahelix.alphalibary.netty.handler.ReceivedPacket;
 import de.alphahelix.alphalibary.netty.handler.SentPacket;
 import de.alphahelix.alphalibary.nms.PlayerInfoDataWrapper;
-import de.alphahelix.alphalibary.nms.REnumAction;
-import de.alphahelix.alphalibary.nms.REnumHand;
+import de.alphahelix.alphalibary.nms.enums.REnumAction;
+import de.alphahelix.alphalibary.nms.enums.REnumHand;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
@@ -53,10 +53,8 @@ public class FakeAPI extends AlphaLibary {
     private static final HashMap<String, ArrayList<FakeMob>> FAKE_MOBS = new HashMap<>();
     private static final HashMap<String, ArrayList<FakeBigItem>> FAKE_BIG_ITEMS = new HashMap<>();
     private static final HashMap<String, ArrayList<FakeXPOrb>> FAKE_XP_ORBS = new HashMap<>();
-    private static final HashMap<String, ArrayList<FakePainting>> FAKE_PAINTINGS = new HashMap<>();
     private static final HashMap<Integer, UUID> ENTITY_IDS = new HashMap<>();
     private static final ArrayList<String> NPCS = new ArrayList<>();
-    private static final int[] UUID_SPLIT = {0, 8, 12, 16, 20, 32};
 
     /**
      * Gets all {@link FakeEntity}s a {@link Player} can see
@@ -1458,187 +1456,6 @@ public class FakeAPI extends AlphaLibary {
         throw new NoSuchFakeEntityException();
     }
 
-    /**
-     * Gets a {@link HashMap} with all {@link Player}s and which {@link FakePainting}s they can see
-     *
-     * @return a {@link HashMap} with all {@link Player}s and which {@link FakePainting}s they can see
-     */
-    public static HashMap<String, ArrayList<FakePainting>> getFakePaintings() {
-        return FAKE_PAINTINGS;
-    }
-
-    /**
-     * Adds a new {@link FakePainting} for a specific {@link Player}
-     *
-     * @param p    the {@link Player} to add the {@link FakePainting} for
-     * @param fake the {@link FakePainting} which should be added
-     */
-    public static void addFakePainting(Player p, FakePainting fake) {
-        ArrayList<FakePainting> list;
-        if (getFakePaintings().containsKey(p.getName())) {
-            list = getFakePaintings().get(p.getName());
-            list.add(fake);
-        } else {
-            list = new ArrayList<>();
-            list.add(fake);
-        }
-        getFakePaintings().put(p.getName(), list);
-        addFakeEntity(p, fake);
-    }
-
-    /**
-     * Removes a {@link FakePainting} for a specific {@link Player}
-     *
-     * @param p    the {@link Player} to remove the {@link FakePainting} for
-     * @param fake the {@link FakePainting} which should be removed
-     */
-    public static void removeFakePainting(Player p, FakePainting fake) {
-        ArrayList<FakePainting> list;
-        if (getFakePaintings().containsKey(p.getName())) {
-            list = getFakePaintings().get(p.getName());
-            list.remove(fake);
-        } else {
-            list = new ArrayList<>();
-        }
-        getFakePaintings().put(p.getName(), list);
-        removeFakeEntity(p, fake);
-    }
-
-    /**
-     * Checks if a specific {@link Player} looks at a {@link FakePainting} in a certain range
-     *
-     * @param p     the {@link Player} to check for
-     * @param range the range in which it should be checked
-     * @return if a Painting is inside the range
-     */
-    public static boolean isFakePaintingInRange(Player p, int range) {
-        if (!getFakePaintings().containsKey(p.getName())) return false;
-        for (Block b : p.getLineOfSight(null, range)) {
-            for (FakePainting fakePainting : getFakePaintings().get(p.getName())) {
-                if ((b.getX() == fakePainting.getCurrentlocation().getBlockX()
-                        && b.getY() == fakePainting.getCurrentlocation().getBlockY()
-                        && b.getZ() == fakePainting.getCurrentlocation().getBlockZ()
-                        || (b.getX() == fakePainting.getCurrentlocation().getBlockX()
-                        && b.getY() == (fakePainting.getCurrentlocation().getBlockY() + 1)
-                        && b.getZ() == fakePainting.getCurrentlocation().getBlockZ())))
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Gets the {@link FakePainting} at which the {@link Player} is currently looking at
-     *
-     * @param p     the {@link Player} which looks at the {@link FakePainting}
-     * @param range the range in which it should stand
-     * @return the {@link FakePainting} inside the range
-     * @throws NoSuchFakeEntityException if there is no Painting in the range
-     */
-    public static FakePainting getFakePaintingInRange(Player p, int range) throws NoSuchFakeEntityException {
-        if (!getFakePaintings().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (Block b : p.getLineOfSight(null, range)) {
-            for (FakePainting fakePainting : getFakePaintings().get(p.getName())) {
-                if ((b.getX() == fakePainting.getCurrentlocation().getBlockX()
-                        && b.getY() == fakePainting.getCurrentlocation().getBlockY()
-                        && b.getZ() == fakePainting.getCurrentlocation().getBlockZ()
-                        || (b.getX() == fakePainting.getCurrentlocation().getBlockX()
-                        && b.getY() == (fakePainting.getCurrentlocation().getBlockY() + 1)
-                        && b.getZ() == fakePainting.getCurrentlocation().getBlockZ())))
-                    return fakePainting;
-            }
-        }
-        throw new NoSuchFakeEntityException();
-    }
-
-    /**
-     * Gets a {@link ArrayList} with all {@link FakePainting} inside a certain radius
-     *
-     * @param p      the {@link Player} for which it should search for
-     * @param radius the radius in which should be searched for
-     * @return a {@link ArrayList} with all {@link FakePainting} inside the radius {@param radius}
-     */
-    public static ArrayList<FakePainting> getFakePaintingsInRadius(Player p, double radius) {
-        if (!getFakePaintings().containsKey(p.getName())) return new ArrayList<>();
-        ArrayList<FakePainting> list = new ArrayList<>();
-        for (FakePainting fakePainting : getFakePaintings().get(p.getName())) {
-            if (fakePainting.getCurrentlocation().distanceSquared(p.getLocation()) <= radius * radius) {
-                list.add(fakePainting);
-            }
-        }
-        return list;
-    }
-
-    /**
-     * Gets a {@link FakePainting} by its NMSEntity
-     *
-     * @param p    the {@link Player} who can see this {@link FakePainting}
-     * @param fake the NMSEntity of the {@link FakePainting}
-     * @return the {@link FakePainting} with his NMSEntity
-     * @throws NoSuchFakeEntityException when there is no painting with this object
-     */
-    public static FakePainting getFakePaintingByObject(Player p, Object fake) throws NoSuchFakeEntityException {
-        if (!getFakePaintings().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (FakePainting fakePainting : getFakePaintings().get(p.getName())) {
-            if (fakePainting.getNmsEntity() == fake) return fakePainting;
-        }
-        throw new NoSuchFakeEntityException();
-    }
-
-    /**
-     * Gets a {@link FakePainting} by its Name
-     *
-     * @param p    the {@link Player} who can see this {@link FakePainting}
-     * @param name the name of the {@link FakePainting} (can include color)
-     * @return the {@link FakePainting} with his NMSEntity
-     * @throws NoSuchFakeEntityException when there is no {@link FakePainting} with this name
-     */
-    public static FakePainting getFakePaintingByName(Player p, String name) throws NoSuchFakeEntityException {
-        if (!getFakePaintings().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (FakePainting fakePainting : getFakePaintings().get(p.getName())) {
-            if (ChatColor.stripColor(fakePainting.getName()).equals(ChatColor.stripColor(name))) return fakePainting;
-        }
-        throw new NoSuchFakeEntityException();
-    }
-
-    /**
-     * Gets a {@link FakePainting} by its EntityID
-     *
-     * @param p        the {@link Player} who can see this {@link FakePainting}
-     * @param entityID the entityid of the {@link FakePainting}
-     * @return the {@link FakePainting} with his NMSEntity
-     * @throws NoSuchFakeEntityException when there is no {@link FakePainting} with this id
-     */
-    public static FakePainting getFakePaintingByID(Player p, int entityID) throws NoSuchFakeEntityException {
-        if (!getFakePaintings().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (FakePainting fakePainting : getFakePaintings().get(p.getName())) {
-            if (ReflectionUtil.getEntityID(fakePainting.getNmsEntity()) == entityID) return fakePainting;
-        }
-        throw new NoSuchFakeEntityException();
-    }
-
-    /**
-     * Gets a {@link FakePainting} by its {@link Location}
-     *
-     * @param p   the {@link Player} who can see this {@link FakePainting}
-     * @param loc the {@link Location} of the {@link FakePainting}
-     * @return the {@link FakePainting} at his {@link Location}
-     * @throws NoSuchFakeEntityException when there is no painting at this {@link Location}
-     */
-    public static FakePainting getFakePaintingByLocation(Player p, Location loc) throws NoSuchFakeEntityException {
-        if (!getFakePaintings().containsKey(p.getName())) throw new NoSuchFakeEntityException();
-        for (FakePainting fakePainting : getFakePaintings().get(p.getName())) {
-            if ((loc.getBlockX() == fakePainting.getCurrentlocation().getBlockX()
-                    && loc.getBlockY() == fakePainting.getCurrentlocation().getBlockY()
-                    && loc.getBlockZ() == fakePainting.getCurrentlocation().getBlockZ()
-                    || (loc.getBlockX() == fakePainting.getCurrentlocation().getBlockX()
-                    && loc.getBlockY() == (fakePainting.getCurrentlocation().getBlockY() + 1)
-                    && loc.getBlockZ() == fakePainting.getCurrentlocation().getBlockZ()))) {
-                return fakePainting;
-            }
-        }
-        throw new NoSuchFakeEntityException();
-    }
 
     /**
      * Wraps the floor(Abrunden) method from the net.minecraft.server MathHelper

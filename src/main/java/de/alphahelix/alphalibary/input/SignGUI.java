@@ -19,37 +19,33 @@
 package de.alphahelix.alphalibary.input;
 
 import de.alphahelix.alphalibary.nms.BlockPos;
+import de.alphahelix.alphalibary.nms.packets.PPOOpenSignEditor;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.entity.Player;
 
 public class SignGUI extends InputGUI {
 
-	@Override
-	public void openGUI(Player p) {
-		try {
+    @Override
+    public void openGUI(Player p) {
+        BlockPos s = new BlockPos() {
+            @Override
+            public int getX() {
+                return 0;
+            }
 
-			BlockPos s = new BlockPos() {
-				@Override
-				public int getX() {
-					return 0;
-				}
+            @Override
+            public int getY() {
+                return 0;
+            }
 
-				@Override
-				public int getY() {
-					return 0;
-				}
+            @Override
+            public int getZ() {
+                return 0;
+            }
+        };
 
-				@Override
-				public int getZ() {
-					return 0;
-				}
-			};
+        ReflectionUtil.sendPacket(p, new PPOOpenSignEditor(s).getPacket(false));
 
-			ReflectionUtil.sendPacket(p, getPacketPlayOutOpenSignEditor().newInstance(ReflectionUtil.toBlockPosition(s)));
-
-			getOpenGUIS().add(p.getName());
-		} catch(ReflectiveOperationException e) {
-			e.printStackTrace();
-		}
-	}
+        getOpenGUIS().add(p.getName());
+    }
 }

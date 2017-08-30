@@ -20,7 +20,11 @@ import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeEndercrystal;
-import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
+import de.alphahelix.alphalibary.nms.packets.PPOEntityDestroy;
+import de.alphahelix.alphalibary.nms.packets.PPOEntityMetadata;
+import de.alphahelix.alphalibary.nms.packets.PPOEntityTeleport;
+import de.alphahelix.alphalibary.nms.packets.PPOSpawnEntity;
+import de.alphahelix.alphalibary.nms.wrappers.EntityWrapper;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.utils.LocationUtil;
 import org.bukkit.Location;
@@ -29,23 +33,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-public class EndercrystalFakeUtil extends FakeUtilBase {
+public class EndercrystalFakeUtil {
 
     private static HashMap<String, BukkitTask> splitMap = new HashMap<>();
 
-    private static Constructor<?> entityEndercrystal;
-
-    static {
-        try {
-            entityEndercrystal = ReflectionUtil.getNmsClass("EntityEnderCrystal").getConstructor(ReflectionUtil.getNmsClass("World"));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
+    private static ReflectionUtil.SaveConstructor entityEndercrystal =
+            ReflectionUtil.getDeclaredConstructor("EntityEnderCrystal", ReflectionUtil.getNmsClass("World"));
 
     /**
      * Spawns in a {@link FakeEndercrystal} for the {@link Player}
@@ -75,21 +71,17 @@ public class EndercrystalFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeEndercrystal}
      */
     public static FakeEndercrystal spawnTemporaryEndercrystal(Player p, Location loc, String name) {
-        try {
-            Object endercrystal = entityEndercrystal.newInstance(ReflectionUtil.getWorldServer(p.getWorld()));
+        Object endercrystal = entityEndercrystal.newInstance(false, ReflectionUtil.getWorldServer(p.getWorld()));
+        EntityWrapper e = new EntityWrapper(endercrystal);
 
-            setLocation().invoke(endercrystal, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        e.setLocation(loc);
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntity().newInstance(endercrystal, 51));
+        ReflectionUtil.sendPacket(p, new PPOSpawnEntity(endercrystal, 51, 0));
 
-            FakeEndercrystal fE = new FakeEndercrystal(loc, name, endercrystal);
+        FakeEndercrystal fE = new FakeEndercrystal(loc, name, endercrystal);
 
-            FakeAPI.addFakeEndercrystal(p, fE);
-            return fE;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakeAPI.addFakeEndercrystal(p, fE);
+        return fE;
     }
 
     /**
@@ -102,25 +94,21 @@ public class EndercrystalFakeUtil extends FakeUtilBase {
      * @param endercrystal  the {@link FakeEndercrystal} which should be teleported
      */
     public static void splitTeleportBigItem(final Player p, final Location to, final int teleportCount, final long wait, final FakeEndercrystal endercrystal) {
-        try {
-            final Location currentLocation = endercrystal.getCurrentlocation();
-            Vector between = to.toVector().subtract(currentLocation.toVector());
+        final Location currentLocation = endercrystal.getCurrentlocation();
+        Vector between = to.toVector().subtract(currentLocation.toVector());
 
-            final double toMoveInX = between.getX() / teleportCount;
-            final double toMoveInY = between.getY() / teleportCount;
-            final double toMoveInZ = between.getZ() / teleportCount;
+        final double toMoveInX = between.getX() / teleportCount;
+        final double toMoveInY = between.getY() / teleportCount;
+        final double toMoveInZ = between.getZ() / teleportCount;
 
-            splitMap.put(p.getName(), new BukkitRunnable() {
-                public void run() {
-                    if (!LocationUtil.isSameLocation(currentLocation, to)) {
-                        teleportEndercrystal(p, currentLocation.add(new Vector(toMoveInX, toMoveInY, toMoveInZ)), endercrystal);
-                    } else
-                        this.cancel();
-                }
-            }.runTaskTimer(AlphaLibary.getInstance(), 0, wait));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        splitMap.put(p.getName(), new BukkitRunnable() {
+            public void run() {
+                if (!LocationUtil.isSameLocation(currentLocation, to)) {
+                    teleportEndercrystal(p, currentLocation.add(new Vector(toMoveInX, toMoveInY, toMoveInZ)), endercrystal);
+                } else
+                    this.cancel();
+            }
+        }.runTaskTimer(AlphaLibary.getInstance(), 0, wait));
     }
 
     /**
@@ -159,7 +147,8 @@ public class EndercrystalFakeUtil extends FakeUtilBase {
             yaw.set(a, loc.getYaw());
             pitch.set(a, loc.getPitch());
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityTeleport().newInstance(a));
+            ReflectionUtil.sendPacket(p, new PPOEntityTeleport(a));
+
             endercrystal.setCurrentlocation(loc);
         } catch (Exception e) {
             e.printStackTrace();
@@ -173,12 +162,8 @@ public class EndercrystalFakeUtil extends FakeUtilBase {
      * @param endercrystal the {@link FakeEndercrystal} to remove
      */
     public static void destroyEndercrystal(Player p, FakeEndercrystal endercrystal) {
-        try {
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityDestroy().newInstance(new int[]{ReflectionUtil.getEntityID(endercrystal.getNmsEntity())}));
-            FakeAPI.removeFakeEndercrystal(p, endercrystal);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(endercrystal.getNmsEntity())));
+        FakeAPI.removeFakeEndercrystal(p, endercrystal);
     }
 
     /**
@@ -189,15 +174,11 @@ public class EndercrystalFakeUtil extends FakeUtilBase {
      * @param endercrystal the {@link FakeEndercrystal} to change the name for
      */
     public static void setEndercrystalname(Player p, String name, FakeEndercrystal endercrystal) {
-        try {
-            setCustomName().invoke(endercrystal.getNmsEntity(), name.replace("&", "§").replace("_", " "));
-            setCustomNameVisible().invoke(endercrystal.getNmsEntity(), true);
+        EntityWrapper e = new EntityWrapper(endercrystal.getNmsEntity());
 
-            Object dw = getDataWatcher().invoke(endercrystal.getNmsEntity());
+        e.setCustomName(name.replace("&", "§").replace("_", " "));
+        e.setCustomNameVisible(true);
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(endercrystal.getNmsEntity()), dw, true));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityMetadata(e.getEntityID(), e.getDataWatcher()));
     }
 }

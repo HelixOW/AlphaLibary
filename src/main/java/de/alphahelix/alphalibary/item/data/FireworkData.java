@@ -15,7 +15,6 @@
  */
 package de.alphahelix.alphalibary.item.data;
 
-import de.alphahelix.alphalibary.item.SimpleFireworkEffect;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

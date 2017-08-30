@@ -63,7 +63,7 @@ public class SimpleFile extends YamlConfiguration {
     /**
      * Convert a normal {@link File} into a {@link SimpleFile}
      *
-     * @param f the old File which you want to convert
+     * @param f the old FileHelp which you want to convert
      */
     public SimpleFile(File f) {
         source = f;

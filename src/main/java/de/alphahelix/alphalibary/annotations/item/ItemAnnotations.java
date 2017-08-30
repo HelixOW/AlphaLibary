@@ -19,8 +19,12 @@ public class ItemAnnotations implements IAnnotation {
 
             Skull skull = field.getAnnotation(Skull.class);
             Color color = field.getAnnotation(Color.class);
+            Banner banner = field.getAnnotation(Banner.class);
+            Map map = field.getAnnotation(Map.class);
+            Potion potion = field.getAnnotation(Potion.class);
+            SpawnEgg spawnEgg = field.getAnnotation(SpawnEgg.class);
 
-            AnnotatedItem annotatedItem = new AnnotatedItem(clazzObj, field, item, skull, color);
+            AnnotatedItem annotatedItem = new AnnotatedItem(clazzObj, field, item, skull, color, banner, map, potion, spawnEgg);
             registeredItems.add(annotatedItem.apply());
         }
 

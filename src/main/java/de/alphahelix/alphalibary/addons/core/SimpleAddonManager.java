@@ -33,7 +33,7 @@ public class SimpleAddonManager implements AddonManager {
         Addon result;
 
         if (!JAR_PATTERN.matcher(file.getName()).matches()) {
-            throw new InvalidAddonException("File '" + file.getName() + "' is not a Jar File!");
+            throw new InvalidAddonException("FileHelp '" + file.getName() + "' is not a Jar FileHelp!");
         }
 
         result = AddonLoader.loadAddon(file);

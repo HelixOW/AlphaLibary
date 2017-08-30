@@ -19,28 +19,21 @@ package de.alphahelix.alphalibary.fakeapi.utils;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeItem;
-import de.alphahelix.alphalibary.fakeapi.utils.intern.FakeUtilBase;
+import de.alphahelix.alphalibary.nms.packets.PPOEntityDestroy;
+import de.alphahelix.alphalibary.nms.packets.PPOEntityMetadata;
+import de.alphahelix.alphalibary.nms.packets.PPOSpawnEntity;
+import de.alphahelix.alphalibary.nms.wrappers.EntityItemWrapper;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.Constructor;
+public class ItemFakeUtil {
 
-public class ItemFakeUtil extends FakeUtilBase {
-
-    private static Constructor<?> entityItem;
-
-    static {
-        try {
-            entityItem = ReflectionUtil.getNmsClass("EntityItem")
-                    .getConstructor(ReflectionUtil.getNmsClass("World"),
-                            double.class, double.class, double.class, ReflectionUtil.getNmsClass("ItemStack"));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
+    private static ReflectionUtil.SaveConstructor entityItem =
+            ReflectionUtil.getDeclaredConstructor("EntityItem", ReflectionUtil.getNmsClass("World"),
+                    double.class, double.class, double.class, ReflectionUtil.getNmsClass("ItemStack"));
 
     /**
      * Spawns in a {@link FakeItem} for the {@link Player}
@@ -53,8 +46,6 @@ public class ItemFakeUtil extends FakeUtilBase {
      */
     public static FakeItem spawnItem(Player p, Location loc, String name, Material type) {
         FakeItem fI = spawnTemporaryItem(p, loc, name, type);
-
-        if (fI == null) return null;
 
         FakeRegister.getItemLocationsFile().addItemToFile(fI);
         return fI;
@@ -70,28 +61,23 @@ public class ItemFakeUtil extends FakeUtilBase {
      * @return the new spawned {@link FakeItem}
      */
     public static FakeItem spawnTemporaryItem(Player p, Location loc, String name, Material type) {
-        try {
-            Object item = entityItem.newInstance(ReflectionUtil.getWorldServer(p.getWorld())
-                    , loc.getX()
-                    , loc.getY()
-                    , loc.getZ()
-                    , ReflectionUtil.getObjectNMSItemStack(new ItemStack(type)));
+        Object item = entityItem.newInstance(false,
+                ReflectionUtil.getWorldServer(p.getWorld()),
+                loc.getX(),
+                loc.getY(),
+                loc.getZ(),
+                ReflectionUtil.getNMSItemStack(new ItemStack(type)));
+        EntityItemWrapper i = new EntityItemWrapper(item);
 
-            Object dw = getDataWatcher().invoke(item);
+        i.setItemStack(new ItemStack(type));
 
-            setItemStack().invoke(item, ReflectionUtil.getObjectNMSItemStack(new ItemStack(type)));
+        ReflectionUtil.sendPacket(p, new PPOSpawnEntity(item, 2, 0));
+        ReflectionUtil.sendPacket(p, new PPOEntityMetadata(i.getEntityID(), i.getDataWatcher()));
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutSpawnEntity().newInstance(item, 2));
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(item), dw, true));
+        FakeItem fI = new FakeItem(loc, name, item, type);
 
-            FakeItem fI = new FakeItem(loc, name, item, type);
-
-            FakeAPI.addFakeItem(p, fI);
-            return fI;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        FakeAPI.addFakeItem(p, fI);
+        return fI;
     }
 
     /**
@@ -101,12 +87,8 @@ public class ItemFakeUtil extends FakeUtilBase {
      * @param item the {@link FakeItem} to remove
      */
     public static void destroyItem(Player p, FakeItem item) {
-        try {
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityDestroy().newInstance(new int[]{ReflectionUtil.getEntityID(item.getNmsEntity())}));
-            FakeAPI.removeFakeItem(p, item);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(item.getNmsEntity())));
+        FakeAPI.removeFakeItem(p, item);
     }
 
     /**
@@ -117,31 +99,22 @@ public class ItemFakeUtil extends FakeUtilBase {
      * @param item the {@link FakeItem} to change the name for
      */
     public static void setItemname(Player p, String name, FakeItem item) {
-        try {
-            setCustomName().invoke(item.getNmsEntity(), name.replace("&", "§").replace("_", " "));
-            setCustomNameVisible().invoke(item.getNmsEntity(), true);
+        EntityItemWrapper e = new EntityItemWrapper(item.getNmsEntity());
 
-            Object dw = getDataWatcher().invoke(item.getNmsEntity());
+        e.setCustomName(name.replace("&", "§").replace("_", " "));
+        e.setCustomNameVisible(true);
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(item.getNmsEntity()), dw, true));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityMetadata(e.getEntityID(), e.getDataWatcher()));
     }
 
     /**
      * Experimental feature
      */
     public static void setGravity(Player p, boolean gravity, FakeItem item) {
-        try {
-            setGravity().invoke(item.getNmsEntity(), !gravity);
+        EntityItemWrapper e = new EntityItemWrapper(item.getNmsEntity());
 
-            Object dw = getDataWatcher().invoke(item.getNmsEntity());
+        e.setNoGravity(!gravity);
 
-            ReflectionUtil.sendPacket(p, getPacketPlayOutEntityMetadata().newInstance(ReflectionUtil.getEntityID(item.getNmsEntity()), dw, true));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, new PPOEntityMetadata(e.getEntityID(), e.getDataWatcher()));
     }
 }

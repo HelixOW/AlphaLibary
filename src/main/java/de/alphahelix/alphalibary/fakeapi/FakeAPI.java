@@ -18,7 +18,7 @@ package de.alphahelix.alphalibary.fakeapi;
 
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.AlphaLibary;
-import de.alphahelix.alphalibary.fakeapi.events.*;
+import de.alphahelix.alphalibary.fakeapi.events.FakeEntityClickEvent;
 import de.alphahelix.alphalibary.fakeapi.instances.*;
 import de.alphahelix.alphalibary.netty.PacketListenerAPI;
 import de.alphahelix.alphalibary.netty.handler.PacketHandler;
@@ -1574,20 +1574,8 @@ public class FakeAPI extends AlphaLibary {
                         if (packet.getPacketValue("d") != null)
                             hand = REnumHand.values()[getID(packet.getPacketValue("d"))];
 
-
                         if (action != REnumAction.INTERACT_AT) {
-
                             Bukkit.getPluginManager().callEvent(new FakeEntityClickEvent(p, clicked, action, hand));
-
-                            if (clicked instanceof FakeArmorstand) {
-                                Bukkit.getPluginManager().callEvent(new FakeArmorstandClickEvent(p, (FakeArmorstand) clicked, action, hand));
-                            } else if (clicked instanceof FakeEndercrystal) {
-                                Bukkit.getPluginManager().callEvent(new FakeEndercrystalClickEvent(p, (FakeEndercrystal) clicked, action, hand));
-                            } else if (clicked instanceof FakeMob) {
-                                Bukkit.getPluginManager().callEvent(new FakeMobClickEvent(p, (FakeMob) clicked, action, hand));
-                            } else if (clicked instanceof FakePlayer) {
-                                Bukkit.getPluginManager().callEvent(new FakePlayerClickEvent(p, (FakePlayer) clicked, action, hand));
-                            }
                         }
                     } catch (NoSuchFakeEntityException ignore) {
                     }

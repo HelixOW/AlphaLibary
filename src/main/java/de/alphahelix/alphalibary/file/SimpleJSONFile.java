@@ -18,6 +18,7 @@
 
 package de.alphahelix.alphalibary.file;
 
+import com.google.common.base.Objects;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -193,5 +194,26 @@ public class SimpleJSONFile extends File {
             e.printStackTrace();
             return true;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        SimpleJSONFile that = (SimpleJSONFile) o;
+        return Objects.equal(head, that.head);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), head);
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleJSONFile{" +
+                "head=" + head +
+                '}';
     }
 }

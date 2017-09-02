@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
@@ -69,5 +70,33 @@ public class PPORelEntityMove implements IPacket {
     @Override
     public Object getPacket(boolean stackTrace) {
         return PACKET.newInstance(stackTrace, entityID, FakeAPI.toDelta(x), FakeAPI.toDelta(y), FakeAPI.toDelta(z), onGround);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPORelEntityMove that = (PPORelEntityMove) o;
+        return getEntityID() == that.getEntityID() &&
+                Double.compare(that.getX(), getX()) == 0 &&
+                Double.compare(that.getY(), getY()) == 0 &&
+                Double.compare(that.getZ(), getZ()) == 0 &&
+                isOnGround() == that.isOnGround();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntityID(), getX(), getY(), getZ(), isOnGround());
+    }
+
+    @Override
+    public String toString() {
+        return "PPORelEntityMove{" +
+                "entityID=" + entityID +
+                ", x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", onGround=" + onGround +
+                '}';
     }
 }

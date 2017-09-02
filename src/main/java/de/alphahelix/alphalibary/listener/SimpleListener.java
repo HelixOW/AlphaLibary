@@ -19,10 +19,6 @@ import de.alphahelix.alphalibary.AlphaLibary;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
-/**
- * @see SimpleLoader
- * @deprecated
- */
 public class SimpleListener implements Listener {
 
     /**

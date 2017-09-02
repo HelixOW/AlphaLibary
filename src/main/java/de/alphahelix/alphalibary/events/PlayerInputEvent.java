@@ -18,6 +18,7 @@
 
 package de.alphahelix.alphalibary.events;
 
+import com.google.common.base.Objects;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
@@ -44,4 +45,24 @@ public class PlayerInputEvent extends PlayerEvent {
 	public HandlerList getHandlers() {
 		return handlers;
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PlayerInputEvent that = (PlayerInputEvent) o;
+        return Objects.equal(getInput(), that.getInput());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getInput());
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerInputEvent{" +
+                "input='" + input + '\'' +
+                '}';
+    }
 }

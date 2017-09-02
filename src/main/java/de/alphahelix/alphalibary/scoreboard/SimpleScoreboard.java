@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.scoreboard;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.gson.annotations.Expose;
@@ -384,6 +385,23 @@ public class SimpleScoreboard extends SimpleListener implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleScoreboard that = (SimpleScoreboard) o;
+        return Objects.equal(stringLines, that.stringLines) &&
+                Objects.equal(boardLines, that.boardLines) &&
+                Objects.equal(owner, that.owner) &&
+                Objects.equal(scoreboard, that.scoreboard) &&
+                Objects.equal(objective, that.objective);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(stringLines, boardLines, owner, scoreboard, objective);
+    }
+
+    @Override
     public String toString() {
         return "SimpleScoreboard{" +
                 "boardLines=" + boardLines +
@@ -457,6 +475,24 @@ public class SimpleScoreboard extends SimpleListener implements Serializable {
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            StringLine that = (StringLine) o;
+            return getLine() == that.getLine() &&
+                    Objects.equal(getStartValue(), that.getStartValue()) &&
+                    Objects.equal(getStartSplitter(), that.getStartSplitter()) &&
+                    Objects.equal(getValue(), that.getValue()) &&
+                    Objects.equal(getSplitter(), that.getSplitter()) &&
+                    Objects.equal(getMoving(), that.getMoving());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(getStartValue(), getStartSplitter(), getLine(), getValue(), getSplitter(), getMoving());
+        }
+
+        @Override
         public String toString() {
             return "StringLine{" +
                     "line=" + line +
@@ -491,6 +527,21 @@ class BoardLine implements Serializable {
 
     public Team getTeam() {
         return team;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BoardLine boardLine = (BoardLine) o;
+        return getLine() == boardLine.getLine() &&
+                getColor() == boardLine.getColor() &&
+                Objects.equal(getTeam(), boardLine.getTeam());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getColor(), getLine(), getTeam());
     }
 
     @Override

@@ -64,4 +64,11 @@ public enum FakeMobType {
     public String getNmsClass() {
         return nmsClass;
     }
+
+    @Override
+    public String toString() {
+        return "FakeMobType{" +
+                "nmsClass='" + nmsClass + '\'' +
+                '}';
+    }
 }

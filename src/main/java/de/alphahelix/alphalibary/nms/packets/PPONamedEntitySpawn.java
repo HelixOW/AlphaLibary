@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 public class PPONamedEntitySpawn implements IPacket {
@@ -26,5 +27,25 @@ public class PPONamedEntitySpawn implements IPacket {
     @Override
     public Object getPacket(boolean stackTrace) {
         return PACKET.newInstance(stackTrace, entityHuman);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPONamedEntitySpawn that = (PPONamedEntitySpawn) o;
+        return Objects.equal(getEntityHuman(), that.getEntityHuman());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntityHuman());
+    }
+
+    @Override
+    public String toString() {
+        return "PPONamedEntitySpawn{" +
+                "entityHuman=" + entityHuman +
+                '}';
     }
 }

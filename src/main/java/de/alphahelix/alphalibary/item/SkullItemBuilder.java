@@ -24,13 +24,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 
 public class SkullItemBuilder {
 
     private static final Base64 BASE_64 = new Base64();
 
-    public enum Skulls {
+    public enum Skulls implements Serializable {
         ARROW_LEFT("MHF_ArrowLeft"),
         ARROW_RIGHT("MHF_ArrowRight"),
         ARROW_UP("MHF_ArrowUp"),
@@ -79,6 +80,13 @@ public class SkullItemBuilder {
             meta.setOwner(id);
             itemStack.setItemMeta(meta);
             return itemStack;
+        }
+
+        @Override
+        public String toString() {
+            return "Skulls{" +
+                    "id='" + id + '\'' +
+                    '}';
         }
     }
 

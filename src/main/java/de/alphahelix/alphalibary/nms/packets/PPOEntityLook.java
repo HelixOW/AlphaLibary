@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
@@ -59,5 +60,31 @@ public class PPOEntityLook implements IPacket {
     @Override
     public Object getPacket(boolean stackTrace) {
         return PACKET.newInstance(stackTrace, entityID, FakeAPI.toAngle(yaw), FakeAPI.toAngle(pitch), onGround);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPOEntityLook that = (PPOEntityLook) o;
+        return getEntityID() == that.getEntityID() &&
+                Float.compare(that.getYaw(), getYaw()) == 0 &&
+                Float.compare(that.getPitch(), getPitch()) == 0 &&
+                isOnGround() == that.isOnGround();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntityID(), getYaw(), getPitch(), isOnGround());
+    }
+
+    @Override
+    public String toString() {
+        return "PPOEntityLook{" +
+                "entityID=" + entityID +
+                ", yaw=" + yaw +
+                ", pitch=" + pitch +
+                ", onGround=" + onGround +
+                '}';
     }
 }

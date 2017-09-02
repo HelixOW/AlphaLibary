@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.status;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.events.status.GameStatusChangeEvent;
 import net.md_5.bungee.api.ChatColor;
@@ -53,15 +54,23 @@ public class GameStatus implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameStatus that = (GameStatus) o;
+        return Objects.equal(rawName, that.rawName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName());
+    }
+
+    @Override
     public String toString() {
         return "GameStatus{" +
                 "name='" + name + '\'' +
                 ", rawName='" + rawName + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof GameStatus && ((GameStatus) obj).rawName.equals(this.rawName);
     }
 }

@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.statistics;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.utils.SerializationUtil;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
 import org.bukkit.OfflinePlayer;
@@ -96,6 +97,20 @@ public class PlayerStatistic implements Serializable {
 
     public String encodeInBase64() {
         return SerializationUtil.encodeBase64(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PlayerStatistic that = (PlayerStatistic) o;
+        return Objects.equal(getPlayer(), that.getPlayer()) &&
+                Objects.equal(getStatistics(), that.getStatistics());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getPlayer(), getStatistics());
     }
 
     @Override

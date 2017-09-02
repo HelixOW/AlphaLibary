@@ -31,4 +31,11 @@ public enum NBTType {
     public int getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "NBTType{" +
+                "id=" + id +
+                '}';
+    }
 }

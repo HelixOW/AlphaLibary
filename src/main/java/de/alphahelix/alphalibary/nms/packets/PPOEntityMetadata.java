@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 public class PPOEntityMetadata implements IPacket {
@@ -55,5 +56,29 @@ public class PPOEntityMetadata implements IPacket {
         if (updateItem == null)
             return PACKET.newInstance(stackTrace, entityID, dataWatcher, true);
         return PACKET.newInstance(stackTrace, entityID, dataWatcher, updateItem);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPOEntityMetadata that = (PPOEntityMetadata) o;
+        return getEntityID() == that.getEntityID() &&
+                Objects.equal(getDataWatcher(), that.getDataWatcher()) &&
+                Objects.equal(isUpdateItem(), that.isUpdateItem());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntityID(), getDataWatcher(), isUpdateItem());
+    }
+
+    @Override
+    public String toString() {
+        return "PPOEntityMetadata{" +
+                "entityID=" + entityID +
+                ", dataWatcher=" + dataWatcher +
+                ", updateItem=" + updateItem +
+                '}';
     }
 }

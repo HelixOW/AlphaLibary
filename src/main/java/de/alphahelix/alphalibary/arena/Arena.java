@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.arena;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.utils.Util;
 import org.apache.commons.io.FileDeleteStrategy;
@@ -89,13 +90,28 @@ public class Arena implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Arena arena = (Arena) o;
+        return Objects.equal(getName(), arena.getName()) &&
+                Objects.equal(getFileName(), arena.getFileName()) &&
+                Objects.equal(getIcon(), arena.getIcon()) &&
+                Objects.equal(getSpawns(), arena.getSpawns());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), getFileName(), getIcon(), getSpawns());
+    }
+
+    @Override
     public String toString() {
         return "Arena{" +
                 "name='" + name + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", icon=" + icon +
                 ", spawns=" + spawns +
-                ", realSpawns=" + realSpawns +
                 '}';
     }
 }

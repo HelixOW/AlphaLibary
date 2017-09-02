@@ -1,7 +1,9 @@
 package de.alphahelix.alphalibary.command;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.command.arguments.Argument;
 
+import java.util.Arrays;
 import java.util.WeakHashMap;
 
 /**
@@ -53,5 +55,27 @@ public class CommandWatcher {
     @SuppressWarnings("unchecked")
     public <T, A extends Argument<T>> Argument<T> getArgument(int index, Class<A> typus) {
         return ((Argument<T>) args.get(index));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommandWatcher that = (CommandWatcher) o;
+        return Objects.equal(args, that.args) &&
+                Objects.equal(argsGiven, that.argsGiven);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(args, argsGiven);
+    }
+
+    @Override
+    public String toString() {
+        return "CommandWatcher{" +
+                "args=" + args +
+                ", argsGiven=" + Arrays.toString(argsGiven) +
+                '}';
     }
 }

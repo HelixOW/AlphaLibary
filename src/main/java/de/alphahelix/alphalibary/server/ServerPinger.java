@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.server;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.utils.Util;
 
 import java.io.DataInputStream;
@@ -41,5 +42,27 @@ public class ServerPinger {
                 callback.done(null);
             }
         });
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ServerPinger that = (ServerPinger) o;
+        return port == that.port &&
+                Objects.equal(server, that.server);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(server, port);
+    }
+
+    @Override
+    public String toString() {
+        return "ServerPinger{" +
+                "server='" + server + '\'' +
+                ", port=" + port +
+                '}';
     }
 }

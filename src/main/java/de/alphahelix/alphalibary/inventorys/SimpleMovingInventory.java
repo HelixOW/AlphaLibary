@@ -131,21 +131,39 @@ public class SimpleMovingInventory implements Listener, Serializable {
 
         if (sameName(e.getCurrentItem(), nextPage)) {
             e.setCancelled(true);
-            if (inv.currpage < inv.pages.size() - 1) {
+            if (inv.currpage < pages.size() - 1) {
                 inv.currpage += 1;
-                p.openInventory(inv.pages.get(inv.currpage));
+                p.openInventory(pages.get(inv.currpage));
             }
         } else if (sameName(e.getCurrentItem(), previousPage)) {
             e.setCancelled(true);
             if (inv.currpage > 0) {
                 inv.currpage -= 1;
-                p.openInventory(inv.pages.get(inv.currpage));
+                p.openInventory(pages.get(inv.currpage));
             }
         }
     }
 
     public boolean sameName(ItemStack is1, ItemStack is2) {
         return ChatColor.stripColor(is1.getItemMeta().getDisplayName()).equals(ChatColor.stripColor(is2.getItemMeta().getDisplayName()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleMovingInventory that = (SimpleMovingInventory) o;
+        return size == that.size &&
+                currpage == that.currpage &&
+                com.google.common.base.Objects.equal(items, that.items) &&
+                com.google.common.base.Objects.equal(title, that.title) &&
+                com.google.common.base.Objects.equal(nextPage, that.nextPage) &&
+                com.google.common.base.Objects.equal(previousPage, that.previousPage);
+    }
+
+    @Override
+    public int hashCode() {
+        return com.google.common.base.Objects.hashCode(items, title, size, nextPage, previousPage, currpage);
     }
 
     @Override

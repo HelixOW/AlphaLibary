@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.status;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.arena.Arena;
 import de.alphahelix.alphalibary.events.status.ArenaStatusChangeEvent;
@@ -53,15 +54,23 @@ public class ArenaStatus {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArenaStatus that = (ArenaStatus) o;
+        return Objects.equal(rawName, that.rawName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(rawName);
+    }
+
+    @Override
     public String toString() {
         return "ArenaStatus{" +
                 "name='" + name + '\'' +
                 ", rawName='" + rawName + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof ArenaStatus && ((ArenaStatus) obj).rawName.equals(this.rawName);
     }
 }

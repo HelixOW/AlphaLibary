@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.command;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.Bukkit;
@@ -125,5 +126,25 @@ public abstract class SimpleCommand extends Command {
      */
     public AlphaLibary getAPI() {
         return this.plugin;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleCommand that = (SimpleCommand) o;
+        return Objects.equal(plugin, that.plugin);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(plugin);
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleCommand{" +
+                "plugin=" + plugin +
+                '}';
     }
 }

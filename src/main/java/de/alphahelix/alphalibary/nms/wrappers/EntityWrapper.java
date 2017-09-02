@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.wrappers;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.Location;
 
@@ -89,5 +90,29 @@ public class EntityWrapper {
 
     public Object getDataWatcher() {
         return GDATAWATCHER.invoke(entity, stackTrace);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EntityWrapper that = (EntityWrapper) o;
+        return getEntityID() == that.getEntityID() &&
+                isStackTrace() == that.isStackTrace() &&
+                Objects.equal(getEntity(), that.getEntity());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntity(), getEntityID(), isStackTrace());
+    }
+
+    @Override
+    public String toString() {
+        return "EntityWrapper{" +
+                "entity=" + entity +
+                ", entityID=" + entityID +
+                ", stackTrace=" + stackTrace +
+                '}';
     }
 }

@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.item.data;
 
+import com.google.common.base.Objects;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -54,6 +55,19 @@ public class FireworkData implements ItemData {
 
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FireworkData that = (FireworkData) o;
+        return Objects.equal(allEffects, that.allEffects);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(allEffects);
     }
 
     @Override

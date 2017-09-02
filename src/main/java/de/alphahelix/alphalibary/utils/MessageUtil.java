@@ -128,6 +128,14 @@ enum DefaultFontInfo {
         if (this == DefaultFontInfo.SPACE) return this.getLength();
         return this.length + 1;
     }
+
+    @Override
+    public String toString() {
+        return "DefaultFontInfo{" +
+                "character=" + character +
+                ", length=" + length +
+                '}';
+    }
 }
 
 public class MessageUtil {
@@ -146,9 +154,7 @@ public class MessageUtil {
                 previousCode = true;
             } else if (previousCode) {
                 previousCode = false;
-                if (c == 'l' || c == 'L') {
-                    isBold = true;
-                } else isBold = false;
+                isBold = c == 'l' || c == 'L';
             } else {
                 DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
                 messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();

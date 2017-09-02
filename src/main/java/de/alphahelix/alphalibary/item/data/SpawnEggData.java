@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.item.data;
 
+import com.google.common.base.Objects;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -27,5 +28,25 @@ public class SpawnEggData implements ItemData {
         meta.setSpawnedType(spawnedType);
 
         applyOn.setItemMeta(meta);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpawnEggData that = (SpawnEggData) o;
+        return spawnedType == that.spawnedType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(spawnedType);
+    }
+
+    @Override
+    public String toString() {
+        return "SpawnEggData{" +
+                "spawnedType=" + spawnedType +
+                '}';
     }
 }

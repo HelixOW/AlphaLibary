@@ -16,7 +16,6 @@
 
 package de.alphahelix.alphalibary.fakeapi.files;
 
-import de.alphahelix.alphalibary.fakeapi.instances.FakePainting;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 
 public class PaintingLocationsFile extends SimpleJSONFile {

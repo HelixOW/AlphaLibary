@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.events.kit;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.kits.Kit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -26,5 +27,25 @@ public class KitReceiveEvent extends PlayerEvent {
 
     public Kit getReceivedKit() {
         return receivedKit;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KitReceiveEvent that = (KitReceiveEvent) o;
+        return Objects.equal(getReceivedKit(), that.getReceivedKit());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getReceivedKit());
+    }
+
+    @Override
+    public String toString() {
+        return "KitReceiveEvent{" +
+                "receivedKit=" + receivedKit +
+                '}';
     }
 }

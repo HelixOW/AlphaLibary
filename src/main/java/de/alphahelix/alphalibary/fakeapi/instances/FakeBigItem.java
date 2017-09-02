@@ -16,6 +16,7 @@
 
 package de.alphahelix.alphalibary.fakeapi.instances;
 
+import com.google.common.base.Objects;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,6 +31,20 @@ public class FakeBigItem extends FakeEntity {
 
     public ItemStack getItemStack() {
         return itemStack;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        FakeBigItem that = (FakeBigItem) o;
+        return Objects.equal(getItemStack(), that.getItemStack());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), getItemStack());
     }
 
     @Override

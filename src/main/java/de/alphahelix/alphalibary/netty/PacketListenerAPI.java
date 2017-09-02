@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.netty;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.netty.channel.ChannelWrapper;
 import de.alphahelix.alphalibary.netty.handler.PacketHandler;
 import de.alphahelix.alphalibary.netty.handler.ReceivedPacket;
@@ -100,5 +101,27 @@ public class PacketListenerAPI implements IPacketListener, Listener {
             return sentPacket.getPacket();
         }
         return packet;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PacketListenerAPI that = (PacketListenerAPI) o;
+        return injected == that.injected &&
+                Objects.equal(channelInjector, that.channelInjector);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(injected, channelInjector);
+    }
+
+    @Override
+    public String toString() {
+        return "PacketListenerAPI{" +
+                "injected=" + injected +
+                ", channelInjector=" + channelInjector +
+                '}';
     }
 }

@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.nbt.NBTCompound;
 import de.alphahelix.alphalibary.nms.BlockPos;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
@@ -50,5 +51,29 @@ public class PPOTileEntityData implements IPacket {
     @Override
     public Object getPacket(boolean stackTrace) {
         return PACKET.newInstance(stackTrace, ReflectionUtil.toBlockPosition(pos), action, compound.getCoumpound());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPOTileEntityData that = (PPOTileEntityData) o;
+        return getAction() == that.getAction() &&
+                Objects.equal(getPos(), that.getPos()) &&
+                Objects.equal(getCompound(), that.getCompound());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getPos(), getAction(), getCompound());
+    }
+
+    @Override
+    public String toString() {
+        return "PPOTileEntityData{" +
+                "pos=" + pos +
+                ", action=" + action +
+                ", compound=" + compound +
+                '}';
     }
 }

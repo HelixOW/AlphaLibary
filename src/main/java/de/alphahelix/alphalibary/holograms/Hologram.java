@@ -18,13 +18,16 @@
 
 package de.alphahelix.alphalibary.holograms;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeArmorstand;
 import de.alphahelix.alphalibary.fakeapi.utils.ArmorstandFakeUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-public class Hologram implements Listener {
+import java.io.Serializable;
+
+public class Hologram implements Listener, Serializable {
 
     private String name;
     private Location location;
@@ -54,5 +57,27 @@ public class Hologram implements Listener {
     public Hologram setName(String name) {
         this.name = name;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Hologram hologram = (Hologram) o;
+        return Objects.equal(getName(), hologram.getName()) &&
+                Objects.equal(getLocation(), hologram.getLocation());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), getLocation());
+    }
+
+    @Override
+    public String toString() {
+        return "Hologram{" +
+                "name='" + name + '\'' +
+                ", location=" + location +
+                '}';
     }
 }

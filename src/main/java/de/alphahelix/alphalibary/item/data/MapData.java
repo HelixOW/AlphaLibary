@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.item.data;
 
+import com.google.common.base.Objects;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -42,5 +43,29 @@ public class MapData implements ItemData {
         meta.setScaling(scaling);
 
         applyOn.setItemMeta(meta);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MapData mapData = (MapData) o;
+        return scaling == mapData.scaling &&
+                Objects.equal(mapColor, mapData.mapColor) &&
+                Objects.equal(locationName, mapData.locationName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(mapColor, locationName, scaling);
+    }
+
+    @Override
+    public String toString() {
+        return "MapData{" +
+                "mapColor=" + mapColor +
+                ", locationName='" + locationName + '\'' +
+                ", scaling=" + scaling +
+                '}';
     }
 }

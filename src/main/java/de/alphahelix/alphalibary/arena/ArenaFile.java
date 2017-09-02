@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.arena;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -106,6 +107,24 @@ public class ArenaFile extends SimpleJSONFile {
 
         public Location realize() {
             return new Location(Bukkit.getWorld(getWorldName()), getX(), getY(), getZ(), getYaw(), getPitch());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            NotInitLocation that = (NotInitLocation) o;
+            return Double.compare(that.getX(), getX()) == 0 &&
+                    Double.compare(that.getY(), getY()) == 0 &&
+                    Double.compare(that.getZ(), getZ()) == 0 &&
+                    Float.compare(that.getYaw(), getYaw()) == 0 &&
+                    Float.compare(that.getPitch(), getPitch()) == 0 &&
+                    Objects.equal(getWorldName(), that.getWorldName());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(getX(), getY(), getZ(), getYaw(), getPitch(), getWorldName());
         }
 
         @Override

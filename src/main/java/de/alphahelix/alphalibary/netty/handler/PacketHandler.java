@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.netty.handler;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.entity.Player;
 
@@ -106,18 +107,6 @@ public abstract class PacketHandler {
         }
     }
 
-    @Override
-    public String toString() {
-        return "PacketHandler{" +
-                "hasSendOptions=" + hasSendOptions +
-                ", forcePlayerSend=" + forcePlayerSend +
-                ", forceServerSend=" + forceServerSend +
-                ", hasReceiveOptions=" + hasReceiveOptions +
-                ", forcePlayerReceive=" + forcePlayerReceive +
-                ", forceServerReceive=" + forceServerReceive +
-                '}';
-    }
-
     public static List<PacketHandler> getHandlers() {
         return new ArrayList<>(handlers);
     }
@@ -139,4 +128,33 @@ public abstract class PacketHandler {
 
     public abstract void onReceive(ReceivedPacket packet);
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PacketHandler that = (PacketHandler) o;
+        return hasSendOptions == that.hasSendOptions &&
+                forcePlayerSend == that.forcePlayerSend &&
+                forceServerSend == that.forceServerSend &&
+                hasReceiveOptions == that.hasReceiveOptions &&
+                forcePlayerReceive == that.forcePlayerReceive &&
+                forceServerReceive == that.forceServerReceive;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(hasSendOptions, forcePlayerSend, forceServerSend, hasReceiveOptions, forcePlayerReceive, forceServerReceive);
+    }
+
+    @Override
+    public String toString() {
+        return "PacketHandler{" +
+                "hasSendOptions=" + hasSendOptions +
+                ", forcePlayerSend=" + forcePlayerSend +
+                ", forceServerSend=" + forceServerSend +
+                ", hasReceiveOptions=" + hasReceiveOptions +
+                ", forcePlayerReceive=" + forcePlayerReceive +
+                ", forceServerReceive=" + forceServerReceive +
+                '}';
+    }
 }

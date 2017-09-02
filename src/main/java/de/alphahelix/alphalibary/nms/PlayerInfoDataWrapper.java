@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms;
 
+import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
@@ -77,5 +78,33 @@ public class PlayerInfoDataWrapper {
             e1.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PlayerInfoDataWrapper that = (PlayerInfoDataWrapper) o;
+        return getPing() == that.getPing() &&
+                Objects.equal(getGameMode(), that.getGameMode()) &&
+                Objects.equal(getProfile(), that.getProfile()) &&
+                Objects.equal(getName(), that.getName()) &&
+                Objects.equal(getPlayerinfoaction(), that.getPlayerinfoaction());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getPing(), getGameMode(), getProfile(), getName(), getPlayerinfoaction());
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerInfoDataWrapper{" +
+                "ping=" + ping +
+                ", gameMode=" + gameMode +
+                ", profile=" + profile +
+                ", name='" + name + '\'' +
+                ", playerinfoaction=" + playerinfoaction +
+                '}';
     }
 }

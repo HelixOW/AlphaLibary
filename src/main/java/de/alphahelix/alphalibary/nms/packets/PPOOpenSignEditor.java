@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.nms.BlockPos;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
@@ -27,5 +28,25 @@ public class PPOOpenSignEditor implements IPacket {
     @Override
     public Object getPacket(boolean stackTrace) {
         return PACKET.newInstance(stackTrace, ReflectionUtil.toBlockPosition(pos));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPOOpenSignEditor that = (PPOOpenSignEditor) o;
+        return Objects.equal(getPos(), that.getPos());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getPos());
+    }
+
+    @Override
+    public String toString() {
+        return "PPOOpenSignEditor{" +
+                "pos=" + pos +
+                '}';
     }
 }

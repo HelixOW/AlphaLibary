@@ -16,6 +16,7 @@
 
 package de.alphahelix.alphalibary.fakeapi.instances;
 
+import com.google.common.base.Objects;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -35,6 +36,20 @@ public class FakeItem extends FakeEntity {
      */
     public Material getType() {
         return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        FakeItem fakeItem = (FakeItem) o;
+        return getType() == fakeItem.getType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), getType());
     }
 
     @Override

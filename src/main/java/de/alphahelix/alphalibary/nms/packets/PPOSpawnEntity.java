@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.nms.BlockPos;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
@@ -70,5 +71,31 @@ public class PPOSpawnEntity implements IPacket {
         if (pos == null)
             return PACKET_OPT_1.newInstance(stackTrace, entity, type, metaData);
         return PACKET_OPT_2.newInstance(stackTrace, entity, type, metaData, ReflectionUtil.toBlockPosition(pos));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPOSpawnEntity that = (PPOSpawnEntity) o;
+        return getType() == that.getType() &&
+                getMetaData() == that.getMetaData() &&
+                Objects.equal(getEntity(), that.getEntity()) &&
+                Objects.equal(getPos(), that.getPos());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntity(), getType(), getMetaData(), getPos());
+    }
+
+    @Override
+    public String toString() {
+        return "PPOSpawnEntity{" +
+                "entity=" + entity +
+                ", type=" + type +
+                ", metaData=" + metaData +
+                ", pos=" + pos +
+                '}';
     }
 }

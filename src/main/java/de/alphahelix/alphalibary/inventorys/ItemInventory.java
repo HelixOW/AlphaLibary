@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.inventorys;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.file.SimpleFile;
 import de.alphahelix.alphalibary.item.InventoryItem;
 import org.bukkit.Bukkit;
@@ -8,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Modified version of an {@link Inventory} to save it inside the {@link SimpleFile}
@@ -31,17 +33,7 @@ public class ItemInventory implements Serializable {
         for (ItemStack stack : inventory.getContents()) {
             if (stack != null && inventory.getItem(slot) != null) {
 
-                iitems.add(new InventoryItem() {
-                    @Override
-                    public ItemStack getItemStack() {
-                        return stack;
-                    }
-
-                    @Override
-                    public int getSlot() {
-                        return inventory.first(stack);
-                    }
-                });
+                iitems.add(new InventoryItem(stack, inventory.first(stack)));
                 inventory.removeItem(inventory.getItem(slot));
             }
             slot++;
@@ -61,5 +53,27 @@ public class ItemInventory implements Serializable {
 
     public InventoryItem[] getItems() {
         return items;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemInventory that = (ItemInventory) o;
+        return Objects.equal(getInventory(), that.getInventory()) &&
+                Objects.equal(getItems(), that.getItems());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getInventory(), getItems());
+    }
+
+    @Override
+    public String toString() {
+        return "ItemInventory{" +
+                "inventory=" + inventory +
+                ", items=" + Arrays.toString(items) +
+                '}';
     }
 }

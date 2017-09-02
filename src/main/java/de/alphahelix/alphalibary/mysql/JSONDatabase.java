@@ -18,6 +18,7 @@
 
 package de.alphahelix.alphalibary.mysql;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.utils.JSONUtil;
 
 import java.util.ArrayList;
@@ -145,5 +146,31 @@ public class JSONDatabase {
 
     public enum DatabaseType {
         MYSQL, SQLITE
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JSONDatabase that = (JSONDatabase) o;
+        return id == that.id &&
+                type == that.type &&
+                Objects.equal(mySQLDatabase, that.mySQLDatabase) &&
+                Objects.equal(sqliteDatabase, that.sqliteDatabase);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, type, mySQLDatabase, sqliteDatabase);
+    }
+
+    @Override
+    public String toString() {
+        return "JSONDatabase{" +
+                "id=" + id +
+                ", type=" + type +
+                ", mySQLDatabase=" + mySQLDatabase +
+                ", sqliteDatabase=" + sqliteDatabase +
+                '}';
     }
 }

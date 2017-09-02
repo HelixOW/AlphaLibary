@@ -1,5 +1,7 @@
 package de.alphahelix.alphalibary.nbt;
 
+import com.google.common.base.Objects;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -96,5 +98,27 @@ public class NBTListCompound {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NBTListCompound that = (NBTListCompound) o;
+        return Objects.equal(owner, that.owner) &&
+                Objects.equal(compound, that.compound);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(owner, compound);
+    }
+
+    @Override
+    public String toString() {
+        return "NBTListCompound{" +
+                "owner=" + owner +
+                ", compound=" + compound +
+                '}';
     }
 }

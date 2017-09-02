@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.item.data;
 
+import com.google.common.base.Objects;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -52,6 +53,19 @@ public class SkullData implements ItemData {
 
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SkullData skullData = (SkullData) o;
+        return Objects.equal(ownerName, skullData.ownerName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(ownerName);
     }
 
     @Override

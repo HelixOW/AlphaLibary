@@ -2,7 +2,9 @@ package de.alphahelix.alphalibary.nms.enums;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
-public enum RChatMessageType {
+import java.io.Serializable;
+
+public enum RChatMessageType implements Serializable {
 
     CHAT(0),
     SYSTEM(1),
@@ -16,5 +18,12 @@ public enum RChatMessageType {
 
     public Object getNMSChatMessageType() {
         return ReflectionUtil.getNmsClass("ChatMessageType").getEnumConstants()[index];
+    }
+
+    @Override
+    public String toString() {
+        return "RChatMessageType{" +
+                "index=" + index +
+                '}';
     }
 }

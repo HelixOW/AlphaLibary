@@ -18,31 +18,73 @@
 
 package de.alphahelix.alphalibary.achievements;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.item.InventoryItem;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
-public interface Achievement extends Serializable {
-	
-	/**
-	 * Gets the name of the achievement for id purpose
-	 *
-	 * @return the name of the achievement
-	 */
-	String getName();
-	
-	/**
-	 * Gets an ItemStack which represents the achievement inside a inventory
-	 *
-	 * @return the ItemStack with its corresponding slot inside a inventory
-	 */
-	InventoryItem getIcon();
-	
-	/**
-	 * Gives out a short explanation of the achievement for clarity
-	 *
-	 * @return a short explanation of the achievement
-	 */
-	List<String> getDescription();
+public class Achievement implements Serializable {
+
+    private String name;
+    private InventoryItem icon;
+    private List<String> description;
+
+    public Achievement(String name, InventoryItem icon, List<String> description) {
+        this.name = name;
+        this.icon = icon;
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Achievement setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public InventoryItem getIcon() {
+        return icon;
+    }
+
+    public Achievement setIcon(InventoryItem icon) {
+        this.icon = icon;
+        return this;
+    }
+
+    public List<String> getDescription() {
+        return description;
+    }
+
+    public Achievement setDescription(String... description) {
+        this.description = Arrays.asList(description);
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Achievement that = (Achievement) o;
+        return Objects.equal(getName(), that.getName()) &&
+                Objects.equal(getIcon(), that.getIcon()) &&
+                Objects.equal(getDescription(), that.getDescription());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), getIcon(), getDescription());
+    }
+
+    @Override
+    public String toString() {
+        return "Achievement{" +
+                "name='" + name + '\'' +
+                ", icon=" + icon +
+                ", description=" + description +
+                '}';
+    }
 }

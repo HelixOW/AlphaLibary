@@ -29,17 +29,7 @@ public class SchematicManager {
 
     public static void save(Location location1, Location location2, String name) {
 
-        new SchematicFile(new Schematic() {
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public List<LocationDiff> getBlocks() {
-                return SchematicManager.getBlocks(location1, location2);
-            }
-        });
+        new SchematicFile(new Schematic(name, SchematicManager.getBlocks(location1, location2)));
     }
 
     public static void paste(String name, Location loc) {

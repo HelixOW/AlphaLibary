@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.item.data;
 
+import com.google.common.base.Objects;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
@@ -49,6 +50,19 @@ public class PotionData implements ItemData {
         } catch (Exception e) {
             throw new WrongDataException(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PotionData that = (PotionData) o;
+        return Objects.equal(toApply, that.toApply);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(toApply);
     }
 
     @Override

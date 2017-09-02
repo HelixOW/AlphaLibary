@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.scoreboard;
 
+import com.google.common.base.Objects;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -85,4 +86,27 @@ public class Scroller {
         return new StringBuilder(list.get(position++ % list.size()));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Scroller scroller = (Scroller) o;
+        return position == scroller.position &&
+                Objects.equal(list, scroller.list) &&
+                colour == scroller.colour;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(position, list, colour);
+    }
+
+    @Override
+    public String toString() {
+        return "Scroller{" +
+                "position=" + position +
+                ", list=" + list +
+                ", colour=" + colour +
+                '}';
+    }
 }

@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.entity;
 
+import com.google.common.base.Objects;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -121,6 +122,29 @@ public class EntityBuilder implements Serializable {
             }
         }
         return e;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EntityBuilder that = (EntityBuilder) o;
+        return Double.compare(that.health, health) == 0 &&
+                move == that.move &&
+                itemPickup == that.itemPickup &&
+                glowing == that.glowing &&
+                gravity == that.gravity &&
+                invincible == that.invincible &&
+                ageLock == that.ageLock &&
+                type == that.type &&
+                Objects.equal(entityClazz, that.entityClazz) &&
+                Objects.equal(name, that.name) &&
+                age == that.age;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(type, entityClazz, name, health, move, itemPickup, glowing, gravity, invincible, ageLock, age);
     }
 
     @Override

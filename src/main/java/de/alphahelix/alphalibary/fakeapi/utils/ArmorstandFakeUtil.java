@@ -42,7 +42,6 @@ public class ArmorstandFakeUtil {
     private static HashMap<String, BukkitTask> followMap = new HashMap<>();
     private static HashMap<String, BukkitTask> splitMap = new HashMap<>();
 
-
     private static ReflectionUtil.SaveConstructor entityArmorstand =
             ReflectionUtil.getDeclaredConstructor("EntityArmorStand", ReflectionUtil.getNmsClass("World"));
 

@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.mysql;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.file.SimpleJSONFile;
 import org.bukkit.Bukkit;
 
@@ -118,6 +119,26 @@ public class SQLiteAPI {
         return info;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SQLiteAPI sqLiteAPI = (SQLiteAPI) o;
+        return Objects.equal(getInfo(), sqLiteAPI.getInfo());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getInfo());
+    }
+
+    @Override
+    public String toString() {
+        return "SQLiteAPI{" +
+                "info=" + info +
+                '}';
+    }
+
     public enum SQLiteDataType implements Serializable {
         NULL, INTEGER, REAL, TEXT, BLOB
     }
@@ -132,6 +153,26 @@ public class SQLiteAPI {
 
         public String getDatabasePath() {
             return databasePath;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SQLiteInfo that = (SQLiteInfo) o;
+            return Objects.equal(getDatabasePath(), that.getDatabasePath());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(getDatabasePath());
+        }
+
+        @Override
+        public String toString() {
+            return "SQLiteInfo{" +
+                    "databasePath='" + databasePath + '\'' +
+                    '}';
         }
     }
 }

@@ -18,14 +18,71 @@
 
 package de.alphahelix.alphalibary.voting;
 
-import org.bukkit.inventory.ItemStack;
+import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.item.InventoryItem;
 
-public interface VoteItem<T> {
+import java.io.Serializable;
 
-	String name();
+public class VoteItem<T> implements Serializable {
 
-	ItemStack icon();
+    private String name;
+    private InventoryItem icon;
+    private T toVoteFor;
 
-	T toVoteFor();
+    public VoteItem(String name, InventoryItem icon, T toVoteFor) {
+        this.name = name;
+        this.icon = icon;
+        this.toVoteFor = toVoteFor;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public VoteItem setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public InventoryItem getIcon() {
+        return icon;
+    }
+
+    public VoteItem setIcon(InventoryItem icon) {
+        this.icon = icon;
+        return this;
+    }
+
+    public T getToVoteFor() {
+        return toVoteFor;
+    }
+
+    public VoteItem setToVoteFor(T toVoteFor) {
+        this.toVoteFor = toVoteFor;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VoteItem<?> voteItem = (VoteItem<?>) o;
+        return Objects.equal(getName(), voteItem.getName()) &&
+                Objects.equal(getIcon(), voteItem.getIcon()) &&
+                Objects.equal(getToVoteFor(), voteItem.getToVoteFor());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), getIcon(), getToVoteFor());
+    }
+
+    @Override
+    public String toString() {
+        return "VoteItem{" +
+                "name='" + name + '\'' +
+                ", icon=" + icon +
+                ", toVoteFor=" + toVoteFor +
+                '}';
+    }
 }

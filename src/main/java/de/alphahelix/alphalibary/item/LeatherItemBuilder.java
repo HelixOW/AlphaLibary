@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.item;
 
+import com.google.common.base.Objects;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -22,9 +23,14 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
+import java.io.Serializable;
 import java.util.Map.Entry;
 
-public class LeatherItemBuilder extends ItemBuilder {
+/**
+ * @see de.alphahelix.alphalibary.item.data.ColorData
+ * @deprecated
+ */
+public class LeatherItemBuilder extends ItemBuilder implements Serializable {
 
     private Color color = Color.BLACK;
 
@@ -98,6 +104,20 @@ public class LeatherItemBuilder extends ItemBuilder {
             s.addUnsafeEnchantment(temp.getKey(), temp.getValue());
         }
         return s;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        LeatherItemBuilder that = (LeatherItemBuilder) o;
+        return Objects.equal(getColor(), that.getColor());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), getColor());
     }
 
     @Override

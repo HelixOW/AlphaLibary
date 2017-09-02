@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.utils;
 
+import com.google.common.base.Objects;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
@@ -101,5 +102,35 @@ public class Updater {
             }
             return sb.toString();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Updater updater = (Updater) o;
+        return Objects.equal(pluginToUpdate, updater.pluginToUpdate) &&
+                Objects.equal(dataFolder, updater.dataFolder) &&
+                Objects.equal(currentVersion, updater.currentVersion) &&
+                Objects.equal(updateURL, updater.updateURL) &&
+                Objects.equal(pluginName, updater.pluginName) &&
+                Objects.equal(jarName, updater.jarName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(pluginToUpdate, dataFolder, currentVersion, updateURL, pluginName, jarName);
+    }
+
+    @Override
+    public String toString() {
+        return "Updater{" +
+                "pluginToUpdate=" + pluginToUpdate +
+                ", dataFolder='" + dataFolder + '\'' +
+                ", currentVersion='" + currentVersion + '\'' +
+                ", updateURL='" + updateURL + '\'' +
+                ", pluginName='" + pluginName + '\'' +
+                ", jarName='" + jarName + '\'' +
+                '}';
     }
 }

@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nbt;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.inventory.ItemStack;
 
@@ -160,6 +161,20 @@ public class NBTCompound {
 
     public NBTType getType(String name) {
         return NBTType.valueOf(ReflectionUtil.getType(this, name));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NBTCompound that = (NBTCompound) o;
+        return Objects.equal(getName(), that.getName()) &&
+                Objects.equal(getParent(), that.getParent());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), getParent());
     }
 
     @Override

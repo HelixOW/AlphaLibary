@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.item.data;
 
+import com.google.common.base.Objects;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -81,6 +82,22 @@ public class ColorData implements ItemData {
         } else {
             throw new WrongDataException(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ColorData colorData = (ColorData) o;
+        return red == colorData.red &&
+                blue == colorData.blue &&
+                green == colorData.green &&
+                dyeColor == colorData.dyeColor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(red, blue, green, dyeColor);
     }
 
     @Override

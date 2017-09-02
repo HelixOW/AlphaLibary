@@ -15,10 +15,13 @@
  */
 package de.alphahelix.alphalibary.item.data;
 
+import com.google.common.base.Objects;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class SimplePotionEffect {
+import java.io.Serializable;
+
+public class SimplePotionEffect implements Serializable {
 
     private int durationInSec = 0;
     private PotionEffectType potionType = PotionEffectType.SPEED;
@@ -39,6 +42,21 @@ public class SimplePotionEffect {
 
     public PotionEffect createEffect() {
         return new PotionEffect(this.potionType, this.durationInSec * 20, this.amplifier);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimplePotionEffect that = (SimplePotionEffect) o;
+        return durationInSec == that.durationInSec &&
+                amplifier == that.amplifier &&
+                Objects.equal(potionType, that.potionType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(durationInSec, potionType, amplifier);
     }
 
     @Override

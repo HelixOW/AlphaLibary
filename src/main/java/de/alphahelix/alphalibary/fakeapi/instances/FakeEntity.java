@@ -16,6 +16,7 @@
 
 package de.alphahelix.alphalibary.fakeapi.instances;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import org.bukkit.Location;
 
@@ -92,6 +93,22 @@ public class FakeEntity implements Serializable {
 
     public UUID getUUID() {
         return uuid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FakeEntity that = (FakeEntity) o;
+        return Objects.equal(getStartLocation(), that.getStartLocation()) &&
+                Objects.equal(getName(), that.getName()) &&
+                Objects.equal(uuid, that.uuid) &&
+                Objects.equal(getCurrentlocation(), that.getCurrentlocation());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getStartLocation(), getName(), uuid, getCurrentlocation());
     }
 
     @Override

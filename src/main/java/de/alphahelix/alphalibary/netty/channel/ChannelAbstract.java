@@ -13,27 +13,26 @@ import java.util.concurrent.Executors;
 
 public abstract class ChannelAbstract {
 
-    static final Class<?> EntityPlayer = ReflectionUtil.getNmsClass("EntityPlayer");
-    static final Class<?> PlayerConnection = ReflectionUtil.getNmsClass("PlayerConnection");
-    //    static final Class<?> NetworkManager = ReflectionUtil.getNmsClass("NetworkManager");
-    static final Class<?> Packet = ReflectionUtil.getNmsClass("Packet");
-    static final Class<?> ServerConnection = ReflectionUtil.getNmsClass("ServerConnection");
-    static final Class<?> MinecraftServer = ReflectionUtil.getNmsClass("MinecraftServer");
+    static final Class<?> ENTITY_PLAYER_CLASS = ReflectionUtil.getNmsClass("ENTITY_PLAYER_CLASS");
+    static final Class<?> PLAYER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("PLAYER_CONNECTION_CLASS");
+    static final Class<?> PACKET_CLASS = ReflectionUtil.getNmsClass("PACKET_CLASS");
+    static final Class<?> SERVER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("SERVER_CONNECTION_CLASS");
+    static final Class<?> MINECRAFT_SERVER_CLASS = ReflectionUtil.getNmsClass("MINECRAFT_SERVER_CLASS");
 
     static final ReflectionUtil.SaveField
-            networkManager = ReflectionUtil.getDeclaredField("networkManager", PlayerConnection);
+            NETWORK_MANAGER = ReflectionUtil.getDeclaredField("NETWORK_MANAGER", PLAYER_CONNECTION_CLASS);
 
     static final ReflectionUtil.SaveField
-            playerConnection = ReflectionUtil.getDeclaredField("playerConnection", EntityPlayer);
+            PLAYER_CONNECTION = ReflectionUtil.getDeclaredField("PLAYER_CONNECTION", ENTITY_PLAYER_CLASS);
 
     static final ReflectionUtil.SaveField
-            serverConnection = ReflectionUtil.getFirstType(ServerConnection, MinecraftServer);
+            SERVER_CONNECTION = ReflectionUtil.getFirstType(SERVER_CONNECTION_CLASS, MINECRAFT_SERVER_CLASS);
 
     static final ReflectionUtil.SaveField
-            connectionList = ReflectionUtil.getLastType(List.class, ServerConnection);
+            CONNECTION_LIST = ReflectionUtil.getLastType(List.class, SERVER_CONNECTION_CLASS);
 
     static final ReflectionUtil.SaveMethod
-            getServer = ReflectionUtil.getDeclaredMethod("getServer", Bukkit.getServer().getClass());
+            GET_SERVER = ReflectionUtil.getDeclaredMethod("GET_SERVER", Bukkit.getServer().getClass());
 
     static final String KEY_HANDLER = "packet_handler";
     static final String KEY_PLAYER = "packet_listener_player";
@@ -53,13 +52,13 @@ public abstract class ChannelAbstract {
 
     public void addServerChannel() {
         try {
-            Object dedicatedServer = getServer.invoke(Bukkit.getServer(), false);
+            Object dedicatedServer = GET_SERVER.invoke(Bukkit.getServer(), false);
             if (dedicatedServer == null) return;
 
-            Object serverConnection = ChannelAbstract.serverConnection.get(dedicatedServer);
+            Object serverConnection = ChannelAbstract.SERVER_CONNECTION.get(dedicatedServer);
             if (serverConnection == null) return;
 
-            List currentList = (List) connectionList.get(serverConnection);
+            List currentList = (List) CONNECTION_LIST.get(serverConnection);
             ReflectionUtil.SaveField superListField = new ReflectionUtil.SaveField(currentList.getClass().getSuperclass().getDeclaredField("list"));
             Object list = superListField.get(currentList);
             if (IListenerList.class.isAssignableFrom(list.getClass())) return;
@@ -69,7 +68,7 @@ public abstract class ChannelAbstract {
                 newList.add(o);
             }
 
-            connectionList.set(serverConnection, newList, false);
+            CONNECTION_LIST.set(serverConnection, newList, false);
         } catch (Exception e) {
             e.printStackTrace();
         }

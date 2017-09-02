@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.menus;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.AlphaLibary;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,9 +11,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class MenuManager implements Listener {
+public class MenuManager implements Listener, Serializable {
     private HashMap<String, Menu> menuHashMap = new HashMap<>();
 
     public MenuManager() {
@@ -56,5 +58,25 @@ public class MenuManager implements Listener {
         if (menu == null) return;
         if (menu.getElement(e.getRawSlot()) == null) return;
         menu.getElement(e.getRawSlot()).click(e);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MenuManager that = (MenuManager) o;
+        return Objects.equal(menuHashMap, that.menuHashMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(menuHashMap);
+    }
+
+    @Override
+    public String toString() {
+        return "MenuManager{" +
+                "menuHashMap=" + menuHashMap +
+                '}';
     }
 }

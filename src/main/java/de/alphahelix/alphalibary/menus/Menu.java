@@ -1,16 +1,18 @@
 package de.alphahelix.alphalibary.menus;
 
+import com.google.common.base.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Menu {
+public class Menu implements Serializable {
 
     private final String title;
     private final int size;
@@ -70,5 +72,31 @@ public class Menu {
         getMenuManager().setMenuOpened(p, this);
 
         p.openInventory(inv);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Menu menu = (Menu) o;
+        return getSize() == menu.getSize() &&
+                Objects.equal(getTitle(), menu.getTitle()) &&
+                Objects.equal(getElements(), menu.getElements()) &&
+                Objects.equal(getMenuManager(), menu.getMenuManager());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getTitle(), getSize(), getElements(), getMenuManager());
+    }
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "title='" + title + '\'' +
+                ", size=" + size +
+                ", elements=" + elements +
+                ", menuManager=" + menuManager +
+                '}';
     }
 }

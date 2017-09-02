@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.events.countdown;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.countdown.GameCountdown;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -30,5 +31,27 @@ public class CountDownStartEvent extends Event {
 
     public long getTimeTillEnd() {
         return timeTillEnd;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CountDownStartEvent that = (CountDownStartEvent) o;
+        return getTimeTillEnd() == that.getTimeTillEnd() &&
+                Objects.equal(getCountdown(), that.getCountdown());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getCountdown(), getTimeTillEnd());
+    }
+
+    @Override
+    public String toString() {
+        return "CountDownStartEvent{" +
+                "countdown=" + countdown +
+                ", timeTillEnd=" + timeTillEnd +
+                '}';
     }
 }

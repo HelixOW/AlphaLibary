@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.utils;
 
+import com.google.common.base.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -687,19 +688,6 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
         return new Cuboid(this);
     }
 
-    @Override
-    public String toString() {
-        return "Cuboid{" +
-                "worldName='" + worldName + '\'' +
-                ", x1=" + x1 +
-                ", y1=" + y1 +
-                ", z1=" + z1 +
-                ", x2=" + x2 +
-                ", y2=" + y2 +
-                ", z2=" + z2 +
-                '}';
-    }
-
     public enum CuboidDirection {
         North, East, South, West, Up, Down, Horizontal, Vertical, Both, Unknown;
 
@@ -767,4 +755,35 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cuboid blocks = (Cuboid) o;
+        return x1 == blocks.x1 &&
+                y1 == blocks.y1 &&
+                z1 == blocks.z1 &&
+                x2 == blocks.x2 &&
+                y2 == blocks.y2 &&
+                z2 == blocks.z2 &&
+                Objects.equal(worldName, blocks.worldName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(worldName, x1, y1, z1, x2, y2, z2);
+    }
+
+    @Override
+    public String toString() {
+        return "Cuboid{" +
+                "worldName='" + worldName + '\'' +
+                ", x1=" + x1 +
+                ", y1=" + y1 +
+                ", z1=" + z1 +
+                ", x2=" + x2 +
+                ", y2=" + y2 +
+                ", z2=" + z2 +
+                '}';
+    }
 }

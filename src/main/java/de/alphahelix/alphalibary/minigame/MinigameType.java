@@ -1,6 +1,8 @@
 package de.alphahelix.alphalibary.minigame;
 
-public enum MinigameType {
+import java.io.Serializable;
+
+public enum MinigameType implements Serializable {
 
     BUNGEECORD, SPIGOT
 

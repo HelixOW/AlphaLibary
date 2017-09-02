@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 public class PPOAnimation implements IPacket {
@@ -37,5 +38,27 @@ public class PPOAnimation implements IPacket {
     @Override
     public Object getPacket(boolean stackTrace) {
         return PACKET.newInstance(stackTrace, entity, animationType);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPOAnimation that = (PPOAnimation) o;
+        return getAnimationType() == that.getAnimationType() &&
+                Objects.equal(getEntity(), that.getEntity());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntity(), getAnimationType());
+    }
+
+    @Override
+    public String toString() {
+        return "PPOAnimation{" +
+                "entity=" + entity +
+                ", animationType=" + animationType +
+                '}';
     }
 }

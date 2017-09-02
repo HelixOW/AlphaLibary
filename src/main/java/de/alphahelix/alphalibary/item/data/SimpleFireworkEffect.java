@@ -15,13 +15,15 @@
  */
 package de.alphahelix.alphalibary.item.data;
 
+import com.google.common.base.Objects;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class SimpleFireworkEffect {
+public class SimpleFireworkEffect implements Serializable {
 
     private Type type = Type.BALL;
     private Color[] color = new Color[]{Color.WHITE};
@@ -60,6 +62,23 @@ public class SimpleFireworkEffect {
 
     public FireworkEffect build() {
         return FireworkEffect.builder().flicker(flicker).trail(trail).withColor(color).withFade(fades).with(type).build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleFireworkEffect that = (SimpleFireworkEffect) o;
+        return flicker == that.flicker &&
+                trail == that.trail &&
+                type == that.type &&
+                Objects.equal(color, that.color) &&
+                Objects.equal(fades, that.fades);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(type, color, flicker, trail, fades);
     }
 
     @Override

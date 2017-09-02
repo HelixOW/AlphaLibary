@@ -18,6 +18,7 @@
 
 package de.alphahelix.alphalibary.airdrops;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.listener.SimpleListener;
 import de.alphahelix.alphalibary.utils.Util;
 import org.bukkit.Location;
@@ -124,6 +125,20 @@ public class AirDrop extends SimpleListener implements Serializable {
                 });
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AirDrop airDrop = (AirDrop) o;
+        return Objects.equal(dropOff, airDrop.dropOff) &&
+                Objects.equal(dropList, airDrop.dropList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(dropOff, dropList);
     }
 
     @Override

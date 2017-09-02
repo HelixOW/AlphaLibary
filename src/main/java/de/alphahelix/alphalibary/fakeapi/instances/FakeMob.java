@@ -16,6 +16,7 @@
 
 package de.alphahelix.alphalibary.fakeapi.instances;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.fakeapi.FakeMobType;
 import org.bukkit.Location;
 
@@ -36,6 +37,21 @@ public class FakeMob extends FakeEntity {
 
     public boolean isBaby() {
         return baby;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        FakeMob fakeMob = (FakeMob) o;
+        return isBaby() == fakeMob.isBaby() &&
+                getFakeMobType() == fakeMob.getFakeMobType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), getFakeMobType(), isBaby());
     }
 
     @Override

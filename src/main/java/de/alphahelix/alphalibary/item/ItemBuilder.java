@@ -17,8 +17,10 @@
  */
 package de.alphahelix.alphalibary.item;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.item.data.ItemData;
 import de.alphahelix.alphalibary.item.data.WrongDataException;
+import de.alphahelix.alphalibary.listener.SimpleListener;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -29,7 +31,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class ItemBuilder implements Serializable {
+public class ItemBuilder extends SimpleListener implements Serializable {
 
     private Map<Enchantment, Integer> enchantments = new HashMap<>();
     private ArrayList<ItemFlag> itemflags = new ArrayList<>();
@@ -292,6 +294,27 @@ public class ItemBuilder implements Serializable {
 	public ArrayList<ItemData> getAllData () {
 		return itemData;
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemBuilder that = (ItemBuilder) o;
+        return getAmount() == that.getAmount() &&
+                getDamage() == that.getDamage() &&
+                isUnbreakable() == that.isUnbreakable() &&
+                Objects.equal(enchantments, that.enchantments) &&
+                Objects.equal(itemflags, that.itemflags) &&
+                Objects.equal(itemData, that.itemData) &&
+                Objects.equal(getName(), that.getName()) &&
+                getMaterial() == that.getMaterial() &&
+                Objects.equal(getLore(), that.getLore());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(enchantments, itemflags, itemData, getName(), getMaterial(), getAmount(), getDamage(), getLore(), isUnbreakable());
+    }
 
     @Override
     public String toString() {

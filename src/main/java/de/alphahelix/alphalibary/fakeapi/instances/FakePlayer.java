@@ -16,6 +16,7 @@
 
 package de.alphahelix.alphalibary.fakeapi.instances;
 
+import com.google.common.base.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -43,9 +44,23 @@ public class FakePlayer extends FakeEntity {
         return skinUUID;
     }
 
-
     public OfflinePlayer getSkinPlayer() {
         return skinPlayer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        FakePlayer that = (FakePlayer) o;
+        return Objects.equal(getSkinUUID(), that.getSkinUUID()) &&
+                Objects.equal(getSkinPlayer(), that.getSkinPlayer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), getSkinUUID(), getSkinPlayer());
     }
 
     @Override

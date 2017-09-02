@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.netty.handler;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.netty.channel.ChannelWrapper;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.entity.Player;
@@ -220,8 +221,23 @@ public abstract class PacketAbstract {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PacketAbstract that = (PacketAbstract) o;
+        return Objects.equal(getPlayer(), that.getPlayer()) &&
+                Objects.equal(channelWrapper, that.channelWrapper) &&
+                Objects.equal(getPacket(), that.getPacket()) &&
+                Objects.equal(cancellable, that.cancellable);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getPlayer(), channelWrapper, getPacket(), cancellable);
+    }
+
+    @Override
     public String toString() {
         return "Packet{ " + (this.getClass().equals(SentPacket.class) ? "[> OUT >]" : "[< IN <]") + " " + this.getPacketName() + " " + (this.hasPlayer() ? this.getPlayername() : this.hasChannel() ? this.getChannel().channel() : "#server#") + " }";
     }
-
 }

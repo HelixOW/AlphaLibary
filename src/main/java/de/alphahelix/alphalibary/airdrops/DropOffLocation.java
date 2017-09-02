@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.airdrops;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.utils.LocationUtil;
 import org.bukkit.Location;
 
@@ -22,6 +23,20 @@ public class DropOffLocation implements Serializable {
         int maxZ = (int) (center.getZ() + radius);
 
         return LocationUtil.getRandomLocation(center, minX, maxX, minZ, maxZ);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DropOffLocation that = (DropOffLocation) o;
+        return radius == that.radius &&
+                Objects.equal(center, that.center);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(center, radius);
     }
 
     @Override

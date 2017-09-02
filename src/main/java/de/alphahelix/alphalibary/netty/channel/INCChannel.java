@@ -55,8 +55,8 @@ public class INCChannel extends ChannelAbstract {
     private Channel getChannel(Player player)
             throws ReflectiveOperationException {
         Object handle = ReflectionUtil.getDeclaredMethod("getHandle", ReflectionUtil.getCraftBukkitClass("entity.CraftPlayer")).invoke(player, false);
-        Object connection = playerConnection.get(handle);
-        return (Channel) channelField.get(networkManager.get(connection));
+        Object connection = PLAYER_CONNECTION.get(handle);
+        return (Channel) channelField.get(NETWORK_MANAGER.get(connection));
     }
 
     public ChannelAbstract.IListenerList newListenerList() {
@@ -68,18 +68,16 @@ public class INCChannel extends ChannelAbstract {
         public boolean add(E paramE) {
             try {
                 final E a = paramE;
-                INCChannel.this.addChannelExecutor.execute(new Runnable() {
-                    public void run() {
-                        try {
-                            Channel channel = null;
-                            while (channel == null) {
-                                channel = (Channel) INCChannel.channelField.get(a);
-                            }
-                            if (channel.pipeline().get(KEY_SERVER) == null) {
-                                channel.pipeline().addBefore(KEY_HANDLER, KEY_SERVER, INCChannel.this.new ChannelHandler(INCChannel.this.new INCChannelWrapper(channel)));
-                            }
-                        } catch (Exception ignored) {
+                INCChannel.this.addChannelExecutor.execute(() -> {
+                    try {
+                        Channel channel = null;
+                        while (channel == null) {
+                            channel = (Channel) INCChannel.channelField.get(a);
                         }
+                        if (channel.pipeline().get(KEY_SERVER) == null) {
+                            channel.pipeline().addBefore(KEY_HANDLER, KEY_SERVER, INCChannel.this.new ChannelHandler(INCChannel.this.new INCChannelWrapper(channel)));
+                        }
+                    } catch (Exception ignored) {
                     }
                 });
             } catch (Exception ignored) {
@@ -90,16 +88,14 @@ public class INCChannel extends ChannelAbstract {
         public boolean remove(Object arg0) {
             try {
                 final Object a = arg0;
-                INCChannel.this.removeChannelExecutor.execute(new Runnable() {
-                    public void run() {
-                        try {
-                            Channel channel = null;
-                            while (channel == null) {
-                                channel = (Channel) INCChannel.channelField.get(a);
-                            }
-                            channel.pipeline().remove(KEY_SERVER);
-                        } catch (Exception e) {
+                INCChannel.this.removeChannelExecutor.execute(() -> {
+                    try {
+                        Channel channel = null;
+                        while (channel == null) {
+                            channel = (Channel) INCChannel.channelField.get(a);
                         }
+                        channel.pipeline().remove(KEY_SERVER);
+                    } catch (Exception e) {
                     }
                 });
             } catch (Exception e) {
@@ -123,7 +119,7 @@ public class INCChannel extends ChannelAbstract {
         public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
             Cancellable cancellable = new de.alphahelix.alphalibary.netty.Cancellable();
             Object pckt = msg;
-            if (ChannelAbstract.Packet.isAssignableFrom(msg.getClass())) {
+            if (ChannelAbstract.PACKET_CLASS.isAssignableFrom(msg.getClass())) {
                 pckt = INCChannel.this.onPacketSend(this.owner, msg, cancellable);
             }
 
@@ -136,7 +132,7 @@ public class INCChannel extends ChannelAbstract {
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             Cancellable cancellable = new de.alphahelix.alphalibary.netty.Cancellable();
             Object pckt = msg;
-            if (ChannelAbstract.Packet.isAssignableFrom(msg.getClass())) {
+            if (ChannelAbstract.PACKET_CLASS.isAssignableFrom(msg.getClass())) {
                 pckt = INCChannel.this.onPacketReceive(this.owner, msg, cancellable);
             }
             if (cancellable.isCancelled()) {

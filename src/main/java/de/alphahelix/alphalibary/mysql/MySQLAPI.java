@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.mysql;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.file.SimpleFile;
 import org.bukkit.Bukkit;
 
@@ -143,6 +144,23 @@ public class MySQLAPI implements Serializable {
      */
     public String getDatabase() {
         return database;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MySQLAPI mySQLAPI = (MySQLAPI) o;
+        return Objects.equal(username, mySQLAPI.username) &&
+                Objects.equal(password, mySQLAPI.password) &&
+                Objects.equal(getDatabase(), mySQLAPI.getDatabase()) &&
+                Objects.equal(host, mySQLAPI.host) &&
+                Objects.equal(port, mySQLAPI.port);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(username, password, getDatabase(), host, port);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.mysql;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
@@ -642,5 +643,27 @@ public class SQLiteDatabase {
             }
         });
         return list;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SQLiteDatabase that = (SQLiteDatabase) o;
+        return Objects.equal(tableName, that.tableName) &&
+                Objects.equal(databasePath, that.databasePath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(tableName, databasePath);
+    }
+
+    @Override
+    public String toString() {
+        return "SQLiteDatabase{" +
+                "tableName='" + tableName + '\'' +
+                ", databasePath='" + databasePath + '\'' +
+                '}';
     }
 }

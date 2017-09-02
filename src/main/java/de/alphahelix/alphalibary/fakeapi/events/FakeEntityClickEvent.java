@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.fakeapi.events;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeEntity;
 import de.alphahelix.alphalibary.nms.enums.REnumAction;
 import de.alphahelix.alphalibary.nms.enums.REnumHand;
@@ -10,13 +11,13 @@ import org.bukkit.event.player.PlayerEvent;
 public class FakeEntityClickEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private FakeEntity fakeArmorstand;
+    private FakeEntity fakeEntity;
     private REnumAction clickAction;
     private REnumHand hand;
 
-    public FakeEntityClickEvent(Player who, FakeEntity fakeArmorstand, REnumAction clickAction, REnumHand hand) {
+    public FakeEntityClickEvent(Player who, FakeEntity fakeEntity, REnumAction clickAction, REnumHand hand) {
         super(who);
-        this.fakeArmorstand = fakeArmorstand;
+        this.fakeEntity = fakeEntity;
         this.clickAction = clickAction;
         this.hand = hand;
     }
@@ -46,7 +47,7 @@ public class FakeEntityClickEvent extends PlayerEvent {
      * @return the clicked {@link FakeEntity}
      */
     public FakeEntity getFakeEntity() {
-        return fakeArmorstand;
+        return fakeEntity;
     }
 
     /**
@@ -60,5 +61,29 @@ public class FakeEntityClickEvent extends PlayerEvent {
 
     public REnumHand getHand() {
         return hand;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FakeEntityClickEvent that = (FakeEntityClickEvent) o;
+        return Objects.equal(getFakeEntity(), that.getFakeEntity()) &&
+                getClickAction() == that.getClickAction() &&
+                getHand() == that.getHand();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getFakeEntity(), getClickAction(), getHand());
+    }
+
+    @Override
+    public String toString() {
+        return "FakeEntityClickEvent{" +
+                "fakeEntity=" + fakeEntity +
+                ", clickAction=" + clickAction +
+                ", hand=" + hand +
+                '}';
     }
 }

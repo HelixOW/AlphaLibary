@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.file;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.inventorys.ItemInventory;
 import de.alphahelix.alphalibary.item.InventoryItem;
@@ -303,17 +304,7 @@ public class SimpleFile extends YamlConfiguration {
 
         stack.setItemMeta(meta);
 
-        return new InventoryItem() {
-            @Override
-            public ItemStack getItemStack() {
-                return stack;
-            }
-
-            @Override
-            public int getSlot() {
-                return getInt(path + ".slot");
-            }
-        };
+        return new InventoryItem(stack, getInt(path + ".slot"));
     }
 
     /**
@@ -705,6 +696,26 @@ public class SimpleFile extends YamlConfiguration {
         else
             addDefault(path, value);
         save();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleFile that = (SimpleFile) o;
+        return Objects.equal(source, that.source);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(source);
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleFile{" +
+                "source=" + source +
+                '}';
     }
 }
 

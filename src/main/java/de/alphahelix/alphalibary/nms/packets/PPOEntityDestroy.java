@@ -1,6 +1,9 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
+
+import java.util.Arrays;
 
 public class PPOEntityDestroy implements IPacket {
 
@@ -26,5 +29,25 @@ public class PPOEntityDestroy implements IPacket {
     @Override
     public Object getPacket(boolean stackTrace) {
         return PACKET.newInstance(stackTrace, entityIDs);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPOEntityDestroy that = (PPOEntityDestroy) o;
+        return Objects.equal(getEntityIDs(), that.getEntityIDs());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntityIDs());
+    }
+
+    @Override
+    public String toString() {
+        return "PPOEntityDestroy{" +
+                "entityIDs=" + Arrays.toString(entityIDs) +
+                '}';
     }
 }

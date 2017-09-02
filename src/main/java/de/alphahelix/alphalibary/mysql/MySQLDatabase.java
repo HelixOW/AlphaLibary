@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.mysql;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
 import org.bukkit.entity.Player;
 
@@ -615,21 +616,18 @@ public class MySQLDatabase implements Serializable {
         return null;
     }
 
-    /**
-     * Alters a table
-     *
-     * @param qry the query to perform
-     */
-    public void alterTable(String qry) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
-                try {
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
-                    prepstate.executeUpdate();
-                } catch (Exception ignored) {
-                }
-            }
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MySQLDatabase that = (MySQLDatabase) o;
+        return Objects.equal(table, that.table) &&
+                Objects.equal(database, that.database);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(table, database);
     }
 
     @Override

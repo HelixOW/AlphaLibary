@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.mysql;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
@@ -655,5 +656,27 @@ public class AsyncMySQLDatabase {
             }
             Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
         });
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AsyncMySQLDatabase that = (AsyncMySQLDatabase) o;
+        return Objects.equal(table, that.table) &&
+                Objects.equal(database, that.database);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(table, database);
+    }
+
+    @Override
+    public String toString() {
+        return "AsyncMySQLDatabase{" +
+                "table='" + table + '\'' +
+                ", database='" + database + '\'' +
+                '}';
     }
 }

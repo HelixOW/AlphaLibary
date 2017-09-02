@@ -3,8 +3,6 @@ package de.alphahelix.alphalibary.utils;
 import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
-import de.alphahelix.alphalibary.achievements.Achievement;
-import de.alphahelix.alphalibary.item.InventoryItem;
 import de.alphahelix.alphalibary.item.ItemBuilder;
 import de.alphahelix.alphalibary.schematics.Schematic;
 import org.bukkit.Bukkit;
@@ -27,10 +25,7 @@ public class JSONUtil {
             .registerTypeHierarchyAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer())
             .registerTypeHierarchyAdapter(PropertyMap.class, new PropertyMap.Serializer())
             .registerTypeHierarchyAdapter(ItemStack.class, new ItemStackSerializer())
-            .registerTypeHierarchyAdapter(Achievement.class, new AchievementSerializer())
-            .registerTypeHierarchyAdapter(Schematic.LocationDiff.class, new LocationDiffSerializer())
-            .registerTypeHierarchyAdapter(Schematic.class, new SchematicSerializer())
-            .registerTypeHierarchyAdapter(InventoryItem.class, new InventoryItemSerializer());
+            .registerTypeHierarchyAdapter(Schematic.LocationDiff.class, new LocationDiffSerializer());
 
     private static Gson gson = builder.create();
 
@@ -181,70 +176,6 @@ class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer
     }
 }
 
-class AchievementSerializer implements JsonSerializer<Achievement>, JsonDeserializer<Achievement> {
-    @Override
-    public Achievement deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        JsonObject obj = (JsonObject) json;
-
-        return new Achievement() {
-            @Override
-            public String getName() {
-                return obj.getAsJsonPrimitive("name").getAsString();
-            }
-
-            @Override
-            public InventoryItem getIcon() {
-                return JSONUtil.getGson().fromJson(obj.getAsJsonObject("icon"), InventoryItem.class);
-            }
-
-            @Override
-            public List<String> getDescription() {
-                return JSONUtil.getGson().fromJson(obj.getAsJsonArray("description"), List.class);
-            }
-        };
-    }
-
-    @Override
-    public JsonElement serialize(Achievement achievement, Type type, JsonSerializationContext jsonSerializationContext) {
-        JsonObject obj = new JsonObject();
-
-        obj.addProperty("name", achievement.getName());
-        obj.add("icon", JSONUtil.getGson().toJsonTree(achievement.getIcon(), InventoryItem.class));
-        obj.add("description", JSONUtil.getGson().toJsonTree(achievement.getDescription()));
-
-        return obj;
-    }
-}
-
-class SchematicSerializer implements JsonSerializer<Schematic>, JsonDeserializer<Schematic> {
-    @Override
-    public Schematic deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        JsonObject obj = (JsonObject) jsonElement;
-
-        return new Schematic() {
-            @Override
-            public String getName() {
-                return obj.getAsJsonPrimitive("name").getAsString();
-            }
-
-            @Override
-            public List<LocationDiff> getBlocks() {
-                return JSONUtil.getGson().fromJson(obj.getAsJsonArray("locationDiffs"), List.class);
-            }
-        };
-    }
-
-    @Override
-    public JsonElement serialize(Schematic schematic, Type type, JsonSerializationContext jsonSerializationContext) {
-        JsonObject obj = new JsonObject();
-
-        obj.addProperty("name", schematic.getName());
-        obj.add("locationDiffs", JSONUtil.getGson().toJsonTree(schematic.getBlocks()));
-
-        return obj;
-    }
-}
-
 class LocationDiffSerializer implements JsonSerializer<Schematic.LocationDiff>, JsonDeserializer<Schematic.LocationDiff> {
 
     @Override
@@ -294,36 +225,6 @@ class LocationDiffSerializer implements JsonSerializer<Schematic.LocationDiff>, 
         obj.addProperty("x", locationDiff.getX());
         obj.addProperty("y", locationDiff.getY());
         obj.addProperty("z", locationDiff.getZ());
-
-        return obj;
-    }
-}
-
-class InventoryItemSerializer implements JsonSerializer<InventoryItem>, JsonDeserializer<InventoryItem> {
-
-    @Override
-    public InventoryItem deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        JsonObject obj = (JsonObject) jsonElement;
-
-        return new InventoryItem() {
-            @Override
-            public ItemStack getItemStack() {
-                return JSONUtil.getGson().fromJson(obj.getAsJsonObject("item"), ItemStack.class);
-            }
-
-            @Override
-            public int getSlot() {
-                return obj.getAsJsonPrimitive("slot").getAsInt();
-            }
-        };
-    }
-
-    @Override
-    public JsonElement serialize(InventoryItem inventoryItem, Type type, JsonSerializationContext jsonSerializationContext) {
-        JsonObject obj = new JsonObject();
-
-        obj.add("item", JSONUtil.getGson().toJsonTree(inventoryItem.getItemStack()));
-        obj.addProperty("slot", inventoryItem.getSlot());
 
         return obj;
     }

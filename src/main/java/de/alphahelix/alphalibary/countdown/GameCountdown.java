@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.countdown;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.events.countdown.CountDownFinishEvent;
 import de.alphahelix.alphalibary.events.countdown.CountDownStartEvent;
@@ -10,9 +11,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class GameCountdown {
+public class GameCountdown implements Serializable {
 
     private final String name;
     private GameCountdown instance;
@@ -119,6 +121,38 @@ public class GameCountdown {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameCountdown that = (GameCountdown) o;
+        return time == that.time &&
+                schedulerID == that.schedulerID &&
+                useXP == that.useXP &&
+                useTitle == that.useTitle &&
+                Objects.equal(getName(), that.getName()) &&
+                Objects.equal(instance, that.instance) &&
+                Objects.equal(messageTimes, that.messageTimes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), instance, messageTimes, time, schedulerID, useXP, useTitle);
+    }
+
+    @Override
+    public String toString() {
+        return "GameCountdown{" +
+                "name='" + name + '\'' +
+                ", instance=" + instance +
+                ", messageTimes=" + Arrays.toString(messageTimes) +
+                ", time=" + time +
+                ", schedulerID=" + schedulerID +
+                ", useXP=" + useXP +
+                ", useTitle=" + useTitle +
+                '}';
     }
 }
 

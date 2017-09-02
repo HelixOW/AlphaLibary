@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nbt;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.Bukkit;
 
@@ -92,5 +93,31 @@ public class NBTList {
 
     public NBTType getType() {
         return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NBTList nbtList = (NBTList) o;
+        return Objects.equal(name, nbtList.name) &&
+                Objects.equal(parent, nbtList.parent) &&
+                getType() == nbtList.getType() &&
+                Objects.equal(listObj, nbtList.listObj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name, parent, getType(), listObj);
+    }
+
+    @Override
+    public String toString() {
+        return "NBTList{" +
+                "name='" + name + '\'' +
+                ", parent=" + parent +
+                ", type=" + type +
+                ", listObj=" + listObj +
+                '}';
     }
 }

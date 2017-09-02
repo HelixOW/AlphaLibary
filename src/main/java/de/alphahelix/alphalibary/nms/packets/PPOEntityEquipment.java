@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.nms.packets;
 
+import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.nms.enums.REnumEquipSlot;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.inventory.ItemStack;
@@ -50,5 +51,29 @@ public class PPOEntityEquipment implements IPacket {
     @Override
     public Object getPacket(boolean stackTrace) {
         return PACKET.newInstance(stackTrace, entityID, ReflectionUtil.getNMSItemStack(itemStack), equipSlot.getNmsSlot());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PPOEntityEquipment that = (PPOEntityEquipment) o;
+        return getEntityID() == that.getEntityID() &&
+                Objects.equal(getItemStack(), that.getItemStack()) &&
+                getEquipSlot() == that.getEquipSlot();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntityID(), getItemStack(), getEquipSlot());
+    }
+
+    @Override
+    public String toString() {
+        return "PPOEntityEquipment{" +
+                "entityID=" + entityID +
+                ", itemStack=" + itemStack +
+                ", equipSlot=" + equipSlot +
+                '}';
     }
 }

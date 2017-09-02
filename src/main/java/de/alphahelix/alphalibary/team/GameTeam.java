@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.team;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.events.team.TeamJoinEvent;
 import de.alphahelix.alphalibary.events.team.TeamLeaveEvent;
@@ -194,6 +195,24 @@ public class GameTeam implements Serializable {
 
     public String getRawTeamName() {
         return rawTeamName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameTeam gameTeam = (GameTeam) o;
+        return getMaximumPlayers() == gameTeam.getMaximumPlayers() &&
+                isFriendlyFire() == gameTeam.isFriendlyFire() &&
+                Objects.equal(getRawTeamName(), gameTeam.getRawTeamName()) &&
+                getColor() == gameTeam.getColor() &&
+                Objects.equal(getSpawn(), gameTeam.getSpawn()) &&
+                Objects.equal(getMembers(), gameTeam.getMembers());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getRawTeamName(), getColor(), getSpawn(), getMaximumPlayers(), isFriendlyFire(), getMembers());
     }
 
     @Override

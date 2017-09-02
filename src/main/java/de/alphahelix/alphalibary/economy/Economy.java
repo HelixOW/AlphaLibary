@@ -1,8 +1,11 @@
 package de.alphahelix.alphalibary.economy;
 
+import com.google.common.base.Objects;
+
+import java.io.Serializable;
 import java.util.UUID;
 
-public class Economy {
+public class Economy implements Serializable {
 
     private final UUID owner;
     private long money;
@@ -50,5 +53,29 @@ public class Economy {
         else
             this.money -= money;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Economy economy = (Economy) o;
+        return getMoney() == economy.getMoney() &&
+                isMinus() == economy.isMinus() &&
+                Objects.equal(getOwner(), economy.getOwner());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getOwner(), getMoney(), isMinus());
+    }
+
+    @Override
+    public String toString() {
+        return "Economy{" +
+                "owner=" + owner +
+                ", money=" + money +
+                ", minus=" + minus +
+                '}';
     }
 }

@@ -1,18 +1,18 @@
 /*
  *
- *  * Copyright (C) <2017>  <AlphaHelixDev>
- *  *
- *  *       This program is free software: you can redistribute it under the
- *  *       terms of the GNU General Public License as published by
- *  *       the Free Software Foundation, either version 3 of the License.
- *  *
- *  *       This program is distributed in the hope that it will be useful,
- *  *       but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  *       GNU General Public License for more details.
- *  *
- *  *       You should have received a copy of the GNU General Public License
- *  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) <2017>  <AlphaHelixDev>
+ *
+ *       This program is free software: you can redistribute it under the
+ *       terms of the GNU General Public License as published by
+ *       the Free Software Foundation, either version 3 of the License.
+ *
+ *       This program is distributed in the hope that it will be useful,
+ *       but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *       GNU General Public License for more details.
+ *
+ *       You should have received a copy of the GNU General Public License
+ *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -32,10 +32,10 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.*;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 public class ReflectionUtil {
 
@@ -1125,6 +1125,29 @@ public class ReflectionUtil {
                 return (int) getDeclaredField("c", bP).get(nmsLoc);
             }
         };
+    }
+
+    public static List<Class<?>> findLoadedClassesImpmenenting(final Class<?> interfaceClass, JavaPlugin pl) {
+        if (interfaceClass == null)
+            return null;
+
+        List<Class<?>> rVal = new ArrayList<>();
+
+        ClassLoader cl = (ClassLoader) getDeclaredField("classLoader", JavaPlugin.class).get(pl);
+        Collection<Class<?>> classes = null;
+        try {
+            classes = ((Map<String, Class<?>>) getDeclaredField("classes", Class.forName("org.bukkit.plugin.java.PluginClassLoader")).get(cl)).values();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        for (Class<?> aTarget : classes != null ? classes : new ArrayList<Class<?>>()) {
+            if (aTarget != null && !aTarget.equals(interfaceClass) && interfaceClass.isAssignableFrom(aTarget)) {
+                rVal.add(aTarget);
+            }
+        }
+
+        return rVal;
     }
 
     public static class SaveField {

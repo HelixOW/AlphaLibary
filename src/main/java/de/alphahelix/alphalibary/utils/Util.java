@@ -239,4 +239,12 @@ public class Util {
             e.printStackTrace();
         }
     }
+
+    public static <T> List<T> getTypesOf(Class<T> clazzType, List<?> inList) {
+        List<T> types = new ArrayList<>();
+        for (Object e : inList)
+            if (e.getClass().isInstance(clazzType))
+                types.add((T) e);
+        return types;
+    }
 }

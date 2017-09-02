@@ -19,6 +19,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.AlphaLibary;
+import de.alphahelix.alphalibary.listener.SimpleListener;
 import de.alphahelix.alphalibary.utils.Util;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -34,7 +35,7 @@ import org.bukkit.scoreboard.Team;
 import java.io.Serializable;
 import java.util.*;
 
-public class SimpleScoreboard implements Serializable {
+public class SimpleScoreboard extends SimpleListener implements Serializable {
 
     @Expose
     private transient static final List<ChatColor> colors = Arrays.asList(ChatColor.values());
@@ -88,9 +89,7 @@ public class SimpleScoreboard implements Serializable {
      * @return
      */
     public static SimpleScoreboard getScoreboard(String key) {
-        if (scoreboards.containsKey(key))
-            return scoreboards.get(key);
-        return null;
+        return scoreboards.get(key);
     }
 
     private static String getFirstColors(String input) {
@@ -122,7 +121,6 @@ public class SimpleScoreboard implements Serializable {
 
         if (stringLines.containsKey(owner))
             list = stringLines.get(owner);
-
 
         if (!list.contains(line)) {
             list.add(line);

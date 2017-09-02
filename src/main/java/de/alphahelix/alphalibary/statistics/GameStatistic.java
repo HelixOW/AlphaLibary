@@ -1,11 +1,11 @@
 package de.alphahelix.alphalibary.statistics;
 
-public class GameStatistic {
+public class GameStatistic<T> {
 
     private String name;
-    private Object value;
+    private T value;
 
-    public GameStatistic(String name, Object value) {
+    public GameStatistic(String name, T value) {
         this.name = name;
         this.value = value;
     }
@@ -14,7 +14,7 @@ public class GameStatistic {
         return name;
     }
 
-    public Object getValue() {
+    public T getValue() {
         return value;
     }
 }

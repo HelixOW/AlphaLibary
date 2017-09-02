@@ -1,18 +1,18 @@
 /*
  *
- *  * Copyright (C) <2017>  <AlphaHelixDev>
- *  *
- *  *       This program is free software: you can redistribute it under the
- *  *       terms of the GNU General Public License as published by
- *  *       the Free Software Foundation, either version 3 of the License.
- *  *
- *  *       This program is distributed in the hope that it will be useful,
- *  *       but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  *       GNU General Public License for more details.
- *  *
- *  *       You should have received a copy of the GNU General Public License
- *  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) <2017>  <AlphaHelixDev>
+ *
+ *       This program is free software: you can redistribute it under the
+ *       terms of the GNU General Public License as published by
+ *       the Free Software Foundation, either version 3 of the License.
+ *
+ *       This program is distributed in the hope that it will be useful,
+ *       but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *       GNU General Public License for more details.
+ *
+ *       You should have received a copy of the GNU General Public License
+ *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -26,7 +26,6 @@ import de.alphahelix.alphalibary.events.PlayerInputEvent;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.input.AnvilGUI;
 import de.alphahelix.alphalibary.input.SignGUI;
-import de.alphahelix.alphalibary.listener.SimpleLoader;
 import de.alphahelix.alphalibary.netty.PacketListenerAPI;
 import de.alphahelix.alphalibary.netty.handler.PacketHandler;
 import de.alphahelix.alphalibary.netty.handler.PacketOptions;
@@ -43,7 +42,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.reflections.Reflections;
 
 import java.io.File;
 import java.util.HashMap;
@@ -55,7 +53,6 @@ public class AlphaLibary extends JavaPlugin {
     private static GameProfileBuilder.GameProfileFile gameProfileFile;
     private static ArenaFile arenaFile;
     private static HashMap<UUID, Double> oldValues = new HashMap<>();
-    private static Reflections reflections = new Reflections();
 
     public static AlphaLibary getInstance() {
         return instance;
@@ -67,10 +64,6 @@ public class AlphaLibary extends JavaPlugin {
 
     public static ArenaFile getArenaFile() {
         return arenaFile;
-    }
-
-    public static Reflections getReflections() {
-        return reflections;
     }
 
     @Override
@@ -95,15 +88,6 @@ public class AlphaLibary extends JavaPlugin {
         File arenaFolder = new File("plugins/AlphaGameLibary/arenas");
 
         if (!arenaFolder.exists()) arenaFolder.mkdirs();
-
-        for (Class<? extends SimpleLoader> clazz : getReflections().getSubTypesOf(SimpleLoader.class)) {
-            try {
-                Bukkit.getPluginManager().registerEvents(clazz.newInstance(), this);
-            } catch (InstantiationException | IllegalAccessException ignored) {
-            }
-        }
-
-        new TestAnno();
 
         PacketListenerAPI.addPacketHandler(new PacketHandler() {
             @Override

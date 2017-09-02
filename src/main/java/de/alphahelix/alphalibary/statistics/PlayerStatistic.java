@@ -6,9 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerStatistic implements Serializable {
 
@@ -64,8 +62,16 @@ public class PlayerStatistic implements Serializable {
         return statistics.values();
     }
 
-    public Object getStatistic(String name) {
-        return statistics.get(name).getValue();
+    public <T> T getStatistic(String name) {
+        return (T) statistics.get(name).getValue();
+    }
+
+    public <T> List<GameStatistic<T>> getStatistics(Class<T> type) {
+        List<GameStatistic<T>> stats = new ArrayList<>();
+        for (GameStatistic<?> s : statistics.values())
+            if (s.getClass().isInstance(type))
+                stats.add((GameStatistic<T>) s);
+        return stats;
     }
 
     public PlayerStatistic addStatistics(GameStatistic... gameStatistics) {

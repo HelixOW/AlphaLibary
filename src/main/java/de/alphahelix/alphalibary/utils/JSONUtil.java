@@ -51,6 +51,10 @@ public class JSONUtil {
         return gson.fromJson(json, definy);
     }
 
+    public static void disableEscaping() {
+        gson = builder.disableHtmlEscaping().create();
+    }
+
     public static Gson getGson() {
         return gson;
     }

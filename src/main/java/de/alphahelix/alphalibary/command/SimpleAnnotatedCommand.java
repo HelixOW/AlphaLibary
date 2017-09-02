@@ -1,9 +1,9 @@
 package de.alphahelix.alphalibary.command;
 
 import de.alphahelix.alphalibary.annotations.Annotations;
-import de.alphahelix.alphalibary.listener.SimpleLoader;
+import org.bukkit.event.Listener;
 
-public class SimpleAnnotatedCommand implements SimpleLoader {
+public class SimpleAnnotatedCommand implements Listener {
 
     public SimpleAnnotatedCommand() {
         super();

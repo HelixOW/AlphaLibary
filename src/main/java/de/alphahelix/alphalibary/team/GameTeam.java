@@ -48,9 +48,7 @@ public class GameTeam implements Serializable {
     }
 
     public static GameTeam getTeamByName(String rawTeamName) {
-        if (TEAMS.containsKey(rawTeamName))
-            return TEAMS.get(rawTeamName);
-        return null;
+        return TEAMS.get(rawTeamName);
     }
 
     public static GameTeam getTeamByPlayer(Player p) {

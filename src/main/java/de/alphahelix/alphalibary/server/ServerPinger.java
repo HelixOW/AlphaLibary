@@ -6,7 +6,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class ServerPinger {
 
@@ -36,7 +35,6 @@ public class ServerPinger {
                         str.append((char) b);
 
                 String[] data = str.toString().split("§");
-                System.out.println(Arrays.toString(data));
                 callback.done(new ServerResult(Integer.parseInt(data[1]), Integer.parseInt(data[2]), data[0]));
             } catch (IOException e) {
                 e.printStackTrace();

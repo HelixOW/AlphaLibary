@@ -18,14 +18,14 @@ package de.alphahelix.alphalibary.fakeapi;
 
 import de.alphahelix.alphalibary.fakeapi.instances.*;
 import de.alphahelix.alphalibary.fakeapi.utils.*;
-import de.alphahelix.alphalibary.listener.SimpleLoader;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class FakeEventListener implements SimpleLoader {
+public class FakeEventListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {

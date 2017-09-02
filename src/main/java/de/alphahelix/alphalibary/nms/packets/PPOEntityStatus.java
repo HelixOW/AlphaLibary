@@ -1,6 +1,7 @@
 package de.alphahelix.alphalibary.nms.packets;
 
 import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.nms.enums.EntityStatus;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 public class PPOEntityStatus implements IPacket {
@@ -10,10 +11,9 @@ public class PPOEntityStatus implements IPacket {
                     ReflectionUtil.getNmsClass("Entity"), byte.class);
 
     private Object entity;
-    //TODO: Create a StatusEnum
-    private byte status;
+    private EntityStatus status;
 
-    public PPOEntityStatus(Object entity, byte status) {
+    public PPOEntityStatus(Object entity, EntityStatus status) {
         this.entity = entity;
         this.status = status;
     }
@@ -27,18 +27,18 @@ public class PPOEntityStatus implements IPacket {
         return this;
     }
 
-    public byte getStatus() {
+    public EntityStatus getStatus() {
         return status;
     }
 
-    public PPOEntityStatus setStatus(byte status) {
+    public PPOEntityStatus setStatus(EntityStatus status) {
         this.status = status;
         return this;
     }
 
     @Override
     public Object getPacket(boolean stackTrace) {
-        return PACKET.newInstance(stackTrace, entity, status);
+        return PACKET.newInstance(stackTrace, entity, status.getId());
     }
 
     @Override

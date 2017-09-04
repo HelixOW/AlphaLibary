@@ -2,11 +2,11 @@ package de.alphahelix.alphalibary;
 
 import de.alphahelix.alphalibary.airdrops.AirDrop;
 import de.alphahelix.alphalibary.annotations.Annotations;
+import de.alphahelix.alphalibary.listener.SimpleListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.event.Listener;
 
-public class SimplePack implements Listener {
+public class SimplePack extends SimpleListener {
 
     public SimplePack() {
         super();

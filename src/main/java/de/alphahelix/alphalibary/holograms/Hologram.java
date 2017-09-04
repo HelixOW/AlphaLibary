@@ -21,13 +21,13 @@ package de.alphahelix.alphalibary.holograms;
 import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeArmorstand;
 import de.alphahelix.alphalibary.fakeapi.utils.ArmorstandFakeUtil;
+import de.alphahelix.alphalibary.listener.SimpleListener;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import java.io.Serializable;
 
-public class Hologram implements Listener, Serializable {
+public class Hologram extends SimpleListener implements Serializable {
 
     private String name;
     private Location location;

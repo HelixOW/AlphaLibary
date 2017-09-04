@@ -17,12 +17,12 @@ package de.alphahelix.alphalibary.inventorys;
 
 import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.item.ItemBuilder;
+import de.alphahelix.alphalibary.listener.SimpleListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
-public class SimpleMovingInventory implements Listener, Serializable {
+public class SimpleMovingInventory extends SimpleListener implements Serializable {
 
     private static HashMap<UUID, SimpleMovingInventory> users = new HashMap<>();
     private static ArrayList<Inventory> pages = new ArrayList<>();

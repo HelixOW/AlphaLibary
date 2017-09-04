@@ -13,11 +13,11 @@ import java.util.concurrent.Executors;
 
 public abstract class ChannelAbstract {
 
-    static final Class<?> ENTITY_PLAYER_CLASS = ReflectionUtil.getNmsClass("EntityPlayer");
-    static final Class<?> PLAYER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("PlayerConnection");
-    static final Class<?> PACKET_CLASS = ReflectionUtil.getNmsClass("NetworkManager");
-    static final Class<?> SERVER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("ServerConnection");
-    static final Class<?> MINECRAFT_SERVER_CLASS = ReflectionUtil.getNmsClass("MinecraftServer");
+    static final Class<?> PACKET_CLASS = ReflectionUtil.getNmsClass("Packet");
+    private static final Class<?> ENTITY_PLAYER_CLASS = ReflectionUtil.getNmsClass("EntityPlayer");
+    private static final Class<?> PLAYER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("PlayerConnection");
+    private static final Class<?> SERVER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("ServerConnection");
+    private static final Class<?> MINECRAFT_SERVER_CLASS = ReflectionUtil.getNmsClass("MinecraftServer");
 
     static final ReflectionUtil.SaveField
             NETWORK_MANAGER = ReflectionUtil.getDeclaredField("networkManager", PLAYER_CONNECTION_CLASS);
@@ -25,13 +25,13 @@ public abstract class ChannelAbstract {
     static final ReflectionUtil.SaveField
             PLAYER_CONNECTION = ReflectionUtil.getDeclaredField("playerConnection", ENTITY_PLAYER_CLASS);
 
-    static final ReflectionUtil.SaveField
+    private static final ReflectionUtil.SaveField
             SERVER_CONNECTION = ReflectionUtil.getFirstType(SERVER_CONNECTION_CLASS, MINECRAFT_SERVER_CLASS);
 
-    static final ReflectionUtil.SaveField
+    private static final ReflectionUtil.SaveField
             CONNECTION_LIST = ReflectionUtil.getLastType(List.class, SERVER_CONNECTION_CLASS);
 
-    static final ReflectionUtil.SaveMethod
+    private static final ReflectionUtil.SaveMethod
             GET_SERVER = ReflectionUtil.getDeclaredMethod("getServer", Bukkit.getServer().getClass());
 
     static final String KEY_HANDLER = "packet_handler";

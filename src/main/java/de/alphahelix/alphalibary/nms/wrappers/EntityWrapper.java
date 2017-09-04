@@ -26,7 +26,7 @@ public class EntityWrapper {
     private static final ReflectionUtil.SaveMethod SNOGRAV = ReflectionUtil.getDeclaredMethod("setNoGravity", "Entity",
             boolean.class);
 
-    private static final ReflectionUtil.SaveMethod GDATAWATCHER = ReflectionUtil.getDeclaredMethod("getDatawatcher", "Entity");
+    private static final ReflectionUtil.SaveMethod GDATAWATCHER = ReflectionUtil.getDeclaredMethod("getDataWatcher", "Entity");
 
     private final Object entity;
     private final int entityID;

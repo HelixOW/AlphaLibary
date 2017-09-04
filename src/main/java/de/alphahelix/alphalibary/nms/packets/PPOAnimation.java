@@ -1,6 +1,7 @@
 package de.alphahelix.alphalibary.nms.packets;
 
 import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.nms.enums.AnimationType;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 public class PPOAnimation implements IPacket {
@@ -15,6 +16,10 @@ public class PPOAnimation implements IPacket {
     public PPOAnimation(Object entity, int animationType) {
         this.entity = entity;
         this.animationType = animationType;
+    }
+
+    public PPOAnimation(Object entity, AnimationType type) {
+        this(entity, type.ordinal());
     }
 
     public Object getEntity() {
@@ -33,6 +38,10 @@ public class PPOAnimation implements IPacket {
     public PPOAnimation setAnimationType(int animationType) {
         this.animationType = animationType;
         return this;
+    }
+
+    public PPOAnimation setAnimationType(AnimationType animationType) {
+        return this.setAnimationType(animationType.ordinal());
     }
 
     @Override

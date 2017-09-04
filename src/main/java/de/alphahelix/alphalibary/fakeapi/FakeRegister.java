@@ -27,7 +27,6 @@ public class FakeRegister {
     private static MobLocationsFile mobLocationsFile;
     private static BigItemLocationsFile bigItemLocationsFile;
     private static XPOrbLocationsFile xpOrbLocationsFile;
-    private static PaintingLocationsFile paintingLocationsFile;
 
     public static ArmorstandLocationsFile getArmorstandLocationsFile() {
         return armorstandLocationsFile;
@@ -57,10 +56,6 @@ public class FakeRegister {
         return xpOrbLocationsFile;
     }
 
-    public static PaintingLocationsFile getPaintingLocationsFile() {
-        return paintingLocationsFile;
-    }
-
 
     void initAll() {
         armorstandLocationsFile = new ArmorstandLocationsFile();
@@ -70,7 +65,6 @@ public class FakeRegister {
         mobLocationsFile = new MobLocationsFile();
         bigItemLocationsFile = new BigItemLocationsFile();
         xpOrbLocationsFile = new XPOrbLocationsFile();
-        paintingLocationsFile = new PaintingLocationsFile();
         new FakeEventListener();
     }
 }

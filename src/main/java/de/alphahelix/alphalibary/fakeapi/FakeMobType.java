@@ -53,7 +53,8 @@ public enum FakeMobType {
     ILLAGER("EntityIllagerWizard"),
     VINDICATOR("EntityVindicator"),
     EVOKER("EntityEvoker"),
-    ILLUSIONER("EntityIllagerIllusioner");
+    ILLUSIONER("EntityIllagerIllusioner"),
+    PARROT("EntityParrot");
 
     private String nmsClass;
 

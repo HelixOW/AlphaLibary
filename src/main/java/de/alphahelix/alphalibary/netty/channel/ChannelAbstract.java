@@ -13,17 +13,17 @@ import java.util.concurrent.Executors;
 
 public abstract class ChannelAbstract {
 
-    static final Class<?> ENTITY_PLAYER_CLASS = ReflectionUtil.getNmsClass("ENTITY_PLAYER_CLASS");
-    static final Class<?> PLAYER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("PLAYER_CONNECTION_CLASS");
-    static final Class<?> PACKET_CLASS = ReflectionUtil.getNmsClass("PACKET_CLASS");
-    static final Class<?> SERVER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("SERVER_CONNECTION_CLASS");
-    static final Class<?> MINECRAFT_SERVER_CLASS = ReflectionUtil.getNmsClass("MINECRAFT_SERVER_CLASS");
+    static final Class<?> ENTITY_PLAYER_CLASS = ReflectionUtil.getNmsClass("EntityPlayer");
+    static final Class<?> PLAYER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("PlayerConnection");
+    static final Class<?> PACKET_CLASS = ReflectionUtil.getNmsClass("NetworkManager");
+    static final Class<?> SERVER_CONNECTION_CLASS = ReflectionUtil.getNmsClass("ServerConnection");
+    static final Class<?> MINECRAFT_SERVER_CLASS = ReflectionUtil.getNmsClass("MinecraftServer");
 
     static final ReflectionUtil.SaveField
-            NETWORK_MANAGER = ReflectionUtil.getDeclaredField("NETWORK_MANAGER", PLAYER_CONNECTION_CLASS);
+            NETWORK_MANAGER = ReflectionUtil.getDeclaredField("networkManager", PLAYER_CONNECTION_CLASS);
 
     static final ReflectionUtil.SaveField
-            PLAYER_CONNECTION = ReflectionUtil.getDeclaredField("PLAYER_CONNECTION", ENTITY_PLAYER_CLASS);
+            PLAYER_CONNECTION = ReflectionUtil.getDeclaredField("playerConnection", ENTITY_PLAYER_CLASS);
 
     static final ReflectionUtil.SaveField
             SERVER_CONNECTION = ReflectionUtil.getFirstType(SERVER_CONNECTION_CLASS, MINECRAFT_SERVER_CLASS);
@@ -32,7 +32,7 @@ public abstract class ChannelAbstract {
             CONNECTION_LIST = ReflectionUtil.getLastType(List.class, SERVER_CONNECTION_CLASS);
 
     static final ReflectionUtil.SaveMethod
-            GET_SERVER = ReflectionUtil.getDeclaredMethod("GET_SERVER", Bukkit.getServer().getClass());
+            GET_SERVER = ReflectionUtil.getDeclaredMethod("getServer", Bukkit.getServer().getClass());
 
     static final String KEY_HANDLER = "packet_handler";
     static final String KEY_PLAYER = "packet_listener_player";

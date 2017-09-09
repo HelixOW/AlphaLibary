@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PacketHandler {
+public class PacketHandler {
 
     private static final List<PacketHandler> handlers = new ArrayList<>();
 
@@ -121,12 +121,11 @@ public abstract class PacketHandler {
 
     // //////////////////////////////////////////////////
 
-    public PacketHandler() {
+    public void onSend(SentPacket packet) {
     }
 
-    public abstract void onSend(SentPacket packet);
-
-    public abstract void onReceive(ReceivedPacket packet);
+    public void onReceive(ReceivedPacket packet) {
+    }
 
     @Override
     public boolean equals(Object o) {

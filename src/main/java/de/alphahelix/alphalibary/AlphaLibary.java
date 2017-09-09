@@ -89,6 +89,8 @@ public class AlphaLibary extends JavaPlugin {
 
         if (!arenaFolder.exists()) arenaFolder.mkdirs();
 
+        new SimplePack();
+
         PacketListenerAPI.addPacketHandler(new PacketHandler() {
             @Override
             @PacketOptions(forcePlayer = true)

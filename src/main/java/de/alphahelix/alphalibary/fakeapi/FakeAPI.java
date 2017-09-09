@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class FakeAPI extends AlphaLibary {
+public class FakeAPI {
 
     private static final PacketListenerAPI PACKET_LISTENER_API = new PacketListenerAPI();
     private static final HashMap<String, ArrayList<FakeEntity>> FAKE_ENTITIES = new HashMap<>();

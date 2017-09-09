@@ -20,6 +20,8 @@ public class PlayerUtil {
 
     public static void addTotalPlayer(Player player) {
         addTotalPlayer(player.getName());
+
+
     }
 
     public static void removeTotalPlayer(String player) {

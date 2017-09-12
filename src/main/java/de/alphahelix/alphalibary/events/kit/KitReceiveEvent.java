@@ -9,14 +9,14 @@ import org.bukkit.event.player.PlayerEvent;
 public class KitReceiveEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private Kit receivedKit;
+    private final Kit receivedKit;
 
     public KitReceiveEvent(Player who, Kit receivedKit) {
         super(who);
         this.receivedKit = receivedKit;
     }
 
-    public final static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

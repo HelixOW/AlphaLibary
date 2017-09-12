@@ -30,7 +30,6 @@ import java.util.List;
 
 /**
  * @see SimpleAnnotatedCommand
- * @deprecated
  */
 public abstract class SimpleCommand extends Command {
 

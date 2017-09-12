@@ -30,6 +30,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import java.util.Collections;
 
 public class AirDrop extends SimpleListener implements Serializable {
 
-    private static transient ArrayList<Entity> airDrops = new ArrayList<>();
+    private static final transient ArrayList<Entity> AIR_DROPS = new ArrayList<>();
 
     private DropOffLocation dropOff;
     private ArrayList<ItemStack> dropList = new ArrayList<>();
@@ -106,22 +107,22 @@ public class AirDrop extends SimpleListener implements Serializable {
     }
 
     public void spawn() {
-        FallingBlock chest = dropOff.getDropOff().getWorld().spawnFallingBlock(dropOff.getDropOff(), Material.CHEST, (byte) 0);
+        FallingBlock chest = dropOff.getDropOff().getWorld().spawnFallingBlock(dropOff.getDropOff(), new MaterialData(Material.CHEST));
 
-        airDrops.add(chest);
+        AIR_DROPS.add(chest);
     }
 
     @EventHandler
     public void onHit(EntityChangeBlockEvent e) {
         if (e.getEntity() instanceof FallingBlock) {
-            if (airDrops.contains(e.getEntity())) {
+            if (AIR_DROPS.contains(e.getEntity())) {
                 Util.runLater(5, false, () -> {
                     Chest chest = (Chest) e.getBlock().getState();
 
                     for (ItemStack is : dropList)
                         chest.getBlockInventory().addItem(is);
 
-                    airDrops.remove(e.getEntity());
+                    AIR_DROPS.remove(e.getEntity());
                 });
             }
         }

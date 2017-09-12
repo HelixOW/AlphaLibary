@@ -8,10 +8,10 @@ import java.util.logging.Level;
 
 public class NBTList {
 
-    private String name;
-    private NBTCompound parent;
-    private NBTType type;
-    private Object listObj;
+    private final String name;
+    private final NBTCompound parent;
+    private final NBTType type;
+    private final Object listObj;
 
     public NBTList(String name, NBTCompound parent, NBTType type, Object listObj) {
         this.name = name;

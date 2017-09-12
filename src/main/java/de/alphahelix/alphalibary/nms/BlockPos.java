@@ -20,10 +20,10 @@ package de.alphahelix.alphalibary.nms;
 
 public interface BlockPos {
 
-	int getX();
+    int getX();
 
-	int getY();
+    int getY();
 
-	int getZ();
+    int getZ();
 
 }

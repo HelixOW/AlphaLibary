@@ -10,7 +10,7 @@ public enum REnumAction implements Serializable {
     ATTACK(1),
     INTERACT_AT(2);
 
-    private int c;
+    private final int c;
 
     REnumAction(int c) {
         this.c = c;

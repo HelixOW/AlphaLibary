@@ -19,13 +19,12 @@ public class GameTeam implements Serializable {
 
     @Expose
     private static final transient WeakHashMap<String, GameTeam> TEAMS = new WeakHashMap<>();
-
+    private final ArrayList<String> members = new ArrayList<>();
     private String teamName, rawTeamName;
     private ChatColor color;
     private Location spawn;
     private int maximumPlayers;
     private boolean friendlyFire = true;
-    private ArrayList<String> members = new ArrayList<>();
 
     public GameTeam(String teamName, ChatColor color, Location spawn, int maximumPlayers) {
         this.teamName = teamName;

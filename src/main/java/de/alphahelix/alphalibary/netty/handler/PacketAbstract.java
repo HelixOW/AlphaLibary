@@ -8,11 +8,10 @@ import org.bukkit.event.Cancellable;
 
 public abstract class PacketAbstract {
 
+    private final Cancellable cancellable;
     private Player player;
     private ChannelWrapper channelWrapper;
-
     private Object packet;
-    private Cancellable cancellable;
 
     public PacketAbstract(Object packet, Cancellable cancellable, Player player) {
         this.player = player;
@@ -51,7 +50,7 @@ public abstract class PacketAbstract {
     public void setPacketValueSilent(String field, Object value) {
         try {
             new ReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).set(getPacket(), value, false);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException ignored) {
 
         }
     }
@@ -79,7 +78,7 @@ public abstract class PacketAbstract {
     public void setPacketValueSilent(int index, Object value) {
         try {
             new ReflectionUtil.SaveField(packet.getClass().getDeclaredFields()[index]).set(getPacket(), value, false);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -106,7 +105,7 @@ public abstract class PacketAbstract {
     public Object getPacketValueSilent(String field) {
         try {
             return new ReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).get(getPacket());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }

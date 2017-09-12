@@ -9,9 +9,8 @@ public class ChannelInjector {
 
     private ChannelAbstract channel;
 
-    public boolean inject(IPacketListener iPacketListener) {
+    public void inject(IPacketListener iPacketListener) {
         channel = new INCChannel(iPacketListener);
-        return true;
     }
 
     public void addChannel(Player p) {

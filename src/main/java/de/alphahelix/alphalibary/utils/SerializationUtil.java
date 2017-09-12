@@ -26,6 +26,6 @@ public class SerializationUtil {
     }
 
     public static <T> T decodeBase64(String base64, Class<T> identifier) {
-	    return JSONUtil.getGson().fromJson(Base64Coder.decodeString(base64), identifier);
+        return JSONUtil.getGson().fromJson(Base64Coder.decodeString(base64), identifier);
     }
 }

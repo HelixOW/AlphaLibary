@@ -16,8 +16,8 @@ import java.util.Arrays;
  */
 public class ItemInventory implements Serializable {
 
-    private Inventory inventory;
-    private InventoryItem[] items;
+    private final Inventory inventory;
+    private final InventoryItem[] items;
 
     public ItemInventory(Inventory inventory, InventoryItem... items) {
         this.inventory = inventory;

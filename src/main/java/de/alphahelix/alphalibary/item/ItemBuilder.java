@@ -33,9 +33,9 @@ import java.util.Map.Entry;
 
 public class ItemBuilder extends SimpleListener implements Serializable {
 
+    private final ArrayList<ItemFlag> itemflags = new ArrayList<>();
+    private final ArrayList<ItemData> itemData = new ArrayList<>();
     private Map<Enchantment, Integer> enchantments = new HashMap<>();
-    private ArrayList<ItemFlag> itemflags = new ArrayList<>();
-    private ArrayList<ItemData> itemData = new ArrayList<>();
     private String name = "";
     private Material material = Material.AIR;
     private int amount = 1;
@@ -120,9 +120,7 @@ public class ItemBuilder extends SimpleListener implements Serializable {
      * @return this {@link ItemBuilder}
      */
     public ItemBuilder removeItemFlags(ItemFlag... flagsToRemove) {
-        for (ItemFlag iFlag : flagsToRemove) {
-            itemflags.remove(iFlag);
-        }
+        itemflags.removeAll(Arrays.asList(flagsToRemove));
         return this;
     }
 
@@ -282,18 +280,18 @@ public class ItemBuilder extends SimpleListener implements Serializable {
             } catch (WrongDataException e) {
                 e.printStackTrace();
             }
-	
-	    return s;
+
+        return s;
     }
-	
-	/**
-	 * Gets the all current {@link ItemData}s
-	 *
-	 * @return {@link ArrayList} with all current {@link ItemData}
-	 */
-	public ArrayList<ItemData> getAllData () {
-		return itemData;
-	}
+
+    /**
+     * Gets the all current {@link ItemData}s
+     *
+     * @return {@link ArrayList} with all current {@link ItemData}
+     */
+    public ArrayList<ItemData> getAllData() {
+        return itemData;
+    }
 
     @Override
     public boolean equals(Object o) {

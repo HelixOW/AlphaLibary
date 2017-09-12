@@ -19,17 +19,17 @@
 package de.alphahelix.alphalibary.addons.csv;
 
 public interface CrossSystemVariable {
-	/**
-	 * Gets a serialized String
-	 *
-	 * @return a serialized String of the {@link CrossSystemVariable}
-	 */
-	String value();
-	
-	/**
-	 * Gets the name of the String
-	 *
-	 * @return the name of the String
-	 */
-	String name ();
+    /**
+     * Gets a serialized String
+     *
+     * @return a serialized String of the {@link CrossSystemVariable}
+     */
+    String value();
+
+    /**
+     * Gets the name of the String
+     *
+     * @return the name of the String
+     */
+    String name();
 }

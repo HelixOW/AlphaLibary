@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class BooleanArgument extends Argument<Boolean> {
 
-    private ArrayList<String> trueStrings = new ArrayList<>();
-    private ArrayList<String> falseStrings = new ArrayList<>();
+    private final ArrayList<String> trueStrings = new ArrayList<>();
+    private final ArrayList<String> falseStrings = new ArrayList<>();
 
     public BooleanArgument() {
         addBooleans("true", "false");

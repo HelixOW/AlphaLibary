@@ -39,10 +39,10 @@ import java.util.HashMap;
 
 public class ArmorstandFakeUtil {
 
-    private static HashMap<String, BukkitTask> followMap = new HashMap<>();
-    private static HashMap<String, BukkitTask> splitMap = new HashMap<>();
+    private static final HashMap<String, BukkitTask> FOLLOW_MAP = new HashMap<>();
+    private static final HashMap<String, BukkitTask> SPLIT_MAP = new HashMap<>();
 
-    private static ReflectionUtil.SaveConstructor entityArmorstand =
+    private static final ReflectionUtil.SaveConstructor ENTITY_ARMORSTAND =
             ReflectionUtil.getDeclaredConstructor("EntityArmorStand", ReflectionUtil.getNmsClass("World"));
 
     /**
@@ -72,7 +72,7 @@ public class ArmorstandFakeUtil {
      * @return the new spawned {@link FakeArmorstand}
      */
     public static FakeArmorstand spawnTemporaryArmorstand(Player p, Location loc, String name) {
-        Object armorstand = entityArmorstand.newInstance(false, ReflectionUtil.getWorldServer(loc.getWorld()));
+        Object armorstand = ENTITY_ARMORSTAND.newInstance(false, ReflectionUtil.getWorldServer(loc.getWorld()));
         EntityWrapper aW = new EntityWrapper(armorstand);
 
         aW.setLocation(loc);
@@ -126,7 +126,7 @@ public class ArmorstandFakeUtil {
         final double toMoveInY = between.getY() / teleportCount;
         final double toMoveInZ = between.getZ() / teleportCount;
 
-        splitMap.put(p.getName(), new BukkitRunnable() {
+        SPLIT_MAP.put(p.getName(), new BukkitRunnable() {
             public void run() {
                 if (!LocationUtil.isSameLocation(currentLocation, to)) {
                     teleportArmorstand(p, currentLocation.add(new Vector(toMoveInX, toMoveInY, toMoveInZ)), armorstand);
@@ -142,9 +142,9 @@ public class ArmorstandFakeUtil {
      * @param p the {@link Player} to cancel all teleport tasks
      */
     public static void cancelAllSplittedTasks(Player p) {
-        if (splitMap.containsKey(p.getName())) {
-            splitMap.get(p.getName()).cancel();
-            splitMap.remove(p.getName());
+        if (SPLIT_MAP.containsKey(p.getName())) {
+            SPLIT_MAP.get(p.getName()).cancel();
+            SPLIT_MAP.remove(p.getName());
         }
     }
 
@@ -227,7 +227,7 @@ public class ArmorstandFakeUtil {
      * @param armorstand the {@link FakeArmorstand} which should follow the {@link Player}
      */
     public static void followArmorstand(final Player p, final Player toFollow, final FakeArmorstand armorstand) {
-        followMap.put(p.getName(), new BukkitRunnable() {
+        FOLLOW_MAP.put(p.getName(), new BukkitRunnable() {
             @Override
             public void run() {
                 teleportArmorstand(p, toFollow.getLocation(), armorstand);
@@ -241,9 +241,9 @@ public class ArmorstandFakeUtil {
      * @param p the {@link Player} who shouldn't be followed anylonger
      */
     public static void unFollowArmorstand(Player p) {
-        if (followMap.containsKey(p.getName())) {
-            followMap.get(p.getName()).cancel();
-            followMap.remove(p.getName());
+        if (FOLLOW_MAP.containsKey(p.getName())) {
+            FOLLOW_MAP.get(p.getName()).cancel();
+            FOLLOW_MAP.remove(p.getName());
         }
     }
 

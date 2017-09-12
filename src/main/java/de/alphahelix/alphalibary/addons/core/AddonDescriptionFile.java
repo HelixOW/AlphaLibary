@@ -9,9 +9,6 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 public class AddonDescriptionFile {
@@ -50,7 +47,6 @@ public class AddonDescriptionFile {
     };
 
     private String name, main, description, author, version;
-    private List<String> depends = new ArrayList<>();
 
     public AddonDescriptionFile(InputStream stream) throws InvalidAddonDescriptionException {
         this.loadMap(this.asMap(YAML.get().load(stream)));
@@ -92,9 +88,6 @@ public class AddonDescriptionFile {
 
         if (map.get("description") != null)
             this.description = map.get("description").toString();
-
-        if (map.get("depends") != null)
-            this.depends = Arrays.asList(map.get("depends").toString().split(", "));
 
         if (map.get("author") != null)
             this.author = map.get("author").toString();

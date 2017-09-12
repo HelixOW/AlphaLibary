@@ -18,8 +18,12 @@ import java.util.logging.Level;
 
 public class Updater {
 
-    private JavaPlugin pluginToUpdate;
-    private String dataFolder, currentVersion, updateURL, pluginName, jarName;
+    private final JavaPlugin pluginToUpdate;
+    private final String dataFolder;
+    private final String currentVersion;
+    private final String updateURL;
+    private final String pluginName;
+    private final String jarName;
 
     public Updater(JavaPlugin pluginToUpdate, int spigotID, String jarName) {
         this.pluginToUpdate = pluginToUpdate;

@@ -35,10 +35,10 @@ public class UUIDFetcher {
 
     private static final Gson GSON = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
     private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/%s?at=%d";
-    private static final String NAME_URL = "https://api.mojang.com/user/profiles/%s/names";
+    private static final String NAME_URL = "https://api.mojang.com/user/profiles/%s/NAMES";
 
-    private static ConcurrentHashMap<UUID, String> names = new ConcurrentHashMap<>();
-    private static ConcurrentHashMap<String, UUID> uuids = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, String> NAMES = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, UUID> UUIDS = new ConcurrentHashMap<>();
 
     /**
      * Gets the {@link UUID} of a {@link String}
@@ -73,8 +73,8 @@ public class UUIDFetcher {
         }
         name = name.toLowerCase();
 
-        if (uuids.containsKey(name)) {
-            callback.done(uuids.get(name));
+        if (UUIDS.containsKey(name)) {
+            callback.done(UUIDS.get(name));
             return;
         }
 
@@ -101,7 +101,7 @@ public class UUIDFetcher {
                     return;
                 }
 
-                uuids.put(finalName, player.getId());
+                UUIDS.put(finalName, player.getId());
 
                 Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
                         callback.done(player.getId()));
@@ -120,8 +120,8 @@ public class UUIDFetcher {
      * @param callback the {@link NameCallback} with the parsed name
      */
     public static void getName(UUID uuid, NameCallback callback) {
-        if (names.containsKey(uuid)) {
-            callback.done(names.get(uuid));
+        if (NAMES.containsKey(uuid)) {
+            callback.done(NAMES.get(uuid));
             return;
         }
 
@@ -147,7 +147,7 @@ public class UUIDFetcher {
                     return;
                 }
 
-                names.put(uuid, currentName.getName());
+                NAMES.put(uuid, currentName.getName());
 
                 Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
                         callback.done(currentName.getName()));
@@ -194,8 +194,8 @@ public class UUIDFetcher {
 
         name = name.toLowerCase();
 
-        if (uuids.containsKey(name))
-            return uuids.get(name);
+        if (UUIDS.containsKey(name))
+            return UUIDS.get(name);
 
         String finalName = name;
 
@@ -216,7 +216,7 @@ public class UUIDFetcher {
                 return Bukkit.getOfflinePlayer(finalName).getUniqueId();
 
 
-            uuids.put(finalName, player.getId());
+            UUIDS.put(finalName, player.getId());
 
             return player.getId();
         } catch (Exception e) {
@@ -234,8 +234,8 @@ public class UUIDFetcher {
      * @deprecated not async
      */
     public static String getName(UUID uuid) {
-        if (names.containsKey(uuid))
-            return names.get(uuid);
+        if (NAMES.containsKey(uuid))
+            return NAMES.get(uuid);
 
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(
@@ -252,7 +252,7 @@ public class UUIDFetcher {
             if (currentName.getName() == null)
                 return Bukkit.getOfflinePlayer(uuid).getName();
 
-            names.put(uuid, currentName.getName());
+            NAMES.put(uuid, currentName.getName());
 
             return currentName.getName();
         } catch (Exception e) {

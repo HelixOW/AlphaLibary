@@ -17,11 +17,11 @@ import java.util.ArrayList;
 
 public class Arena implements Serializable {
 
-    private String name;
-    private String fileName;
-    private ArenaFile.ArenaItem icon;
+    private final String name;
+    private final String fileName;
+    private final ArenaFile.ArenaItem icon;
+    private final transient ArrayList<Location> realSpawns = new ArrayList<>();
     private ArrayList<ArenaFile.NotInitLocation> spawns = new ArrayList<>();
-    private transient ArrayList<Location> realSpawns = new ArrayList<>();
 
     public Arena(String name, String fileName, ArenaFile.ArenaItem icon, ArrayList<ArenaFile.NotInitLocation> spawns) {
         this.name = name;

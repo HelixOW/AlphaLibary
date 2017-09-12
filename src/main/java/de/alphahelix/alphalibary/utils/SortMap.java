@@ -4,8 +4,8 @@ import java.util.*;
 
 public class SortMap<K, V> implements Map<K, V> {
 
-    private Map<K, V> tempMap;
-    private transient Map<K, V> lookUp = new HashMap<>();
+    private final Map<K, V> tempMap;
+    private final transient Map<K, V> lookUp = new HashMap<>();
 
     public SortMap(Object... content) {
         this(SortType.UNSORTED, null, content);
@@ -29,7 +29,7 @@ public class SortMap<K, V> implements Map<K, V> {
                 return order.val * cmp;
             });
         } else if (type != null && type == SortType.VALUE) {
-            tempMap = new TreeMap<K, V>((k1, k2) -> {
+            tempMap = new TreeMap<>((k1, k2) -> {
                 V v1 = lookUp.get(k1);
 
                 if (v1 == null)
@@ -136,13 +136,13 @@ public class SortMap<K, V> implements Map<K, V> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return tempMap.equals(obj);
-    }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    @Override
-    public int hashCode() {
-        return tempMap.hashCode();
+        SortMap<?, ?> sortMap = (SortMap<?, ?>) o;
+
+        return tempMap != null ? tempMap.equals(sortMap.tempMap) : sortMap.tempMap == null;
     }
 
     @Override

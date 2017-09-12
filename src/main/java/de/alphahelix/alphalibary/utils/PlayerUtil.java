@@ -6,16 +6,16 @@ import java.util.ArrayList;
 
 public class PlayerUtil {
 
-    private static ArrayList<String> totalPlayers = new ArrayList<>();
-    private static ArrayList<String> alivePlayers = new ArrayList<>();
-    private static ArrayList<String> deadPlayers = new ArrayList<>();
+    private static final ArrayList<String> TOTAL_PLAYERS = new ArrayList<>();
+    private static final ArrayList<String> ALIVE_PLAYERS = new ArrayList<>();
+    private static final ArrayList<String> DEAD_PLAYERS = new ArrayList<>();
 
     public static ArrayList<String> getTotalPlayers() {
-        return totalPlayers;
+        return TOTAL_PLAYERS;
     }
 
     public static void addTotalPlayer(String player) {
-        totalPlayers.add(player);
+        TOTAL_PLAYERS.add(player);
     }
 
     public static void addTotalPlayer(Player player) {
@@ -25,14 +25,14 @@ public class PlayerUtil {
     }
 
     public static void removeTotalPlayer(String player) {
-        if (totalPlayers.contains(player))
-            totalPlayers.remove(player);
+        if (TOTAL_PLAYERS.contains(player))
+            TOTAL_PLAYERS.remove(player);
 
-        if (alivePlayers.contains(player))
-            alivePlayers.remove(player);
+        if (ALIVE_PLAYERS.contains(player))
+            ALIVE_PLAYERS.remove(player);
 
-        if (deadPlayers.contains(player))
-            deadPlayers.remove(player);
+        if (DEAD_PLAYERS.contains(player))
+            DEAD_PLAYERS.remove(player);
     }
 
     public static void removeTotalPlayer(Player player) {
@@ -40,11 +40,11 @@ public class PlayerUtil {
     }
 
     public static ArrayList<String> getAlivePlayers() {
-        return alivePlayers;
+        return ALIVE_PLAYERS;
     }
 
     public static void addAlivePlayer(String player) {
-        alivePlayers.add(player);
+        ALIVE_PLAYERS.add(player);
     }
 
     public static void addAlivePlayer(Player player) {
@@ -52,11 +52,11 @@ public class PlayerUtil {
     }
 
     public static void removeAlivePlayer(String player) {
-        if (alivePlayers.contains(player))
-            alivePlayers.remove(player);
+        if (ALIVE_PLAYERS.contains(player))
+            ALIVE_PLAYERS.remove(player);
 
-        if (deadPlayers.contains(player))
-            deadPlayers.remove(player);
+        if (DEAD_PLAYERS.contains(player))
+            DEAD_PLAYERS.remove(player);
     }
 
     public static void removeAlivePlayer(Player player) {
@@ -64,7 +64,7 @@ public class PlayerUtil {
     }
 
     public static boolean isPlayerAlive(String player) {
-        return alivePlayers.contains(player);
+        return ALIVE_PLAYERS.contains(player);
     }
 
     public static boolean isPlayerAlive(Player player) {
@@ -72,11 +72,11 @@ public class PlayerUtil {
     }
 
     public static ArrayList<String> getDeadPlayers() {
-        return deadPlayers;
+        return DEAD_PLAYERS;
     }
 
     public static void addDeadPlayer(String player) {
-        deadPlayers.add(player);
+        DEAD_PLAYERS.add(player);
     }
 
     public static void addDeadPlayer(Player player) {
@@ -84,8 +84,8 @@ public class PlayerUtil {
     }
 
     public static void removeDeadPlayer(String player) {
-        if (deadPlayers.contains(player))
-            deadPlayers.remove(player);
+        if (DEAD_PLAYERS.contains(player))
+            DEAD_PLAYERS.remove(player);
     }
 
     public static void removeDeadPlayer(Player player) {
@@ -93,7 +93,7 @@ public class PlayerUtil {
     }
 
     public static boolean isPlayerDead(String player) {
-        return deadPlayers.contains(player);
+        return DEAD_PLAYERS.contains(player);
     }
 
     public static boolean isPlayerDead(Player player) {

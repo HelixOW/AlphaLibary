@@ -58,8 +58,8 @@ public enum FakeMobType {
     ILLUSIONER("EntityIllagerIllusioner", ReflectionUtil.getNmsClass("World")),
     PARROT("EntityParrot", ReflectionUtil.getNmsClass("World"));
 
-    private String nmsClass;
-    private Class<?>[] classes;
+    private final String nmsClass;
+    private final Class<?>[] classes;
 
     FakeMobType(String nmsClass, Class<?>... classes) {
         this.nmsClass = nmsClass;

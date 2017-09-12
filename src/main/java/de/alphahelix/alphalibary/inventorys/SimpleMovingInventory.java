@@ -35,11 +35,11 @@ import java.util.UUID;
 
 public class SimpleMovingInventory extends SimpleListener implements Serializable {
 
-    private static HashMap<UUID, SimpleMovingInventory> users = new HashMap<>();
-    private static ArrayList<Inventory> pages = new ArrayList<>();
+    private static final HashMap<UUID, SimpleMovingInventory> USERS = new HashMap<>();
+    private static final ArrayList<Inventory> PAGES = new ArrayList<>();
+    private final String title;
+    private final int size;
     private ArrayList<ItemStack> items = new ArrayList<>();
-    private String title;
-    private int size;
     private ItemStack nextPage = null;
     private ItemStack previousPage = null;
     private int currpage = 0;
@@ -66,16 +66,16 @@ public class SimpleMovingInventory extends SimpleListener implements Serializabl
 
         for (ItemStack item : items) {
             if (page.firstEmpty() == -1) {
-                pages.add(page);
+                PAGES.add(page);
                 page = getBlankPage(name, size);
                 page.addItem(item);
             } else {
                 page.addItem(item);
             }
         }
-        pages.add(page);
-        p.openInventory(pages.get(currpage));
-        users.put(p.getUniqueId(), this);
+        PAGES.add(page);
+        p.openInventory(PAGES.get(currpage));
+        USERS.put(p.getUniqueId(), this);
     }
 
     public void construct(Player p) {
@@ -85,16 +85,16 @@ public class SimpleMovingInventory extends SimpleListener implements Serializabl
 
         for (ItemStack item : items) {
             if (page.firstEmpty() == -1) {
-                pages.add(page);
+                PAGES.add(page);
                 page = getBlankPage(title, size);
                 page.addItem(item);
             } else {
                 page.addItem(item);
             }
         }
-        pages.add(page);
-        p.openInventory(pages.get(currpage));
-        users.put(p.getUniqueId(), this);
+        PAGES.add(page);
+        p.openInventory(PAGES.get(currpage));
+        USERS.put(p.getUniqueId(), this);
     }
 
     private Inventory getBlankPage(String name, int size) {
@@ -118,10 +118,10 @@ public class SimpleMovingInventory extends SimpleListener implements Serializabl
 
         if (e.getClickedInventory() == null) return;
         if (Objects.equals(e.getClickedInventory().getTitle(), title)) e.setCancelled(true);
-        if (!users.containsKey(p.getUniqueId()))
+        if (!USERS.containsKey(p.getUniqueId()))
             return;
 
-        SimpleMovingInventory inv = users.get(p.getUniqueId());
+        SimpleMovingInventory inv = USERS.get(p.getUniqueId());
         if (e.getCurrentItem() == null)
             return;
         if (e.getCurrentItem().getItemMeta() == null)
@@ -131,15 +131,15 @@ public class SimpleMovingInventory extends SimpleListener implements Serializabl
 
         if (sameName(e.getCurrentItem(), nextPage)) {
             e.setCancelled(true);
-            if (inv.currpage < pages.size() - 1) {
+            if (inv.currpage < PAGES.size() - 1) {
                 inv.currpage += 1;
-                p.openInventory(pages.get(inv.currpage));
+                p.openInventory(PAGES.get(inv.currpage));
             }
         } else if (sameName(e.getCurrentItem(), previousPage)) {
             e.setCancelled(true);
             if (inv.currpage > 0) {
                 inv.currpage -= 1;
-                p.openInventory(pages.get(inv.currpage));
+                p.openInventory(PAGES.get(inv.currpage));
             }
         }
     }

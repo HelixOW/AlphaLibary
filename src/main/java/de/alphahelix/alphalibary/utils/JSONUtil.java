@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class JSONUtil {
 
-    private static GsonBuilder builder = new GsonBuilder()
+    private static final GsonBuilder builder = new GsonBuilder()
             .registerTypeHierarchyAdapter(Location.class, new LocationSerializer())
             .registerTypeHierarchyAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer())
             .registerTypeHierarchyAdapter(PropertyMap.class, new PropertyMap.Serializer())
@@ -108,10 +108,10 @@ class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer
             }
 
             if (meta.has("lore")) {
-                lore = JSONUtil.getGson().fromJson(meta.getAsJsonArray("lore"), List.class);
+                lore = JSONUtil.getGson().<List<String>>fromJson(meta.getAsJsonArray("lore"), List.class);
             }
 
-            flags = JSONUtil.getGson().fromJson(meta.getAsJsonArray("flags"), Set.class);
+            flags = JSONUtil.getGson().<Set<String>>fromJson(meta.getAsJsonArray("flags"), Set.class);
 
         }
 

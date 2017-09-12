@@ -16,8 +16,8 @@ public class Menu implements Serializable {
 
     private final String title;
     private final int size;
+    private final MenuManager menuManager;
     private HashMap<Integer, MenuElement> elements = new HashMap<>();
-    private MenuManager menuManager;
 
     public Menu(String title, int size) {
         this.title = title;

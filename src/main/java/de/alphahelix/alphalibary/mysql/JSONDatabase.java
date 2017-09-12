@@ -140,14 +140,6 @@ public class JSONDatabase {
             this.sqliteDatabase.contains(id.name().toLowerCase(), idValue, callback);
     }
 
-    public enum UniqueIdentifier {
-        NAME, NUMBER, UUID
-    }
-
-    public enum DatabaseType {
-        MYSQL, SQLITE
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -172,5 +164,13 @@ public class JSONDatabase {
                 ", mySQLDatabase=" + mySQLDatabase +
                 ", sqliteDatabase=" + sqliteDatabase +
                 '}';
+    }
+
+    public enum UniqueIdentifier {
+        NAME, NUMBER, UUID
+    }
+
+    public enum DatabaseType {
+        MYSQL, SQLITE
     }
 }

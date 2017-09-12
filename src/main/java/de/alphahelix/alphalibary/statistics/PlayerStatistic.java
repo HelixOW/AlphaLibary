@@ -12,7 +12,7 @@ import java.util.*;
 public class PlayerStatistic implements Serializable {
 
     private final UUID player;
-    private HashMap<String, GameStatistic> statistics = new HashMap<>();
+    private final HashMap<String, GameStatistic> statistics = new HashMap<>();
 
     public PlayerStatistic(UUID player, GameStatistic... array) {
         this.player = player;

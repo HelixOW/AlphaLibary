@@ -159,25 +159,13 @@ public class Util {
                         return a.getDisplayName().equals(b.getDisplayName());
                     }
                 } else { //maybe lore
-                    if (hl) {
-                        return a.getLore().equals(b.getLore());
-                    } else { //nothing
-                        return true;
-                    }
+                    return !hl || a.getLore().equals(b.getLore());
                 }
             } else { //maybe name
-                if (hdn) {
-                    return a.getDisplayName().equals(b.getDisplayName());
-                } else { //nothing
-                    return true;
-                }
+                return !hdn || a.getDisplayName().equals(b.getDisplayName());
             }
         } else if (l) {
-            if (hl) {
-                return a.getLore().equals(b.getLore());
-            } else { //nothing
-                return true;
-            }
+            return !hl || a.getLore().equals(b.getLore());
         }
         return false;
     }
@@ -240,7 +228,7 @@ public class Util {
         }
     }
 
-    public static <T> List<T> getTypesOf(Class<T> clazzType, List<?> inList) {
+    public static <T> List<T> getTypesOf(Class<T> clazzType, List<Object> inList) {
         List<T> types = new ArrayList<>();
         for (Object e : inList)
             if (e.getClass().isInstance(clazzType))

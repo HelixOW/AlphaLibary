@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class BannerData implements ItemData {
 
-    private Pattern[] patterns;
+    private final Pattern[] patterns;
 
     public BannerData(Pattern... patterns) {
         this.patterns = patterns;
@@ -38,7 +38,7 @@ public class BannerData implements ItemData {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(patterns);
+        return Objects.hashCode((Object[]) patterns);
     }
 
     @Override

@@ -14,12 +14,12 @@ import java.util.logging.Level;
 
 public class SQLiteAPI {
 
-    private static ArrayList<SQLiteAPI> SQLiteAPIS = new ArrayList<>();
-    private static HashMap<String, Connection> cons = new HashMap<>();
-    private static SQLiteFileManager fm = new SQLiteFileManager();
+    private static final ArrayList<SQLiteAPI> SQ_LITE_APIS = new ArrayList<>();
+    private static final HashMap<String, Connection> CONNECTIONS = new HashMap<>();
+    private static final SQLiteFileManager FILE_MANAGER = new SQLiteFileManager();
 
     static {
-        fm.setupConnection();
+        FILE_MANAGER.setupConnection();
     }
 
     private SQLiteInfo info;
@@ -28,7 +28,7 @@ public class SQLiteAPI {
         this.info = info;
 
         if (getSQLLite(info.getDatabasePath()) == null) {
-            SQLiteAPIS.add(this);
+            SQ_LITE_APIS.add(this);
         }
     }
 
@@ -39,7 +39,7 @@ public class SQLiteAPI {
      * @return the {@link SQLiteAPI} of this database
      */
     public static SQLiteAPI getSQLLite(String db) {
-        for (SQLiteAPI api : SQLiteAPIS) {
+        for (SQLiteAPI api : SQ_LITE_APIS) {
             if (api.info.getDatabasePath().equals(db)) return api;
         }
         return null;
@@ -51,7 +51,7 @@ public class SQLiteAPI {
      * @return a {@link ArrayList} with those {@link SQLiteAPI}s
      */
     public static ArrayList<SQLiteAPI> getSQLLiteDBs() {
-        return SQLiteAPIS;
+        return SQ_LITE_APIS;
     }
 
     /**
@@ -61,7 +61,7 @@ public class SQLiteAPI {
      */
     public Connection getSQLiteConnection() {
         if (isConnected()) {
-            return cons.get(info.getDatabasePath());
+            return CONNECTIONS.get(info.getDatabasePath());
         } else {
             try {
                 closeSQLiteConnection();
@@ -70,7 +70,7 @@ public class SQLiteAPI {
                 Connection c = DriverManager.getConnection(
                         "jdbc:sqlite:" + info.getDatabasePath());
 
-                cons.put(info.getDatabasePath(), c);
+                CONNECTIONS.put(info.getDatabasePath(), c);
 
                 return c;
             } catch (SQLException | ClassNotFoundException ignore) {
@@ -86,7 +86,7 @@ public class SQLiteAPI {
      * @return plugin is connected to the database
      */
     public boolean isConnected() {
-        return cons.get(info.getDatabasePath()) != null;
+        return CONNECTIONS.get(info.getDatabasePath()) != null;
     }
 
     /**
@@ -95,7 +95,7 @@ public class SQLiteAPI {
     public void initSQLiteAPI() {
         if (!isConnected()) {
             try {
-                cons.put(info.getDatabasePath(), DriverManager.getConnection(
+                CONNECTIONS.put(info.getDatabasePath(), DriverManager.getConnection(
                         "jdbc:sqlite:" + info.getDatabasePath()));
             } catch (SQLException ignore) {
                 Bukkit.getLogger().log(Level.WARNING, "Failed to reconnect to " + info.getDatabasePath() + "! Check your sqlite.json inside AlphaLibary");
@@ -110,8 +110,8 @@ public class SQLiteAPI {
      */
     public void closeSQLiteConnection() throws SQLException {
         if (isConnected()) {
-            cons.get(info.getDatabasePath()).close();
-            cons.remove(info.getDatabasePath());
+            CONNECTIONS.get(info.getDatabasePath()).close();
+            CONNECTIONS.remove(info.getDatabasePath());
         }
     }
 
@@ -145,13 +145,13 @@ public class SQLiteAPI {
 
     public static class SQLiteInfo {
 
-        private String databasePath;
+        private final String databasePath;
 
-        public SQLiteInfo(String databasePath) {
+        SQLiteInfo(String databasePath) {
             this.databasePath = databasePath;
         }
 
-        public String getDatabasePath() {
+        String getDatabasePath() {
             return databasePath;
         }
 

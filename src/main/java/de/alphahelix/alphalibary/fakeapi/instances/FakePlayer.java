@@ -25,8 +25,8 @@ import java.util.UUID;
 
 public class FakePlayer extends FakeEntity {
 
-    private UUID skinUUID;
-    private transient OfflinePlayer skinPlayer;
+    private final UUID skinUUID;
+    private final transient OfflinePlayer skinPlayer;
 
     public FakePlayer(Location location, String name, UUID skin, Object fake) {
         super(location, name, fake);

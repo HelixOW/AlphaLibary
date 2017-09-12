@@ -34,7 +34,6 @@ public class AnnotatedCommand {
     public String permissionMsg = "";
     public String resultPrefix = "";
 
-    private BukkitCMD cmd;
     private CommandMap commandMap;
 
     public AnnotatedCommand(Object cmdClass, Method cmdMethod, Command cmdAnnotation, Permission permissionAnnotation, Method completeMethod, Complete completeAnnotation) {
@@ -295,9 +294,7 @@ public class AnnotatedCommand {
 
     String[] getLeftoverArguments(String[] args, int start) {
         String[] newArray = new String[args.length - start];
-        for (int i = start; i < args.length; i++) {
-            newArray[i - start] = args[i];
-        }
+        System.arraycopy(args, start, newArray, 0, args.length - start);
         return newArray;
     }
 
@@ -341,7 +338,7 @@ public class AnnotatedCommand {
     public final AnnotatedCommand register() {
         BukkitCMD command = new BukkitCMD(name);
 
-        this.cmd = command;
+        BukkitCMD cmd = command;
 
         if (description != null)
             command.setDescription(description);

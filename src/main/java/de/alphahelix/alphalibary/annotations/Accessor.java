@@ -13,7 +13,7 @@ public class Accessor {
         return f;
     }
 
-    public static Method access(Method m) throws ReflectiveOperationException {
+    public static Method access(Method m) {
         m.setAccessible(true);
         return m;
     }

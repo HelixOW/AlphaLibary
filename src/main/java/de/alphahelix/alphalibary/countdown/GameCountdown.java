@@ -17,7 +17,7 @@ import java.util.Arrays;
 public class GameCountdown implements Serializable {
 
     private final String name;
-    private GameCountdown instance;
+    private final GameCountdown instance;
     private Long[] messageTimes = null;
     private long time = 0;
     private int schedulerID = -1;

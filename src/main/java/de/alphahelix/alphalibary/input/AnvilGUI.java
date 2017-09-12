@@ -26,10 +26,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class AnvilGUI extends InputGUI {
-	@Override
-	public void openGUI(Player p) {
-		Inventory anvil = Bukkit.createInventory(p, InventoryType.ANVIL);
+    @Override
+    public void openGUI(Player p) {
+        Inventory anvil = Bukkit.createInventory(p, InventoryType.ANVIL);
 
-		anvil.setItem(0, new ItemStack(Material.PAPER)); p.openInventory(anvil);
-	}
+        anvil.setItem(0, new ItemStack(Material.PAPER));
+        p.openInventory(anvil);
+    }
 }

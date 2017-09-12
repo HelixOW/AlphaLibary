@@ -4,8 +4,8 @@ import com.google.common.base.Objects;
 
 public class GameStatistic<T> {
 
-    private String name;
-    private T value;
+    private final String name;
+    private final T value;
 
     public GameStatistic(String name, T value) {
         this.name = name;

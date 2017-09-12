@@ -4,22 +4,13 @@ import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 public class PlayerInfoDataWrapper {
 
-    private static Class<?> pIDClazz;
-    private static Constructor<?> pIDConstuctor;
-
-    static {
-        try {
-            pIDClazz = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");
-            pIDConstuctor = pIDClazz.getConstructors()[0];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    private static final Class<?> P_ID_CLAZZ = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");
+    private static final ReflectionUtil.SaveConstructor P_ID_CONSTUCTOR = ReflectionUtil.getDeclaredConstructor(
+            P_ID_CLAZZ, GameProfile.class, int.class, ReflectionUtil.getNmsClass("EnumGamemode"),
+            ReflectionUtil.getNmsClass("IChatBaseComponent")
+    );
 
     private final int ping;
     private final Object gameMode;
@@ -36,17 +27,17 @@ public class PlayerInfoDataWrapper {
     }
 
     public static PlayerInfoDataWrapper getPlayerInfo(Object nmsPlayerInfoData) {
-        int ping = (int) ReflectionUtil.getDeclaredField("b", pIDClazz).get(nmsPlayerInfoData);
-        Object gamemode = ReflectionUtil.getDeclaredField("c", pIDClazz).get(nmsPlayerInfoData);
-        GameProfile profile = (GameProfile) ReflectionUtil.getDeclaredField("d", pIDClazz).get(nmsPlayerInfoData);
-        Object name = ReflectionUtil.getDeclaredField("e", pIDClazz).get(nmsPlayerInfoData);
-        Object infoAction = ReflectionUtil.getDeclaredField("a", pIDClazz).get(nmsPlayerInfoData);
+        int ping = (int) ReflectionUtil.getDeclaredField("b", P_ID_CLAZZ).get(nmsPlayerInfoData);
+        Object gamemode = ReflectionUtil.getDeclaredField("c", P_ID_CLAZZ).get(nmsPlayerInfoData);
+        GameProfile profile = (GameProfile) ReflectionUtil.getDeclaredField("d", P_ID_CLAZZ).get(nmsPlayerInfoData);
+        Object name = ReflectionUtil.getDeclaredField("e", P_ID_CLAZZ).get(nmsPlayerInfoData);
+        Object infoAction = ReflectionUtil.getDeclaredField("a", P_ID_CLAZZ).get(nmsPlayerInfoData);
 
         return new PlayerInfoDataWrapper(profile, ping, gamemode, ReflectionUtil.fromIChatBaseComponent(name)[0], infoAction);
     }
 
     public static boolean isUnknown(Object playerInfoData) {
-        GameProfile profile = (GameProfile) ReflectionUtil.getDeclaredField("d", pIDClazz).get(playerInfoData);
+        GameProfile profile = (GameProfile) ReflectionUtil.getDeclaredField("d", P_ID_CLAZZ).get(playerInfoData);
 
         return playerInfoData == null || profile == null;
     }
@@ -72,12 +63,7 @@ public class PlayerInfoDataWrapper {
     }
 
     public Object getPlayerInfoData() {
-        try {
-            return pIDConstuctor.newInstance(getPlayerinfoaction(), getProfile(), getPing(), getGameMode(), ReflectionUtil.serializeString(getName()));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e1) {
-            e1.printStackTrace();
-            return null;
-        }
+        return P_ID_CONSTUCTOR.newInstance(true, getPlayerinfoaction(), getProfile(), getPing(), getGameMode(), ReflectionUtil.serializeString(getName()));
     }
 
     @Override

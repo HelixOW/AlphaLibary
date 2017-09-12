@@ -24,29 +24,29 @@ import java.io.File;
  * This ones need to be extended for a Addon of a certain plugin
  */
 public abstract class Addon {
-	
-	private File dataFolder;
-	private AddonDescriptionFile description;
-	private ClassLoader loader;
-	
-	final void init(AddonClassLoader classLoader, File dataFolder, AddonDescriptionFile description) {
-		this.dataFolder = dataFolder;
-		this.description = description;
-		this.loader = classLoader;
-		onEnable();
-	}
-	
-	public abstract void onEnable ();
-	
-	public File getDataFolder() {
-		return dataFolder;
-	}
-	
-	public AddonDescriptionFile getDescription() {
-		return description;
-	}
-	
-	public ClassLoader getLoader() {
-		return loader;
-	}
+
+    private File dataFolder;
+    private AddonDescriptionFile description;
+    private ClassLoader loader;
+
+    final void init(AddonClassLoader classLoader, File dataFolder, AddonDescriptionFile description) {
+        this.dataFolder = dataFolder;
+        this.description = description;
+        this.loader = classLoader;
+        onEnable();
+    }
+
+    public abstract void onEnable();
+
+    public File getDataFolder() {
+        return dataFolder;
+    }
+
+    public AddonDescriptionFile getDescription() {
+        return description;
+    }
+
+    public ClassLoader getLoader() {
+        return loader;
+    }
 }

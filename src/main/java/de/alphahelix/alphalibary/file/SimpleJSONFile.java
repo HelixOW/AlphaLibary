@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class SimpleJSONFile extends File {
 
-    private JsonObject head = new JsonObject();
+    private final JsonObject head = new JsonObject();
 
     public SimpleJSONFile(String parent, String child) {
         super(parent, child);
@@ -81,7 +81,8 @@ public class SimpleJSONFile extends File {
         }
     }
 
-    public <T> void addValuesToList(Object path, T... value) {
+    @SafeVarargs
+    public final <T> void addValuesToList(Object path, T... value) {
         JsonArray array = new JsonArray();
 
         if (jsonContains(path))
@@ -97,9 +98,8 @@ public class SimpleJSONFile extends File {
 
         JsonObject obj = read();
 
-        if (obj == null) return false;
+        return obj != null && obj.get(path.toString()) != null;
 
-        return obj.get(path.toString()) != null;
     }
 
     public <T> T getValue(Object path, Class<T> definy) {

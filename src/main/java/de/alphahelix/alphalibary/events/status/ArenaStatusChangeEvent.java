@@ -8,15 +8,15 @@ import org.bukkit.event.HandlerList;
 public class ArenaStatusChangeEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
-    private ArenaStatus newArenaState;
-    private ArenaStatus oldArenaState;
+    private final ArenaStatus newArenaState;
+    private final ArenaStatus oldArenaState;
 
     public ArenaStatusChangeEvent(ArenaStatus newArenaState, ArenaStatus oldArenaState) {
         this.newArenaState = newArenaState;
         this.oldArenaState = oldArenaState;
     }
 
-    public final static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

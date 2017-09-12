@@ -28,7 +28,7 @@ public enum REnumGamemode implements Serializable {
     ADVENTURE(3),
     SPECTATOR(4);
 
-    private int c;
+    private final int c;
 
     REnumGamemode(int c) {
         this.c = c;

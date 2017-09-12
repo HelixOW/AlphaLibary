@@ -42,7 +42,8 @@ public class PointForm extends Form {
     }
 
     public static class Point {
-        private double x, y;
+        private final double x;
+        private final double y;
 
         public Point(double x, double y) {
             this.x = x;

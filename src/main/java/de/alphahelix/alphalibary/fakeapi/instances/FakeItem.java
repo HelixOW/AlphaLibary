@@ -22,7 +22,7 @@ import org.bukkit.Material;
 
 public class FakeItem extends FakeEntity {
 
-    private Material type;
+    private final Material type;
 
     public FakeItem(Location location, String name, Object fake, Material type) {
         super(location, name, fake);

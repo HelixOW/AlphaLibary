@@ -41,8 +41,8 @@ public class ArenaFile extends SimpleJSONFile {
 
     public static class ArenaItem {
 
-        private ItemStack base;
-        private String arenaFileName;
+        private final ItemStack base;
+        private final String arenaFileName;
 
         public ArenaItem(ItemStack base, String arenaFileName) {
             this.base = base;
@@ -68,9 +68,12 @@ public class ArenaFile extends SimpleJSONFile {
 
     public static class NotInitLocation {
 
-        private double x, y, z;
-        private float yaw, pitch;
-        private String worldName;
+        private final double x;
+        private final double y;
+        private final double z;
+        private final float yaw;
+        private final float pitch;
+        private final String worldName;
 
         public NotInitLocation(double x, double y, double z, float yaw, float pitch, String worldName) {
             this.x = x;

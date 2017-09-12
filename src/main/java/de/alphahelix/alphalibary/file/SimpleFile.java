@@ -27,6 +27,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -48,6 +49,10 @@ public class SimpleFile extends YamlConfiguration {
         source = new File(path, name);
         createIfNotExist();
         addValues();
+    }
+
+    public SimpleFile(JavaPlugin plugin, String name) {
+        this(plugin.getDataFolder().getAbsolutePath(), name);
     }
 
     /**
@@ -497,12 +502,12 @@ public class SimpleFile extends YamlConfiguration {
      * @param <T>  the type of the arguments
      * @return
      */
-    public <T> ArrayList<T> getBase64ArgumentList(String path, Class<?> objectClazz) {
+    public <T> ArrayList<T> getBase64ArgumentList(String path, Class<T> objectClazz) {
         ArrayList<T> args = new ArrayList<>();
 
         if (configContains(path))
             for (String base64arg : getStringList(path)) {
-                args.add(SerializationUtil.decodeBase64(base64arg, (Class<T>) objectClazz));
+                args.add(SerializationUtil.decodeBase64(base64arg, objectClazz));
             }
 
         return args;
@@ -516,7 +521,7 @@ public class SimpleFile extends YamlConfiguration {
      */
     @SafeVarargs
     public final <T> void addBase64ArgumentsToList(String path, T... arguments) {
-        ArrayList<T> args = getBase64ArgumentList(path, arguments.getClass());
+        ArrayList<T> args = this.getBase64ArgumentList(path, (Class<T>) arguments.getClass().getComponentType());
 
         Collections.addAll(args, arguments);
 
@@ -531,7 +536,7 @@ public class SimpleFile extends YamlConfiguration {
      */
     @SafeVarargs
     public final <T> void removeBase64ArgumentsFromList(String path, T... arguments) {
-        ArrayList<T> args = getBase64ArgumentList(path, arguments.getClass());
+        ArrayList<T> args = getBase64ArgumentList(path, (Class<T>) arguments.getClass().getComponentType());
 
         for (T arg : arguments) {
             if (args.contains(arg)) {

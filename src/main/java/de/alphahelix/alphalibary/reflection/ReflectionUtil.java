@@ -63,7 +63,7 @@ public class ReflectionUtil {
             return new SaveField(f);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new SaveField();
         }
     }
 
@@ -78,7 +78,7 @@ public class ReflectionUtil {
             throw new NoSuchFieldException("Could not resolve field of type '" + type.toString() + "' in class " + clazz);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
-            return null;
+            return new SaveField();
         }
     }
 
@@ -95,7 +95,7 @@ public class ReflectionUtil {
                 throw new NoSuchFieldException("Could not resolve field of type '" + type.toString() + "' in class " + clazz);
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
-                return null;
+                return new SaveField();
             }
         }
         return new SaveField(field);
@@ -114,7 +114,7 @@ public class ReflectionUtil {
             return new SaveMethod(clazz.getDeclaredMethod(name, parameterClasses));
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new SaveMethod();
         }
     }
 
@@ -123,7 +123,7 @@ public class ReflectionUtil {
             return new SaveMethod(getNmsClass(nmsClazz).getDeclaredMethod(name, parameterClasses));
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new SaveMethod();
         }
     }
 
@@ -132,7 +132,7 @@ public class ReflectionUtil {
             return new SaveConstructor(clazz.getDeclaredConstructor(parameterClasses));
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new SaveConstructor();
         }
     }
 
@@ -141,7 +141,7 @@ public class ReflectionUtil {
             return new SaveConstructor(getNmsClass(nmsClazz).getDeclaredConstructor(parameterClasses));
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new SaveConstructor();
         }
     }
 
@@ -865,7 +865,7 @@ public class ReflectionUtil {
             return new SaveField(f);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new SaveField();
         }
     }
 
@@ -875,7 +875,7 @@ public class ReflectionUtil {
             return new SaveField(f);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new SaveField();
         }
     }
 
@@ -893,7 +893,7 @@ public class ReflectionUtil {
             return new SaveMethod(m);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new SaveMethod();
         }
     }
 
@@ -1163,25 +1163,31 @@ public class ReflectionUtil {
             }
         }
 
+        SaveField() {
+        }
+
         public Object get(Object instance) {
+            if (f == null) return new Object();
             try {
                 return f.get(instance);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
+            return new Object();
         }
 
         public Object get(Object instance, boolean stackTrace) {
+            if (f == null) return new Object();
             try {
                 return f.get(instance);
             } catch (Exception e) {
                 if (stackTrace) e.printStackTrace();
             }
-            return null;
+            return new Object();
         }
 
         public void set(Object instance, Object value, boolean stackTrace) {
+            if (f == null) return;
             try {
                 f.set(instance, value);
             } catch (Exception e) {
@@ -1203,15 +1209,18 @@ public class ReflectionUtil {
             }
         }
 
+        SaveMethod() {
+        }
+
         public Object invoke(Object instance, Boolean stackTrace, Object... args) {
+            if (m == null) return new Object();
             try {
                 return m.invoke(instance, args);
             } catch (Exception e) {
                 if (stackTrace) e.printStackTrace();
             }
-            return null;
+            return new Object();
         }
-
     }
 
     public static class SaveConstructor {
@@ -1227,14 +1236,17 @@ public class ReflectionUtil {
             }
         }
 
+        SaveConstructor() {
+        }
+
         public Object newInstance(Boolean stackTrace, Object... args) {
+            if (c == null) return new Object();
             try {
                 return c.newInstance(args);
             } catch (Exception e) {
                 if (stackTrace) e.printStackTrace();
             }
-            return null;
+            return new Object();
         }
-
     }
 }

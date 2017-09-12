@@ -8,15 +8,15 @@ import org.bukkit.event.HandlerList;
 public class CountDownStartEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
-    private GameCountdown countdown;
-    private long timeTillEnd;
+    private final GameCountdown countdown;
+    private final long timeTillEnd;
 
     public CountDownStartEvent(GameCountdown countdown, long timeTillEnd) {
         this.countdown = countdown;
         this.timeTillEnd = timeTillEnd;
     }
 
-    public final static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

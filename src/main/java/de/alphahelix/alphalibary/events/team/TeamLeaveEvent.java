@@ -9,14 +9,14 @@ import org.bukkit.event.player.PlayerEvent;
 public class TeamLeaveEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private GameTeam leftTeam;
+    private final GameTeam leftTeam;
 
     public TeamLeaveEvent(Player who, GameTeam leftTeam) {
         super(who);
         this.leftTeam = leftTeam;
     }
 
-    public final static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

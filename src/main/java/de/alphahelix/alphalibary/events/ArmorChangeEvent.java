@@ -8,12 +8,17 @@ import org.bukkit.event.player.PlayerEvent;
 public class ArmorChangeEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private double oV, nV;
+    private final double oV;
+    private final double nV;
 
     public ArmorChangeEvent(Player who, double oldValue, double newValue) {
         super(who);
         this.oV = oldValue;
         this.nV = newValue;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     public double getOldValue() {
@@ -26,10 +31,6 @@ public class ArmorChangeEvent extends PlayerEvent {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public final static HandlerList getHandlerList() {
         return handlers;
     }
 

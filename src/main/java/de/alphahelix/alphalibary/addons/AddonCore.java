@@ -33,7 +33,7 @@ public class AddonCore {
             addonFolder.mkdirs();
 
         getLogger().log(Level.INFO, "Loading addons...");
-        addonManager = new SimpleAddonManager(getAddonFolder(), new AddonCore());
+        addonManager = new SimpleAddonManager(getAddonFolder());
         addonManager.loadAddons();
 
         getLogger().log(Level.INFO, "Successfully loaded " + addonManager.getAddons().length + " Addons");

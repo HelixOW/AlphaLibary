@@ -29,7 +29,7 @@ public class GameProfileBuilder {
     private static final String JSON_CAPE = "{\"timestamp\":%d,\"profileId\":\"%s\",\"profileName\":\"%s\",\"isPublic\":true,\"textures\":{\"SKIN\":{\"url\":\"%s\"},\"CAPE\":{\"url\":\"%s\"}}}";
     private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).registerTypeAdapter(GameProfile.class, new GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
 
-    private static HashMap<UUID, CachedProfile> cache = new HashMap<>();
+    private static final HashMap<UUID, CachedProfile> CACHE = new HashMap<>();
 
     private static long cacheTime = -1;
 
@@ -60,12 +60,12 @@ public class GameProfileBuilder {
      * Fetches the GameProfile from the Mojang servers
      *
      * @param uuid     The player uuid
-     * @param forceNew If true the cache is ignored
+     * @param forceNew If true the CACHE is ignored
      * @see GameProfile
      */
     public static void fetch(UUID uuid, boolean forceNew, GameProfileCallback callback) {
-        if (!forceNew && cache.containsKey(uuid) && cache.get(uuid).isValid())
-            callback.done(cache.get(uuid).profile);
+        if (!forceNew && CACHE.containsKey(uuid) && CACHE.get(uuid).isValid())
+            callback.done(CACHE.get(uuid).profile);
         else if (AlphaLibary.getGameProfileFile().getProfile(uuid) != null)
             callback.done(AlphaLibary.getGameProfileFile().getProfile(uuid));
         else Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
@@ -85,13 +85,13 @@ public class GameProfileBuilder {
                         String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
 
                         GameProfile result = GSON.fromJson(json, GameProfile.class);
-                        cache.put(uuid, new CachedProfile(result));
+                        CACHE.put(uuid, new CachedProfile(result));
 
                         AlphaLibary.getGameProfileFile().addProfile(result);
 
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(result));
-                    } else if (!forceNew && cache.containsKey(uuid))
-                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(cache.get(uuid).profile));
+                    } else if (!forceNew && CACHE.containsKey(uuid))
+                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(CACHE.get(uuid).profile));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -102,13 +102,13 @@ public class GameProfileBuilder {
      * Fetches the GameProfile from the Mojang servers
      *
      * @param uuid     The player uuid
-     * @param forceNew If true the cache is ignored
+     * @param forceNew If true the CACHE is ignored
      * @see GameProfileBuilder#fetch(UUID, boolean, GameProfileCallback)
      * @deprecated not async!
      */
     public static GameProfile fetch(UUID uuid, boolean forceNew) {
-        if (!forceNew && cache.containsKey(uuid) && cache.get(uuid).isValid())
-            return cache.get(uuid).profile;
+        if (!forceNew && CACHE.containsKey(uuid) && CACHE.get(uuid).isValid())
+            return CACHE.get(uuid).profile;
         else if (AlphaLibary.getGameProfileFile().getProfile(uuid) != null)
             return AlphaLibary.getGameProfileFile().getProfile(uuid);
         else {
@@ -128,13 +128,13 @@ public class GameProfileBuilder {
                     String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
 
                     GameProfile result = GSON.fromJson(json, GameProfile.class);
-                    cache.put(uuid, new CachedProfile(result));
+                    CACHE.put(uuid, new CachedProfile(result));
 
                     AlphaLibary.getGameProfileFile().addProfile(result);
 
                     return result;
-                } else if (!forceNew && cache.containsKey(uuid))
-                    return cache.get(uuid).profile;
+                } else if (!forceNew && CACHE.containsKey(uuid))
+                    return CACHE.get(uuid).profile;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -181,9 +181,9 @@ public class GameProfileBuilder {
     }
 
     /**
-     * Sets the time as long as you want to keep the gameprofiles in cache (-1 = never remove it)
+     * Sets the time as long as you want to keep the gameprofiles in CACHE (-1 = never remove it)
      *
-     * @param time cache time (default = -1)
+     * @param time CACHE time (default = -1)
      */
     public static void setCacheTime(long time) {
         cacheTime = time;
@@ -220,10 +220,10 @@ public class GameProfileBuilder {
 
     private static class CachedProfile {
 
-        private long timestamp = System.currentTimeMillis();
-        private GameProfile profile;
+        private final long timestamp = System.currentTimeMillis();
+        private final GameProfile profile;
 
-        public CachedProfile(GameProfile profile) {
+        CachedProfile(GameProfile profile) {
             this.profile = profile;
         }
 
@@ -237,11 +237,11 @@ public class GameProfileBuilder {
             super("plugins/AlphaLibary", "profiles.json");
         }
 
-        public void addProfile(GameProfile profile) {
+        void addProfile(GameProfile profile) {
             addValuesToList("Profiles", profile);
         }
 
-        public GameProfile getProfile(UUID owner) {
+        GameProfile getProfile(UUID owner) {
             if (getListValues("Profiles", GameProfile[].class) != null)
                 for (GameProfile profile : getListValues("Profiles", GameProfile[].class)) {
                     if (profile.getId().equals(owner)) return profile;

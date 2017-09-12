@@ -25,7 +25,7 @@ interface UndoSave {
 
 public class SchematicManager {
 
-    private static HashMap<String, ArrayList<UndoSave>> saveMap = new HashMap<>();
+    private static final HashMap<String, ArrayList<UndoSave>> SAVE_MAP = new HashMap<>();
 
     public static void save(Location location1, Location location2, String name) {
 
@@ -60,12 +60,12 @@ public class SchematicManager {
             toEdit.getState().setData(diff.getBlockData());
         }
 
-        saveMap.put(name, save);
+        SAVE_MAP.put(name, save);
     }
 
     public static void undo(String name) {
-        if (saveMap.containsKey(name))
-            for (UndoSave us : saveMap.get(name)) {
+        if (SAVE_MAP.containsKey(name))
+            for (UndoSave us : SAVE_MAP.get(name)) {
                 us.getOld().getBlock().setType(us.getType());
                 us.getOld().getBlock().getState().setData(us.getData());
             }

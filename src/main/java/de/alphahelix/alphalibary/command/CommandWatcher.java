@@ -12,8 +12,8 @@ import java.util.WeakHashMap;
  */
 public class CommandWatcher {
 
-    private WeakHashMap<Integer, Argument<?>> args = new WeakHashMap<>();
-    private String[] argsGiven;
+    private final WeakHashMap<Integer, Argument<?>> args = new WeakHashMap<>();
+    private final String[] argsGiven;
 
     public CommandWatcher(String[] argsGiven) {
         this.argsGiven = argsGiven;

@@ -8,13 +8,13 @@ import org.bukkit.event.HandlerList;
 public class CountDownFinishEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
-    private GameCountdown countdown;
+    private final GameCountdown countdown;
 
     public CountDownFinishEvent(GameCountdown countdown) {
         this.countdown = countdown;
     }
 
-    public final static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

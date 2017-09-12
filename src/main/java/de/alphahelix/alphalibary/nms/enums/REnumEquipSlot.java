@@ -29,8 +29,8 @@ public enum REnumEquipSlot implements Serializable {
     OFF_HAND(0, 1),
     HAND(0, 0);
 
-    private int nmsSlot;
-    private int past;
+    private final int nmsSlot;
+    private final int past;
 
     REnumEquipSlot(int nmsSlot, int past) {
         this.nmsSlot = nmsSlot;

@@ -7,8 +7,8 @@ import java.util.Set;
 
 public class NBTListCompound {
 
-    private NBTList owner;
-    private Object compound;
+    private final NBTList owner;
+    private final Object compound;
 
     public NBTListCompound(NBTList owner, Object compound) {
         this.owner = owner;

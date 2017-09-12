@@ -22,7 +22,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class FakeBigItem extends FakeEntity {
 
-    private ItemStack itemStack;
+    private final ItemStack itemStack;
 
     public FakeBigItem(Location location, String name, Object nmsEntity, ItemStack itemStack) {
         super(location, name, nmsEntity);

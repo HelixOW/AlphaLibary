@@ -20,8 +20,9 @@ public class AsyncMySQLDatabase {
     private static transient final HashMap<String, String> TABLEINFO = new HashMap<>();
     private static transient final ArrayList<String> TABLENAMES = new ArrayList<>();
 
-    private String table;
-    private String database;
+    private final String table;
+    private final String database;
+    private final MySQLAPI api;
 
     /**
      * Creates a new manager for the table
@@ -32,6 +33,7 @@ public class AsyncMySQLDatabase {
     public AsyncMySQLDatabase(String table, String database) {
         this.table = table;
         this.database = database;
+        this.api = MySQLAPI.getMySQL(database);
     }
 
     /**
@@ -75,11 +77,11 @@ public class AsyncMySQLDatabase {
             if (!TABLEINFO.containsKey(table))
                 TABLEINFO.put(table, tableinfo);
 
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "CREATE TABLE IF NOT EXISTS " + table + " (" + tableinfo + ")";
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         prepstate.executeUpdate();
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -97,11 +99,11 @@ public class AsyncMySQLDatabase {
      */
     public void remove(String condition, String value) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "DELETE FROM " + table + " WHERE(" + condition + "='" + value + "')";
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         prepstate.executeUpdate();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -168,11 +170,11 @@ public class AsyncMySQLDatabase {
                 builder.append(", '").append(str).append("'");
             }
 
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "INSERT INTO " + table + " VALUES (" + builder.toString().replaceFirst(", ", "") + ")";
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         prepstate.executeUpdate();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -192,11 +194,11 @@ public class AsyncMySQLDatabase {
      */
     public void orderAscending(String columnToOrder, String orderBy, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT " + columnToOrder + " FROM " + table + " ORDER BY " + orderBy + " asc";
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());
@@ -225,11 +227,11 @@ public class AsyncMySQLDatabase {
      */
     public void orderLimitAscending(String columnToOrder, String orderBy, long limit, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT " + columnToOrder + " FROM " + table + " ORDER BY " + orderBy + " asc LIMIT " + limit;
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());
@@ -257,11 +259,11 @@ public class AsyncMySQLDatabase {
      */
     public void orderDescending(String columnToOrder, String orderBy, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT " + columnToOrder + " FROM " + table + " ORDER BY " + orderBy + " desc";
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());
@@ -290,11 +292,11 @@ public class AsyncMySQLDatabase {
      */
     public void orderLimitDescending(String columnToOrder, String orderBy, long limit, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT " + columnToOrder + " FROM " + table + " ORDER BY " + orderBy + " desc LIMIT " + limit;
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());
@@ -321,11 +323,11 @@ public class AsyncMySQLDatabase {
      */
     public void update(UUID uuid, String column, String updatevalue) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "UPDATE " + table + " SET " + column + "=? WHERE " + "uuid" + "=?";
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         prepstate.setString(1, updatevalue);
                         prepstate.setString(2, uuid.toString());
                         prepstate.executeUpdate();
@@ -347,11 +349,11 @@ public class AsyncMySQLDatabase {
      */
     public void update(String condition, String conditionValue, String column, String updatevalue) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "UPDATE " + table + " SET " + column + "=? WHERE " + condition + "=?";
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         prepstate.setString(1, updatevalue);
                         prepstate.setString(2, conditionValue);
                         prepstate.executeUpdate();
@@ -404,8 +406,8 @@ public class AsyncMySQLDatabase {
         ArrayList<String> list = new ArrayList<>();
 
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
 
                     try {
                         ResultSet rs = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement("SELECT " + column + " FROM " + table).executeQuery();
@@ -448,10 +450,10 @@ public class AsyncMySQLDatabase {
         ArrayList<String> list = new ArrayList<>();
 
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
-                        ResultSet rs = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement("SELECT " + column + " FROM " + table + " LIMIT " + limit).executeQuery();
+                        ResultSet rs = api.getMySQLConnection().prepareStatement("SELECT " + column + " FROM " + table + " LIMIT " + limit).executeQuery();
 
                         if (rs == null) {
                             Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
@@ -597,11 +599,11 @@ public class AsyncMySQLDatabase {
      */
     public void getResult(String condition, String value, String column, DatabaseCallback<Object> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT * FROM " + table + " WHERE (" + condition + "=?)";
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         prepstate.setString(1, value);
                         ResultSet rs = prepstate.executeQuery();
 
@@ -637,10 +639,10 @@ public class AsyncMySQLDatabase {
      */
     public void customResult(String qry, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (MySQLAPI.getMySQL(database) != null) {
-                if (MySQLAPI.getMySQL(database).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
-                        PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());

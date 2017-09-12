@@ -9,7 +9,7 @@ public class DataWatcherWrapper {
             ReflectionUtil.getDeclaredMethod("set", "DataWatcher",
                     ReflectionUtil.getNmsClass("DataWatcherObject"), Object.class);
 
-    private Object dataWatcher;
+    private final Object dataWatcher;
     private boolean stackTrace = true;
 
     public DataWatcherWrapper(Object dataWatcher) {

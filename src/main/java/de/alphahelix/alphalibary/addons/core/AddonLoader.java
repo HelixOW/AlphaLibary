@@ -18,7 +18,7 @@ import java.util.jar.JarFile;
 
 public class AddonLoader {
 
-    private static Map<String, AddonClassLoader> loaders = new HashMap<>();
+    private static final Map<String, AddonClassLoader> LOADERS = new HashMap<>();
 
     public static AddonDescriptionFile getAddonDescriptionFile(File file) throws InvalidAddonDescriptionException {
         Validate.notNull(file, "FileHelp cannot be null");
@@ -83,7 +83,7 @@ public class AddonLoader {
             throw new InvalidAddonException(e);
         }
 
-        loaders.put(description.getName(), loader);
+        LOADERS.put(description.getName(), loader);
 
         return loader.addon;
     }

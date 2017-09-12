@@ -19,12 +19,14 @@ public class SQLiteDatabase {
     private static transient final HashMap<String, String> TABLEINFO = new HashMap<>();
     private static transient final ArrayList<String> TABLENAMES = new ArrayList<>();
 
-    private String tableName;
-    private String databasePath;
+    private final String tableName;
+    private final String databasePath;
+    private final SQLiteAPI api;
 
     public SQLiteDatabase(String tableName, String databasePath) {
         this.tableName = tableName;
         this.databasePath = databasePath;
+        this.api = SQLiteAPI.getSQLLite(databasePath);
     }
 
     /**
@@ -63,11 +65,11 @@ public class SQLiteDatabase {
             if (!TABLEINFO.containsKey(tableName))
                 TABLEINFO.put(tableName, tableinfo);
 
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "CREATE TABLE IF NOT EXISTS " + tableName + "(" + tableinfo + ");";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         prepstate.execute();
 
                     } catch (SQLException ignored) {
@@ -85,11 +87,11 @@ public class SQLiteDatabase {
      */
     public void remove(String condition, String value) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "DELETE FROM " + tableName + " WHERE(" + condition + "='" + value + "')";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         prepstate.executeUpdate();
 
                     } catch (SQLException ignored) {
@@ -164,11 +166,11 @@ public class SQLiteDatabase {
 
             info = builder2.toString().replaceFirst(",", "");
 
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "INSERT INTO " + tableName + " (" + info + ") VALUES (" + builder.toString().replaceFirst(",", "") + ");";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         prepstate.executeUpdate();
 
                     } catch (SQLException ignored) {
@@ -187,11 +189,11 @@ public class SQLiteDatabase {
      */
     public void update(UUID uuid, String column, String updatevalue) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "UPDATE " + tableName + " SET " + column + "=? WHERE " + "uuid" + "=?;";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         prepstate.setString(1, updatevalue);
                         prepstate.setString(2, uuid.toString());
                         prepstate.executeUpdate();
@@ -213,11 +215,11 @@ public class SQLiteDatabase {
      */
     public void update(String condition, String conditionValue, String column, String updatevalue) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "UPDATE " + tableName + " SET " + column + "=? WHERE " + condition + "=?;";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         prepstate.setString(1, updatevalue);
                         prepstate.setString(2, conditionValue);
                         prepstate.executeUpdate();
@@ -243,11 +245,11 @@ public class SQLiteDatabase {
      */
     public void getResult(String condition, String value, String column, DatabaseCallback<Object> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT * FROM " + tableName + " WHERE " + condition + "=?;";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         prepstate.setString(1, value);
                         ResultSet rs = prepstate.executeQuery();
 
@@ -280,10 +282,10 @@ public class SQLiteDatabase {
      */
     public void customResult(String qry, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());
@@ -310,11 +312,11 @@ public class SQLiteDatabase {
      */
     public void orderAscending(String columnToOrder, String orderBy, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT " + columnToOrder + " FROM " + tableName + " ORDER BY " + orderBy + " ASC;";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());
@@ -343,11 +345,11 @@ public class SQLiteDatabase {
      */
     public void orderLimitAscending(String columnToOrder, String orderBy, long limit, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT " + columnToOrder + " FROM " + tableName + " ORDER BY " + orderBy + " ASC LIMIT " + limit + ";";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());
@@ -375,11 +377,11 @@ public class SQLiteDatabase {
      */
     public void orderDescending(String columnToOrder, String orderBy, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT " + columnToOrder + " FROM " + tableName + " ORDER BY " + orderBy + " DESC;";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());
@@ -408,11 +410,11 @@ public class SQLiteDatabase {
      */
     public void orderLimitDescending(String columnToOrder, String orderBy, long limit, DatabaseCallback<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
                         String qry = "SELECT " + columnToOrder + " FROM " + tableName + " ORDER BY " + orderBy + " DESC LIMIT " + limit + ";";
-                        PreparedStatement prepstate = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement(qry);
+                        PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
                                 callback.done(prepstate.executeQuery());
@@ -473,10 +475,10 @@ public class SQLiteDatabase {
         ArrayList<String> list = new ArrayList<>();
 
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
-                        ResultSet rs = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement("SELECT " + column + " FROM " + tableName + ";").executeQuery();
+                        ResultSet rs = api.getSQLiteConnection().prepareStatement("SELECT " + column + " FROM " + tableName + ";").executeQuery();
 
                         if (rs == null) {
                             Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
@@ -515,10 +517,10 @@ public class SQLiteDatabase {
         ArrayList<String> list = new ArrayList<>();
 
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            if (SQLiteAPI.getSQLLite(databasePath) != null) {
-                if (SQLiteAPI.getSQLLite(databasePath).isConnected()) {
+            if (api != null) {
+                if (api.isConnected()) {
                     try {
-                        ResultSet rs = SQLiteAPI.getSQLLite(databasePath).getSQLiteConnection().prepareStatement("SELECT " + column + " FROM " + tableName + " LIMIT " + limit + ";").executeQuery();
+                        ResultSet rs = api.getSQLiteConnection().prepareStatement("SELECT " + column + " FROM " + tableName + " LIMIT " + limit + ";").executeQuery();
 
                         if (rs == null) {
                             Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));

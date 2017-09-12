@@ -29,12 +29,12 @@ import java.util.logging.Level;
 
 public class MySQLAPI implements Serializable {
 
-    private static ArrayList<MySQLAPI> mysqlDBs = new ArrayList<>();
-    private static HashMap<String, Connection> cons = new HashMap<>();
-    private static MySQLFileManager fm = new MySQLFileManager();
+    private static final ArrayList<MySQLAPI> MY_SQLAPIS = new ArrayList<>();
+    private static final HashMap<String, Connection> CONNECTIONS = new HashMap<>();
+    private static final MySQLFileManager FILE_MANAGER = new MySQLFileManager();
 
     static {
-        fm.setupConnection();
+        FILE_MANAGER.setupConnection();
     }
 
     private String username;
@@ -51,7 +51,7 @@ public class MySQLAPI implements Serializable {
         this.port = port;
 
         if (getMySQL(database) == null) {
-            mysqlDBs.add(this);
+            MY_SQLAPIS.add(this);
         }
     }
 
@@ -62,7 +62,7 @@ public class MySQLAPI implements Serializable {
      * @return the {@link MySQLAPI} of this database
      */
     public static MySQLAPI getMySQL(String db) {
-        for (MySQLAPI api : mysqlDBs) {
+        for (MySQLAPI api : MY_SQLAPIS) {
             if (api.getDatabase().equals(db)) return api;
         }
         return null;
@@ -74,7 +74,7 @@ public class MySQLAPI implements Serializable {
      * @return a {@link ArrayList} with those {@link MySQLAPI}s
      */
     public static ArrayList<MySQLAPI> getMysqlDBs() {
-        return mysqlDBs;
+        return MY_SQLAPIS;
     }
 
     /**
@@ -84,13 +84,13 @@ public class MySQLAPI implements Serializable {
      */
     public Connection getMySQLConnection() {
         if (isConnected()) {
-            return cons.get(database);
+            return CONNECTIONS.get(database);
         } else {
             try {
                 Connection c = DriverManager.getConnection(
                         "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", username, password);
 
-                cons.put(database, c);
+                CONNECTIONS.put(database, c);
 
                 return c;
             } catch (SQLException ignore) {
@@ -106,7 +106,7 @@ public class MySQLAPI implements Serializable {
      * @return plugin is connected to the database
      */
     public boolean isConnected() {
-        return cons.containsKey(database) && cons.get(database) != null;
+        return CONNECTIONS.containsKey(database) && CONNECTIONS.get(database) != null;
     }
 
     /**
@@ -115,7 +115,7 @@ public class MySQLAPI implements Serializable {
     public void initMySQLAPI() {
         if (!isConnected()) {
             try {
-                cons.put(database, DriverManager.getConnection(
+                CONNECTIONS.put(database, DriverManager.getConnection(
                         "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", username, password));
 
 
@@ -132,8 +132,8 @@ public class MySQLAPI implements Serializable {
      */
     public void closeMySQLConnection() throws SQLException {
         if (isConnected()) {
-            cons.get(database).close();
-            cons.remove(database);
+            CONNECTIONS.get(database).close();
+            CONNECTIONS.remove(database);
         }
     }
 

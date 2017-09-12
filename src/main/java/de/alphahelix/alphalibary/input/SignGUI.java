@@ -46,6 +46,6 @@ public class SignGUI extends InputGUI {
 
         ReflectionUtil.sendPacket(p, new PPOOpenSignEditor(s).getPacket(false));
 
-        getOpenGUIS().add(p.getName());
+        getOpenGuis().add(p.getName());
     }
 }

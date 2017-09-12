@@ -41,7 +41,7 @@ import java.util.HashMap;
 
 public class BigItemFakeUtil {
 
-    private static HashMap<String, BukkitTask> splitMap = new HashMap<>();
+    private static final HashMap<String, BukkitTask> SPLIT_MAP = new HashMap<>();
 
     /**
      * Spawns in a {@link FakeBigItem} for the {@link Player}
@@ -118,7 +118,7 @@ public class BigItemFakeUtil {
         final double toMoveInY = between.getY() / teleportCount;
         final double toMoveInZ = between.getZ() / teleportCount;
 
-        splitMap.put(p.getName(), new BukkitRunnable() {
+        SPLIT_MAP.put(p.getName(), new BukkitRunnable() {
             public void run() {
                 if (!LocationUtil.isSameLocation(currentLocation, to)) {
                     teleportBigItem(p, currentLocation.add(new Vector(toMoveInX, toMoveInY, toMoveInZ)), item);
@@ -134,9 +134,9 @@ public class BigItemFakeUtil {
      * @param p the {@link Player} to cancel all teleport tasks
      */
     public static void cancelAllSplittedTasks(Player p) {
-        if (splitMap.containsKey(p.getName())) {
-            splitMap.get(p.getName()).cancel();
-            splitMap.remove(p.getName());
+        if (SPLIT_MAP.containsKey(p.getName())) {
+            SPLIT_MAP.get(p.getName()).cancel();
+            SPLIT_MAP.remove(p.getName());
         }
     }
 

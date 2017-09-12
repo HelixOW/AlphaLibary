@@ -8,8 +8,8 @@ import java.util.List;
 
 public class Scroller {
     private static final char COLOUR_CHAR = '?';
+    private final List<String> list;
     private int position;
-    private List<String> list;
     private ChatColor colour = ChatColor.RESET;
 
     /**

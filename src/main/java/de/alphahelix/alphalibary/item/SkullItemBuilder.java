@@ -31,6 +31,34 @@ public class SkullItemBuilder {
 
     private static final Base64 BASE_64 = new Base64();
 
+    public static ItemStack getCustomSkull(String url) {
+        GameProfile profile = SkinChangeUtil.changeSkin(url);
+
+        ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        ItemMeta headMeta = head.getItemMeta();
+        Class<?> headMetaClass = headMeta.getClass();
+
+        try {
+            Field f = headMetaClass.getDeclaredField("profile");
+            f.setAccessible(true);
+
+            f.set(headMeta, profile);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        head.setItemMeta(headMeta);
+        return head;
+    }
+
+    public static ItemStack getPlayerSkull(String name) {
+        ItemStack itemStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+        meta.setOwner(name);
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+
     public enum Skulls implements Serializable {
         ARROW_LEFT("MHF_ArrowLeft"),
         ARROW_RIGHT("MHF_ArrowRight"),
@@ -68,7 +96,7 @@ public class SkullItemBuilder {
         TNT("MHF_TNT"),
         DYNAMITE("MHF_TNT2");
 
-        private String id;
+        private final String id;
 
         Skulls(String id) {
             this.id = id;
@@ -88,33 +116,5 @@ public class SkullItemBuilder {
                     "id='" + id + '\'' +
                     '}';
         }
-    }
-
-    public static ItemStack getCustomSkull(String url) {
-        GameProfile profile = SkinChangeUtil.changeSkin(url);
-
-        ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-        ItemMeta headMeta = head.getItemMeta();
-        Class<?> headMetaClass = headMeta.getClass();
-
-        try {
-            Field f = headMetaClass.getDeclaredField("profile");
-            f.setAccessible(true);
-
-            f.set(headMeta, profile);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        head.setItemMeta(headMeta);
-        return head;
-    }
-
-    public static ItemStack getPlayerSkull(String name) {
-        ItemStack itemStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-        SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
-        meta.setOwner(name);
-        itemStack.setItemMeta(meta);
-        return itemStack;
     }
 }

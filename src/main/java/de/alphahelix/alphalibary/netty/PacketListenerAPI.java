@@ -32,9 +32,10 @@ public class PacketListenerAPI implements IPacketListener, Listener {
     public void load() {
         channelInjector = new ChannelInjector();
 
-        if (injected = channelInjector.inject(this)) {
-            channelInjector.addServerChannel();
-        }
+        channelInjector.inject(this);
+
+        injected = true;
+        channelInjector.addServerChannel();
     }
 
     /**

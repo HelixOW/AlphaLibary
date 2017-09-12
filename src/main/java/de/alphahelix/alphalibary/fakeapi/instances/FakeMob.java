@@ -22,8 +22,8 @@ import org.bukkit.Location;
 
 public class FakeMob extends FakeEntity {
 
-    private FakeMobType fakeMobType;
-    private boolean baby;
+    private final FakeMobType fakeMobType;
+    private final boolean baby;
 
     public FakeMob(Location location, String name, Object nmsEntity, FakeMobType type, boolean baby) {
         super(location, name, nmsEntity);

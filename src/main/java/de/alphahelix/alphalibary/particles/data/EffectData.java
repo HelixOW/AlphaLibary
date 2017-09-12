@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 
 public class EffectData<T> {
 
-    private T dataValue;
+    private final T dataValue;
 
     public EffectData(T dataValue) {
         this.dataValue = dataValue;

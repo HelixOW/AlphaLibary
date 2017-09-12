@@ -12,7 +12,7 @@ import java.util.WeakHashMap;
 public class GameStatus implements Serializable {
 
     @Expose
-    private static transient WeakHashMap<String, GameStatus> gameStatuses = new WeakHashMap<>();
+    private static final transient WeakHashMap<String, GameStatus> GAME_STATUSES = new WeakHashMap<>();
 
     @Expose
     private static transient GameStatus current = null;
@@ -23,11 +23,11 @@ public class GameStatus implements Serializable {
     public GameStatus(String name) {
         setName(name);
 
-        gameStatuses.put(rawName, this);
+        GAME_STATUSES.put(rawName, this);
     }
 
     public static GameStatus getGameState(String name) {
-        return gameStatuses.get(ChatColor.stripColor(name).replace(" ", "_"));
+        return GAME_STATUSES.get(ChatColor.stripColor(name).replace(" ", "_"));
     }
 
     public static boolean isState(GameStatus state) {

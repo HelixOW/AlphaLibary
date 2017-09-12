@@ -6,9 +6,7 @@ import org.apache.commons.lang.Validate;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -16,16 +14,12 @@ public class SimpleAddonManager implements AddonManager {
 
     private final static Pattern JAR_PATTERN = Pattern.compile("(.+?)(\\.jar)");
 
-    private final AddonCore addonCore;
     private final File addonDir;
-    private Map<String, Addon> lookUpNames = new HashMap<>();
-    private Map<File, String[]> depends = new HashMap<>();
-    private List<Addon> addons = new ArrayList<>();
+    private final List<Addon> addons = new ArrayList<>();
 
-    public SimpleAddonManager(File addonDir, AddonCore addonCore) {
+    public SimpleAddonManager(File addonDir) {
         Validate.notNull(addonDir, "Directory cannot be null");
         Validate.isTrue(addonDir.isDirectory(), "Directory must be a directory");
-        this.addonCore = addonCore;
         this.addonDir = addonDir;
     }
 
@@ -41,7 +35,6 @@ public class SimpleAddonManager implements AddonManager {
         if (result != null) {
             this.addons.add(result);
             Validate.notNull(result.getDescription());
-            this.lookUpNames.put(result.getDescription().getName(), result);
             AddonCore.getLogger().log(Level.INFO, result.getDescription().getName() + " v." + result.getDescription().getVersion() + " by " + result.getDescription().getAuthor() + " loaded");
         }
 

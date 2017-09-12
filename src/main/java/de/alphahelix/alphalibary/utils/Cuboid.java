@@ -688,6 +688,38 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
         return new Cuboid(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cuboid blocks = (Cuboid) o;
+        return x1 == blocks.x1 &&
+                y1 == blocks.y1 &&
+                z1 == blocks.z1 &&
+                x2 == blocks.x2 &&
+                y2 == blocks.y2 &&
+                z2 == blocks.z2 &&
+                Objects.equal(worldName, blocks.worldName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(worldName, x1, y1, z1, x2, y2, z2);
+    }
+
+    @Override
+    public String toString() {
+        return "Cuboid{" +
+                "worldName='" + worldName + '\'' +
+                ", x1=" + x1 +
+                ", y1=" + y1 +
+                ", z1=" + z1 +
+                ", x2=" + x2 +
+                ", y2=" + y2 +
+                ", z2=" + z2 +
+                '}';
+    }
+
     public enum CuboidDirection {
         North, East, South, West, Up, Down, Horizontal, Vertical, Both, Unknown;
 
@@ -719,10 +751,14 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
     }
 
     public class CuboidIterator implements Iterator<Block> {
-        private World w;
-        private int baseX, baseY, baseZ;
+        private final World w;
+        private final int baseX;
+        private final int baseY;
+        private final int baseZ;
+        private final int sizeX;
+        private final int sizeY;
+        private final int sizeZ;
         private int x, y, z;
-        private int sizeX, sizeY, sizeZ;
 
         public CuboidIterator(World w, int x1, int y1, int z1, int x2, int y2, int z2) {
             this.w = w;
@@ -753,37 +789,5 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
 
         public void remove() {
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Cuboid blocks = (Cuboid) o;
-        return x1 == blocks.x1 &&
-                y1 == blocks.y1 &&
-                z1 == blocks.z1 &&
-                x2 == blocks.x2 &&
-                y2 == blocks.y2 &&
-                z2 == blocks.z2 &&
-                Objects.equal(worldName, blocks.worldName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(worldName, x1, y1, z1, x2, y2, z2);
-    }
-
-    @Override
-    public String toString() {
-        return "Cuboid{" +
-                "worldName='" + worldName + '\'' +
-                ", x1=" + x1 +
-                ", y1=" + y1 +
-                ", z1=" + z1 +
-                ", x2=" + x2 +
-                ", y2=" + y2 +
-                ", z2=" + z2 +
-                '}';
     }
 }

@@ -10,8 +10,8 @@ import java.net.Socket;
 
 public class ServerPinger {
 
-    private String server;
-    private int port;
+    private final String server;
+    private final int port;
 
     public ServerPinger(String server, int port) {
         this.server = server;

@@ -9,14 +9,14 @@ import org.bukkit.event.player.PlayerEvent;
 public class TeamJoinEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private GameTeam joinedTeam;
+    private final GameTeam joinedTeam;
 
     public TeamJoinEvent(Player who, GameTeam joinedTeam) {
         super(who);
         this.joinedTeam = joinedTeam;
     }
 
-    public final static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

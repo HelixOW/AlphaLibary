@@ -12,10 +12,10 @@ import java.util.WeakHashMap;
 public class ArenaStatus {
 
     @Expose
-    private static transient WeakHashMap<String, ArenaStatus> arenaStatuses = new WeakHashMap<>();
+    private static final transient WeakHashMap<String, ArenaStatus> ARENA_STATUSES = new WeakHashMap<>();
 
     @Expose
-    private static transient WeakHashMap<Arena, ArenaStatus> current = new WeakHashMap<>();
+    private static final transient WeakHashMap<Arena, ArenaStatus> CURRENT = new WeakHashMap<>();
 
     private String name;
     private String rawName;
@@ -23,24 +23,24 @@ public class ArenaStatus {
     public ArenaStatus(String name) {
         setName(name);
 
-        arenaStatuses.put(rawName, this);
+        ARENA_STATUSES.put(rawName, this);
     }
 
     public static ArenaStatus getArenaState(String name) {
-        return arenaStatuses.get(ChatColor.stripColor(name).replace(" ", "_"));
+        return ARENA_STATUSES.get(ChatColor.stripColor(name).replace(" ", "_"));
     }
 
     public static boolean isState(Arena toCheck, ArenaStatus match) {
-        return current.containsKey(toCheck) && current.get(toCheck).equals(match);
+        return CURRENT.containsKey(toCheck) && CURRENT.get(toCheck).equals(match);
     }
 
     public static ArenaStatus getCurrentStatus(Arena arena) {
-        return current.get(arena);
+        return CURRENT.get(arena);
     }
 
     public static void setCurrentStatus(Arena toUpdate, ArenaStatus current) {
         ArenaStatusChangeEvent gameStatusChangeEvent = new ArenaStatusChangeEvent(getCurrentStatus(toUpdate), current);
-        ArenaStatus.current.put(toUpdate, current);
+        ArenaStatus.CURRENT.put(toUpdate, current);
         Bukkit.getPluginManager().callEvent(gameStatusChangeEvent);
     }
 

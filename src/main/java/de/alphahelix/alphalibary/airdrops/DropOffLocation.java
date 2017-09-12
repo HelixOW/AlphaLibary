@@ -8,8 +8,8 @@ import java.io.Serializable;
 
 public class DropOffLocation implements Serializable {
 
-    private Location center;
-    private int radius;
+    private final Location center;
+    private final int radius;
 
     public DropOffLocation(Location center, int radius) {
         this.center = center;

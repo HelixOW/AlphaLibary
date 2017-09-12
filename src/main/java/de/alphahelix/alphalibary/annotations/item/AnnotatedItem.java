@@ -20,7 +20,6 @@ class AnnotatedItem {
 
     private final Object itemClass;
     private final Field itemField;
-    private final Item itemAnnotation;
 
     private final Skull skullAnnotation;
     private final Color colorAnnotation;
@@ -29,9 +28,9 @@ class AnnotatedItem {
     private final Potion potionAnnotation;
     private final SpawnEgg spawnEggAnnotation;
 
+    private String name = "";
     private String[] enchantments = {};
     private ItemFlag[] itemflags = {};
-    private String name = "";
     private Material material = Material.AIR;
     private int amount = 1;
     private short damage = 0;
@@ -42,7 +41,6 @@ class AnnotatedItem {
     AnnotatedItem(Object itemClass, Field itemField, Item itemAnnotation, Skull skullAnnotation, Color colorAnnotation, Banner bannerAnnotation, Map mapAnnotation, Potion potionAnnotation, SpawnEgg spawnEggAnnotation) {
         this.itemClass = itemClass;
         this.itemField = itemField;
-        this.itemAnnotation = itemAnnotation;
         this.skullAnnotation = skullAnnotation;
         this.colorAnnotation = colorAnnotation;
         this.bannerAnnotation = bannerAnnotation;
@@ -69,7 +67,7 @@ class AnnotatedItem {
             builder.addEnchantment(Enchantment.getByName(enchLvL[0]), Integer.parseInt(enchLvL[1]));
         }
 
-        builder.addItemFlags(itemflags).setAmount(amount).setDamage(damage).setUnbreakable(unbreakable).setLore(lore);
+        builder.addItemFlags(itemflags).setAmount(amount).setName(name).setDamage(damage).setUnbreakable(unbreakable).setLore(lore);
 
         if (skullAnnotation != null) {
             if (!skullAnnotation.owner().isEmpty())

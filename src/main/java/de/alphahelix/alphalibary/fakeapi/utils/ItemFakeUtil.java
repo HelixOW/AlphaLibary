@@ -31,7 +31,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemFakeUtil {
 
-    private static ReflectionUtil.SaveConstructor entityItem =
+    private static final ReflectionUtil.SaveConstructor ENTITY_ITEM =
             ReflectionUtil.getDeclaredConstructor("EntityItem", ReflectionUtil.getNmsClass("World"),
                     double.class, double.class, double.class, ReflectionUtil.getNmsClass("ItemStack"));
 
@@ -61,7 +61,7 @@ public class ItemFakeUtil {
      * @return the new spawned {@link FakeItem}
      */
     public static FakeItem spawnTemporaryItem(Player p, Location loc, String name, Material type) {
-        Object item = entityItem.newInstance(false,
+        Object item = ENTITY_ITEM.newInstance(false,
                 ReflectionUtil.getWorldServer(p.getWorld()),
                 loc.getX(),
                 loc.getY(),

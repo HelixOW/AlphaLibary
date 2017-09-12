@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class SkinChangeUtil {
 
-    private static Base64 BASE64 = new Base64();
+    private static final Base64 BASE64 = new Base64();
 
     public static GameProfile changeSkin(String url) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);

@@ -7,7 +7,7 @@ public enum EntityAge implements Serializable {
     CHILD(0),
     ADULT(1);
 
-    private int bukkitAge;
+    private final int bukkitAge;
 
     EntityAge(int bukkitAge) {
         this.bukkitAge = bukkitAge;

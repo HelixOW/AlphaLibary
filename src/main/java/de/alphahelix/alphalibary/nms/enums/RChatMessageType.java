@@ -10,7 +10,7 @@ public enum RChatMessageType implements Serializable {
     SYSTEM(1),
     GAME_INFO(2);
 
-    private int index;
+    private final int index;
 
     RChatMessageType(int index) {
         this.index = index;

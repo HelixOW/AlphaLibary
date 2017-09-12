@@ -30,7 +30,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 
 import java.io.Serializable;
@@ -78,7 +77,7 @@ public class MinigameLogic extends SimpleListener implements Serializable {
     }
 
     @EventHandler
-    public void onCollect(PlayerPickupItemEvent e) {
+    public void onCollect(EntityPickupItemEvent e) {
         if (GameStatus.isState(gameStatus))
             e.setCancelled(!canCollect);
     }

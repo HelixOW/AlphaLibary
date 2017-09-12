@@ -27,42 +27,44 @@ import org.bukkit.inventory.InventoryView;
 
 public class ItemRenameEvent extends PlayerEvent implements Cancellable {
 
-	private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
 
-	private InventoryView inventory;
-	private String name;
-	private boolean cancelled;
+    private final InventoryView inventory;
+    private final String name;
+    private boolean cancelled;
 
-	public ItemRenameEvent(Player who, InventoryView iw, String nN) {
-		super(who); this.inventory = iw; this.name = nN;
-	}
+    public ItemRenameEvent(Player who, InventoryView iw, String nN) {
+        super(who);
+        this.inventory = iw;
+        this.name = nN;
+    }
 
-	public final static HandlerList getHandlerList() {
-		return handlers;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
-	public InventoryView getInventory() {
-		return inventory;
-	}
+    public InventoryView getInventory() {
+        return inventory;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-	@Override
-	public void setCancelled(boolean b) {
-		this.cancelled = b;
-	}
+    @Override
+    public void setCancelled(boolean b) {
+        this.cancelled = b;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -24,11 +24,11 @@ import java.util.ArrayList;
 
 public abstract class InputGUI {
 
-	private static ArrayList<String> openGUIS = new ArrayList<>();
+    private static final ArrayList<String> OPEN_GUIS = new ArrayList<>();
 
-	public static ArrayList<String> getOpenGUIS() {
-		return openGUIS;
-	}
+    public static ArrayList<String> getOpenGuis() {
+        return OPEN_GUIS;
+    }
 
-	public abstract void openGUI(Player p);
+    public abstract void openGUI(Player p);
 }

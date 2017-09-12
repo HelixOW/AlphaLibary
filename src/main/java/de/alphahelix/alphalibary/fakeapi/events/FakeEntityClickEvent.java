@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerEvent;
 public class FakeEntityClickEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private FakeEntity fakeEntity;
-    private REnumAction clickAction;
-    private REnumHand hand;
+    private final FakeEntity fakeEntity;
+    private final REnumAction clickAction;
+    private final REnumHand hand;
 
     public FakeEntityClickEvent(Player who, FakeEntity fakeEntity, REnumAction clickAction, REnumHand hand) {
         super(who);
@@ -27,7 +27,7 @@ public class FakeEntityClickEvent extends PlayerEvent {
      *
      * @return A list of handlers handling this event.
      */
-    public final static HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

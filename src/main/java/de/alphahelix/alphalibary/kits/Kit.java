@@ -13,13 +13,12 @@ import java.util.WeakHashMap;
 
 public class Kit implements Serializable {
 
-    private static WeakHashMap<String, Kit> kits = new WeakHashMap<>();
-
+    private static final WeakHashMap<String, Kit> KITS = new WeakHashMap<>();
+    private final ItemStack[] items;
     private String name;
     private String rawName;
     private int price;
     private ItemStack icon;
-    private ItemStack[] items;
 
     public Kit(String name, int price, ItemStack icon, ItemStack... items) {
         this.name = name;
@@ -28,12 +27,12 @@ public class Kit implements Serializable {
         this.icon = icon;
         this.items = items;
 
-        kits.put(rawName, this);
+        KITS.put(rawName, this);
     }
 
     public static Kit getKitByName(String name) {
-        if (kits.containsKey(name))
-            return kits.get(name);
+        if (KITS.containsKey(name))
+            return KITS.get(name);
         return null;
     }
 

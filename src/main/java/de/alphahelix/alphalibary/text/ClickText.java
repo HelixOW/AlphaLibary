@@ -41,7 +41,7 @@ public class ClickText {
 
     private static class ActionTextCommand extends SimpleCommand {
 
-        private TextAction action;
+        private final TextAction action;
 
         ActionTextCommand(UUID player, TextAction action) {
             super("atcPerform_" + player.toString(), "", "");

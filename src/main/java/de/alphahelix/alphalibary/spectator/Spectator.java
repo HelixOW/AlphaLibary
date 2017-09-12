@@ -11,11 +11,11 @@ import java.util.HashMap;
 
 public class Spectator {
 
-    private static HashMap<String, String> prefixes = new HashMap<>();
+    private static final HashMap<String, String> PREFIXES = new HashMap<>();
 
     public static void setSpectator(Player player, String prefix, Location spawn) {
-        if (!prefixes.containsKey(player.getName()))
-            prefixes.put(player.getName(), prefix);
+        if (!PREFIXES.containsKey(player.getName()))
+            PREFIXES.put(player.getName(), prefix);
 
         player.setFoodLevel(20);
         player.setLevel(0);
@@ -56,10 +56,10 @@ public class Spectator {
             player.removePotionEffect(eff.getType());
         }
 
-        if (prefixes.containsKey(player.getName())) {
-            player.setCustomName(player.getDisplayName().replace(prefixes.get(player.getName()), ""));
-            player.setPlayerListName(player.getDisplayName().replace(prefixes.get(player.getName()), ""));
-            player.setDisplayName(player.getDisplayName().replace(prefixes.get(player.getName()), ""));
+        if (PREFIXES.containsKey(player.getName())) {
+            player.setCustomName(player.getDisplayName().replace(PREFIXES.get(player.getName()), ""));
+            player.setPlayerListName(player.getDisplayName().replace(PREFIXES.get(player.getName()), ""));
+            player.setDisplayName(player.getDisplayName().replace(PREFIXES.get(player.getName()), ""));
             player.setCustomNameVisible(true);
         }
 

@@ -42,9 +42,9 @@ import java.util.HashMap;
 
 public class MobFakeUtil {
 
-    private static HashMap<String, BukkitTask> followMap = new HashMap<>();
-    private static HashMap<String, BukkitTask> stareMap = new HashMap<>();
-    private static HashMap<String, BukkitTask> splitMap = new HashMap<>();
+    private static final HashMap<String, BukkitTask> FOLLOW_MAP = new HashMap<>();
+    private static final HashMap<String, BukkitTask> STARE_MAP = new HashMap<>();
+    private static final HashMap<String, BukkitTask> SPLIT_MAP = new HashMap<>();
 
     /**
      * Spawns in a {@link FakeMob} for the {@link Player}
@@ -195,7 +195,7 @@ public class MobFakeUtil {
      * @return if the {@link Player} has a {@link FakeMob} which followes him
      */
     public static boolean hasFollower(Player toCheck) {
-        return followMap.containsKey(toCheck.getName());
+        return FOLLOW_MAP.containsKey(toCheck.getName());
     }
 
     /**
@@ -206,7 +206,7 @@ public class MobFakeUtil {
      * @param mob      the {@link FakeMob} which should follow the {@link Player}
      */
     public static void followPlayer(final Player p, final Player toFollow, final FakeMob mob) {
-        followMap.put(p.getName(), new BukkitRunnable() {
+        FOLLOW_MAP.put(p.getName(), new BukkitRunnable() {
             @Override
             public void run() {
                 teleportMob(p, LocationUtil.getLocationBehindPlayer(toFollow, 2), mob);
@@ -220,9 +220,9 @@ public class MobFakeUtil {
      * @param p the {@link Player} who shouldn't be followed any longer
      */
     public static void unFollowPlayer(Player p) {
-        if (followMap.containsKey(p.getName())) {
-            followMap.get(p.getName()).cancel();
-            followMap.remove(p.getName());
+        if (FOLLOW_MAP.containsKey(p.getName())) {
+            FOLLOW_MAP.get(p.getName()).cancel();
+            FOLLOW_MAP.remove(p.getName());
         }
     }
 
@@ -248,7 +248,7 @@ public class MobFakeUtil {
      * @param mob       the {@link FakeMob} who should stare at the {@link Player}
      */
     public static void stareAtPlayer(final Player p, final Player toStareAt, final FakeMob mob) {
-        stareMap.put(p.getName(), new BukkitRunnable() {
+        STARE_MAP.put(p.getName(), new BukkitRunnable() {
             @Override
             public void run() {
                 lookAtPlayer(p, toStareAt, mob);
@@ -262,9 +262,9 @@ public class MobFakeUtil {
      * @param p the {@link Player}
      */
     public static void normalizeLook(Player p) {
-        if (stareMap.containsKey(p.getName())) {
-            stareMap.get(p.getName()).cancel();
-            stareMap.remove(p.getName());
+        if (STARE_MAP.containsKey(p.getName())) {
+            STARE_MAP.get(p.getName()).cancel();
+            STARE_MAP.remove(p.getName());
         }
     }
 
@@ -319,7 +319,7 @@ public class MobFakeUtil {
         final double toMoveInY = between.getY() / teleportCount;
         final double toMoveInZ = between.getZ() / teleportCount;
 
-        splitMap.put(p.getName(), new BukkitRunnable() {
+        SPLIT_MAP.put(p.getName(), new BukkitRunnable() {
             public void run() {
                 if (!LocationUtil.isSameLocation(currentLocation, to)) {
                     teleportMob(p, currentLocation.add(new Vector(toMoveInX, toMoveInY, toMoveInZ)), mob);
@@ -335,9 +335,9 @@ public class MobFakeUtil {
      * @param p the {@link Player} to cancel all teleport tasks
      */
     public static void cancelAllSplittedTasks(Player p) {
-        if (splitMap.containsKey(p.getName())) {
-            splitMap.get(p.getName()).cancel();
-            splitMap.remove(p.getName());
+        if (SPLIT_MAP.containsKey(p.getName())) {
+            SPLIT_MAP.get(p.getName()).cancel();
+            SPLIT_MAP.remove(p.getName());
         }
     }
 

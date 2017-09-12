@@ -5,8 +5,9 @@ import com.google.common.base.Objects;
 import java.io.Serializable;
 
 public class ServerResult implements Serializable {
-    private int playercount, maximumPlayers;
-    private String motd;
+    private final int playercount;
+    private final int maximumPlayers;
+    private final String motd;
 
     public ServerResult(int playercount, int maximumPlayers, String motd) {
         this.playercount = playercount;

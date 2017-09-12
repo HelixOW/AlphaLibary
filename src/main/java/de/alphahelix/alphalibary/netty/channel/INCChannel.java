@@ -21,39 +21,30 @@ public class INCChannel extends ChannelAbstract {
     }
 
     public void addChannel(final Player player) {
-        try {
-            final Channel channel = getChannel(player);
-            this.addChannelExecutor.execute(() -> {
-                try {
-                    channel.pipeline().addBefore(KEY_HANDLER, KEY_PLAYER, INCChannel.this.new ChannelHandler(player));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Failed to add channel for " + player, e);
-        }
+        final Channel channel = getChannel(player);
+        this.addChannelExecutor.execute(() -> {
+            try {
+                channel.pipeline().addBefore(KEY_HANDLER, KEY_PLAYER, INCChannel.this.new ChannelHandler(player));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void removeChannel(Player player) {
-        try {
-            final Channel channel = getChannel(player);
-            this.removeChannelExecutor.execute(() -> {
-                try {
-                    if (channel.pipeline().get(KEY_PLAYER) != null) {
-                        channel.pipeline().remove(KEY_PLAYER);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        final Channel channel = getChannel(player);
+        this.removeChannelExecutor.execute(() -> {
+            try {
+                if (channel.pipeline().get(KEY_PLAYER) != null) {
+                    channel.pipeline().remove(KEY_PLAYER);
                 }
-            });
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Failed to remove channel for " + player, e);
-        }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    private Channel getChannel(Player player)
-            throws ReflectiveOperationException {
+    private Channel getChannel(Player player) {
         Object handle = ReflectionUtil.getDeclaredMethod("getHandle", ReflectionUtil.getCraftBukkitClass("entity.CraftPlayer")).invoke(player, false);
         Object connection = PLAYER_CONNECTION.get(handle);
         return (Channel) channelField.get(NETWORK_MANAGER.get(connection));
@@ -95,10 +86,10 @@ public class INCChannel extends ChannelAbstract {
                             channel = (Channel) INCChannel.channelField.get(a);
                         }
                         channel.pipeline().remove(KEY_SERVER);
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 });
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             return super.remove(arg0);
         }
@@ -106,7 +97,7 @@ public class INCChannel extends ChannelAbstract {
 
     class ChannelHandler extends ChannelDuplexHandler implements ChannelAbstract.IChannelHandler {
 
-        private Object owner;
+        private final Object owner;
 
         public ChannelHandler(Player player) {
             this.owner = player;

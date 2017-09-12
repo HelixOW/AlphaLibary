@@ -35,13 +35,13 @@ public class PPOAnimation implements IPacket {
         return animationType;
     }
 
+    public PPOAnimation setAnimationType(AnimationType animationType) {
+        return this.setAnimationType(animationType.ordinal());
+    }
+
     public PPOAnimation setAnimationType(int animationType) {
         this.animationType = animationType;
         return this;
-    }
-
-    public PPOAnimation setAnimationType(AnimationType animationType) {
-        return this.setAnimationType(animationType.ordinal());
     }
 
     @Override

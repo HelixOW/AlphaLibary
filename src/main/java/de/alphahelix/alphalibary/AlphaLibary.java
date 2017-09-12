@@ -49,10 +49,10 @@ import java.util.UUID;
 
 public class AlphaLibary extends JavaPlugin {
 
+    private static final HashMap<UUID, Double> OLD_VALUES = new HashMap<>();
     private static AlphaLibary instance;
     private static GameProfileBuilder.GameProfileFile gameProfileFile;
     private static ArenaFile arenaFile;
-    private static HashMap<UUID, Double> oldValues = new HashMap<>();
 
     public static AlphaLibary getInstance() {
         return instance;
@@ -89,8 +89,6 @@ public class AlphaLibary extends JavaPlugin {
 
         if (!arenaFolder.exists()) arenaFolder.mkdirs();
 
-        new SimplePack();
-
         PacketListenerAPI.addPacketHandler(new PacketHandler() {
             @Override
             @PacketOptions(forcePlayer = true)
@@ -103,15 +101,15 @@ public class AlphaLibary extends JavaPlugin {
                             double nV = p.getAttribute(Attribute.GENERIC_ARMOR).getValue();
                             double oV;
 
-                            if (oldValues.containsKey(id)) {
-                                if (oldValues.get(id) != nV) {
-                                    oV = oldValues.get(id);
-                                    oldValues.put(id, nV);
+                            if (OLD_VALUES.containsKey(id)) {
+                                if (OLD_VALUES.get(id) != nV) {
+                                    oV = OLD_VALUES.get(id);
+                                    OLD_VALUES.put(id, nV);
                                     ArmorChangeEvent ace = new ArmorChangeEvent(p, oV, nV);
                                     Bukkit.getPluginManager().callEvent(ace);
                                 }
                             } else {
-                                oldValues.put(id, nV);
+                                OLD_VALUES.put(id, nV);
                                 ArmorChangeEvent ace = new ArmorChangeEvent(p, 0.0, nV);
                                 Bukkit.getPluginManager().callEvent(ace);
                             }
@@ -126,18 +124,18 @@ public class AlphaLibary extends JavaPlugin {
                     if (packet.getPlayer() == null) return;
                     BlockPos bp = ReflectionUtil.fromBlockPostition(packet.getPacketValue("a"));
                     if (bp.getX() == 0 && bp.getY() == 0 && bp.getZ() == 0) {
-                        if (!SignGUI.getOpenGUIS().contains(packet.getPlayer().getName())) return;
+                        if (!SignGUI.getOpenGuis().contains(packet.getPlayer().getName())) return;
                         int i = 0;
                         for (String line : (String[]) packet.getPacketValue(1)) {
                             if (i == 1)
                                 Bukkit.getPluginManager().callEvent(new PlayerInputEvent(packet.getPlayer(), line));
                             i++;
                         }
-                        SignGUI.getOpenGUIS().remove(packet.getPlayer().getName());
+                        SignGUI.getOpenGuis().remove(packet.getPlayer().getName());
                     }
                 } else if (packet.getPacketName().equals("PacketPlayInWindowClick")) {
                     if (packet.getPlayer() == null) return;
-                    if (!AnvilGUI.getOpenGUIS().contains(packet.getPlayer().getName())) return;
+                    if (!AnvilGUI.getOpenGuis().contains(packet.getPlayer().getName())) return;
                     InventoryView view = packet.getPlayer().getOpenInventory();
 
                     if (view != null && view.getTopInventory().getType() == InventoryType.ANVIL) {
@@ -152,7 +150,7 @@ public class AlphaLibary extends JavaPlugin {
                                     Bukkit.getPluginManager().callEvent(event);
                                     Bukkit.getPluginManager().callEvent(new PlayerInputEvent(packet.getPlayer(), is.getItemMeta().getDisplayName()));
 
-                                    AnvilGUI.getOpenGUIS().remove(packet.getPlayer().getName());
+                                    AnvilGUI.getOpenGuis().remove(packet.getPlayer().getName());
 
                                     if (event.isCancelled()) packet.getPlayer().closeInventory();
                                 }

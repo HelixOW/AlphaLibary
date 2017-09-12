@@ -28,9 +28,9 @@ import org.bukkit.entity.Player;
 
 public class XPOrbFakeUtil {
 
-    private static ReflectionUtil.SaveConstructor entityXPOrb =
+    private static final ReflectionUtil.SaveConstructor ENTITY_XP_ORB =
             ReflectionUtil.getDeclaredConstructor("EntityExperienceOrb", ReflectionUtil.getNmsClass("World"));
-    private static ReflectionUtil.SaveConstructor spawnXPOrb =
+    private static final ReflectionUtil.SaveConstructor SPAWN_XP_ORB =
             ReflectionUtil.getDeclaredConstructor("PacketPlayOutSpawnEntityExperienceOrb", ReflectionUtil.getNmsClass("EntityExperienceOrb"));
 
     /**
@@ -59,12 +59,12 @@ public class XPOrbFakeUtil {
      * @return the new spawned {@link FakeXPOrb}
      */
     public static FakeXPOrb spawnTemporaryXPOrb(Player p, Location loc, String name) {
-        Object orb = entityXPOrb.newInstance(false, ReflectionUtil.getWorldServer(p.getWorld()));
+        Object orb = ENTITY_XP_ORB.newInstance(false, ReflectionUtil.getWorldServer(p.getWorld()));
         EntityWrapper o = new EntityWrapper(orb);
 
         o.setLocation(loc);
 
-        ReflectionUtil.sendPacket(p, spawnXPOrb.newInstance(false, orb));
+        ReflectionUtil.sendPacket(p, SPAWN_XP_ORB.newInstance(false, orb));
 
         FakeXPOrb fXO = new FakeXPOrb(loc, name, orb);
 

@@ -2,7 +2,8 @@ package de.alphahelix.alphalibary.annotations.command.exceptions;
 
 public class InvalidLenghtException extends CommandException {
 
-    private int expected, given;
+    private final int expected;
+    private final int given;
 
     public InvalidLenghtException(int expected, int given) {
         super((given < expected ? "Not enough" : "Too many") + " arguments. (" + given + (given < expected ? "<" : ">") + expected + ")");

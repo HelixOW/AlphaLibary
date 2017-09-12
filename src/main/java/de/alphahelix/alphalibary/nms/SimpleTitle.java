@@ -18,25 +18,13 @@ package de.alphahelix.alphalibary.nms;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 public class SimpleTitle {
 
-    private static Class<?> cEnumTitleAction = ReflectionUtil.getNmsClass("PacketPlayOutTitle$EnumTitleAction");
-    private static Class<?> cIChatBaseComponent = ReflectionUtil.getNmsClass("IChatBaseComponent");
+    private static final Class<?> PACKET_PLAY_OUT_TITLE_$_ENUM_TITLE_ACTION = ReflectionUtil.getNmsClass("PacketPlayOutTitle$EnumTitleAction");
+    private static final Class<?> I_CHAT_BASE_COMPONENT = ReflectionUtil.getNmsClass("IChatBaseComponent");
 
-    private static Constructor<?> titleConstructor;
-    private static Constructor<?> timingConstructor;
-
-    static {
-        try {
-            titleConstructor = ReflectionUtil.getNmsClass("PacketPlayOutTitle").getConstructor(cEnumTitleAction, cIChatBaseComponent);
-            timingConstructor = ReflectionUtil.getNmsClass("PacketPlayOutTitle").getConstructor(int.class, int.class, int.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
+    private static final ReflectionUtil.SaveConstructor PACKET_PLAY_OUT_TITLE = ReflectionUtil.getDeclaredConstructor("PacketPlayOutTitle", PACKET_PLAY_OUT_TITLE_$_ENUM_TITLE_ACTION, I_CHAT_BASE_COMPONENT);
+    private static final ReflectionUtil.SaveConstructor PACKET_PLAY_OUT_TITLE1 = ReflectionUtil.getDeclaredConstructor("PacketPlayOutTitle", int.class, int.class, int.class);
 
     /**
      * Send a title and subtitle to a {@link Player}
@@ -49,36 +37,28 @@ public class SimpleTitle {
      * @param fadeOut fade out in seconds
      */
     public static void sendTitle(Player p, String title, String sub, int fadeIn, int stay, int fadeOut) {
-        try {
-            Object pTitle = titleConstructor.newInstance(TitleAction.getNmsEnumObject(TitleAction.TITLE), de.alphahelix.alphalibary.reflection.ReflectionUtil.serializeString(title));
-            Object pSubTitle = titleConstructor.newInstance(TitleAction.getNmsEnumObject(TitleAction.SUBTITLE), de.alphahelix.alphalibary.reflection.ReflectionUtil.serializeString(sub));
-            Object pTimings = timingConstructor.newInstance(fadeIn * 20, stay * 20, fadeOut * 20);
+        Object pTitle = PACKET_PLAY_OUT_TITLE.newInstance(true, TitleAction.TITLE.getNmsEnumObject(), ReflectionUtil.serializeString(title));
+        Object pSubTitle = PACKET_PLAY_OUT_TITLE.newInstance(true, TitleAction.SUBTITLE.getNmsEnumObject(), ReflectionUtil.serializeString(sub));
+        Object pTimings = PACKET_PLAY_OUT_TITLE1.newInstance(true, fadeIn * 20, stay * 20, fadeOut * 20);
 
-            ReflectionUtil.sendPacket(p, pTimings);
-            ReflectionUtil.sendPacket(p, pTitle);
-            ReflectionUtil.sendPacket(p, pSubTitle);
-
-        } catch (InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException
-                | SecurityException e) {
-            e.printStackTrace();
-        }
+        ReflectionUtil.sendPacket(p, pTimings);
+        ReflectionUtil.sendPacket(p, pTitle);
+        ReflectionUtil.sendPacket(p, pSubTitle);
     }
 
-    public static final class TitleAction {
+    public enum TitleAction {
 
-        public static final int TITLE = 0;
-        public static final int SUBTITLE = 1;
-        public static final int TIMES = 2;
-        public static final int CLEAR = 3;
-        public static final int RESET = 4;
+        TITLE,
+        SUBTITLE,
+        TIMES,
+        CLEAR,
+        RESET;
 
-        public static Object getNmsEnumObject(int action) {
-            if (action < 0 || action > 4) {
+        Object getNmsEnumObject() {
+            if (ordinal() < 0 || ordinal() > 4) {
                 return null;
             }
-            return de.alphahelix.alphalibary.reflection.ReflectionUtil.getNmsClass("PacketPlayOutTitle$EnumTitleAction").getEnumConstants()[action];
+            return ReflectionUtil.getNmsClass("PacketPlayOutTitle$EnumTitleAction").getEnumConstants()[ordinal()];
         }
-
     }
 }

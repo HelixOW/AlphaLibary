@@ -38,9 +38,9 @@ import java.util.HashMap;
 
 public class EndercrystalFakeUtil {
 
-    private static HashMap<String, BukkitTask> splitMap = new HashMap<>();
+    private static final HashMap<String, BukkitTask> SPLIT_MAP = new HashMap<>();
 
-    private static ReflectionUtil.SaveConstructor entityEndercrystal =
+    private static final ReflectionUtil.SaveConstructor ENTITY_ENDERCRYSTAL =
             ReflectionUtil.getDeclaredConstructor("EntityEnderCrystal", ReflectionUtil.getNmsClass("World"));
 
     /**
@@ -71,7 +71,7 @@ public class EndercrystalFakeUtil {
      * @return the new spawned {@link FakeEndercrystal}
      */
     public static FakeEndercrystal spawnTemporaryEndercrystal(Player p, Location loc, String name) {
-        Object endercrystal = entityEndercrystal.newInstance(false, ReflectionUtil.getWorldServer(p.getWorld()));
+        Object endercrystal = ENTITY_ENDERCRYSTAL.newInstance(false, ReflectionUtil.getWorldServer(p.getWorld()));
         EntityWrapper e = new EntityWrapper(endercrystal);
 
         e.setLocation(loc);
@@ -101,7 +101,7 @@ public class EndercrystalFakeUtil {
         final double toMoveInY = between.getY() / teleportCount;
         final double toMoveInZ = between.getZ() / teleportCount;
 
-        splitMap.put(p.getName(), new BukkitRunnable() {
+        SPLIT_MAP.put(p.getName(), new BukkitRunnable() {
             public void run() {
                 if (!LocationUtil.isSameLocation(currentLocation, to)) {
                     teleportEndercrystal(p, currentLocation.add(new Vector(toMoveInX, toMoveInY, toMoveInZ)), endercrystal);
@@ -117,9 +117,9 @@ public class EndercrystalFakeUtil {
      * @param p the {@link Player} to cancel all teleport tasks
      */
     public static void cancelAllSplittedTasks(Player p) {
-        if (splitMap.containsKey(p.getName())) {
-            splitMap.get(p.getName()).cancel();
-            splitMap.remove(p.getName());
+        if (SPLIT_MAP.containsKey(p.getName())) {
+            SPLIT_MAP.get(p.getName()).cancel();
+            SPLIT_MAP.remove(p.getName());
         }
     }
 

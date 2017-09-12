@@ -34,8 +34,9 @@ public class MySQLDatabase implements Serializable {
     private static transient final HashMap<String, String> TABLEINFO = new HashMap<>();
     private static transient final ArrayList<String> TABLENAMES = new ArrayList<>();
 
-    private String table;
-    private String database;
+    private final String table;
+    private final String database;
+    private final MySQLAPI api;
 
     /**
      * Creates a new manager for the table
@@ -46,6 +47,7 @@ public class MySQLDatabase implements Serializable {
     public MySQLDatabase(String table, String database) {
         this.table = table;
         this.database = database;
+        this.api = MySQLAPI.getMySQL(database);
     }
 
     /**
@@ -75,11 +77,11 @@ public class MySQLDatabase implements Serializable {
         if (!TABLEINFO.containsKey(table))
             TABLEINFO.put(table, tableinfo);
 
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "CREATE TABLE IF NOT EXISTS " + table + " (" + tableinfo + ")";
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     prepstate.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -95,11 +97,11 @@ public class MySQLDatabase implements Serializable {
      * @param value     the value to define which entry should be removed
      */
     public void remove(String condition, String value) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "DELETE FROM " + table + " WHERE(" + condition + "='" + value + "')";
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     prepstate.executeUpdate();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -172,11 +174,11 @@ public class MySQLDatabase implements Serializable {
             builder.append(", '").append(str).append("'");
         }
 
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "INSERT INTO " + table + " VALUES (" + builder.toString().replaceFirst(", ", "") + ")";
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     prepstate.executeUpdate();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -194,11 +196,11 @@ public class MySQLDatabase implements Serializable {
      * @return the executed query
      */
     public ResultSet orderAscending(String columnToOrder, String orderBy) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "SELECT " + columnToOrder + " FROM " + table + " ORDER BY " + orderBy + " asc";
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     return prepstate.executeQuery();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -218,11 +220,11 @@ public class MySQLDatabase implements Serializable {
      * @return the executed query
      */
     public ResultSet orderLimitAscending(String columnToOrder, String orderBy, long limit) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "SELECT " + columnToOrder + " FROM " + table + " ORDER BY " + orderBy + " asc LIMIT " + limit;
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     return prepstate.executeQuery();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -241,11 +243,11 @@ public class MySQLDatabase implements Serializable {
      * @return the executed query
      */
     public ResultSet orderDescending(String columnToOrder, String orderBy) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "SELECT " + columnToOrder + " FROM " + table + " ORDER BY " + orderBy + " desc";
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     return prepstate.executeQuery();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -265,11 +267,11 @@ public class MySQLDatabase implements Serializable {
      * @return the executed query
      */
     public ResultSet orderLimitDescending(String columnToOrder, String orderBy, long limit) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "SELECT " + columnToOrder + " FROM " + table + " ORDER BY " + orderBy + " desc LIMIT " + limit;
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     return prepstate.executeQuery();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -287,11 +289,11 @@ public class MySQLDatabase implements Serializable {
      * @param updatevalue the new value
      */
     public void update(UUID uuid, String column, String updatevalue) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "UPDATE " + table + " SET " + column + "=? WHERE " + "uuid" + "=?";
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     prepstate.setString(1, updatevalue);
                     prepstate.setString(2, uuid.toString());
                     prepstate.executeUpdate();
@@ -311,11 +313,11 @@ public class MySQLDatabase implements Serializable {
      * @param updatevalue    the new value
      */
     public void update(String condition, String conditionValue, String column, String updatevalue) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "UPDATE " + table + " SET " + column + "=? WHERE " + condition + "=?";
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     prepstate.setString(1, updatevalue);
                     prepstate.setString(2, conditionValue);
                     prepstate.executeUpdate();
@@ -379,11 +381,11 @@ public class MySQLDatabase implements Serializable {
     public ArrayList<String> getList(String column) {
         ArrayList<String> list = new ArrayList<>();
 
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
 
                 try {
-                    ResultSet rs = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement("SELECT " + column + " FROM " + table).executeQuery();
+                    ResultSet rs = api.getMySQLConnection().prepareStatement("SELECT " + column + " FROM " + table).executeQuery();
 
                     if (rs == null) {
                         return new ArrayList<>();
@@ -419,10 +421,10 @@ public class MySQLDatabase implements Serializable {
     public ArrayList<String> getLimitedList(String column, long limit) {
         ArrayList<String> list = new ArrayList<>();
 
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
-                    ResultSet rs = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement("SELECT " + column + " FROM " + table + " LIMIT " + limit).executeQuery();
+                    ResultSet rs = api.getMySQLConnection().prepareStatement("SELECT " + column + " FROM " + table + " LIMIT " + limit).executeQuery();
 
                     if (rs == null) {
                         return new ArrayList<>();
@@ -573,11 +575,11 @@ public class MySQLDatabase implements Serializable {
      * @return the Object which was saved inside the table
      */
     public Object getResult(String condition, String value, String column) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
                     String qry = "SELECT * FROM " + table + " WHERE (" + condition + "=?)";
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     prepstate.setString(1, value);
                     ResultSet rs = prepstate.executeQuery();
 
@@ -603,10 +605,10 @@ public class MySQLDatabase implements Serializable {
      * @return the executed Query
      */
     public ResultSet customResult(String qry) {
-        if (MySQLAPI.getMySQL(database) != null) {
-            if (MySQLAPI.getMySQL(database).isConnected()) {
+        if (api != null) {
+            if (api.isConnected()) {
                 try {
-                    PreparedStatement prepstate = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement(qry);
+                    PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                     return prepstate.executeQuery();
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -3,7 +3,7 @@ package de.alphahelix.alphalibary.netty.channel;
 import java.net.SocketAddress;
 
 public class ChannelWrapper<T> {
-    private T channel;
+    private final T channel;
 
     public ChannelWrapper(T channel) {
         this.channel = channel;

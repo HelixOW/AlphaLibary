@@ -25,26 +25,27 @@ import org.bukkit.event.player.PlayerEvent;
 
 public class PlayerInputEvent extends PlayerEvent {
 
-	private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
 
-	private String input;
+    private final String input;
 
-	public PlayerInputEvent(Player who, String input) {
-		super(who); this.input = input;
-	}
+    public PlayerInputEvent(Player who, String input) {
+        super(who);
+        this.input = input;
+    }
 
-	public final static HandlerList getHandlerList() {
-		return handlers;
-	}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
-	public String getInput() {
-		return input;
-	}
+    public String getInput() {
+        return input;
+    }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -41,7 +41,7 @@ public class SimpleScoreboard extends SimpleListener implements Serializable {
     @Expose
     private transient static final List<ChatColor> colors = Arrays.asList(ChatColor.values());
 
-    private static WeakHashMap<String, SimpleScoreboard> scoreboards = new WeakHashMap<>();
+    private static final WeakHashMap<String, SimpleScoreboard> SCOREBOARDS = new WeakHashMap<>();
 
     private final WeakHashMap<String, List<StringLine>> stringLines = new WeakHashMap<>();
     private final List<BoardLine> boardLines = new ArrayList<>();
@@ -79,9 +79,9 @@ public class SimpleScoreboard extends SimpleListener implements Serializable {
         }
 
         if (p == null) {
-            scoreboards.put("ALL", this);
+            SCOREBOARDS.put("ALL", this);
         } else {
-            scoreboards.put(p.getName(), this);
+            SCOREBOARDS.put(p.getName(), this);
         }
     }
 
@@ -90,7 +90,7 @@ public class SimpleScoreboard extends SimpleListener implements Serializable {
      * @return
      */
     public static SimpleScoreboard getScoreboard(String key) {
-        return scoreboards.get(key);
+        return SCOREBOARDS.get(key);
     }
 
     private static String getFirstColors(String input) {

@@ -8,8 +8,8 @@ import java.util.Set;
 
 public class NBTCompound {
 
-    private String name;
-    private NBTCompound parent;
+    private final String name;
+    private final NBTCompound parent;
 
     public NBTCompound(String name, NBTCompound parent) {
         this.name = name;

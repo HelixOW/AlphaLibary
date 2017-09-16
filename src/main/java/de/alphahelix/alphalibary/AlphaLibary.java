@@ -104,14 +104,24 @@ public class AlphaLibary extends JavaPlugin {
                             if (OLD_VALUES.containsKey(id)) {
                                 if (OLD_VALUES.get(id) != nV) {
                                     oV = OLD_VALUES.get(id);
-                                    OLD_VALUES.put(id, nV);
+
                                     ArmorChangeEvent ace = new ArmorChangeEvent(p, oV, nV);
                                     Bukkit.getPluginManager().callEvent(ace);
+
+                                    if (!ace.isCancelled())
+                                        OLD_VALUES.put(id, nV);
+                                    else
+                                        packet.setCancelled(true);
+
                                 }
                             } else {
-                                OLD_VALUES.put(id, nV);
                                 ArmorChangeEvent ace = new ArmorChangeEvent(p, 0.0, nV);
                                 Bukkit.getPluginManager().callEvent(ace);
+
+                                if (!ace.isCancelled())
+                                    OLD_VALUES.put(id, nV);
+                                else
+                                    packet.setCancelled(true);
                             }
                         });
                     }

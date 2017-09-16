@@ -40,8 +40,10 @@ public class ArenaStatus {
 
     public static void setCurrentStatus(Arena toUpdate, ArenaStatus current) {
         ArenaStatusChangeEvent gameStatusChangeEvent = new ArenaStatusChangeEvent(getCurrentStatus(toUpdate), current);
-        ArenaStatus.CURRENT.put(toUpdate, current);
         Bukkit.getPluginManager().callEvent(gameStatusChangeEvent);
+
+        if (!gameStatusChangeEvent.isCancelled())
+            ArenaStatus.CURRENT.put(toUpdate, current);
     }
 
     public String getName() {

@@ -2,14 +2,16 @@ package de.alphahelix.alphalibary.events.countdown;
 
 import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.countdown.GameCountdown;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class CountDownStartEvent extends Event {
+public class CountDownStartEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private final GameCountdown countdown;
     private final long timeTillEnd;
+    private boolean cancel;
 
     public CountDownStartEvent(GameCountdown countdown, long timeTillEnd) {
         this.countdown = countdown;
@@ -53,5 +55,16 @@ public class CountDownStartEvent extends Event {
                 "countdown=" + countdown +
                 ", timeTillEnd=" + timeTillEnd +
                 '}';
+    }
+
+
+    @Override
+    public boolean isCancelled() {
+        return cancel;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancel = cancel;
     }
 }

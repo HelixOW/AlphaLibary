@@ -40,8 +40,10 @@ public class GameStatus implements Serializable {
 
     public static void setCurrentStatus(GameStatus current) {
         GameStatusChangeEvent gameStatusChangeEvent = new GameStatusChangeEvent(GameStatus.current, current);
-        GameStatus.current = current;
         Bukkit.getPluginManager().callEvent(gameStatusChangeEvent);
+
+        if (!gameStatusChangeEvent.isCancelled())
+            GameStatus.current = current;
     }
 
     public String getName() {

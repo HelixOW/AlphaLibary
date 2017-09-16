@@ -188,7 +188,8 @@ class MySQLFileManager extends SimpleFile {
     }
 
     public void addValues() {
-        if (getKeys(false).size() > 0) return;
+        if (getKeys().size() > 0) return;
+
         setDefault("database.username", "root");
         setDefault("database.password", "password");
         setDefault("database.host", "localhost");
@@ -196,7 +197,7 @@ class MySQLFileManager extends SimpleFile {
     }
 
     void setupConnection() {
-        for (String dbName : getKeys(false)) {
+        for (String dbName : getKeys()) {
             new MySQLAPI(
                     getString(dbName + ".username"),
                     getString(dbName + ".password"),

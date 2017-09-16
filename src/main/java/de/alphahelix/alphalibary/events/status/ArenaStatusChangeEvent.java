@@ -2,14 +2,16 @@ package de.alphahelix.alphalibary.events.status;
 
 import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.status.ArenaStatus;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class ArenaStatusChangeEvent extends Event {
+public class ArenaStatusChangeEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private final ArenaStatus newArenaState;
     private final ArenaStatus oldArenaState;
+    private boolean cancel;
 
     public ArenaStatusChangeEvent(ArenaStatus newArenaState, ArenaStatus oldArenaState) {
         this.newArenaState = newArenaState;
@@ -53,5 +55,15 @@ public class ArenaStatusChangeEvent extends Event {
                 "newArenaState=" + newArenaState +
                 ", oldArenaState=" + oldArenaState +
                 '}';
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancel;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancel = cancel;
     }
 }

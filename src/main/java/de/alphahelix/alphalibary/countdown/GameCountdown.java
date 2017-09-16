@@ -59,13 +59,19 @@ public class GameCountdown implements Serializable {
      * @param titleMessage the message to display
      */
     public void start(String titleMessage) {
-        Bukkit.getPluginManager().callEvent(new CountDownStartEvent(instance, time));
+        CountDownStartEvent countDownStartEvent = new CountDownStartEvent(instance, time);
+        Bukkit.getPluginManager().callEvent(countDownStartEvent);
+
+        if (countDownStartEvent.isCancelled()) return;
+
         schedulerID = new BukkitRunnable() {
             long currentTime = time;
 
             public void run() {
                 if (Arrays.asList(messageTimes).contains(currentTime)) {
-                    Bukkit.getPluginManager().callEvent(new CountDownTimeEvent(instance, currentTime));
+                    CountDownTimeEvent countDownTimeEvent = new CountDownTimeEvent(instance, currentTime);
+
+                    Bukkit.getPluginManager().callEvent(countDownTimeEvent);
                 }
 
                 if (useXP) {
@@ -89,8 +95,13 @@ public class GameCountdown implements Serializable {
                 }
 
                 if (currentTime == 0) {
-                    Bukkit.getPluginManager().callEvent(new CountDownFinishEvent(instance));
-                    stop();
+                    CountDownFinishEvent countDownFinishEvent = new CountDownFinishEvent(instance);
+                    Bukkit.getPluginManager().callEvent(countDownFinishEvent);
+
+                    if (!countDownFinishEvent.isCancelled())
+                        stop();
+                    else
+                        currentTime++;
                 }
                 currentTime--;
             }

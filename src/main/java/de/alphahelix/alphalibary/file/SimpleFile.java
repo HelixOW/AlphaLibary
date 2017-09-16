@@ -15,28 +15,32 @@
  */
 package de.alphahelix.alphalibary.file;
 
-import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.AlphaLibary;
 import de.alphahelix.alphalibary.inventorys.ItemInventory;
 import de.alphahelix.alphalibary.item.InventoryItem;
 import de.alphahelix.alphalibary.utils.SerializationUtil;
 import org.bukkit.*;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
-public class SimpleFile extends YamlConfiguration {
+public class SimpleFile extends File {
 
-    private File source = null;
+    private static final Yaml YAML = new Yaml(new DumperOptions() {
+        @Override
+        public boolean isPrettyFlow() {
+            return true;
+        }
+    });
+
+    private Map head;
 
     /**
      * Create a new {@link SimpleFile} inside the given path with the name 'name'
@@ -45,47 +49,30 @@ public class SimpleFile extends YamlConfiguration {
      * @param name the name which the {@link File} should have
      */
     public SimpleFile(String path, String name) {
-        new File(path).mkdirs();
-        source = new File(path, name);
-        createIfNotExist();
+        super(path, name);
+        if (!this.exists() && !this.isDirectory()) {
+            try {
+                getParentFile().mkdirs();
+                createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            head = YAML.loadAs(new FileReader(this), Map.class);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (head == null)
+            head = new HashMap();
+
         addValues();
     }
 
     public SimpleFile(JavaPlugin plugin, String name) {
         this(plugin.getDataFolder().getAbsolutePath(), name);
-    }
-
-    /**
-     * Create a new {@link SimpleFile} inside the plugin path with the name 'name'
-     *
-     * @param name the name which the file should have
-     */
-    public SimpleFile(String name) {
-        source = new File(AlphaLibary.getInstance().getDataFolder().getPath(), name);
-        createIfNotExist();
-        addValues();
-    }
-
-    /**
-     * Convert a normal {@link File} into a {@link SimpleFile}
-     *
-     * @param f the old FileHelp which you want to convert
-     */
-    public SimpleFile(File f) {
-        source = f;
-        createIfNotExist();
-        addValues();
-    }
-
-    /**
-     * Finish the setup of the {@link SimpleFile}
-     */
-    private void finishSetup() {
-        try {
-            load(source);
-        } catch (Exception ignored) {
-
-        }
     }
 
     /**
@@ -95,29 +82,74 @@ public class SimpleFile extends YamlConfiguration {
 
     }
 
-    /**
-     * Create a new {@link SimpleFile} if it's not existing
-     */
-    private void createIfNotExist() {
-        options().copyDefaults(true);
-        if (source == null || !source.exists()) {
-            try {
-                assert source != null;
-                source.createNewFile();
-            } catch (IOException e) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            source.createNewFile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.runTaskLaterAsynchronously(AlphaLibary.getInstance(), 20);
-            }
+    public boolean contains(String path) {
+        return head.containsKey(path);
+    }
+
+    public boolean isList(String path) {
+        return head.get(path).getClass().isAssignableFrom(List.class);
+    }
+
+    public void setValue(String path, Object value) {
+        if (value == null)
+            head.remove(path);
+        else
+            head.put(path, value);
+
+        save();
+    }
+
+    public Object getValue(String path) {
+        return head.get(path);
+    }
+
+    public String[] getKeys(String path) {
+        return path.substring(path.indexOf(".") + 1).split("\\.");
+    }
+
+    public Set<String> getKeys() {
+        Set<String> keys = new HashSet<>();
+        for (Object key : head.keySet()) {
+            keys.add(((String) key).substring(0, ((String) key).indexOf(".")));
         }
-        finishSetup();
+
+        return keys;
+    }
+
+    public String getString(String path) {
+        return (String) getValue(path);
+    }
+
+    public int getInt(String path) {
+        return (int) getValue(path);
+    }
+
+    public short getShort(String path) {
+        return (short) getValue(path);
+    }
+
+    public double getDouble(String path) {
+        return (double) getValue(path);
+    }
+
+    public float getFloat(String path) {
+        return (float) getValue(path);
+    }
+
+    public boolean getBoolean(String path) {
+        return (boolean) getValue(path);
+    }
+
+    public char getChar(String path) {
+        return (char) getValue(path);
+    }
+
+    public byte getByte(String path) {
+        return (byte) getValue(path);
+    }
+
+    public long getLong(String path) {
+        return (long) getValue(path);
     }
 
     /**
@@ -131,7 +163,7 @@ public class SimpleFile extends YamlConfiguration {
             return "";
 
         try {
-            String toReturn = getString(path);
+            String toReturn = (String) getValue(path);
             return ChatColor.translateAlternateColorCodes('&', toReturn);
         } catch (Exception e) {
             return "";
@@ -145,12 +177,12 @@ public class SimpleFile extends YamlConfiguration {
      * @return the {@link ArrayList} with Colors
      */
     public ArrayList<String> getColorStringList(String path) {
-        if (!configContains(path)) return new ArrayList<>();
+        if (!contains(path)) return new ArrayList<>();
         if (!isList(path)) return new ArrayList<>();
 
         try {
             ArrayList<String> tR = new ArrayList<>();
-            for (String str : getStringList(path)) {
+            for (String str : (List<String>) getValue(path)) {
                 tR.add(ChatColor.translateAlternateColorCodes('&', str));
             }
             return tR;
@@ -182,7 +214,7 @@ public class SimpleFile extends YamlConfiguration {
             items.add(SerializationUtil.encodeBase64(item));
         }
 
-        override(path, items);
+        setValue(path, items);
     }
 
     /**
@@ -194,7 +226,7 @@ public class SimpleFile extends YamlConfiguration {
     public InventoryItem[] getBase64InventoryItemArray(String path) {
         ArrayList<InventoryItem> items = new ArrayList<>();
 
-        for (String base64 : getStringList(path)) {
+        for (String base64 : (List<String>) getValue(path)) {
             items.add(SerializationUtil.decodeBase64(base64, InventoryItem.class));
         }
 
@@ -208,7 +240,7 @@ public class SimpleFile extends YamlConfiguration {
      * @return the {@link ItemStack}[] which was saved
      */
     public ItemStack[] getBase64ItemStackArray(String path) {
-        return SerializationUtil.decodeBase64(getString(path), ItemStack[].class);
+        return SerializationUtil.decodeBase64((String) getValue(path), ItemStack[].class);
     }
 
     /**
@@ -233,7 +265,7 @@ public class SimpleFile extends YamlConfiguration {
     public ItemStack[] getItemStackArray(String path) {
         ArrayList<ItemStack> items = new ArrayList<>();
 
-        for (String id : getConfigurationSection(path).getKeys(false)) {
+        for (String id : getKeys()) {
             items.add(getInventoryItem(path + "." + id).getItemStack());
         }
         return items.toArray(new ItemStack[items.size()]);
@@ -252,11 +284,11 @@ public class SimpleFile extends YamlConfiguration {
         setDefault(path + ".amount", itemStack.getAmount());
         setDefault(path + ".damage", itemStack.getDurability());
         setDefault(path + ".slot", slot);
-        if (getStringList(path + ".enchantments") == null)
+        if (getValue(path + ".enchantments") == null)
             setMap(path + ".enchantments", new HashMap<>());
-        if (getStringList(path + ".lore") == null)
+        if (getValue(path + ".lore") == null)
             setArgumentList(path + ".lore", "");
-        if (getStringList(path + ".flags") == null)
+        if (getValue(path + ".flags") == null)
             setArgumentList(path + ".flags", "");
 
         if (itemStack.hasItemMeta()) {
@@ -285,13 +317,14 @@ public class SimpleFile extends YamlConfiguration {
      * @return the {@link InventoryItem} which was saved
      */
     public InventoryItem getInventoryItem(String path) {
+
         String name = getColorString(path + ".name");
         Material type = getMaterial(path + ".type");
-        int amount = getInt(path + ".amount");
-        short damage = (short) getInt(path + ".damage");
+        int amount = (int) getValue(path + ".amount");
+        short damage = (short) getValue(path + ".damage");
         HashMap<String, String> ench = getMap(path + ".enchantments");
-        List<String> lore = getStringList(path + ".lore");
-        List<String> flags = getStringList(path + ".flags");
+        List<String> lore = (List<String>) getValue(path + ".lore");
+        List<String> flags = (List<String>) getValue(path + ".flags");
 
         ItemStack stack = new ItemStack(type, amount, damage);
         ItemMeta meta = stack.getItemMeta();
@@ -309,7 +342,7 @@ public class SimpleFile extends YamlConfiguration {
 
         stack.setItemMeta(meta);
 
-        return new InventoryItem(stack, getInt(path + ".slot"));
+        return new InventoryItem(stack, (Integer) getValue(path + ".slot"));
     }
 
     /**
@@ -321,7 +354,7 @@ public class SimpleFile extends YamlConfiguration {
     public void setMaterialStringList(String path, String... materials) {
         ArrayList<String> stacks = new ArrayList<>();
         Collections.addAll(stacks, materials);
-        set(path, stacks);
+        setValue(path, stacks);
         save();
     }
 
@@ -332,7 +365,7 @@ public class SimpleFile extends YamlConfiguration {
      * @return the {@link List} with all {@link Material} names
      */
     public List<String> getMaterialStringList(String path) {
-        return getStringList(path);
+        return (List<String>) getValue(path);
     }
 
     /**
@@ -342,7 +375,7 @@ public class SimpleFile extends YamlConfiguration {
      * @return the saved {@link Material}
      */
     public Material getMaterial(String path) {
-        return Material.getMaterial(getString(path).replace(" ", "_").toUpperCase());
+        return Material.getMaterial(((String) getValue(path)).replace(" ", "_").toUpperCase());
     }
 
     /**
@@ -352,7 +385,7 @@ public class SimpleFile extends YamlConfiguration {
      * @param material the {@link Material} which should be saved
      */
     public void setMaterial(String path, Material material) {
-        setDefault(path, material.name().replace("_", " ").toLowerCase());
+        setValue(path, material.name().replace("_", " ").toLowerCase());
     }
 
     /**
@@ -362,8 +395,8 @@ public class SimpleFile extends YamlConfiguration {
      * @param itemInventory the {@link Inventory} toSave
      */
     public void setItemInventory(String path, ItemInventory itemInventory) {
-        override(path + ".title", itemInventory.getInventory().getTitle());
-        override(path + ".size", itemInventory.getInventory().getSize());
+        setValue(path + ".title", itemInventory.getInventory().getTitle());
+        setValue(path + ".size", itemInventory.getInventory().getSize());
         setBase64InventoryItemArray(path + ".content", itemInventory.getItems());
     }
 
@@ -374,9 +407,9 @@ public class SimpleFile extends YamlConfiguration {
      * @return the {@link Inventory} which was saved inside this {@link SimpleFile}
      */
     public Inventory getItemInventory(String path) {
-        if (!isConfigurationSection(path)) return null;
+        if (!path.contains(".")) return null;
 
-        Inventory inventory = Bukkit.createInventory(null, getInt(path + ".size"), getColorString(path + ".title"));
+        Inventory inventory = Bukkit.createInventory(null, (Integer) getValue(path + ".size"), getColorString(path + ".title"));
 
         for (InventoryItem is : getBase64InventoryItemArray(path + ".content")) {
             if (is.getSlot() == -1) continue;
@@ -395,8 +428,8 @@ public class SimpleFile extends YamlConfiguration {
      * @param toSave the {@link Inventory} to save
      */
     public void setInventory(String path, Inventory toSave) {
-        override(path + ".title", toSave.getTitle());
-        override(path + ".size", toSave.getSize());
+        setValue(path + ".title", toSave.getTitle());
+        setValue(path + ".size", toSave.getSize());
         setBase64ItemStackArray(path + ".content", toSave.getContents());
     }
 
@@ -407,7 +440,7 @@ public class SimpleFile extends YamlConfiguration {
      * @return the {@link Inventory}
      */
     public Inventory getInventory(String path) {
-        Inventory toReturn = Bukkit.createInventory(null, getInt(path + ".size"), getColorString(path + ".title"));
+        Inventory toReturn = Bukkit.createInventory(null, (Integer) getValue(path + ".size"), getColorString(path + ".title"));
 
         for (ItemStack is : getBase64ItemStackArray(path + ".content")) {
             if (is != null && is.getType() != Material.AIR)
@@ -424,7 +457,7 @@ public class SimpleFile extends YamlConfiguration {
      * @param loc  the {@link Location} to save
      */
     public void setBase64Location(String path, Location loc) {
-        override(path, SerializationUtil.encodeBase64(loc));
+        setValue(path, SerializationUtil.encodeBase64(loc));
     }
 
     /**
@@ -434,9 +467,9 @@ public class SimpleFile extends YamlConfiguration {
      * @return the {@link Location} which is saved
      */
     public Location getBase64Location(String path) {
-        if (getString(path) == null) return null;
+        if (getValue(path) == null) return null;
 
-        return SerializationUtil.decodeBase64(getString(path), Location.class);
+        return SerializationUtil.decodeBase64((String) getValue(path), Location.class);
     }
 
     /**
@@ -463,12 +496,12 @@ public class SimpleFile extends YamlConfiguration {
      */
     public Location getLocation(String path, boolean forceGenerate) {
 
-        double x = getDouble(path + ".x");
-        double y = getDouble(path + ".y");
-        double z = getDouble(path + ".z");
-        float yaw = getInt(path + ".yaw");
-        float pitch = getInt(path + ".pitch");
-        World w = Bukkit.getWorld(getString(path + ".world"));
+        double x = (double) getValue(path + ".x");
+        double y = (double) getValue(path + ".y");
+        double z = (double) getValue(path + ".z");
+        float yaw = (float) getValue(path + ".yaw");
+        float pitch = (float) getValue(path + ".pitch");
+        World w = Bukkit.getWorld((String) getValue(path + ".world"));
 
         if (forceGenerate)
             if (w == null)
@@ -492,7 +525,7 @@ public class SimpleFile extends YamlConfiguration {
             argsAtBase64.add(SerializationUtil.encodeBase64(arg));
         }
 
-        override(path, argsAtBase64);
+        setValue(path, argsAtBase64);
     }
 
     /**
@@ -505,8 +538,8 @@ public class SimpleFile extends YamlConfiguration {
     public <T> ArrayList<T> getBase64ArgumentList(String path, Class<T> objectClazz) {
         ArrayList<T> args = new ArrayList<>();
 
-        if (configContains(path))
-            for (String base64arg : getStringList(path)) {
+        if (contains(path))
+            for (String base64arg : (List<String>) getValue(path)) {
                 args.add(SerializationUtil.decodeBase64(base64arg, objectClazz));
             }
 
@@ -548,7 +581,7 @@ public class SimpleFile extends YamlConfiguration {
         if (!args.isEmpty())
             setBase64ArgumentList(path, args.toArray());
         else
-            override(path, null);
+            setValue(path, null);
     }
 
     /**
@@ -562,7 +595,7 @@ public class SimpleFile extends YamlConfiguration {
 
         Collections.addAll(arguments, listArguments);
 
-        override(path, arguments);
+        setValue(path, arguments);
     }
 
     /**
@@ -572,7 +605,12 @@ public class SimpleFile extends YamlConfiguration {
      * @param arguments the arguments to add
      */
     public void addArgumentsToList(String path, String... arguments) {
-        List<String> args = getStringList(path);
+        List<String> args;
+
+        if (!contains(path))
+            args = new ArrayList<>();
+        else
+            args = (List<String>) getValue(path);
 
         for (String arg : arguments) {
             if (!args.contains(arg)) args.add(arg);
@@ -588,7 +626,7 @@ public class SimpleFile extends YamlConfiguration {
      * @param arguments the arguments to remove
      */
     public void removeArgumentsFromList(String path, String... arguments) {
-        List<String> args = getStringList(path);
+        List<String> args = (List<String>) getValue(path);
 
         for (String arg : arguments) {
             if (args.contains(arg)) {
@@ -600,7 +638,7 @@ public class SimpleFile extends YamlConfiguration {
         if (!args.isEmpty())
             setArgumentList(path, args.toArray(new String[args.size()]));
         else
-            override(path, null);
+            setValue(path, null);
     }
 
     /**
@@ -629,7 +667,7 @@ public class SimpleFile extends YamlConfiguration {
     public HashMap<String, String> getMap(String path) {
         HashMap<String, String> map = new HashMap<>();
 
-        for (String seri : getStringList(path)) {
+        for (String seri : (List<String>) getValue(path)) {
             String k = seri.split(" <:> ")[0];
             String v = seri.split(" <:> ")[1];
 
@@ -640,31 +678,16 @@ public class SimpleFile extends YamlConfiguration {
     }
 
     /**
-     * Checks if this {@link SimpleFile} contains a specific {@link String}
-     *
-     * @param toCheck {@link String} which might be inside this {@link SimpleFile}
-     * @return whether or not this {@link SimpleFile} contains the {@link String}
-     */
-    public boolean configContains(String toCheck) {
-        boolean cContains = false;
-
-        for (String key : getKeys(true)) {
-            if (key.equalsIgnoreCase(toCheck))
-                cContains = true;
-        }
-
-        return cContains;
-    }
-
-    /**
      * Save and load this {@link SimpleFile}
      */
     public void save() {
         try {
-            if (source == null) return;
-            save(source);
-        } catch (IOException ignored) {
-            ignored.printStackTrace();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(this));
+            bw.write(YAML.dumpAsMap(head));
+
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -681,25 +704,8 @@ public class SimpleFile extends YamlConfiguration {
         if (value instanceof String)
             value = ((String) value).replaceAll("§", "&");
 
-        addDefault(path, value);
+        setValue(path, value);
 
-        save();
-    }
-
-    /**
-     * Replaces a value inside this {@link SimpleFile}
-     *
-     * @param path  where the value is located at
-     * @param value the new value which should be saved
-     */
-    public void override(String path, Object value) {
-        if (value instanceof String)
-            value = ((String) value).replaceAll("§", "&");
-
-        if (configContains(path))
-            set(path, value);
-        else
-            addDefault(path, value);
         save();
     }
 
@@ -707,20 +713,25 @@ public class SimpleFile extends YamlConfiguration {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
         SimpleFile that = (SimpleFile) o;
-        return Objects.equal(source, that.source);
+
+        return head != null ? head.equals(that.head) : that.head == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(source);
+        int result = super.hashCode();
+        result = 31 * result + (head != null ? head.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
         return "SimpleFile{" +
-                "source=" + source +
-                '}';
+                "head=" + head +
+                "} " + super.toString();
     }
 }
 

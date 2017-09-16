@@ -80,6 +80,12 @@ public class GameTeam implements Serializable {
     }
 
     public GameTeam addPlayer(Player p, boolean updateTab) {
+
+        TeamJoinEvent event = new TeamJoinEvent(p, this);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) return this;
+
         members.add(p.getName());
 
         if (updateTab) {
@@ -117,11 +123,16 @@ public class GameTeam implements Serializable {
                 }
             }
         }
-        Bukkit.getPluginManager().callEvent(new TeamJoinEvent(p, this));
         return this;
     }
 
     public GameTeam removePlayer(Player p, boolean updateTab) {
+
+        TeamLeaveEvent event = new TeamLeaveEvent(p, this);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) return this;
+
         if (members.contains(p.getName())) {
 
             if (updateTab) {
@@ -139,7 +150,6 @@ public class GameTeam implements Serializable {
 
             members.remove(p.getName());
         }
-        Bukkit.getPluginManager().callEvent(new TeamLeaveEvent(p, this));
         return this;
     }
 

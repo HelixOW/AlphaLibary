@@ -33,7 +33,6 @@ import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.utils.GameProfileBuilder;
 import de.alphahelix.alphalibary.utils.LocationUtil;
 import de.alphahelix.alphalibary.uuid.UUIDFetcher;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -168,7 +167,7 @@ public class PlayerFakeUtil {
         GameProfile gameProfile = skin;
 
         Object npc = ENTITY_PLAYER.newInstance(false,
-                ReflectionUtil.getMinecraftServer(Bukkit.getServer()),
+                ReflectionUtil.getMinecraftServer(),
                 ReflectionUtil.getWorldServer(loc.getWorld()),
                 gameProfile,
                 ReflectionUtil.getDeclaredConstructor("PlayerInteractManager", ReflectionUtil.getNmsClass("World"))

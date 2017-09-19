@@ -18,6 +18,7 @@
 
 package de.alphahelix.alphalibary.reflection;
 
+import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.nbt.NBTCompound;
 import de.alphahelix.alphalibary.nbt.NBTList;
 import de.alphahelix.alphalibary.nbt.NBTType;
@@ -1005,7 +1006,7 @@ public class ReflectionUtil {
      * @param server the {@link Server} to get its MinecraftServer from
      * @return the MinecraftServer
      */
-    public static Object getMinecraftServer(Server server) {
+    public static Object getMinecraftServer() {
         try {
             return getCraftBukkitClass("CraftServer").getMethod("getServer").invoke(Bukkit.getServer());
         } catch (Exception e) {
@@ -1125,6 +1126,10 @@ public class ReflectionUtil {
                 return (int) getDeclaredField("c", bP).get(nmsLoc);
             }
         };
+    }
+
+    public static GameProfile getGameProfile(Player p) {
+        return (GameProfile) getDeclaredMethod("getProfile", getCraftBukkitClass("entity.CraftPlayer")).invoke(p, true);
     }
 
     public static List<Class<?>> findLoadedClassesImpmenenting(final Class<?> interfaceClass, JavaPlugin pl) {

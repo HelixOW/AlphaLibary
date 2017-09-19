@@ -17,6 +17,8 @@ package de.alphahelix.alphalibary.file;
 
 import de.alphahelix.alphalibary.inventorys.ItemInventory;
 import de.alphahelix.alphalibary.item.InventoryItem;
+import de.alphahelix.alphalibary.mysql.DatabaseCallback;
+import de.alphahelix.alphalibary.storage.IDataStorage;
 import de.alphahelix.alphalibary.utils.SerializationUtil;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -31,7 +33,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.*;
 import java.util.*;
 
-public class SimpleFile extends File {
+public class SimpleFile extends File implements IDataStorage {
 
     private static final Yaml YAML = new Yaml(new DumperOptions() {
         @Override
@@ -82,25 +84,57 @@ public class SimpleFile extends File {
 
     }
 
-    public boolean contains(String path) {
-        return head.containsKey(path);
+    public boolean contains(Object path) {
+        return head.containsKey(path.toString());
     }
 
-    public boolean isList(String path) {
-        return head.get(path).getClass().isAssignableFrom(List.class);
+    public boolean isList(Object path) {
+        return head.get(path.toString()).getClass().isAssignableFrom(List.class);
     }
 
-    public void setValue(String path, Object value) {
+    @Override
+    public void setValue(Object path, Object value) {
         if (value == null)
-            head.remove(path);
+            head.remove(path.toString());
         else
-            head.put(path, value);
+            head.put(path.toString(), value.toString());
 
         save();
     }
 
-    public Object getValue(String path) {
-        return head.get(path);
+    public <T> T getValue(Object path) {
+        return (T) head.get(path.toString());
+    }
+
+    @Override
+    public void setDefaultValue(Object path, Object value) {
+        if (!contains(path))
+            setValue(path, value);
+    }
+
+    @Override
+    public void removeValue(Object path) {
+        setValue(path, null);
+    }
+
+    @Override
+    public <T> void getValue(Object path, Class<T> definy, DatabaseCallback<T> callback) {
+        callback.done(getValue(path));
+    }
+
+    @Override
+    public void getKeys(DatabaseCallback<ArrayList<String>> callback) {
+        callback.done(new ArrayList<>(getKeys()));
+    }
+
+    @Override
+    public <T> void getValues(Class<T> definy, DatabaseCallback<ArrayList<T>> callback) {
+        callback.done(new ArrayList<T>(head.values()));
+    }
+
+    @Override
+    public void hasValue(Object path, DatabaseCallback<Boolean> callback) {
+        callback.done(contains(path));
     }
 
     public String[] getKeys(String path) {
@@ -115,6 +149,7 @@ public class SimpleFile extends File {
 
         return keys;
     }
+
 
     public String getString(String path) {
         return (String) getValue(path);
@@ -163,7 +198,7 @@ public class SimpleFile extends File {
             return "";
 
         try {
-            String toReturn = (String) getValue(path);
+            String toReturn = getValue(path);
             return ChatColor.translateAlternateColorCodes('&', toReturn);
         } catch (Exception e) {
             return "";
@@ -240,7 +275,7 @@ public class SimpleFile extends File {
      * @return the {@link ItemStack}[] which was saved
      */
     public ItemStack[] getBase64ItemStackArray(String path) {
-        return SerializationUtil.decodeBase64((String) getValue(path), ItemStack[].class);
+        return SerializationUtil.decodeBase64(getValue(path), ItemStack[].class);
     }
 
     /**
@@ -320,11 +355,11 @@ public class SimpleFile extends File {
 
         String name = getColorString(path + ".name");
         Material type = getMaterial(path + ".type");
-        int amount = (int) getValue(path + ".amount");
-        short damage = (short) getValue(path + ".damage");
+        int amount = getValue(path + ".amount");
+        short damage = getValue(path + ".damage");
         HashMap<String, String> ench = getMap(path + ".enchantments");
-        List<String> lore = (List<String>) getValue(path + ".lore");
-        List<String> flags = (List<String>) getValue(path + ".flags");
+        List<String> lore = getValue(path + ".lore");
+        List<String> flags = getValue(path + ".flags");
 
         ItemStack stack = new ItemStack(type, amount, damage);
         ItemMeta meta = stack.getItemMeta();
@@ -342,7 +377,7 @@ public class SimpleFile extends File {
 
         stack.setItemMeta(meta);
 
-        return new InventoryItem(stack, (Integer) getValue(path + ".slot"));
+        return new InventoryItem(stack, getValue(path + ".slot"));
     }
 
     /**
@@ -469,7 +504,7 @@ public class SimpleFile extends File {
     public Location getBase64Location(String path) {
         if (getValue(path) == null) return null;
 
-        return SerializationUtil.decodeBase64((String) getValue(path), Location.class);
+        return SerializationUtil.decodeBase64(getValue(path), Location.class);
     }
 
     /**
@@ -496,11 +531,11 @@ public class SimpleFile extends File {
      */
     public Location getLocation(String path, boolean forceGenerate) {
 
-        double x = (double) getValue(path + ".x");
-        double y = (double) getValue(path + ".y");
-        double z = (double) getValue(path + ".z");
-        float yaw = (float) getValue(path + ".yaw");
-        float pitch = (float) getValue(path + ".pitch");
+        double x = getValue(path + ".x");
+        double y = getValue(path + ".y");
+        double z = getValue(path + ".z");
+        float yaw = getValue(path + ".yaw");
+        float pitch = getValue(path + ".pitch");
         World w = Bukkit.getWorld((String) getValue(path + ".world"));
 
         if (forceGenerate)
@@ -610,7 +645,7 @@ public class SimpleFile extends File {
         if (!contains(path))
             args = new ArrayList<>();
         else
-            args = (List<String>) getValue(path);
+            args = getValue(path);
 
         for (String arg : arguments) {
             if (!args.contains(arg)) args.add(arg);
@@ -626,7 +661,7 @@ public class SimpleFile extends File {
      * @param arguments the arguments to remove
      */
     public void removeArgumentsFromList(String path, String... arguments) {
-        List<String> args = (List<String>) getValue(path);
+        List<String> args = getValue(path);
 
         for (String arg : arguments) {
             if (args.contains(arg)) {

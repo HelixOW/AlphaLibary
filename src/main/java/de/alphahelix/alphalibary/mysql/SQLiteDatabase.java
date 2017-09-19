@@ -169,11 +169,12 @@ public class SQLiteDatabase {
             if (api != null) {
                 if (api.isConnected()) {
                     try {
-                        String qry = "INSERT INTO " + tableName + " (" + info + ") VALUES (" + builder.toString().replaceFirst(",", "") + ");";
+                        String qry = "INSERT INTO " + tableName + " (" + info + ") VALUES (\'" + builder.toString().replaceFirst(",", "") + "\');";
                         PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         prepstate.executeUpdate();
 
-                    } catch (SQLException ignored) {
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
                 }
             }

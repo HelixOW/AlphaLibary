@@ -1,8 +1,8 @@
 package de.alphahelix.alphalibary.mysql;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.file.SimpleJSONFile;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -16,20 +16,20 @@ public class SQLiteAPI {
 
     private static final ArrayList<SQLiteAPI> SQ_LITE_APIS = new ArrayList<>();
     private static final HashMap<String, Connection> CONNECTIONS = new HashMap<>();
-    private static final SQLiteFileManager FILE_MANAGER = new SQLiteFileManager();
 
-    static {
-        FILE_MANAGER.setupConnection();
-    }
+    private String databasePath;
 
-    private SQLiteInfo info;
+    public SQLiteAPI(String databasePath) {
 
-    SQLiteAPI(SQLiteInfo info) {
-        this.info = info;
+        this.databasePath = databasePath;
 
-        if (getSQLLite(info.getDatabasePath()) == null) {
+        if (getSQLLite(databasePath) == null) {
             SQ_LITE_APIS.add(this);
         }
+    }
+
+    public SQLiteAPI(JavaPlugin plugin, String databaseName) {
+        this(plugin.getDataFolder().getAbsolutePath() + "/" + databaseName + ".db");
     }
 
     /**
@@ -40,7 +40,7 @@ public class SQLiteAPI {
      */
     public static SQLiteAPI getSQLLite(String db) {
         for (SQLiteAPI api : SQ_LITE_APIS) {
-            if (api.info.getDatabasePath().equals(db)) return api;
+            if (api.getDatabasePath().equals(db)) return api;
         }
         return null;
     }
@@ -61,20 +61,20 @@ public class SQLiteAPI {
      */
     public Connection getSQLiteConnection() {
         if (isConnected()) {
-            return CONNECTIONS.get(info.getDatabasePath());
+            return CONNECTIONS.get(this.getDatabasePath());
         } else {
             try {
                 closeSQLiteConnection();
 
                 Class.forName("org.sqlite.JDBC");
                 Connection c = DriverManager.getConnection(
-                        "jdbc:sqlite:" + info.getDatabasePath());
+                        "jdbc:sqlite:" + this.getDatabasePath());
 
-                CONNECTIONS.put(info.getDatabasePath(), c);
+                CONNECTIONS.put(this.getDatabasePath(), c);
 
                 return c;
             } catch (SQLException | ClassNotFoundException ignore) {
-                Bukkit.getLogger().log(Level.WARNING, "Failed to reconnect to " + info.getDatabasePath() + "! Check your sqllite.json inside AlphaLibary");
+                Bukkit.getLogger().log(Level.WARNING, "Failed to reconnect to " + this.getDatabasePath() + "! Check your sqllite.json inside AlphaLibary");
                 return null;
             }
         }
@@ -86,7 +86,7 @@ public class SQLiteAPI {
      * @return plugin is connected to the database
      */
     public boolean isConnected() {
-        return CONNECTIONS.get(info.getDatabasePath()) != null;
+        return CONNECTIONS.get(this.getDatabasePath()) != null;
     }
 
     /**
@@ -95,10 +95,10 @@ public class SQLiteAPI {
     public void initSQLiteAPI() {
         if (!isConnected()) {
             try {
-                CONNECTIONS.put(info.getDatabasePath(), DriverManager.getConnection(
-                        "jdbc:sqlite:" + info.getDatabasePath()));
+                CONNECTIONS.put(this.getDatabasePath(), DriverManager.getConnection(
+                        "jdbc:sqlite:" + this.getDatabasePath()));
             } catch (SQLException ignore) {
-                Bukkit.getLogger().log(Level.WARNING, "Failed to reconnect to " + info.getDatabasePath() + "! Check your sqlite.json inside AlphaLibary");
+                Bukkit.getLogger().log(Level.WARNING, "Failed to reconnect to " + this.getDatabasePath() + "! Check your sqlite.json inside AlphaLibary");
             }
         }
     }
@@ -110,88 +110,36 @@ public class SQLiteAPI {
      */
     public void closeSQLiteConnection() throws SQLException {
         if (isConnected()) {
-            CONNECTIONS.get(info.getDatabasePath()).close();
-            CONNECTIONS.remove(info.getDatabasePath());
+            CONNECTIONS.get(this.getDatabasePath()).close();
+            CONNECTIONS.remove(this.getDatabasePath());
         }
     }
 
-    public SQLiteInfo getInfo() {
-        return info;
+    public String getDatabasePath() {
+        return databasePath;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SQLiteAPI sqLiteAPI = (SQLiteAPI) o;
-        return Objects.equal(getInfo(), sqLiteAPI.getInfo());
+        SQLiteAPI api = (SQLiteAPI) o;
+        return Objects.equal(getDatabasePath(), api.getDatabasePath());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getInfo());
+        return Objects.hashCode(getDatabasePath());
     }
 
     @Override
     public String toString() {
         return "SQLiteAPI{" +
-                "info=" + info +
+                "databasePath='" + databasePath + '\'' +
                 '}';
     }
 
     public enum SQLiteDataType implements Serializable {
         NULL, INTEGER, REAL, TEXT, BLOB
-    }
-
-    public static class SQLiteInfo {
-
-        private final String databasePath;
-
-        SQLiteInfo(String databasePath) {
-            this.databasePath = databasePath;
-        }
-
-        String getDatabasePath() {
-            return databasePath;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            SQLiteInfo that = (SQLiteInfo) o;
-            return Objects.equal(getDatabasePath(), that.getDatabasePath());
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(getDatabasePath());
-        }
-
-        @Override
-        public String toString() {
-            return "SQLiteInfo{" +
-                    "databasePath='" + databasePath + '\'' +
-                    '}';
-        }
-    }
-}
-
-class SQLiteFileManager extends SimpleJSONFile {
-    SQLiteFileManager() {
-        super("plugins/AlphaLibary", "sqllite.json");
-        addValues();
-    }
-
-    private void addValues() {
-        if (jsonContains("databases")) return;
-
-        addValuesToList("databases", new SQLiteAPI.SQLiteInfo("./test.db"));
-    }
-
-    void setupConnection() {
-        for (SQLiteAPI.SQLiteInfo info : getListValues("databases", SQLiteAPI.SQLiteInfo[].class)) {
-            new SQLiteAPI(info);
-        }
     }
 }

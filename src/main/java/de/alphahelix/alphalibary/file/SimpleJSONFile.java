@@ -23,6 +23,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import de.alphahelix.alphalibary.mysql.DatabaseCallback;
+import de.alphahelix.alphalibary.storage.IDataStorage;
 import de.alphahelix.alphalibary.utils.JSONUtil;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,7 +37,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class SimpleJSONFile extends File {
+public class SimpleJSONFile extends File implements IDataStorage {
 
     private final JsonObject head = new JsonObject();
 
@@ -56,6 +58,7 @@ public class SimpleJSONFile extends File {
     }
 
 
+    @Override
     public void removeValue(Object path) {
         if (!contains(path)) return;
 
@@ -110,14 +113,35 @@ public class SimpleJSONFile extends File {
         return JSONUtil.getGson().fromJson(obj.get(path.toString()), definy);
     }
 
-    public void setDefaultValue(Object path, Object value) {
-        if (jsonContains(path)) return;
-
-        setValue(path, value);
-    }
-
+    @Override
     public void setValue(Object path, Object value) {
         setDefault(path, value);
+    }
+
+    @Override
+    public void setDefaultValue(Object path, Object value) {
+        if (!jsonContains(path))
+            setValue(path, value);
+    }
+
+    @Override
+    public <T> void getValue(Object path, Class<T> definy, DatabaseCallback<T> callback) {
+        callback.done(getValue(path, definy));
+    }
+
+    @Override
+    public void getKeys(DatabaseCallback<ArrayList<String>> callback) {
+        callback.done(getPaths());
+    }
+
+    @Override
+    public <T> void getValues(Class<T> definy, DatabaseCallback<ArrayList<T>> callback) {
+        callback.done(getValues(definy));
+    }
+
+    @Override
+    public void hasValue(Object path, DatabaseCallback<Boolean> callback) {
+        callback.done(jsonContains(path));
     }
 
     private JsonObject read() {

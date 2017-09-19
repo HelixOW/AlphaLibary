@@ -1,4 +1,4 @@
-package de.alphahelix.alphalibary.nms;
+package de.alphahelix.alphalibary.nms.wrappers;
 
 import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;

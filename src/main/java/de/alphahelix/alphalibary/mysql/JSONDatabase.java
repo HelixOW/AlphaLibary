@@ -19,17 +19,18 @@
 package de.alphahelix.alphalibary.mysql;
 
 import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.storage.IDataStorage;
 import de.alphahelix.alphalibary.utils.JSONUtil;
 
 import java.util.ArrayList;
 
-public class JSONDatabase {
+public class JSONDatabase implements IDataStorage {
 
-    private UniqueIdentifier id;
-    private DatabaseType type;
+    private final UniqueIdentifier id;
+    private final DatabaseType type;
 
-    private AsyncMySQLDatabase mySQLDatabase;
-    private SQLiteDatabase sqliteDatabase;
+    private final AsyncMySQLDatabase mySQLDatabase;
+    private final SQLiteDatabase sqliteDatabase;
 
     public JSONDatabase(UniqueIdentifier id, String table, String database, DatabaseType type) {
         this.id = id;
@@ -39,26 +40,40 @@ public class JSONDatabase {
             this.mySQLDatabase = new AsyncMySQLDatabase(table, database);
             this.mySQLDatabase.create(
                     AsyncMySQLDatabase.createColumn(id.name().toLowerCase(), MySQLAPI.MySQLDataType.VARCHAR, 50, "PRIMARY KEY"),
-                    AsyncMySQLDatabase.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
+                    AsyncMySQLDatabase.createColumn("val", MySQLAPI.MySQLDataType.LONGTEXT, 5000));
+            this.sqliteDatabase = null;
         } else if (type == DatabaseType.SQLITE) {
             this.sqliteDatabase = new SQLiteDatabase(table, database);
             this.sqliteDatabase.create(
                     SQLiteDatabase.createColumn(id.name().toLowerCase(), SQLiteAPI.SQLiteDataType.TEXT, "PRIMARY KEY"),
                     SQLiteDatabase.createColumn("val", SQLiteAPI.SQLiteDataType.TEXT)
             );
+            this.mySQLDatabase = null;
+        } else {
+            this.mySQLDatabase = null;
+            this.sqliteDatabase = null;
         }
     }
 
     public JSONDatabase(String table, String database, DatabaseType type) {
+        this.id = null;
+        this.type = type;
+
         if (type == DatabaseType.MYSQL) {
             this.mySQLDatabase = new AsyncMySQLDatabase(table, database);
             this.mySQLDatabase.create(
                     AsyncMySQLDatabase.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
+
+            this.sqliteDatabase = null;
         } else if (type == DatabaseType.SQLITE) {
             this.sqliteDatabase = new SQLiteDatabase(table, database);
             this.sqliteDatabase.create(
                     SQLiteDatabase.createColumn("val", SQLiteAPI.SQLiteDataType.TEXT)
             );
+            this.mySQLDatabase = null;
+        } else {
+            this.mySQLDatabase = null;
+            this.sqliteDatabase = null;
         }
     }
 
@@ -71,6 +86,10 @@ public class JSONDatabase {
 
     public void setValue(String idValue, Object val) {
         if (type == DatabaseType.MYSQL) {
+            if (id == null) {
+                addValue(val);
+                return;
+            }
             this.mySQLDatabase.contains(id.name().toLowerCase(), idValue, result -> {
                 if (result)
                     this.mySQLDatabase.update(id.name().toLowerCase(), idValue, "val", JSONUtil.toJson(val));
@@ -78,6 +97,10 @@ public class JSONDatabase {
                     this.mySQLDatabase.insert(idValue, JSONUtil.toJson(val));
             });
         } else if (type == DatabaseType.SQLITE) {
+            if (id == null) {
+                addValue(val);
+                return;
+            }
             this.sqliteDatabase.contains(id.name().toLowerCase(), idValue, result -> {
                 if (result)
                     this.sqliteDatabase.update(id.name().toLowerCase(), idValue, "val", JSONUtil.toJson(val));
@@ -89,11 +112,15 @@ public class JSONDatabase {
 
     public <T> void getValue(String idValue, Class<T> define, DatabaseCallback<T> callback) {
         if (type == DatabaseType.MYSQL) {
+            if (id == null)
+                return;
             this.mySQLDatabase.contains(id.name().toLowerCase(), idValue, result -> {
                 if (result)
                     this.mySQLDatabase.getResult(id.name().toLowerCase(), idValue, "val", result1 -> callback.done(JSONUtil.getValue(result1.toString(), define)));
             });
         } else if (type == DatabaseType.SQLITE) {
+            if (id == null)
+                return;
             this.sqliteDatabase.contains(id.name().toLowerCase(), idValue, result -> {
                 if (result)
                     this.sqliteDatabase.getResult(id.name().toLowerCase(), idValue, "val", result1 -> callback.done(JSONUtil.getValue(result1.toString(), define)));
@@ -121,6 +148,27 @@ public class JSONDatabase {
         return vals;
     }
 
+    @Override
+    public <T> void getValues(Class<T> definy, DatabaseCallback<ArrayList<T>> callback) {
+        if (type == DatabaseType.MYSQL) {
+            this.mySQLDatabase.getList("val", result -> {
+                ArrayList<T> vals = new ArrayList<>();
+                for (String json : result) {
+                    vals.add(JSONUtil.getValue(json, definy));
+                }
+                callback.done(vals);
+            });
+        } else if (type == DatabaseType.SQLITE) {
+            this.sqliteDatabase.getList("val", result -> {
+                ArrayList<T> vals = new ArrayList<>();
+                for (String json : result) {
+                    vals.add(JSONUtil.getValue(json, definy));
+                }
+                callback.done(vals);
+            });
+        }
+    }
+
     public ArrayList<String> getKeys() {
         ArrayList<String> keys = new ArrayList<>();
 
@@ -141,19 +189,83 @@ public class JSONDatabase {
     }
 
     @Override
+    public void setValue(Object path, Object value) {
+        setValue(path.toString(), value);
+    }
+
+    @Override
+    public void setDefaultValue(Object path, Object value) {
+        hasValue(path.toString(), result -> {
+            if (result)
+                setValue(path, value);
+        });
+    }
+
+    @Override
+    public <T> void getValue(Object path, Class<T> definy, DatabaseCallback<T> callback) {
+        getValue(path.toString(), definy, callback);
+    }
+
+    @Override
+    public void removeValue(Object path) {
+        if (type == DatabaseType.MYSQL) {
+            this.mySQLDatabase.contains(id.name().toLowerCase(), path.toString(), result -> {
+                if (result)
+                    this.mySQLDatabase.remove(id.name().toLowerCase(), path.toString());
+            });
+        } else if (type == DatabaseType.SQLITE) {
+            this.sqliteDatabase.contains(id.name().toLowerCase(), path.toString(), result -> {
+                if (result)
+                    this.sqliteDatabase.remove(id.name().toLowerCase(), path.toString());
+            });
+        }
+    }
+
+    @Override
+    public void hasValue(Object path, DatabaseCallback<Boolean> callback) {
+        hasValue(path.toString(), callback);
+    }
+
+    @Override
+    public void getKeys(DatabaseCallback<ArrayList<String>> callback) {
+        if (id != null) {
+            if (getType() == DatabaseType.MYSQL)
+                this.mySQLDatabase.getList(id.name(), callback);
+            else
+                this.sqliteDatabase.getList(id.name(), callback);
+        }
+    }
+
+    public UniqueIdentifier getId() {
+        return this.id;
+    }
+
+    public DatabaseType getType() {
+        return this.type;
+    }
+
+    public AsyncMySQLDatabase getMySQLDatabase() {
+        return this.mySQLDatabase;
+    }
+
+    public SQLiteDatabase getSqliteDatabase() {
+        return this.sqliteDatabase;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JSONDatabase that = (JSONDatabase) o;
-        return id == that.id &&
-                type == that.type &&
-                Objects.equal(mySQLDatabase, that.mySQLDatabase) &&
-                Objects.equal(sqliteDatabase, that.sqliteDatabase);
+        return getId() == that.getId() &&
+                getType() == that.getType() &&
+                Objects.equal(getMySQLDatabase(), that.getMySQLDatabase()) &&
+                Objects.equal(getSqliteDatabase(), that.getSqliteDatabase());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, type, mySQLDatabase, sqliteDatabase);
+        return Objects.hashCode(getId(), getType(), getMySQLDatabase(), getSqliteDatabase());
     }
 
     @Override

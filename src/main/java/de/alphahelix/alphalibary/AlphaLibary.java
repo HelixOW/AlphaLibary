@@ -24,6 +24,7 @@ import de.alphahelix.alphalibary.events.ArmorChangeEvent;
 import de.alphahelix.alphalibary.events.ItemRenameEvent;
 import de.alphahelix.alphalibary.events.PlayerInputEvent;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
+import de.alphahelix.alphalibary.file.SimpleFolder;
 import de.alphahelix.alphalibary.input.AnvilGUI;
 import de.alphahelix.alphalibary.input.SignGUI;
 import de.alphahelix.alphalibary.netty.PacketListenerAPI;
@@ -43,7 +44,6 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -85,9 +85,7 @@ public class AlphaLibary extends JavaPlugin {
         gameProfileFile = new GameProfileBuilder.GameProfileFile();
         arenaFile = new ArenaFile();
 
-        File arenaFolder = new File("plugins/AlphaGameLibary/arenas");
-
-        if (!arenaFolder.exists()) arenaFolder.mkdirs();
+        new SimpleFolder("plugins/AlphaGameLibary", "arenas");
 
         PacketListenerAPI.addPacketHandler(new PacketHandler() {
             @Override

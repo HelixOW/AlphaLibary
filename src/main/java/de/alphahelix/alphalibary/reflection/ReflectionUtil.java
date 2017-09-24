@@ -19,6 +19,7 @@
 package de.alphahelix.alphalibary.reflection;
 
 import com.mojang.authlib.GameProfile;
+import de.alphahelix.alphalibary.file.SimpleFolder;
 import de.alphahelix.alphalibary.nbt.NBTCompound;
 import de.alphahelix.alphalibary.nbt.NBTList;
 import de.alphahelix.alphalibary.nbt.NBTType;
@@ -33,22 +34,29 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.*;
+import java.io.File;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class ReflectionUtil {
 
-    private static final String version;
+    private static final String VERSION;
 
     static {
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        version = packageName.substring(packageName.lastIndexOf(".") + 1);
+        VERSION = packageName.substring(packageName.lastIndexOf(".") + 1);
     }
 
     public static String getVersion() {
-        return version;
+        return VERSION;
     }
 
     /**
@@ -66,6 +74,27 @@ public class ReflectionUtil {
             e.printStackTrace();
             return new SaveField();
         }
+    }
+
+    /**
+     * Gets a private accessible {@link Field} out of a {@link Class}
+     *
+     * @param name  the name of the {@link Field}
+     * @param clazz the {@link Class} where the {@link Field} is located at
+     * @return a accessible {@link Field}
+     */
+    public static SaveField getDeclaredField(String name, Class<?> clazz) {
+        try {
+            Field f = clazz.getDeclaredField(name);
+            return new SaveField(f);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new SaveField();
+        }
+    }
+
+    public static SaveField getDeclaredField(String name, String nmsClazz) {
+        return getDeclaredField(name, ReflectionUtil.getNmsClass(nmsClazz));
     }
 
     public static SaveField getFirstType(Class<?> type, Class<?> clazz) {
@@ -111,8 +140,19 @@ public class ReflectionUtil {
      * @return a accessible {@link SaveMethod}
      */
     public static SaveMethod getDeclaredMethod(String name, Class<?> clazz, Class<?>... parameterClasses) {
+        return getDeclaredMethod(new MethodInfo(name, clazz, parameterClasses));
+    }
+
+    public static SaveMethod getDeclaredMethod(MethodInfo methodInfo) {
+        if (ReflectiveStorage.getMethods().containsKey(methodInfo))
+            return ReflectiveStorage.getMethods().get(methodInfo);
+
         try {
-            return new SaveMethod(clazz.getDeclaredMethod(name, parameterClasses));
+            SaveMethod sm = new SaveMethod(methodInfo.getType().getDeclaredMethod(methodInfo.getName(), methodInfo.getParameters()));
+
+            ReflectiveStorage.getMethods().put(methodInfo, sm);
+
+            return sm;
         } catch (Exception e) {
             e.printStackTrace();
             return new SaveMethod();
@@ -120,8 +160,31 @@ public class ReflectionUtil {
     }
 
     public static SaveMethod getDeclaredMethod(String name, String nmsClazz, Class<?>... parameterClasses) {
+        return getDeclaredMethod(name, getNmsClass(nmsClazz), parameterClasses);
+    }
+
+    /**
+     * Gets a accessible {@link Method} out of a {@link Class}
+     *
+     * @param name             the name of the {@link Method}
+     * @param clazz            the {@link Class} where the {@link Method} is located at
+     * @param parameterClasses the classes of the parameters for the method
+     * @return a accessible {@link SaveMethod}
+     */
+    public static SaveMethod getMethod(String name, Class<?> clazz, Class<?>... parameterClasses) {
+        return getMethod(new MethodInfo(name, clazz, parameterClasses));
+    }
+
+    public static SaveMethod getMethod(MethodInfo methodInfo) {
+        if (ReflectiveStorage.getMethods().containsKey(methodInfo))
+            return ReflectiveStorage.getMethods().get(methodInfo);
+
         try {
-            return new SaveMethod(getNmsClass(nmsClazz).getDeclaredMethod(name, parameterClasses));
+            SaveMethod sm = new SaveMethod(methodInfo.getType().getMethod(methodInfo.getName(), methodInfo.getParameters()));
+
+            ReflectiveStorage.getMethods().put(methodInfo, sm);
+
+            return sm;
         } catch (Exception e) {
             e.printStackTrace();
             return new SaveMethod();
@@ -129,8 +192,19 @@ public class ReflectionUtil {
     }
 
     public static SaveConstructor getDeclaredConstructor(Class<?> clazz, Class<?>... parameterClasses) {
+        return getDeclaredConstructor(new ConstructorInfo(clazz, parameterClasses));
+    }
+
+    public static SaveConstructor getDeclaredConstructor(ConstructorInfo constructorInfo) {
+        if (ReflectiveStorage.getConstructors().containsKey(constructorInfo))
+            return ReflectiveStorage.getConstructors().get(constructorInfo);
+
         try {
-            return new SaveConstructor(clazz.getDeclaredConstructor(parameterClasses));
+            SaveConstructor sc = new SaveConstructor<>(constructorInfo.getType().getDeclaredConstructor(constructorInfo.getParameters()));
+
+            ReflectiveStorage.getConstructors().put(constructorInfo, sc);
+
+            return sc;
         } catch (Exception e) {
             e.printStackTrace();
             return new SaveConstructor();
@@ -138,12 +212,7 @@ public class ReflectionUtil {
     }
 
     public static SaveConstructor getDeclaredConstructor(String nmsClazz, Class<?>... parameterClasses) {
-        try {
-            return new SaveConstructor(getNmsClass(nmsClazz).getDeclaredConstructor(parameterClasses));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new SaveConstructor();
-        }
+        return getDeclaredConstructor(ReflectionUtil.getNmsClass(nmsClazz), parameterClasses);
     }
 
     /**
@@ -157,9 +226,27 @@ public class ReflectionUtil {
     }
 
     private static Class<?> getClass(String name, boolean asArray) {
+        return getClass(new ClassInfo(name, asArray));
+    }
+
+    private static Class<?> getClass(ClassInfo classInfo) {
+        if (ReflectiveStorage.getClasses().containsKey(classInfo))
+            return ReflectiveStorage.getClasses().get(classInfo);
+
         try {
-            if (asArray) return Array.newInstance(Class.forName(name), 0).getClass();
-            else return Class.forName(name);
+            if (classInfo.isAsArray()) {
+                Class<?> arrayClazz = Array.newInstance(Class.forName(classInfo.getName()), 0).getClass();
+
+                ReflectiveStorage.getClasses().put(new ClassInfo(classInfo.getName(), true), arrayClazz);
+
+                return arrayClazz;
+            } else {
+                Class<?> clazz = Class.forName(classInfo.getName());
+
+                ReflectiveStorage.getClasses().put(new ClassInfo(classInfo.getName(), false), clazz);
+
+                return clazz;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -167,27 +254,27 @@ public class ReflectionUtil {
     }
 
     /**
-     * @return the n.m.s.version {@link String}
+     * @return the net.minecraft.sserver version {@link String}
      */
     public static String getNmsPrefix() {
-        return "net.minecraft.server." + version + ".";
+        return "net.minecraft.server." + VERSION + ".";
     }
 
     /**
-     * Gets a OBC {@link Class}[] from the name of it
+     * Gets a org.bukkit.craftbukkit {@link Class}[] from the name of it
      *
-     * @param name the name of the NMS {@link Class}[]
-     * @return the NMS {@link Class}[]
+     * @param name the name of the obc {@link Class}[]
+     * @return the obc {@link Class}[]
      */
     public static Class<?> getCraftBukkitClassAsArray(String name) {
         return getClass(getCraftBukkitPrefix() + name, true);
     }
 
     /**
-     * @return the o.b.c version {@link String}
+     * @return the org.bukkit.craftbukkit version {@link String}
      */
     public static String getCraftBukkitPrefix() {
-        return "org.bukkit.craftbukkit." + version + ".";
+        return "org.bukkit.craftbukkit." + VERSION + ".";
     }
 
     /**
@@ -198,16 +285,9 @@ public class ReflectionUtil {
      */
     public static Object getEnumGamemode(OfflinePlayer p) {
         try {
+            SaveField fInteractManager = ReflectionUtil.getDeclaredField("playerInteractManager", "EntityPlayer");
 
-            Field fInteractManager = ReflectionUtil.getNmsClass("EntityPlayer").getField("playerInteractManager");
-            fInteractManager.setAccessible(true);
-            Object oInteractManager = fInteractManager.get(getEntityPlayer(p));
-
-            Field enumGamemode = ReflectionUtil.getNmsClass("PlayerInteractManager").getDeclaredField("gamemode");
-            enumGamemode.setAccessible(true);
-
-            return enumGamemode.get(oInteractManager);
-
+            return ReflectionUtil.getDeclaredField("gamemode", "PlayerInteractManager").get(fInteractManager.get(getEntityPlayer(p)));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -232,7 +312,7 @@ public class ReflectionUtil {
      */
     public static Object getEntityPlayer(OfflinePlayer p) {
         try {
-            return getCraftBukkitClass("entity.CraftPlayer").getMethod("getHandle").invoke(p);
+            return getDeclaredMethod("getHandle", getCraftBukkitClass("entity.CraftPlayer")).invoke(p, true);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -256,23 +336,11 @@ public class ReflectionUtil {
      * @return the ping as an {@link Object}
      */
     public static int getPing(Player p) {
-        try {
-            Field ping = getNmsClass("EntityPlayer").getDeclaredField("ping");
-            ping.setAccessible(true);
-            return (int) ping.get(getEntityPlayer(p));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
+        return (int) getDeclaredField("ping", "EntityPlayer").get(getEntityPlayer(p));
     }
 
     public static Object getNewNBTTag() {
-        try {
-            return getNmsClass("NBTTagCompound").newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return getDeclaredConstructor("NBTTagCompound").newInstance(true);
     }
 
     public static Object setNBTTag(Object nbtTag, Object nmsItem) {
@@ -290,16 +358,14 @@ public class ReflectionUtil {
     }
 
     public static Object getEntityNBTTagCompound(Object nmsEntity) {
-        try {
-            Object nbt = getNmsClass("NBTTagCompound").newInstance();
-            Object a = getDeclaredMethod("d", nmsEntity.getClass(), nbt.getClass()).invoke(nmsEntity, true, nbt);
-            if (a == null)
-                a = nbt;
-            return a;
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
+        Object nbt = getNewNBTTag();
+
+        if (nbt == null) return null;
+
+        Object a = getDeclaredMethod("d", nmsEntity.getClass(), nbt.getClass()).invoke(nmsEntity, true, nbt);
+        if (a == null)
+            a = nbt;
+        return a;
     }
 
     public static Object setEntityNBTTag(Object nbtTag, Object nmsEntity) {
@@ -308,33 +374,31 @@ public class ReflectionUtil {
     }
 
     public static Object getTileEntityNBTTagCompound(BlockState tile) {
-        try {
-            Object pos = toBlockPosition(new BlockPos() {
-                @Override
-                public int getX() {
-                    return tile.getX();
-                }
+        Object pos = toBlockPosition(new BlockPos() {
+            @Override
+            public int getX() {
+                return tile.getX();
+            }
 
-                @Override
-                public int getY() {
-                    return tile.getY();
-                }
+            @Override
+            public int getY() {
+                return tile.getY();
+            }
 
-                @Override
-                public int getZ() {
-                    return tile.getZ();
-                }
-            });
-            Object nmsWorld = getWorldServer(tile.getWorld());
-            Object nmsTile = getDeclaredMethod("getTileEntity", nmsWorld.getClass(), pos.getClass()).invoke(nmsWorld, true, pos);
-            Object tag = getNmsClass("NBTTagCompound").newInstance();
-            Object a = getDeclaredMethod("save", getNmsClass("TileEntity"), getNmsClass("NBTTagCompound")).invoke(nmsTile, true, tag);
-            if (a == null) a = tag;
-            return a;
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
+            @Override
+            public int getZ() {
+                return tile.getZ();
+            }
+        });
+        Object nmsWorld = getWorldServer(tile.getWorld());
+
+        if (nmsWorld == null || pos == null) return null;
+
+        Object nmsTile = getDeclaredMethod("getTileEntity", nmsWorld.getClass(), pos.getClass()).invoke(nmsWorld, true, pos);
+        Object tag = getNewNBTTag();
+        Object a = getDeclaredMethod("save", getNmsClass("TileEntity"), getNmsClass("NBTTagCompound")).invoke(nmsTile, true, tag);
+        if (a == null) a = tag;
+        return a;
     }
 
     public static void setTileEntityNBTTagCompound(BlockState tile, Object nbtTag) {
@@ -355,6 +419,9 @@ public class ReflectionUtil {
             }
         });
         Object nmsWorld = getWorldServer(tile.getWorld());
+
+        if (nmsWorld == null || pos == null) return;
+
         Object nmsTile = getDeclaredMethod("getTileEntity", nmsWorld.getClass(), pos.getClass()).invoke(nmsWorld, true, pos);
 
         getDeclaredMethod("a", getNmsClass("TileEntity"), getNmsClass("NBTTagCompound")).invoke(nmsTile, true, nbtTag);
@@ -366,7 +433,7 @@ public class ReflectionUtil {
 
     public static void addNBTTagCompound(NBTCompound compound, String name) {
         if (name == null) {
-            remove(compound, name);
+            remove(compound, null);
             return;
         }
 
@@ -377,6 +444,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return;
 
         try {
             getDeclaredMethod("set", tag.getClass(), String.class, getNmsClass("NBTBase")).invoke(tag, true, name, getNewNBTTag());
@@ -393,6 +462,8 @@ public class ReflectionUtil {
 
         if (!validCompound(compound)) return;
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return;
 
         getDeclaredMethod("remove", tag.getClass(), String.class).invoke(tag, true, name);
         compound.setCompound(rootTag);
@@ -434,6 +505,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setString", tag.getClass(), String.class, String.class).invoke(tag, true, name, text);
         compound.setCompound(rootTag);
     }
@@ -447,6 +520,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return null;
+
         return (String) getDeclaredMethod("getString", tag.getClass(), String.class).invoke(tag, true, name);
     }
 
@@ -458,6 +533,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return getDeclaredMethod("get", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -476,6 +553,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setInt", tag.getClass(), String.class, int.class).invoke(tag, true, name, i);
         compound.setCompound(rootTag);
     }
@@ -488,6 +567,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (Integer) getDeclaredMethod("getInt", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -506,6 +587,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setByteArray", tag.getClass(), String.class, byte[].class).invoke(tag, true, name, b);
         compound.setCompound(rootTag);
     }
@@ -518,6 +601,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (byte[]) getDeclaredMethod("getByteArray", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -536,6 +621,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setIntArray", tag.getClass(), String.class, int[].class).invoke(tag, true, name, i);
         compound.setCompound(rootTag);
     }
@@ -548,6 +635,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (int[]) getDeclaredMethod("getIntArray", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -566,6 +655,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setFloat", tag.getClass(), String.class, float.class).invoke(tag, true, name, f);
         compound.setCompound(rootTag);
     }
@@ -578,6 +669,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (Float) getDeclaredMethod("getFloat", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -596,6 +689,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setLong", tag.getClass(), String.class, long.class).invoke(tag, true, name, l);
         compound.setCompound(rootTag);
     }
@@ -608,6 +703,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (Long) getDeclaredMethod("getLong", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -626,6 +723,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setShort", tag.getClass(), String.class, short.class).invoke(tag, true, name, s);
         compound.setCompound(rootTag);
     }
@@ -638,6 +737,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (Short) getDeclaredMethod("getShort", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -656,6 +757,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setByte", tag.getClass(), String.class, byte.class).invoke(tag, true, name, b);
         compound.setCompound(rootTag);
     }
@@ -668,6 +771,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (Byte) getDeclaredMethod("getByte", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -686,6 +791,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setDouble", tag.getClass(), String.class, double.class).invoke(tag, true, name, d);
         compound.setCompound(rootTag);
     }
@@ -698,6 +805,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (Double) getDeclaredMethod("getDouble", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -716,6 +825,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("setBoolean", tag.getClass(), String.class, boolean.class).invoke(tag, true, name, b);
         compound.setCompound(rootTag);
     }
@@ -728,6 +839,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (Boolean) getDeclaredMethod("getBoolean", tag.getClass(), String.class).invoke(tag, true, name);
     }
@@ -759,6 +872,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return;
+
         getDeclaredMethod("set", tag.getClass(), String.class, getNmsClass("NBTBase")).invoke(tag, false, name, val);
         compound.setCompound(rootTag);
     }
@@ -772,6 +887,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return 0;
+
         return (byte) getDeclaredMethod("d", tag.getClass(), String.class).invoke(tag, true, name);
     }
 
@@ -783,6 +900,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return new NBTList(name, compound, type, getDeclaredMethod("getList", tag.getClass(), String.class, int.class).
                 invoke(tag, true, name, type.getId()));
@@ -797,6 +916,8 @@ public class ReflectionUtil {
 
         Object tag = convertToCompound(rootTag, compound);
 
+        if (tag == null) return null;
+
         return (Boolean) getDeclaredMethod("hasKey", tag.getClass(), String.class).invoke(tag, true, name);
     }
 
@@ -808,6 +929,8 @@ public class ReflectionUtil {
         if (!validCompound(compound)) return null;
 
         Object tag = convertToCompound(rootTag, compound);
+
+        if (tag == null) return null;
 
         return (Set<String>) getDeclaredMethod("c", tag.getClass()).invoke(tag, true);
     }
@@ -833,6 +956,8 @@ public class ReflectionUtil {
         try {
             Object nmsPlayer = getEntityPlayer(p);
 
+            if (nmsPlayer == null) return;
+
             Object con = getDeclaredField("playerConnection", nmsPlayer.getClass()).get(nmsPlayer);
 
             getMethod("sendPacket", getNmsClass("PlayerConnection"), getNmsClass("Packet")).invoke(con, true, packet);
@@ -842,60 +967,11 @@ public class ReflectionUtil {
     }
 
     public static void sendPacket(Player p, IPacket packet) {
-        try {
-            Object nmsPlayer = getEntityPlayer(p);
-
-            Object con = getDeclaredField("playerConnection", nmsPlayer.getClass()).get(nmsPlayer);
-
-            getMethod("sendPacket", getNmsClass("PlayerConnection"), getNmsClass("Packet")).invoke(con, true, packet.getPacket(false));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        sendPacket(p, packet.getPacket(true));
     }
 
-    /**
-     * Gets a private accessible {@link Field} out of a {@link Class}
-     *
-     * @param name  the name of the {@link Field}
-     * @param clazz the {@link Class} where the {@link Field} is located at
-     * @return a accessible {@link Field}
-     */
-    public static SaveField getDeclaredField(String name, Class<?> clazz) {
-        try {
-            Field f = clazz.getDeclaredField(name);
-            return new SaveField(f);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new SaveField();
-        }
-    }
-
-    public static SaveField getDeclaredField(String name, String nmsClazz) {
-        try {
-            Field f = getNmsClass(nmsClazz).getDeclaredField(name);
-            return new SaveField(f);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new SaveField();
-        }
-    }
-
-    /**
-     * Gets a accessible {@link Method} out of a {@link Class}
-     *
-     * @param name             the name of the {@link Method}
-     * @param clazz            the {@link Class} where the {@link Method} is located at
-     * @param parameterClasses the classes of the parameters for the method
-     * @return a accessible {@link SaveMethod}
-     */
-    public static SaveMethod getMethod(String name, Class<?> clazz, Class<?>... parameterClasses) {
-        try {
-            Method m = clazz.getMethod(name, parameterClasses);
-            return new SaveMethod(m);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new SaveMethod();
-        }
+    public static void sendPacket(Player p, IPacket packet, boolean stackTrace) {
+        sendPacket(p, packet.getPacket(stackTrace));
     }
 
     /**
@@ -907,6 +983,18 @@ public class ReflectionUtil {
         for (Player p : Bukkit.getOnlinePlayers())
             for (Object packet : packets)
                 ReflectionUtil.sendPacket(p, packet);
+    }
+
+    public static void sendPackets(IPacket... packets) {
+        for (Player p : Bukkit.getOnlinePlayers())
+            for (IPacket packet : packets)
+                ReflectionUtil.sendPacket(p, packet.getPacket(true));
+    }
+
+    public static void sendPackets(boolean stackTrace, IPacket... packets) {
+        for (Player p : Bukkit.getOnlinePlayers())
+            for (IPacket packet : packets)
+                ReflectionUtil.sendPacket(p, packet.getPacket(stackTrace));
     }
 
     /**
@@ -928,11 +1016,30 @@ public class ReflectionUtil {
      * @param packets the Packet[] to send
      */
     public static void sendPacketsNotFor(Player notFor, Object... packets) {
-        for (Player p : Bukkit.getOnlinePlayers())
-            if (!p.getName().equals(notFor.getName())) for (Object packet : packets)
-                ReflectionUtil.sendPacket(p, packet);
+        sendPacketsNotFor(notFor.getName(), packets);
     }
 
+    public static void sendPacketsNotFor(String notFor, IPacket... packets) {
+        for (Player p : Bukkit.getOnlinePlayers())
+            if (!p.getName().equals(notFor))
+                for (IPacket packet : packets)
+                    ReflectionUtil.sendPacket(p, packet.getPacket(true));
+    }
+
+    public static void sendPacketsNotFor(Player notFor, IPacket... packets) {
+        sendPacketsNotFor(notFor.getName(), packets);
+    }
+
+    public static void sendPacketsNotFor(String notFor, boolean stackTrace, IPacket... packets) {
+        for (Player p : Bukkit.getOnlinePlayers())
+            if (!p.getName().equals(notFor))
+                for (IPacket packet : packets)
+                    ReflectionUtil.sendPacket(p, packet.getPacket(stackTrace));
+    }
+
+    public static void sendPacketsNotFor(Player notFor, boolean stackTrace, IPacket... packets) {
+        sendPacketsNotFor(notFor.getName(), stackTrace, packets);
+    }
 
     /**
      * Gets the entity ID out of a {@link Entity} from its CraftEntity
@@ -941,16 +1048,7 @@ public class ReflectionUtil {
      * @return the entity ID
      */
     public static int getEntityID(Entity entity) {
-
-        try {
-            Object entityEntity = getCraftBukkitClass("entity.CraftEntity").getMethod("getHandle").invoke(entity);
-
-            return (int) getNmsClass("Entity").getMethod("getId").invoke(entityEntity);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return -1;
-        }
+        return (int) getMethod("getId", getNmsClass("Entity")).invoke(getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true), true);
     }
 
     /**
@@ -960,14 +1058,7 @@ public class ReflectionUtil {
      * @return the entity ID
      */
     public static int getEntityID(Object entity) {
-        try {
-            Field id = ReflectionUtil.getNmsClass("Entity").getDeclaredField("id");
-            id.setAccessible(true);
-            return id.getInt(entity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
+        return (int) getDeclaredField("id", "Entity").get(entity);
     }
 
     /**
@@ -977,12 +1068,7 @@ public class ReflectionUtil {
      * @return the NMS Entity
      */
     public static Object getCraftbukkitEntity(Entity entity) {
-        try {
-            return getCraftBukkitClass("entity.CraftEntity").getMethod("getHandle").invoke(entity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true);
     }
 
     /**
@@ -992,27 +1078,16 @@ public class ReflectionUtil {
      * @return the WorldServer
      */
     public static Object getWorldServer(World world) {
-        try {
-            return getCraftBukkitClass("CraftWorld").getMethod("getHandle").invoke(world);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return getMethod("getHandle", getCraftBukkitClass("CraftWorld")).invoke(world, true);
     }
 
     /**
      * Gets the MinecraftServer out of its Bukkit {@link Server}
      *
-     * @param server the {@link Server} to get its MinecraftServer from
      * @return the MinecraftServer
      */
     public static Object getMinecraftServer() {
-        try {
-            return getCraftBukkitClass("CraftServer").getMethod("getServer").invoke(Bukkit.getServer());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return getMethod("getServer", getCraftBukkitClass("CraftServer")).invoke(Bukkit.getServer(), true);
     }
 
     /**
@@ -1022,12 +1097,7 @@ public class ReflectionUtil {
      * @return the ItemStack
      */
     public static Object getNMSItemStack(ItemStack item) {
-        try {
-            return getCraftBukkitClass("inventory.CraftItemStack").getMethod("asNMSCopy", ItemStack.class).invoke(null, item);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return getMethod("asNMSCopy", getCraftBukkitClass("inventory.CraftItemStack"), ItemStack.class).invoke(null, true, item);
     }
 
     /**
@@ -1048,18 +1118,7 @@ public class ReflectionUtil {
     }
 
     private static String fromIChatBaseComponent(Object component) {
-
-        try {
-            Class<?> chatSerelizer = getCraftBukkitClass("util.CraftChatMessage");
-
-            Method mSerelize = chatSerelizer.getMethod("fromComponent", ReflectionUtil.getNmsClass("IChatBaseComponent"));
-
-            return (String) mSerelize.invoke(null, component);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
+        return (String) getMethod("fromComponent", getCraftBukkitClass("util.CraftChatMessage"), ReflectionUtil.getNmsClass("IChatBaseComponent")).invoke(null, true, component);
     }
 
     /**
@@ -1067,13 +1126,25 @@ public class ReflectionUtil {
      *
      * @param strings the {@link String} to get the IChatBaseComponent from
      * @return the IChatBaseComponent
+     * @see ReflectionUtil#toIChatBaseComponent(String...)
+     * @deprecated
      */
+    @Deprecated
     public static Object[] serializeString(String... strings) {
-
         Object[] array = (Object[]) Array.newInstance(getNmsClass("IChatBaseComponent"), strings.length);
 
         for (int i = 0; i < array.length; i++) {
-            array[i] = serializeString(strings[i]);
+            array[i] = toIChatBaseComponentArray(strings[i]);
+        }
+
+        return array;
+    }
+
+    public static Object[] toIChatBaseComponent(String... strings) {
+        Object[] array = (Object[]) Array.newInstance(getNmsClass("IChatBaseComponent"), strings.length);
+
+        for (int i = 0; i < array.length; i++) {
+            array[i] = toIChatBaseComponentArray(strings[i]);
         }
 
         return array;
@@ -1084,7 +1155,10 @@ public class ReflectionUtil {
      *
      * @param s the {@link String} to get its CraftChatMessage from
      * @return the CraftChatMessage as an {@link Object}
+     * @see ReflectionUtil#toIChatBaseComponentArray(String) (String)
+     * @deprecated
      */
+    @Deprecated
     public static Object serializeString(String s) {
         try {
             Class<?> chatSerelizer = getCraftBukkitClass("util.CraftChatMessage");
@@ -1098,13 +1172,14 @@ public class ReflectionUtil {
         }
     }
 
+    public static Object toIChatBaseComponentArray(String s) {
+        SaveMethod mserialize = getDeclaredMethod("fromString", getCraftBukkitClass("util.CraftChatMessage"), String.class);
+
+        return ((Object[]) mserialize.invoke(null, true, s))[0];
+    }
+
     public static Object toBlockPosition(BlockPos loc) {
-        try {
-            return getNmsClass("BlockPosition").getConstructor(int.class, int.class, int.class).newInstance(loc.getX(), loc.getY(), loc.getZ());
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return getDeclaredConstructor("BlockPosition", int.class, int.class, int.class).newInstance(true, loc.getX(), loc.getY(), loc.getZ());
     }
 
     public static BlockPos fromBlockPostition(Object nmsLoc) {
@@ -1132,27 +1207,153 @@ public class ReflectionUtil {
         return (GameProfile) getDeclaredMethod("getProfile", getCraftBukkitClass("entity.CraftPlayer")).invoke(p, true);
     }
 
-    public static List<Class<?>> findLoadedClassesImpmenenting(final Class<?> interfaceClass, JavaPlugin pl) {
-        if (interfaceClass == null)
-            return null;
+    public static Set<Class<?>> getClasses(File jarFile, String pckg) {
+        return getClasses(new JarInfo(jarFile, pckg));
+    }
 
-        List<Class<?>> rVal = new ArrayList<>();
+    public static Set<Class<?>> getClasses(JarInfo info) {
+        if (ReflectiveStorage.getJars().containsKey(info))
+            return ReflectiveStorage.getJars().get(info);
 
-        ClassLoader cl = (ClassLoader) getDeclaredField("classLoader", JavaPlugin.class).get(pl);
-        Collection<Class<?>> classes = null;
+        Set<Class<?>> classes = new HashSet<>();
         try {
-            classes = ((Map<String, Class<?>>) getDeclaredField("classes", Class.forName("org.bukkit.plugin.java.PluginClassLoader")).get(cl)).values();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            JarFile file = new JarFile(info.getJarFile());
+            for (Enumeration<JarEntry> entry = file.entries(); entry.hasMoreElements(); ) {
+                JarEntry jarEntry = entry.nextElement();
+                String jarName = jarEntry.getName().replace('/', '.');
+
+                if (jarName.startsWith(info.getPckg()) && jarName.endsWith(".class")) {
+                    classes.add(getClass(jarName.substring(0, jarName.length() - 6), false));
+                }
+            }
+            file.close();
+        } catch (IOException ex) {
+            Bukkit.getLogger().severe("Error ocurred at getting classes, log: " + ex);
         }
 
-        for (Class<?> aTarget : classes != null ? classes : new ArrayList<Class<?>>()) {
-            if (aTarget != null && !aTarget.equals(interfaceClass) && interfaceClass.isAssignableFrom(aTarget)) {
-                rVal.add(aTarget);
+        ReflectiveStorage.getJars().put(info, classes);
+
+        return classes;
+    }
+
+    public static Set<Class<?>> getClasses(File jarFile) {
+        return getClasses(new JarInfo(jarFile, ""));
+    }
+
+    public static Set<Class<?>> getClasses() {
+        Set<Class<?>> classes = new HashSet<>();
+        File[] plugins = new SimpleFolder(".", "plugins").listFiles();
+
+        if (plugins != null) {
+            for (File jars : plugins) {
+                if (jars.getName().endsWith(".jar")) {
+                    classes.addAll(getClasses(jars));
+                }
             }
         }
 
-        return rVal;
+        return classes;
+    }
+
+    public static Class<?>[] findClassesImplementing(Class<?> implementedClazz) {
+        List<Class<?>> classes = new LinkedList<>();
+
+        for (Class<?> clazz : getClasses()) {
+            if (implementedClazz.isAssignableFrom(clazz) && !implementedClazz.equals(clazz))
+                classes.add(clazz);
+        }
+
+        return classes.toArray(new Class[classes.size()]);
+    }
+
+    public static Class<?>[] findClassesAnnotatedWith(Class<? extends Annotation> annotation) {
+        List<Class<?>> classes = new LinkedList<>();
+
+        for (Class<?> clazz : getClasses()) {
+            if (clazz.isAnnotationPresent(annotation))
+                classes.add(clazz);
+        }
+
+        return classes.toArray(new Class[classes.size()]);
+    }
+
+    public static Method[] findMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
+        List<Method> methods = new LinkedList<>();
+
+        for (Class<?> clazz : getClasses()) {
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(annotation))
+                    methods.add(m);
+            }
+        }
+
+        return methods.toArray(new Method[methods.size()]);
+    }
+
+    public static Field[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation) {
+        List<Field> fields = new LinkedList<>();
+
+        for (Class<?> clazz : getClasses()) {
+            for (Field f : clazz.getDeclaredFields()) {
+                if (f.isAnnotationPresent(annotation))
+                    fields.add(f);
+            }
+        }
+
+        return fields.toArray(new Field[fields.size()]);
+    }
+
+    public static SaveMethod[] findMethodsWithParameters(Class<?>... parameters) {
+        List<SaveMethod> methods = new LinkedList<>();
+
+        for (Class<?> clazz : getClasses()) {
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (Arrays.equals(m.getParameterTypes(), parameters))
+                    methods.add(new SaveMethod(m));
+            }
+        }
+
+        return methods.toArray(new SaveMethod[methods.size()]);
+    }
+
+    public static SaveMethod[] findMethodsReturning(Class<?> returned) {
+        List<SaveMethod> methods = new LinkedList<>();
+
+        for (Class<?> clazz : getClasses()) {
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (m.getReturnType().equals(returned))
+                    methods.add(new SaveMethod(m));
+            }
+        }
+
+        return methods.toArray(new SaveMethod[methods.size()]);
+    }
+
+    public static SaveField[] findFieldsOfType(Class<?> type) {
+        List<SaveField> fields = new LinkedList<>();
+
+        for (Class<?> clazz : getClasses()) {
+            for (Field f : clazz.getDeclaredFields()) {
+                if (f.getType().equals(type))
+                    fields.add(new SaveField(f));
+            }
+        }
+
+        return fields.toArray(new SaveField[fields.size()]);
+    }
+
+    public static SaveConstructor[] findConstructorAnnotatedWith(Class<? extends Annotation> annotation) {
+        List<SaveConstructor> constructors = new LinkedList<>();
+
+        for (Class<?> clazz : getClasses()) {
+            for (Constructor<?> con : clazz.getDeclaredConstructors()) {
+                if (con.isAnnotationPresent(annotation))
+                    constructors.add(new SaveConstructor(con));
+
+            }
+        }
+
+        return constructors.toArray(new SaveConstructor[constructors.size()]);
     }
 
     public static class SaveField {
@@ -1228,11 +1429,12 @@ public class ReflectionUtil {
         }
     }
 
-    public static class SaveConstructor {
+    public static class SaveConstructor<T> {
 
-        private Constructor<?> c;
+        private T type;
+        private Constructor<T> c;
 
-        public SaveConstructor(Constructor<?> c) {
+        public SaveConstructor(Constructor<T> c) {
             try {
                 c.setAccessible(true);
                 this.c = c;
@@ -1241,17 +1443,206 @@ public class ReflectionUtil {
             }
         }
 
+        public SaveConstructor(Class<T> c) {
+            try {
+                Constructor<T> con = c.getDeclaredConstructor();
+                con.setAccessible(true);
+                this.c = con;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         SaveConstructor() {
         }
 
-        public Object newInstance(Boolean stackTrace, Object... args) {
-            if (c == null) return new Object();
+        public T newInstance(Boolean stackTrace, Object... args) {
+            if (c == null) return null;
             try {
                 return c.newInstance(args);
             } catch (Exception e) {
                 if (stackTrace) e.printStackTrace();
             }
-            return new Object();
+            return null;
+        }
+    }
+
+    public static class FieldInfo {
+
+        private final String name;
+        private final Class<?> type;
+
+        public FieldInfo(String name, Class<?> type) {
+            this.name = name;
+            this.type = type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Class<?> getType() {
+            return type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            FieldInfo fieldInfo = (FieldInfo) o;
+            return Objects.equals(getName(), fieldInfo.getName()) &&
+                    Objects.equals(getType(), fieldInfo.getType());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getName(), getType());
+        }
+    }
+
+    public static class MethodInfo {
+
+        private final String name;
+        private final Class<?> type;
+        private final Class<?>[] parameters;
+
+        public MethodInfo(String name, Class<?> type, Class<?>[] parameters) {
+            this.name = name;
+            this.type = type;
+            this.parameters = parameters;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Class<?> getType() {
+            return type;
+        }
+
+        public Class<?>[] getParameters() {
+            return parameters;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            MethodInfo that = (MethodInfo) o;
+            return Objects.equals(getName(), that.getName()) &&
+                    Objects.equals(getType(), that.getType()) &&
+                    Arrays.equals(getParameters(), that.getParameters());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getName(), getType(), getParameters());
+        }
+    }
+
+    public static class ConstructorInfo {
+
+        private final Class<?> type;
+        private final Class<?>[] parameters;
+
+        public ConstructorInfo(Class<?> type, Class<?>[] parameters) {
+            this.type = type;
+            this.parameters = parameters;
+        }
+
+        public Class<?> getType() {
+            return type;
+        }
+
+        public Class<?>[] getParameters() {
+            return parameters;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ConstructorInfo that = (ConstructorInfo) o;
+            return Objects.equals(getType(), that.getType()) &&
+                    Arrays.equals(getParameters(), that.getParameters());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getType(), getParameters());
+        }
+    }
+
+    public static class ClassInfo {
+
+        private final String name;
+        private final boolean asArray;
+
+        public ClassInfo(String name, boolean asArray) {
+            this.name = name;
+            this.asArray = asArray;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean isAsArray() {
+            return asArray;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ClassInfo classInfo = (ClassInfo) o;
+            return isAsArray() == classInfo.isAsArray() &&
+                    Objects.equals(getName(), classInfo.getName());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getName(), isAsArray());
+        }
+    }
+
+    public static class JarInfo {
+
+        private final File jarFile;
+        private final String pckg;
+        private final boolean needsPckg;
+
+        public JarInfo(File jarFile, String pckg) {
+            this.jarFile = jarFile;
+            this.pckg = pckg;
+            this.needsPckg = pckg.trim().isEmpty();
+        }
+
+        public File getJarFile() {
+            return jarFile;
+        }
+
+        public String getPckg() {
+            return pckg;
+        }
+
+        public boolean isNeedsPckg() {
+            return needsPckg;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            JarInfo jarInfo = (JarInfo) o;
+            return isNeedsPckg() == jarInfo.isNeedsPckg() &&
+                    Objects.equals(getJarFile(), jarInfo.getJarFile()) &&
+                    Objects.equals(getPckg(), jarInfo.getPckg());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getJarFile(), getPckg(), isNeedsPckg());
         }
     }
 }

@@ -48,6 +48,11 @@ public class Util {
         return (double) Math.round(value * scale) / scale;
     }
 
+    public static double sqrt(double a) {
+        double sqrt = Double.longBitsToDouble(((Double.doubleToLongBits(a) - (1L << 52)) >> 1) + (1L << 61));
+        return (sqrt + a / sqrt) / 2.0;
+    }
+
     /**
      * Creates a cooldown
      *
@@ -234,5 +239,36 @@ public class Util {
             if (e.getClass().isInstance(clazzType))
                 types.add((T) e);
         return types;
+    }
+
+    /**
+     * Wraps the floor method from the net.minecraft.server MathHelper
+     *
+     * @param var0 the double to floor
+     * @return the floored int
+     */
+    public static int floor(double var0) {
+        int var2 = (int) var0;
+        return var0 < (double) var2 ? var2 - 1 : var2;
+    }
+
+    /**
+     * Converts a float into a angle
+     *
+     * @param v the float to convert
+     * @return the converted angle as a byte
+     */
+    public static byte toAngle(float v) {
+        return (byte) ((int) (v * 256.0F / 360.0F));
+    }
+
+    /**
+     * Converts a double into a delta
+     *
+     * @param v the double to convert
+     * @return the converted delta as a double
+     */
+    public static double toDelta(double v) {
+        return ((v * 32) * 128);
     }
 }

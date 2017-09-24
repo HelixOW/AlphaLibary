@@ -52,6 +52,7 @@ public class GameProfileBuilder {
      * @see GameProfileBuilder#fetch(UUID, GameProfileCallback)
      * @deprecated not async!
      */
+    @Deprecated
     public static GameProfile fetch(UUID uuid) {
         return fetch(uuid, false);
     }
@@ -106,6 +107,7 @@ public class GameProfileBuilder {
      * @see GameProfileBuilder#fetch(UUID, boolean, GameProfileCallback)
      * @deprecated not async!
      */
+    @Deprecated
     public static GameProfile fetch(UUID uuid, boolean forceNew) {
         if (!forceNew && CACHE.containsKey(uuid) && CACHE.get(uuid).isValid())
             return CACHE.get(uuid).profile;

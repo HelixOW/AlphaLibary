@@ -1,8 +1,8 @@
 package de.alphahelix.alphalibary.nms.packets;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
+import de.alphahelix.alphalibary.utils.Util;
 
 public class PPOEntityLook implements IPacket {
 
@@ -59,7 +59,7 @@ public class PPOEntityLook implements IPacket {
 
     @Override
     public Object getPacket(boolean stackTrace) {
-        return PACKET.newInstance(stackTrace, entityID, FakeAPI.toAngle(yaw), FakeAPI.toAngle(pitch), onGround);
+        return PACKET.newInstance(stackTrace, entityID, Util.toAngle(yaw), Util.toAngle(pitch), onGround);
     }
 
     @Override

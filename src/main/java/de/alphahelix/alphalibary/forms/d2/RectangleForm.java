@@ -146,9 +146,9 @@ public class RectangleForm extends Form {
                     action.action(p, getLocation().clone().add(xz, lenght, xz));
                 }
             } else {
-                for (double xz = 0; xz < lenght; xz += 0.1) {
-                    for (double y = 0; y < height; y += 0.1) {
-                        action.action(p, getLocation().clone().add(y, xz, y));
+                for (double y = 0; y < lenght; y += 0.1) {
+                    for (double xz = 0; xz < height; xz += 0.1) {
+                        action.action(p, getLocation().clone().add(xz, y, xz));
                     }
                 }
             }

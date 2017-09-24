@@ -166,6 +166,7 @@ public class UUIDFetcher {
      * @see UUIDFetcher#getUUID(Player, UUIDCallback)
      * @deprecated not async
      */
+    @Deprecated
     public static UUID getUUID(Player p) {
         return getUUID(p.getName());
     }
@@ -177,6 +178,7 @@ public class UUIDFetcher {
      * @see UUIDFetcher#getUUID(OfflinePlayer, UUIDCallback)
      * @deprecated not async
      */
+    @Deprecated
     public static UUID getUUID(OfflinePlayer p) {
         return getUUID(p.getName());
     }
@@ -188,6 +190,7 @@ public class UUIDFetcher {
      * @see UUIDFetcher#getName(UUID, NameCallback)
      * @deprecated not async
      */
+    @Deprecated
     public static UUID getUUID(String name) {
         if (name == null)
             return null;
@@ -233,6 +236,7 @@ public class UUIDFetcher {
      * @see UUIDFetcher#getName(UUID, NameCallback)
      * @deprecated not async
      */
+    @Deprecated
     public static String getName(UUID uuid) {
         if (NAMES.containsKey(uuid))
             return NAMES.get(uuid);

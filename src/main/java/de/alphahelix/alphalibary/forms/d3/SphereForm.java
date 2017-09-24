@@ -2,6 +2,7 @@ package de.alphahelix.alphalibary.forms.d3;
 
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
+import de.alphahelix.alphalibary.utils.Util;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -11,7 +12,7 @@ public class SphereForm extends Form {
     private double radius;
 
     public SphereForm(Location location, double dense, double radius, FormAction action) {
-        super(location, "", dense, x -> Math.sqrt(radius * radius - x[0] * x[0] - x[1] * x[1]));
+        super(location, "", dense, x -> Util.sqrt(radius * radius - x[0] * x[0] - x[1] * x[1]));
         this.action = action;
         this.radius = radius;
     }

@@ -156,35 +156,35 @@ public class SimpleFile extends File implements IDataStorage {
     }
 
     public int getInt(String path) {
-        return (int) getValue(path);
+        return Integer.valueOf(getValue(path));
     }
 
     public short getShort(String path) {
-        return (short) getValue(path);
+        return Short.valueOf(getValue(path));
     }
 
     public double getDouble(String path) {
-        return (double) getValue(path);
+        return Double.valueOf(getValue(path));
     }
 
     public float getFloat(String path) {
-        return (float) getValue(path);
+        return Float.valueOf(getValue(path));
     }
 
     public boolean getBoolean(String path) {
-        return (boolean) getValue(path);
+        return Boolean.valueOf(getValue(path));
     }
 
     public char getChar(String path) {
-        return (char) getValue(path);
+        return getValue(path);
     }
 
     public byte getByte(String path) {
-        return (byte) getValue(path);
+        return Byte.valueOf(getValue(path));
     }
 
     public long getLong(String path) {
-        return (long) getValue(path);
+        return Long.valueOf(getValue(path));
     }
 
     /**

@@ -10,6 +10,7 @@ import java.util.WeakHashMap;
  * @see de.alphahelix.alphalibary.annotations.command.Command
  * @deprecated
  */
+@Deprecated
 public class CommandWatcher {
 
     private final WeakHashMap<Integer, Argument<?>> args = new WeakHashMap<>();

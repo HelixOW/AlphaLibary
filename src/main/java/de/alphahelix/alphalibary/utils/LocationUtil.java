@@ -59,7 +59,7 @@ public class LocationUtil {
             loc.setYaw((float) Math.PI);
         }
 
-        double dxz = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
+        double dxz = Util.sqrt(dx * dx + dz * dz);
 
         loc.setPitch((float) -Math.atan(dy / dxz));
 
@@ -75,7 +75,6 @@ public class LocationUtil {
      * @param loc the {@link Location} to check for
      * @param l1  the first corner of the square
      * @param l2  the seconds corner of the square
-     * @return
      */
     public static boolean isInside(Location loc, Location l1, Location l2) {
         int x1 = Math.min(l1.getBlockX(), l2.getBlockX());
@@ -95,7 +94,6 @@ public class LocationUtil {
      *
      * @param p     the {@link Player} to get its {@link Location}
      * @param range the distance to the player
-     * @return
      */
     public static Location getLocationBehindPlayer(Player p, int range) {
         World world = p.getWorld();

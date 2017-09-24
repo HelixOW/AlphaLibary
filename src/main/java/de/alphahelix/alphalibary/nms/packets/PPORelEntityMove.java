@@ -1,8 +1,8 @@
 package de.alphahelix.alphalibary.nms.packets;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
+import de.alphahelix.alphalibary.utils.Util;
 
 public class PPORelEntityMove implements IPacket {
 
@@ -69,7 +69,7 @@ public class PPORelEntityMove implements IPacket {
 
     @Override
     public Object getPacket(boolean stackTrace) {
-        return PACKET.newInstance(stackTrace, entityID, FakeAPI.toDelta(x), FakeAPI.toDelta(y), FakeAPI.toDelta(z), onGround);
+        return PACKET.newInstance(stackTrace, entityID, Util.toDelta(x), Util.toDelta(y), Util.toDelta(z), onGround);
     }
 
     @Override

@@ -47,15 +47,18 @@ public class SimpleAddonManager implements AddonManager {
         Validate.isTrue(directory.isDirectory(), "Directory must be a directory");
 
         List<Addon> result = new ArrayList<>();
+        File[] files = directory.listFiles();
 
-        for (File file : directory.listFiles()) {
-            if (!JAR_PATTERN.matcher(file.getName()).matches()) continue;
+        if (files != null) {
+            for (File file : files) {
+                if (!JAR_PATTERN.matcher(file.getName()).matches()) continue;
 
-            try {
-                result.add(this.loadAddon(file));
-            } catch (InvalidAddonException e) {
-                AddonCore.getLogger().log(Level.SEVERE,
-                        "Cannot load '" + file.getName() + "' in folder '" + directory.getPath() + "': " + e.getMessage());
+                try {
+                    result.add(this.loadAddon(file));
+                } catch (InvalidAddonException e) {
+                    AddonCore.getLogger().log(Level.SEVERE,
+                            "Cannot load '" + file.getName() + "' in folder '" + directory.getPath() + "': " + e.getMessage());
+                }
             }
         }
 

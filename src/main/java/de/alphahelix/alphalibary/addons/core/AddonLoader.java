@@ -11,14 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class AddonLoader {
-
-    private static final Map<String, AddonClassLoader> LOADERS = new HashMap<>();
 
     public static AddonDescriptionFile getAddonDescriptionFile(File file) throws InvalidAddonDescriptionException {
         Validate.notNull(file, "FileHelp cannot be null");
@@ -82,8 +78,6 @@ public class AddonLoader {
         } catch (MalformedURLException e) {
             throw new InvalidAddonException(e);
         }
-
-        LOADERS.put(description.getName(), loader);
 
         return loader.addon;
     }

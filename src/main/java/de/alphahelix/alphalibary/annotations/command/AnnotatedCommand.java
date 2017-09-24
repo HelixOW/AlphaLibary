@@ -55,7 +55,7 @@ public class AnnotatedCommand {
         this.resultPrefix = cmdAnnotation.resultPrefix();
 
         try {
-            this.errorHandler = cmdAnnotation.errorHandler().newInstance();
+            this.errorHandler = cmdAnnotation.errorHandler().getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -89,7 +89,7 @@ public class AnnotatedCommand {
     boolean onCommand(CommandSender sender, BukkitCMD cmd, String label, String[] args) {
         try {
             if (cmdAnnotation.onlyPlayers())
-                if (!(sender instanceof Player)) throw new IllegalSenderException();
+                if (!(sender instanceof Player)) throw new IllegalSenderException("Sender is not a player!");
 
             if (!hasPerm(sender))
                 throw new InvalidLenghtException(cmdAnnotation.min(), args.length);
@@ -107,7 +107,8 @@ public class AnnotatedCommand {
                     throw new CommandException("First parameter of method '" + cmdMethod.getName() + "' in '" + cmdClass + "' is no CommandSender.");
 
                 if (Player.class.isAssignableFrom(paramTypes[0]))
-                    if (cmdAnnotation.onlyPlayers() && !(sender instanceof Player)) throw new IllegalSenderException();
+                    if (cmdAnnotation.onlyPlayers() && !(sender instanceof Player))
+                        throw new IllegalSenderException("Sender is not a player!");
 
                 if ((paramTypes.length - 1 < cmdAnnotation.min()) || (cmdAnnotation.max() != -1 && paramTypes.length - 1 > cmdAnnotation.max()))
                     throw new CommandException("Parameter lenght of method '" + cmdMethod.getName() + "' in '" + cmdClass + "' is not the given lenght of arguments.");
@@ -337,8 +338,6 @@ public class AnnotatedCommand {
 
     public final AnnotatedCommand register() {
         BukkitCMD command = new BukkitCMD(name);
-
-        BukkitCMD cmd = command;
 
         if (description != null)
             command.setDescription(description);

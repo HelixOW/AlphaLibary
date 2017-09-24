@@ -2,6 +2,7 @@ package de.alphahelix.alphalibary.forms.d2;
 
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
+import de.alphahelix.alphalibary.utils.Util;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -11,7 +12,7 @@ public class CircleForm extends Form {
     private FormAction action;
 
     public CircleForm(Location location, String axis, double dense, double radius, FormAction action) {
-        super(location, axis, dense, x -> Math.sqrt(radius * radius - x[0] * x[0]));
+        super(location, axis, dense, x -> Util.sqrt(radius * radius - x[0] * x[0]));
         this.action = action;
         this.radius = radius;
     }

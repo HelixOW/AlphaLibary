@@ -82,6 +82,7 @@ public class PlayerFakeUtil {
      * @see PlayerFakeUtil#spawnPlayer(Player, Location, OfflinePlayer, String, SpawnCallback)
      * @deprecated not async {@link UUID} retrieving
      */
+    @Deprecated
     public static FakePlayer spawnPlayer(Player p, Location loc, OfflinePlayer skin, String customName) {
         FakePlayer player = spawnTemporaryPlayer(p, loc, skin, customName);
 
@@ -95,6 +96,7 @@ public class PlayerFakeUtil {
      * @see PlayerFakeUtil#spawnPlayer(Player, Location, UUID, String, SpawnCallback)
      * @deprecated not async {@link UUID} retrieving
      */
+    @Deprecated
     public static FakePlayer spawnPlayer(Player p, Location loc, UUID skin, String name) {
         FakePlayer player = spawnTemporaryPlayer(p, loc, skin, name);
 
@@ -147,6 +149,7 @@ public class PlayerFakeUtil {
      * @see PlayerFakeUtil#spawnTemporaryPlayer(Player, Location, OfflinePlayer, String, SpawnCallback)
      * @deprecated not async UUID retrieving
      */
+    @Deprecated
     public static FakePlayer spawnTemporaryPlayer(Player p, Location loc, OfflinePlayer skin, String customName) {
         return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(UUIDFetcher.getUUID(skin)), customName);
     }
@@ -159,6 +162,7 @@ public class PlayerFakeUtil {
      * @see PlayerFakeUtil#spawnTemporaryPlayer(Player, Location, UUID, String, SpawnCallback)
      * @deprecated not async UUID retrieving
      */
+    @Deprecated
     public static FakePlayer spawnTemporaryPlayer(Player p, Location loc, UUID skin, String customName) {
         return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(skin), customName);
     }

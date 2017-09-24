@@ -1456,39 +1456,6 @@ public class FakeAPI {
         throw new NoSuchFakeEntityException();
     }
 
-
-    /**
-     * Wraps the floor(Abrunden) method from the net.minecraft.server MathHelper
-     *
-     * @param var0 the double to floor
-     * @return the floored int
-     */
-    public static int floor(double var0) {
-        int var2 = (int) var0;
-        return var0 < (double) var2 ? var2 - 1 : var2;
-    }
-
-    /**
-     * Converts a float into a angle
-     *
-     * @param v the float to convert
-     * @return the converted angle as a byte
-     */
-    public static byte toAngle(float v) {
-        return (byte) ((int) (v * 256.0F / 360.0F));
-    }
-
-    /**
-     * Converts a double into a delta
-     *
-     * @param v the double to convert
-     * @return the converted delta as a double
-     */
-    public static double toDelta(double v) {
-        return ((v * 32) * 128);
-    }
-
-
     private static int getID(Object enumConstant) {
         try {
             return (int) Enum.class.getMethod("ordinal").invoke(enumConstant);
@@ -1536,7 +1503,6 @@ public class FakeAPI {
                     ArrayList<Object> newPlayerInfo = new ArrayList<>();
 
                     for (Object playerInfo : (ArrayList) packet.getPacketValue("b")) {
-
                         if (PlayerInfoDataWrapper.isUnknown(playerInfo)) {
                             newPlayerInfo.add(playerInfo);
                             continue;
@@ -1548,9 +1514,13 @@ public class FakeAPI {
                         if (getNPCS().contains(wrapper.getName())) {
                             ReflectionUtil.getDeclaredField("name", GameProfile.class).set(wrapper.getProfile(), wrapper.getName(), true);
 
-                            newPlayerInfo.add(new PlayerInfoDataWrapper(
-                                    wrapper.getProfile(), wrapper.getPing(), wrapper.getGameMode(), p.getName(), packet.getPacket()
-                            ).getPlayerInfoData());
+                            try {
+                                newPlayerInfo.add(new PlayerInfoDataWrapper(
+                                        wrapper.getProfile(), wrapper.getPing(), wrapper.getGameMode(), p.getName(), packet.getPacket(), wrapper.getPlayerinfo()
+                                ).getPlayerInfoData());
+                            } catch (IllegalAccessException | InstantiationException e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             newPlayerInfo.add(playerInfo);
                         }

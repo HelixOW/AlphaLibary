@@ -7,23 +7,23 @@ import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 public class PlayerInfoDataWrapper {
 
     private static final Class<?> P_ID_CLAZZ = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");
-    private static final ReflectionUtil.SaveConstructor P_ID_CONSTUCTOR = ReflectionUtil.getDeclaredConstructor(
-            P_ID_CLAZZ, GameProfile.class, int.class, ReflectionUtil.getNmsClass("EnumGamemode"),
-            ReflectionUtil.getNmsClass("IChatBaseComponent")
-    );
+    private static final ReflectionUtil.SaveConstructor<?> P_ID_CONST = ReflectionUtil.getDeclaredConstructor(P_ID_CLAZZ,
+            ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class, ReflectionUtil.getNmsClass("EnumGamemode"), ReflectionUtil.getNmsClass("IChatBaseComponent"));
 
     private final int ping;
     private final Object gameMode;
     private final GameProfile profile;
     private final String name;
     private final Object playerinfoaction;
+    private final Object playerinfo;
 
-    public PlayerInfoDataWrapper(GameProfile gp, int ping, Object gm, String name, Object playerinfoaction) {
+    public PlayerInfoDataWrapper(GameProfile gp, int ping, Object gm, String name, Object playerinfoaction, Object playerinfo) {
         this.profile = gp;
         this.ping = ping;
         this.gameMode = gm;
         this.name = name;
         this.playerinfoaction = playerinfoaction;
+        this.playerinfo = playerinfo;
     }
 
     public static PlayerInfoDataWrapper getPlayerInfo(Object nmsPlayerInfoData) {
@@ -32,14 +32,16 @@ public class PlayerInfoDataWrapper {
         GameProfile profile = (GameProfile) ReflectionUtil.getDeclaredField("d", P_ID_CLAZZ).get(nmsPlayerInfoData);
         Object name = ReflectionUtil.getDeclaredField("e", P_ID_CLAZZ).get(nmsPlayerInfoData);
         Object infoAction = ReflectionUtil.getDeclaredField("a", P_ID_CLAZZ).get(nmsPlayerInfoData);
+        Object info = ReflectionUtil.getDeclaredField("a", P_ID_CLAZZ).get(nmsPlayerInfoData);
 
-        return new PlayerInfoDataWrapper(profile, ping, gamemode, ReflectionUtil.fromIChatBaseComponent(name)[0], infoAction);
+        return new PlayerInfoDataWrapper(profile, ping, gamemode, ReflectionUtil.fromIChatBaseComponent(name)[0], infoAction, info);
     }
 
     public static boolean isUnknown(Object playerInfoData) {
+        if (playerInfoData == null) return true;
         GameProfile profile = (GameProfile) ReflectionUtil.getDeclaredField("d", P_ID_CLAZZ).get(playerInfoData);
 
-        return playerInfoData == null || profile == null;
+        return profile == null;
     }
 
     public int getPing() {
@@ -62,8 +64,12 @@ public class PlayerInfoDataWrapper {
         return playerinfoaction;
     }
 
-    public Object getPlayerInfoData() {
-        return P_ID_CONSTUCTOR.newInstance(true, getPlayerinfoaction(), getProfile(), getPing(), getGameMode(), ReflectionUtil.serializeString(getName()));
+    public Object getPlayerinfo() {
+        return playerinfo;
+    }
+
+    public Object getPlayerInfoData() throws IllegalAccessException, InstantiationException {
+        return P_ID_CONST.newInstance(true, getPlayerinfo(), getProfile(), getPing(), getGameMode(), ReflectionUtil.toIChatBaseComponentArray(getName()));
     }
 
     @Override

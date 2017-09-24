@@ -27,6 +27,7 @@ import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.file.SimpleFolder;
 import de.alphahelix.alphalibary.input.AnvilGUI;
 import de.alphahelix.alphalibary.input.SignGUI;
+import de.alphahelix.alphalibary.listener.SimpleLoader;
 import de.alphahelix.alphalibary.netty.PacketListenerAPI;
 import de.alphahelix.alphalibary.netty.handler.PacketHandler;
 import de.alphahelix.alphalibary.netty.handler.PacketOptions;
@@ -39,6 +40,7 @@ import de.alphahelix.alphalibary.uuid.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -84,8 +86,11 @@ public class AlphaLibary extends JavaPlugin {
 
         gameProfileFile = new GameProfileBuilder.GameProfileFile();
         arenaFile = new ArenaFile();
-
         new SimpleFolder("plugins/AlphaGameLibary", "arenas");
+
+        for (Class<?> loaded : ReflectionUtil.findClassesImplementing(SimpleLoader.class)) {
+            Bukkit.getPluginManager().registerEvents((Listener) new ReflectionUtil.SaveConstructor<>(loaded).newInstance(true), this);
+        }
 
         PacketListenerAPI.addPacketHandler(new PacketHandler() {
             @Override

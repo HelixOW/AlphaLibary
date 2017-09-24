@@ -37,8 +37,8 @@ public class SimpleTitle {
      * @param fadeOut fade out in seconds
      */
     public static void sendTitle(Player p, String title, String sub, int fadeIn, int stay, int fadeOut) {
-        Object pTitle = PACKET_PLAY_OUT_TITLE.newInstance(true, TitleAction.TITLE.getNmsEnumObject(), ReflectionUtil.serializeString(title));
-        Object pSubTitle = PACKET_PLAY_OUT_TITLE.newInstance(true, TitleAction.SUBTITLE.getNmsEnumObject(), ReflectionUtil.serializeString(sub));
+        Object pTitle = PACKET_PLAY_OUT_TITLE.newInstance(true, TitleAction.TITLE.getNmsEnumObject(), ReflectionUtil.toIChatBaseComponent(title));
+        Object pSubTitle = PACKET_PLAY_OUT_TITLE.newInstance(true, TitleAction.SUBTITLE.getNmsEnumObject(), ReflectionUtil.toIChatBaseComponent(sub));
         Object pTimings = PACKET_PLAY_OUT_TITLE1.newInstance(true, fadeIn * 20, stay * 20, fadeOut * 20);
 
         ReflectionUtil.sendPacket(p, pTimings);

@@ -1,9 +1,7 @@
 package de.alphahelix.alphalibary.menus;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.AlphaLibary;
-import de.alphahelix.alphalibary.listener.SimpleListener;
-import org.bukkit.Bukkit;
+import de.alphahelix.alphalibary.listener.SimpleLoader;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,14 +12,8 @@ import org.bukkit.inventory.Inventory;
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class MenuManager extends SimpleListener implements Serializable {
+public class MenuManager implements Serializable, SimpleLoader {
     private HashMap<String, Menu> menuHashMap = new HashMap<>();
-
-    public MenuManager() {
-        this.menuHashMap = new HashMap<>();
-
-        Bukkit.getPluginManager().registerEvents(this, AlphaLibary.getInstance());
-    }
 
     public Menu getMenu(Player p) {
         if (this.menuHashMap.containsKey(p.getName()))

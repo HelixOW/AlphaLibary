@@ -4,6 +4,7 @@ import de.alphahelix.alphalibary.addons.core.exceptions.InvalidAddonException;
 import org.apache.commons.lang.Validate;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -38,8 +39,8 @@ public class AddonClassLoader extends URLClassLoader {
                 throw new InvalidAddonException("main class '" + description.getMain() + "' does not extends Addon", ex);
             }
 
-            this.addon = addonClazz.newInstance();
-        } catch (IllegalAccessException ex) {
+            this.addon = addonClazz.getDeclaredConstructor().newInstance();
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
             throw new InvalidAddonException("No public constructor", ex);
         } catch (InstantiationException ex) {
             throw new InvalidAddonException("Abnormal addon type", ex);

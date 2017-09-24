@@ -19,10 +19,12 @@ import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.nms.enums.REnumGamemode;
 import de.alphahelix.alphalibary.nms.enums.REnumPlayerInfoAction;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class PacketUtil {
+
+    private static final Class<?> PLAYER_INFO = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo");
+    private static final Class<?> P_ID_CLAZZ = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");
 
     /**
      * Creates a new PacketPlayOutPlayerInfoAction packet
@@ -35,38 +37,23 @@ public class PacketUtil {
      * @return the PacketPlayOutPlayerInfoAction
      */
     public static Object createPlayerInfoPacket(REnumPlayerInfoAction enumPlayerInfoAction, GameProfile gameProfile, int ping, REnumGamemode enumGamemode, String name) {
+        Object playOutInfo = ReflectionUtil.getDeclaredConstructor("PacketPlayOutPlayerInfo").newInstance(true);
 
-        Class<?> cIChatBaseComponent = ReflectionUtil.getNmsClass("IChatBaseComponent");
-        Class<?> cPacketPlayOutPlayerInfo = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo");
-        Class<?> cPlayerInfoData = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");
+        ReflectionUtil.getDeclaredField("a", "PacketPlayOutPlayerInfo").set(playOutInfo, enumPlayerInfoAction.getPlayerInfoAction(), true);
 
-        Class<?> cEnumGamemode;
-        cEnumGamemode = ReflectionUtil.getNmsClass("EnumGamemode");
+        Object playerInfoData = ReflectionUtil.getDeclaredConstructor(P_ID_CLAZZ,
+                PLAYER_INFO, GameProfile.class, int.class, ReflectionUtil.getNmsClass("EnumGamemode"), ReflectionUtil.getNmsClass("IChatBaseComponent"))
+                .newInstance(true, playOutInfo, gameProfile, ping, enumGamemode.getEnumGamemode(), ReflectionUtil.toIChatBaseComponentArray(name));
 
-        try {
-            Object pPacketPlayOutInfo = cPacketPlayOutPlayerInfo.getConstructor().newInstance();
+        ReflectionUtil.SaveField b = ReflectionUtil.getDeclaredField("b", "PacketPlayOutPlayerInfo");
 
-            Field fa = pPacketPlayOutInfo.getClass().getDeclaredField("a");
-            fa.setAccessible(true);
-            fa.set(pPacketPlayOutInfo, enumPlayerInfoAction.getPlayerInfoAction());
+        ArrayList<Object> array = (ArrayList<Object>) b.get(playOutInfo);
 
-            Object oPlayerInfoData = cPlayerInfoData.getConstructor(cPacketPlayOutPlayerInfo, GameProfile.class, int.class, cEnumGamemode, cIChatBaseComponent)
-                    .newInstance(pPacketPlayOutInfo, gameProfile, ping, enumGamemode.getEnumGamemode(), ReflectionUtil.serializeString(name));
+        array.add(playerInfoData);
 
-            Field b = pPacketPlayOutInfo.getClass().getDeclaredField("b");
-            b.setAccessible(true);
-            ArrayList<Object> array = (ArrayList<Object>) b.get(pPacketPlayOutInfo);
 
-            array.add(oPlayerInfoData);
+        b.set(playOutInfo, array, true);
 
-            b.set(pPacketPlayOutInfo, array);
-
-            return pPacketPlayOutInfo;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
+        return playOutInfo;
     }
 }

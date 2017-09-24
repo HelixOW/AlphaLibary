@@ -8,9 +8,6 @@ public class InvalidAddonException extends Exception {
         super(cause);
     }
 
-    public InvalidAddonException() {
-    }
-
     public InvalidAddonException(String message, Throwable cause) {
         super(message, cause);
     }

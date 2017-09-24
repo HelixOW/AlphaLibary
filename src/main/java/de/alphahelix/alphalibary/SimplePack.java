@@ -1,11 +1,10 @@
 package de.alphahelix.alphalibary;
 
 import de.alphahelix.alphalibary.annotations.Annotations;
-import de.alphahelix.alphalibary.listener.SimpleListener;
+import de.alphahelix.alphalibary.listener.SimpleLoader;
 
-public class SimplePack extends SimpleListener {
+public class SimplePack implements SimpleLoader {
     public SimplePack() {
-        super();
         Annotations.ITEM.registerItems(this);
         Annotations.COMMAND.registerCommands(this);
     }

@@ -164,6 +164,10 @@ public class SimpleJSONFile extends File implements IDataStorage {
         update();
     }
 
+    private void createSection(JsonObject obj) {
+
+    }
+
     public <T> T[] getListValues(Object path, Class<T[]> definy) {
         return getValue(path, definy);
     }

@@ -16,4 +16,11 @@ public class SimpleFolder extends File {
     public SimpleFolder(JavaPlugin plugin, String child) {
         this(plugin.getDataFolder().getAbsolutePath(), child);
     }
+
+    public SimpleFolder(String pathname) {
+        super(pathname);
+
+        if (!this.exists())
+            this.mkdirs();
+    }
 }

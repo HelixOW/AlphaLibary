@@ -69,7 +69,7 @@ public class ReflectionUtil {
     public static SaveField getField(String name, Class<?> clazz) {
         try {
             Field f = clazz.getField(name);
-            return new SaveField(f);
+            return new SaveField(f, -1);
         } catch (Exception e) {
             e.printStackTrace();
             return new SaveField();
@@ -86,7 +86,7 @@ public class ReflectionUtil {
     public static SaveField getDeclaredField(String name, Class<?> clazz) {
         try {
             Field f = clazz.getDeclaredField(name);
-            return new SaveField(f);
+            return new SaveField(f, -1);
         } catch (Exception e) {
             e.printStackTrace();
             return new SaveField();
@@ -101,7 +101,7 @@ public class ReflectionUtil {
         try {
             for (Field field : clazz.getDeclaredFields()) {
                 if (field.getType().equals(type)) {
-                    return new SaveField(field);
+                    return new SaveField(field, -1);
                 }
             }
 
@@ -128,7 +128,7 @@ public class ReflectionUtil {
                 return new SaveField();
             }
         }
-        return new SaveField(field);
+        return new SaveField(field, -1);
     }
 
     /**
@@ -1207,11 +1207,11 @@ public class ReflectionUtil {
         return (GameProfile) getDeclaredMethod("getProfile", getCraftBukkitClass("entity.CraftPlayer")).invoke(p, true);
     }
 
-    public static Set<Class<?>> getClasses(File jarFile, String pckg) {
+    public static Class<?>[] getClasses(File jarFile, String pckg) {
         return getClasses(new JarInfo(jarFile, pckg));
     }
 
-    public static Set<Class<?>> getClasses(JarInfo info) {
+    public static Class<?>[] getClasses(JarInfo info) {
         if (ReflectiveStorage.getJars().containsKey(info))
             return ReflectiveStorage.getJars().get(info);
 
@@ -1222,7 +1222,11 @@ public class ReflectionUtil {
                 JarEntry jarEntry = entry.nextElement();
                 String jarName = jarEntry.getName().replace('/', '.');
 
-                if (jarName.startsWith(info.getPckg()) && jarName.endsWith(".class")) {
+                if (info.needsPckg) {
+                    if (jarName.startsWith(info.getPckg()) && jarName.endsWith(".class")) {
+                        classes.add(getClass(jarName.substring(0, jarName.length() - 6), false));
+                    }
+                } else if (jarName.endsWith(".class")) {
                     classes.add(getClass(jarName.substring(0, jarName.length() - 6), false));
                 }
             }
@@ -1231,28 +1235,30 @@ public class ReflectionUtil {
             Bukkit.getLogger().severe("Error ocurred at getting classes, log: " + ex);
         }
 
-        ReflectiveStorage.getJars().put(info, classes);
+        Class<?>[] classArray = classes.toArray(new Class[classes.size()]);
 
-        return classes;
+        ReflectiveStorage.getJars().put(info, classArray);
+
+        return classArray;
     }
 
-    public static Set<Class<?>> getClasses(File jarFile) {
+    public static Class<?>[] getClasses(File jarFile) {
         return getClasses(new JarInfo(jarFile, ""));
     }
 
-    public static Set<Class<?>> getClasses() {
+    public static Class<?>[] getClasses() {
         Set<Class<?>> classes = new HashSet<>();
         File[] plugins = new SimpleFolder(".", "plugins").listFiles();
 
         if (plugins != null) {
             for (File jars : plugins) {
                 if (jars.getName().endsWith(".jar")) {
-                    classes.addAll(getClasses(jars));
+                    Collections.addAll(classes, getClasses(jars));
                 }
             }
         }
 
-        return classes;
+        return classes.toArray(new Class[classes.size()]);
     }
 
     public static Class<?>[] findClassesImplementing(Class<?> implementedClazz) {
@@ -1277,36 +1283,132 @@ public class ReflectionUtil {
         return classes.toArray(new Class[classes.size()]);
     }
 
-    public static Method[] findMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
-        List<Method> methods = new LinkedList<>();
+    public static Class<?>[] findClassesNotAnnotatedWith(Class<? extends Annotation> annotation) {
+        List<Class<?>> classes = new LinkedList<>();
 
         for (Class<?> clazz : getClasses()) {
-            for (Method m : clazz.getDeclaredMethods()) {
-                if (m.isAnnotationPresent(annotation))
-                    methods.add(m);
-            }
+            if (!clazz.isAnnotationPresent(annotation))
+                classes.add(clazz);
         }
 
-        return methods.toArray(new Method[methods.size()]);
+        return classes.toArray(new Class[classes.size()]);
     }
 
-    public static Field[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation) {
-        List<Field> fields = new LinkedList<>();
+    public static SaveField[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+        List<SaveField> fields = new LinkedList<>();
+        int i = 0;
 
-        for (Class<?> clazz : getClasses()) {
+        for (Class<?> clazz : classes) {
             for (Field f : clazz.getDeclaredFields()) {
-                if (f.isAnnotationPresent(annotation))
-                    fields.add(f);
+                if (f.isAnnotationPresent(annotation)) {
+                    fields.add(new SaveField(f, i));
+                }
+                i++;
+            }
+            i = 0;
+        }
+
+        return fields.toArray(new SaveField[fields.size()]);
+    }
+
+    public static SaveField[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation) {
+        return findFieldsAnnotatedWith(annotation, getClasses());
+    }
+
+    public static SaveField[] findFieldsNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+        List<SaveField> fields = new LinkedList<>();
+        int i = 0;
+
+        for (Class<?> clazz : classes) {
+            for (Field f : clazz.getDeclaredFields()) {
+                if (!f.isAnnotationPresent(annotation)) {
+                    fields.add(new SaveField(f, i));
+                }
+                i++;
+            }
+            i = 0;
+        }
+
+        return fields.toArray(new SaveField[fields.size()]);
+    }
+
+    public static SaveField[] findFieldsNotAnnotatedWith(Class<? extends Annotation> annotation) {
+        return findFieldsNotAnnotatedWith(annotation, getClasses());
+    }
+
+    public static SaveField[] findFieldsOfType(Class<?> type, Class<?>... classes) {
+        List<SaveField> fields = new LinkedList<>();
+        int i = 0;
+
+        for (Class<?> clazz : classes) {
+            for (Field f : clazz.getDeclaredFields()) {
+                if (f.getType().equals(type)) {
+                    fields.add(new SaveField(f, i));
+                }
+                i++;
+            }
+            i = 0;
+        }
+
+        return fields.toArray(new SaveField[fields.size()]);
+    }
+
+    public static SaveField[] findFieldsOfType(Class<?> type) {
+        return findFieldsOfType(type, getClasses());
+    }
+
+    public static SaveField findFieldAtIndex(int index, Class<?>... classes) {
+        int i = 0;
+
+        for (Class<?> clazz : classes) {
+            for (Field f : clazz.getDeclaredFields()) {
+                if (i == index)
+                    return new SaveField(f, i);
+                i++;
             }
         }
 
-        return fields.toArray(new Field[fields.size()]);
+        return new SaveField();
     }
 
-    public static SaveMethod[] findMethodsWithParameters(Class<?>... parameters) {
+    public static SaveMethod[] findMethodsAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
         List<SaveMethod> methods = new LinkedList<>();
 
-        for (Class<?> clazz : getClasses()) {
+        for (Class<?> clazz : classes) {
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(annotation))
+                    methods.add(new SaveMethod(m));
+            }
+        }
+
+        return methods.toArray(new SaveMethod[methods.size()]);
+    }
+
+    public static SaveMethod[] findMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
+        return findMethodsAnnotatedWith(annotation, getClasses());
+    }
+
+    public static SaveMethod[] findMethodsNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+        List<SaveMethod> methods = new LinkedList<>();
+
+        for (Class<?> clazz : classes) {
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(annotation))
+                    methods.add(new SaveMethod(m));
+            }
+        }
+
+        return methods.toArray(new SaveMethod[methods.size()]);
+    }
+
+    public static SaveMethod[] findMethodsNotAnnotatedWith(Class<? extends Annotation> annotation) {
+        return findMethodsNotAnnotatedWith(annotation, getClasses());
+    }
+
+    public static SaveMethod[] findMethodsWithParameters(Class<?>[] parameters, Class<?>... classes) {
+        List<SaveMethod> methods = new LinkedList<>();
+
+        for (Class<?> clazz : classes) {
             for (Method m : clazz.getDeclaredMethods()) {
                 if (Arrays.equals(m.getParameterTypes(), parameters))
                     methods.add(new SaveMethod(m));
@@ -1316,10 +1418,14 @@ public class ReflectionUtil {
         return methods.toArray(new SaveMethod[methods.size()]);
     }
 
-    public static SaveMethod[] findMethodsReturning(Class<?> returned) {
+    public static SaveMethod[] findMethodsWithParameters(Class<?>... parameters) {
+        return findMethodsWithParameters(parameters, getClasses());
+    }
+
+    public static SaveMethod[] findMethodsReturning(Class<?> returned, Class<?>... classes) {
         List<SaveMethod> methods = new LinkedList<>();
 
-        for (Class<?> clazz : getClasses()) {
+        for (Class<?> clazz : classes) {
             for (Method m : clazz.getDeclaredMethods()) {
                 if (m.getReturnType().equals(returned))
                     methods.add(new SaveMethod(m));
@@ -1329,23 +1435,14 @@ public class ReflectionUtil {
         return methods.toArray(new SaveMethod[methods.size()]);
     }
 
-    public static SaveField[] findFieldsOfType(Class<?> type) {
-        List<SaveField> fields = new LinkedList<>();
-
-        for (Class<?> clazz : getClasses()) {
-            for (Field f : clazz.getDeclaredFields()) {
-                if (f.getType().equals(type))
-                    fields.add(new SaveField(f));
-            }
-        }
-
-        return fields.toArray(new SaveField[fields.size()]);
+    public static SaveMethod[] findMethodsReturning(Class<?> returned) {
+        return findMethodsReturning(returned, getClasses());
     }
 
-    public static SaveConstructor[] findConstructorAnnotatedWith(Class<? extends Annotation> annotation) {
+    public static SaveConstructor[] findConstructorAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
         List<SaveConstructor> constructors = new LinkedList<>();
 
-        for (Class<?> clazz : getClasses()) {
+        for (Class<?> clazz : classes) {
             for (Constructor<?> con : clazz.getDeclaredConstructors()) {
                 if (con.isAnnotationPresent(annotation))
                     constructors.add(new SaveConstructor(con));
@@ -1356,17 +1453,45 @@ public class ReflectionUtil {
         return constructors.toArray(new SaveConstructor[constructors.size()]);
     }
 
+    public static SaveConstructor[] findConstructorAnnotatedWith(Class<? extends Annotation> annotation) {
+        return findConstructorAnnotatedWith(annotation, getClasses());
+    }
+
+    public static SaveConstructor[] findConstructorNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+        List<SaveConstructor> constructors = new LinkedList<>();
+
+        for (Class<?> clazz : classes) {
+            for (Constructor<?> con : clazz.getDeclaredConstructors()) {
+                if (!con.isAnnotationPresent(annotation))
+                    constructors.add(new SaveConstructor(con));
+
+            }
+        }
+
+        return constructors.toArray(new SaveConstructor[constructors.size()]);
+    }
+
+    public static SaveConstructor[] findConstructorNotAnnotatedWith(Class<? extends Annotation> annotation) {
+        return findConstructorNotAnnotatedWith(annotation, getClasses());
+    }
+
     public static class SaveField {
 
         private Field f;
+        private int index;
 
         public SaveField(Field f) {
+            this(f, -1);
+        }
+
+        public SaveField(Field f, int index) {
             try {
                 f.setAccessible(true);
                 this.f = f;
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            this.index = index;
         }
 
         SaveField() {
@@ -1400,6 +1525,14 @@ public class ReflectionUtil {
                 if (stackTrace) e.printStackTrace();
             }
         }
+
+        public Field field() {
+            return f;
+        }
+
+        public int index() {
+            return index;
+        }
     }
 
     public static class SaveMethod {
@@ -1426,6 +1559,10 @@ public class ReflectionUtil {
                 if (stackTrace) e.printStackTrace();
             }
             return new Object();
+        }
+
+        public Method method() {
+            return m;
         }
     }
 
@@ -1464,6 +1601,10 @@ public class ReflectionUtil {
                 if (stackTrace) e.printStackTrace();
             }
             return null;
+        }
+
+        public Constructor<T> constructor() {
+            return c;
         }
     }
 

@@ -37,12 +37,13 @@ public class AlphaLibary extends JavaPlugin {
         return instance;
     }
 
+    @Override
     public void onEnable() {
         instance = this;
 
         for (Class<?> loaded : findClassesImplementing(SimpleLoader.class)) {
             try {
-                Bukkit.getPluginManager().registerEvents((Listener) loaded.getDeclaredConstructors()[0].newInstance(true), this);
+                Bukkit.getPluginManager().registerEvents((Listener) loaded.getDeclaredConstructors()[0].newInstance(), this);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }

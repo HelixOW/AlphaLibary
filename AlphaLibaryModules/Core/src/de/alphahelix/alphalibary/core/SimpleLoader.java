@@ -1,4 +1,6 @@
 package de.alphahelix.alphalibary.core;
 
-public interface SimpleLoader {
+import org.bukkit.event.Listener;
+
+public interface SimpleLoader extends Listener {
 }

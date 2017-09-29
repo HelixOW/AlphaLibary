@@ -1,8 +1,7 @@
 package de.alphahelix.alphalibary.server;
 
-import com.google.common.base.Objects;
-
 import java.io.Serializable;
+import java.util.Objects;
 
 @SuppressWarnings("ALL")
 public class ServerResult implements Serializable {
@@ -35,12 +34,12 @@ public class ServerResult implements Serializable {
         ServerResult that = (ServerResult) o;
         return getPlayercount() == that.getPlayercount() &&
                 getMaximumPlayers() == that.getMaximumPlayers() &&
-                Objects.equal(getMotd(), that.getMotd());
+                Objects.equals(getMotd(), that.getMotd());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getPlayercount(), getMaximumPlayers(), getMotd());
+        return Objects.hash(getPlayercount(), getMaximumPlayers(), getMotd());
     }
 
     @Override

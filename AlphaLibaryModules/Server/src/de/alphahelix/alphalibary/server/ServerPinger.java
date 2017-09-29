@@ -1,12 +1,12 @@
 package de.alphahelix.alphalibary.server;
 
-import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.core.utils.Util;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Objects;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("ALL")
 public class ServerPinger {
@@ -20,7 +20,9 @@ public class ServerPinger {
     }
 
     public void ping(ServerCallback callback) {
-        Util.runLater(1, true, () -> {
+        ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
+
+        exec.schedule(() -> {
             try {
                 Socket s = new Socket(server, port);
 
@@ -42,7 +44,7 @@ public class ServerPinger {
                 e.printStackTrace();
                 callback.done(null);
             }
-        });
+        }, 1, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -51,12 +53,12 @@ public class ServerPinger {
         if (o == null || getClass() != o.getClass()) return false;
         ServerPinger that = (ServerPinger) o;
         return port == that.port &&
-                Objects.equal(server, that.server);
+                Objects.equals(server, that.server);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(server, port);
+        return Objects.hash(server, port);
     }
 
     @Override

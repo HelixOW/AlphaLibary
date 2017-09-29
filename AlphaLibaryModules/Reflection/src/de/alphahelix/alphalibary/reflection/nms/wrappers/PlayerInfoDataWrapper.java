@@ -9,7 +9,7 @@ public class PlayerInfoDataWrapper {
 
     private static final Class<?> P_ID_CLAZZ = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");
     private static final ReflectionUtil.SaveConstructor P_ID_CONSTUCTOR = ReflectionUtil.getDeclaredConstructor(
-            P_ID_CLAZZ, GameProfile.class, int.class, ReflectionUtil.getNmsClass("EnumGamemode"),
+            P_ID_CLAZZ, P_ID_CLAZZ, GameProfile.class, int.class, ReflectionUtil.getNmsClass("EnumGamemode"),
             ReflectionUtil.getNmsClass("IChatBaseComponent")
     );
 
@@ -64,7 +64,7 @@ public class PlayerInfoDataWrapper {
     }
 
     public Object getPlayerInfoData() {
-        return P_ID_CONSTUCTOR.newInstance(true, getPlayerinfoaction(), getProfile(), getPing(), getGameMode(), ReflectionUtil.serializeString(getName()));
+        return P_ID_CONSTUCTOR.newInstance(true, null, getPlayerinfoaction(), getProfile(), getPing(), getGameMode(), ReflectionUtil.serializeString(getName()));
     }
 
     @Override

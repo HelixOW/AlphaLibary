@@ -1,25 +1,9 @@
-/*
- * Copyright (C) <2017>  <AlphaHelixDev>
- *
- *       This program is free software: you can redistribute it under the
- *       terms of the GNU General Public License as published by
- *       the Free Software Foundation, either version 3 of the License.
- *
- *       This program is distributed in the hope that it will be useful,
- *       but WITHOUT ANY WARRANTY; without even the implied warranty of
- *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *       GNU General Public License for more details.
- *
- *       You should have received a copy of the GNU General Public License
- *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package de.alphahelix.alphalibary.storage.file;
 
 import de.alphahelix.alphalibary.core.utils.SerializationUtil;
 import de.alphahelix.alphalibary.inventories.ItemInventory;
 import de.alphahelix.alphalibary.inventories.item.InventoryItem;
 import de.alphahelix.alphalibary.storage.IDataStorage;
-import de.alphahelix.alphalibary.storage.sql.DatabaseCallback;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
@@ -32,8 +16,9 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 
-public class SimpleFile extends File implements IDataStorage {
+public class SimpleFile extends AbstractFile implements IDataStorage {
 
     private static final Yaml YAML = new Yaml(new DumperOptions() {
         @Override
@@ -52,14 +37,6 @@ public class SimpleFile extends File implements IDataStorage {
      */
     public SimpleFile(String path, String name) {
         super(path, name);
-        if (!this.exists() && !this.isDirectory()) {
-            try {
-                getParentFile().mkdirs();
-                createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
         try {
             head = YAML.loadAs(new FileReader(this), Map.class);
@@ -118,23 +95,23 @@ public class SimpleFile extends File implements IDataStorage {
     }
 
     @Override
-    public <T> void getValue(Object path, Class<T> definy, DatabaseCallback<T> callback) {
-        callback.done(getValue(path));
+    public <T> void getValue(Object path, Class<T> definy, Consumer<T> callback) {
+        callback.accept(getValue(path));
     }
 
     @Override
-    public void getKeys(DatabaseCallback<ArrayList<String>> callback) {
-        callback.done(new ArrayList<>(getKeys()));
+    public void getKeys(Consumer<List<String>> callback) {
+        callback.accept(new ArrayList<>(getKeys()));
     }
 
     @Override
-    public <T> void getValues(Class<T> definy, DatabaseCallback<ArrayList<T>> callback) {
-        callback.done(new ArrayList<T>(head.values()));
+    public <T> void getValues(Class<T> definy, Consumer<List<T>> callback) {
+        callback.accept(new ArrayList<T>(head.values()));
     }
 
     @Override
-    public void hasValue(Object path, DatabaseCallback<Boolean> callback) {
-        callback.done(contains(path));
+    public void hasValue(Object path, Consumer<Boolean> callback) {
+        callback.accept(contains(path));
     }
 
     public String[] getKeys(String path) {
@@ -769,4 +746,3 @@ public class SimpleFile extends File implements IDataStorage {
                 "} " + super.toString();
     }
 }
-

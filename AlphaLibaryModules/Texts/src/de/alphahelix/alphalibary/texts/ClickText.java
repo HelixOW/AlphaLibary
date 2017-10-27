@@ -11,28 +11,29 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ClickText {
 
-    public static void sendClickText(Player p, String text, TextAction action) {
-        UUIDFetcher.getUUID(p, id -> {
-            new ActionTextCommand(id, action);
+    public static void sendClickText(Player p, String text, String id, Consumer<Player> action) {
+        UUIDFetcher.getUUID(p, playerID -> {
+            new ActionTextCommand(playerID, id, action);
 
             TextComponent txt = new TextComponent(text);
 
-            txt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/atcPerform_" + id));
+            txt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/atcPerform_" + playerID + "_" + id));
 
             p.spigot().sendMessage(txt);
         });
     }
 
-    public static void sendHoverClickText(Player p, String clickText, String hovertext, TextAction clickAction) {
-        UUIDFetcher.getUUID(p, id -> {
-            new ActionTextCommand(id, clickAction);
+    public static void sendHoverClickText(Player p, String clickText, String hovertext, String id, Consumer<Player> clickAction) {
+        UUIDFetcher.getUUID(p, playerID -> {
+            new ActionTextCommand(playerID, id, clickAction);
 
             TextComponent txt = new TextComponent(clickText);
 
-            txt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/atcPerform_" + id));
+            txt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/atcPerform_" + playerID + "_" + id));
             txt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovertext).create()));
 
             p.spigot().sendMessage(txt);
@@ -41,16 +42,16 @@ public class ClickText {
 
     private static class ActionTextCommand extends SimpleCommand {
 
-        private final TextAction action;
+        private final Consumer<Player> action;
 
-        ActionTextCommand(UUID player, TextAction action) {
-            super("atcPerform_" + player.toString(), "", "");
+        ActionTextCommand(UUID player, String id, Consumer<Player> action) {
+            super("atcPerform_" + player.toString() + "_" + id, "", "");
             this.action = action;
         }
 
         @Override
         public boolean execute(CommandSender cs, String label, String[] args) {
-            action.run((Player) cs);
+            action.accept((Player) cs);
             return true;
         }
 

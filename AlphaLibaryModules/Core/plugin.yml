@@ -1,5 +1,5 @@
 name: AlphaLibary
 version: ${project.version}
-main: de.alphahelix.alphalibary.de.alphahelix.alphalibary.core.AlphaLibary
+main: de.alphahelix.alphalibary.core.AlphaLibary
 authors: [AlphaHelix]
 description: Libary for Plugins of AlphaHelix. Credits to Inventivetalent!

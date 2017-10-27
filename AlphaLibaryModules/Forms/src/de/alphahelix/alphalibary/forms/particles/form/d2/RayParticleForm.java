@@ -1,17 +1,17 @@
 package de.alphahelix.alphalibary.forms.particles.form.d2;
 
-import de.alphahelix.alphalibary.forms.FormFunction;
 import de.alphahelix.alphalibary.forms.d2.RayForm;
 import de.alphahelix.alphalibary.forms.particles.data.EffectData;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
 @SuppressWarnings("ALL")
 public class RayParticleForm extends RayForm {
 
-    public RayParticleForm(Effect effect, EffectData<?> effectData, Location location, String axis, double dense, double lenght, FormFunction formFunction) {
-        super(location, axis, dense, lenght, null, formFunction);
+    public RayParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector direction, double dense, double lenght) {
+        super(location, direction, dense, lenght, null);
 
         if (effectData != null)
             Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");

@@ -9,10 +9,8 @@ import org.bukkit.entity.Player;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Consumer;
 
 @SuppressWarnings("ALL")
 public class AsyncMySQLDatabase {
@@ -47,6 +45,8 @@ public class AsyncMySQLDatabase {
      * @return the sql query string to create a column
      */
     public static String createColumn(String name, MySQLAPI.MySQLDataType type, long size, String... arg) {
+        if (Arrays.<String>asList(arg).isEmpty())
+            return name + " " + type.name() + "(" + size + ")";
         return name + " " + type.name() + "(" + size + ") " + Arrays.toString(arg).replace(", ", " ").replace("[", "").replace("]", "");
     }
 
@@ -82,6 +82,7 @@ public class AsyncMySQLDatabase {
                 if (api.isConnected()) {
                     try {
                         String qry = "CREATE TABLE IF NOT EXISTS " + table + " (" + tableinfo + ")";
+
                         PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         prepstate.executeUpdate();
                     } catch (SQLException e) {
@@ -120,9 +121,9 @@ public class AsyncMySQLDatabase {
      * @param p the {@link Player} to check
      * @return if the {@link Player} is inside the table
      */
-    public void containsPlayer(Player p, DatabaseCallback<Boolean> callback) {
+    public void containsPlayer(Player p, Consumer<Boolean> callback) {
         UUIDFetcher.getUUID(p, id ->
-                getResult("uuid", id.toString(), "uuid", result -> callback.done(result != null))
+                getResult("uuid", id.toString(), "uuid", result -> callback.accept(result != null))
         );
     }
 
@@ -132,9 +133,9 @@ public class AsyncMySQLDatabase {
      * @param playername the name of the {@link Player} to check
      * @return if the {@link Player} is inside the table
      */
-    public void containsPlayer(String playername, DatabaseCallback<Boolean> callback) {
+    public void containsPlayer(String playername, Consumer<Boolean> callback) {
         UUIDFetcher.getUUID(playername, id ->
-                getResult("uuid", id.toString(), "uuid", result -> callback.done(result != null))
+                getResult("uuid", id.toString(), "uuid", result -> callback.accept(result != null))
         );
     }
 
@@ -144,8 +145,8 @@ public class AsyncMySQLDatabase {
      * @param id the UUID of the {@link Player} to check
      * @return if the {@link Player} is inside the table
      */
-    public void containsPlayer(UUID id, DatabaseCallback<Boolean> callback) {
-        getResult("uuid", id.toString(), "uuid", result -> callback.done(result != null));
+    public void containsPlayer(UUID id, Consumer<Boolean> callback) {
+        getResult("uuid", id.toString(), "uuid", result -> callback.accept(result != null));
     }
 
     /**
@@ -155,8 +156,8 @@ public class AsyncMySQLDatabase {
      * @param value     the value of the column
      * @return if the table contains it
      */
-    public void contains(String condition, String value, DatabaseCallback<Boolean> callback) {
-        getResult(condition, value, condition, result -> callback.done(result != null));
+    public void contains(String condition, String value, Consumer<Boolean> callback) {
+        getResult(condition, value, condition, result -> callback.accept(result != null));
     }
 
     /**
@@ -193,7 +194,7 @@ public class AsyncMySQLDatabase {
      * @param orderBy       the column to order it
      * @return the executed query
      */
-    public void orderAscending(String columnToOrder, String orderBy, DatabaseCallback<ResultSet> callback) {
+    public void orderAscending(String columnToOrder, String orderBy, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -202,9 +203,9 @@ public class AsyncMySQLDatabase {
                         PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
                         return;
@@ -213,7 +214,7 @@ public class AsyncMySQLDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -226,7 +227,7 @@ public class AsyncMySQLDatabase {
      * @param limit         the limit of the list
      * @return the executed query
      */
-    public void orderLimitAscending(String columnToOrder, String orderBy, long limit, DatabaseCallback<ResultSet> callback) {
+    public void orderLimitAscending(String columnToOrder, String orderBy, long limit, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -235,9 +236,9 @@ public class AsyncMySQLDatabase {
                         PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
                         return;
@@ -246,7 +247,7 @@ public class AsyncMySQLDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -258,7 +259,7 @@ public class AsyncMySQLDatabase {
      * @param orderBy       the column to order it
      * @return the executed query
      */
-    public void orderDescending(String columnToOrder, String orderBy, DatabaseCallback<ResultSet> callback) {
+    public void orderDescending(String columnToOrder, String orderBy, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -267,9 +268,9 @@ public class AsyncMySQLDatabase {
                         PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
                         return;
@@ -278,7 +279,7 @@ public class AsyncMySQLDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -291,7 +292,7 @@ public class AsyncMySQLDatabase {
      * @param limit         the limit of the list
      * @return the executed query
      */
-    public void orderLimitDescending(String columnToOrder, String orderBy, long limit, DatabaseCallback<ResultSet> callback) {
+    public void orderLimitDescending(String columnToOrder, String orderBy, long limit, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -300,9 +301,9 @@ public class AsyncMySQLDatabase {
                         PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
                         return;
@@ -311,7 +312,7 @@ public class AsyncMySQLDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -403,40 +404,44 @@ public class AsyncMySQLDatabase {
      * @param column the colum to get it's values from
      * @return an {@link ArrayList} with all values
      */
-    public void getList(String column, DatabaseCallback<ArrayList<String>> callback) {
-        ArrayList<String> list = new ArrayList<>();
-
+    public void getList(String column, Consumer<List<String>> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
+            List<String> list = new LinkedList<>();
             if (api != null) {
                 if (api.isConnected()) {
-
                     try {
                         ResultSet rs = MySQLAPI.getMySQL(database).getMySQLConnection().prepareStatement("SELECT " + column + " FROM " + table).executeQuery();
 
                         if (rs == null) {
-                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
                             return;
                         }
 
                         while (rs.next()) {
-                            if (!rs.getString(column).contains(", ")) {
-                                list.add(rs.getString(column).replace("[", "").replace("]", ""));
-                            } else {
-                                String[] strlist = rs.getString(column).split(", ");
-                                for (String aStrlist : strlist) {
-                                    list.add(aStrlist.replace("[", "").replace("]", ""));
+                            String str = rs.getString(column);
+
+                            if (str.startsWith("{") && str.endsWith("}"))
+                                list.add(str);
+                            else {
+                                if (!str.contains(", ")) {
+                                    list.add(str.replace("[", "").replace("]", ""));
+                                } else {
+                                    String[] strlist = str.split(", ");
+                                    for (String aStrlist : strlist) {
+                                        list.add(aStrlist.replace("[", "").replace("]", ""));
+                                    }
                                 }
                             }
                         }
 
-                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
                         return;
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
         });
     }
 
@@ -447,7 +452,7 @@ public class AsyncMySQLDatabase {
      * @param limit  the limit of the entries
      * @return an {@link ArrayList} with all values
      */
-    public void getLimitedList(String column, long limit, DatabaseCallback<ArrayList<String>> callback) {
+    public void getLimitedList(String column, long limit, Consumer<ArrayList<String>> callback) {
         ArrayList<String> list = new ArrayList<>();
 
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
@@ -457,7 +462,7 @@ public class AsyncMySQLDatabase {
                         ResultSet rs = api.getMySQLConnection().prepareStatement("SELECT " + column + " FROM " + table + " LIMIT " + limit).executeQuery();
 
                         if (rs == null) {
-                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
                             return;
                         }
 
@@ -472,14 +477,14 @@ public class AsyncMySQLDatabase {
                             }
                         }
 
-                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
                         return;
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
         });
     }
 
@@ -598,7 +603,7 @@ public class AsyncMySQLDatabase {
      * @param column    the column to get
      * @return the Object which was saved inside the table
      */
-    public void getResult(String condition, String value, String column, DatabaseCallback<Object> callback) {
+    public void getResult(String condition, String value, String column, Consumer<Object> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -609,16 +614,16 @@ public class AsyncMySQLDatabase {
                         ResultSet rs = prepstate.executeQuery();
 
                         if (rs == null) {
-                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
                             return;
                         }
 
                         if (rs.next()) {
                             Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                                 try {
-                                    callback.done(rs.getObject(column));
+                                    callback.accept(rs.getObject(column));
                                 } catch (SQLException e) {
-                                    callback.done(null);
+                                    callback.accept(null);
                                 }
                             });
                             return;
@@ -628,7 +633,7 @@ public class AsyncMySQLDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -638,7 +643,7 @@ public class AsyncMySQLDatabase {
      * @param qry the query to perform
      * @return the executed Query
      */
-    public void customResult(String qry, DatabaseCallback<ResultSet> callback) {
+    public void customResult(String qry, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -646,9 +651,9 @@ public class AsyncMySQLDatabase {
                         PreparedStatement prepstate = api.getMySQLConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
                         return;
@@ -657,7 +662,7 @@ public class AsyncMySQLDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 

@@ -8,8 +8,9 @@ import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 public class PlayerInfoDataWrapper {
 
     private static final Class<?> P_ID_CLAZZ = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");
+
     private static final ReflectionUtil.SaveConstructor P_ID_CONSTUCTOR = ReflectionUtil.getDeclaredConstructor(
-            P_ID_CLAZZ, P_ID_CLAZZ, GameProfile.class, int.class, ReflectionUtil.getNmsClass("EnumGamemode"),
+            P_ID_CLAZZ, ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class, ReflectionUtil.getNmsClass("EnumGamemode"),
             ReflectionUtil.getNmsClass("IChatBaseComponent")
     );
 

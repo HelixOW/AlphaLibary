@@ -29,7 +29,6 @@ public class SchematicManager {
     private static final HashMap<String, ArrayList<UndoSave>> SAVE_MAP = new HashMap<>();
 
     public static void save(Location location1, Location location2, String name) {
-
         new SchematicFile(new Schematic(name, SchematicManager.getBlocks(location1, location2)));
     }
 
@@ -88,6 +87,11 @@ public class SchematicManager {
                 @Override
                 public MaterialData getBlockData() {
                     return block.getState().getData();
+                }
+
+                @Override
+                public int getBlockPower() {
+                    return block.getBlockPower();
                 }
 
                 @Override

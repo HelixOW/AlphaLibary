@@ -18,16 +18,20 @@
 package de.alphahelix.alphalibary.inventories.item;
 
 import de.alphahelix.alphalibary.core.SimpleListener;
+import de.alphahelix.alphalibary.core.utils.Util;
 import de.alphahelix.alphalibary.inventories.item.data.ItemData;
 import de.alphahelix.alphalibary.inventories.item.data.WrongDataException;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Consumer;
 
 @SuppressWarnings("ALL")
 public class ItemBuilder extends SimpleListener implements Serializable {
@@ -41,6 +45,12 @@ public class ItemBuilder extends SimpleListener implements Serializable {
     private short damage = 0;
     private List<String> lore = new ArrayList<>();
     private boolean unbreakable = false;
+    private Consumer<PlayerInteractEvent> triggerEventConsumer = new Consumer<PlayerInteractEvent>() {
+        @Override
+        public void accept(PlayerInteractEvent e) {
+        }
+    };
+
 
     /**
      * Create a new {@link ItemStack} with the given {@link Material}
@@ -52,6 +62,7 @@ public class ItemBuilder extends SimpleListener implements Serializable {
     }
 
     public ItemBuilder(ItemStack is) {
+        super();
         material = is.getType();
         amount = is.getAmount();
         damage = is.getDurability();
@@ -157,7 +168,7 @@ public class ItemBuilder extends SimpleListener implements Serializable {
      * @return this {@link ItemBuilder}
      */
     public ItemBuilder setName(String name) {
-        this.name = name;
+        this.name = name.replace("&", "§");
         return this;
     }
 
@@ -230,7 +241,7 @@ public class ItemBuilder extends SimpleListener implements Serializable {
      * @return this {@link ItemBuilder}
      */
     public ItemBuilder setLore(String... newLore) {
-        this.lore = Arrays.asList(newLore);
+        this.lore = Arrays.asList(Util.replaceInArray("&", "§", newLore));
         return this;
     }
 
@@ -251,6 +262,11 @@ public class ItemBuilder extends SimpleListener implements Serializable {
      */
     public ItemBuilder setUnbreakable(boolean status) {
         this.unbreakable = status;
+        return this;
+    }
+
+    public ItemBuilder setTriggerEventConsumer(Consumer<PlayerInteractEvent> triggerEventConsumer) {
+        this.triggerEventConsumer = triggerEventConsumer;
         return this;
     }
 
@@ -290,6 +306,13 @@ public class ItemBuilder extends SimpleListener implements Serializable {
      */
     public ArrayList<ItemData> getAllData() {
         return itemData;
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent e) {
+        if (e.getItem() == null) return;
+        if (Util.isSame(e.getItem(), this.build()))
+            triggerEventConsumer.accept(e);
     }
 
     @Override

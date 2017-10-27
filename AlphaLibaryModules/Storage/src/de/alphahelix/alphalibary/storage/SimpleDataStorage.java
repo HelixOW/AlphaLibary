@@ -1,14 +1,22 @@
 package de.alphahelix.alphalibary.storage;
 
-import de.alphahelix.alphalibary.storage.sql.DatabaseCallback;
+import io.netty.util.internal.ConcurrentSet;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 @SuppressWarnings("ALL")
 public class SimpleDataStorage<K, V> {
 
     private final IDataStorage storage;
     private final Class<V> valueClazz;
+
+    private final Map<K, V> cache = new ConcurrentHashMap<>();
+    private final Set<String> keyCache = new ConcurrentSet<>();
+    private final Set<V> valueCache = new ConcurrentSet<>();
 
     public SimpleDataStorage(IDataStorage storage, Class<V> valueClazz) {
         this.storage = storage;
@@ -23,31 +31,72 @@ public class SimpleDataStorage<K, V> {
         return valueClazz;
     }
 
-    public void setValue(Object path, Object value) {
-        getStorage().setValue(path, value);
+    public void setValue(K key, V value) {
+        cache.put(key, value);
+        getStorage().setValue(key, value);
     }
 
-    public void setDefaultValue(Object path, Object value) {
-        getStorage().setDefaultValue(path, value);
+    public void setDefaultValue(K key, V value) {
+        if (!cache.containsKey(key))
+            cache.put(key, value);
+        getStorage().setDefaultValue(key, value);
     }
 
-    public void removeValue(Object path) {
-        getStorage().removeValue(path);
+    public void removeValue(K key) {
+        cache.remove(key);
+        getStorage().removeValue(key);
     }
 
-    public <T> void getValue(Object path, Class<T> definy, DatabaseCallback<T> callback) {
-        getStorage().getValue(path, definy, callback);
+    public void getValue(K key, Consumer<V> callback) {
+        getStorage().getValue(key, this.valueClazz, callback);
     }
 
-    public void getKeys(DatabaseCallback<ArrayList<String>> callback) {
+    public void getCachedValue(K key, Consumer<V> callback, boolean forceNew) {
+        if (!cache.containsKey(key) || forceNew) {
+            getValue(key, result -> {
+                cache.put(key, result);
+                callback.accept(result);
+            });
+        } else {
+            callback.accept(cache.get(key));
+        }
+    }
+
+    public void getKeys(Consumer<List<String>> callback) {
         getStorage().getKeys(callback);
     }
 
-    public <T> void getValues(Class<T> definy, DatabaseCallback<ArrayList<T>> callback) {
-        getStorage().getValues(definy, callback);
+    public void getCachedKeys(Consumer<Set<String>> callback, boolean forceNew) {
+        if (keyCache.isEmpty() || forceNew) {
+            keyCache.clear();
+
+            getKeys(result -> {
+                result.forEach(s -> keyCache.add(s));
+                callback.accept(keyCache);
+            });
+        } else {
+            callback.accept(keyCache);
+        }
     }
 
-    public void hasValue(Object path, DatabaseCallback<Boolean> callback) {
-        getStorage().hasValue(path, callback);
+    public void getValues(Consumer<List<V>> callback) {
+        getStorage().getValues(this.valueClazz, callback);
+    }
+
+    public void getCachedValues(Consumer<Set<V>> callback, boolean forceNew) {
+        if (valueCache.isEmpty() || forceNew) {
+            valueCache.clear();
+
+            getValues(result -> {
+                result.forEach(v -> valueCache.add(v));
+                callback.accept(valueCache);
+            });
+        } else {
+            callback.accept(valueCache);
+        }
+    }
+
+    public void hasValue(K key, Consumer<Boolean> callback) {
+        getStorage().hasValue(key, callback);
     }
 }

@@ -1,8 +1,8 @@
 package de.alphahelix.alphalibary.forms.d2;
 
+import de.alphahelix.alphalibary.core.utils.Pair;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -10,22 +10,25 @@ import org.bukkit.util.Vector;
 @SuppressWarnings("ALL")
 public class PolyForm extends Form {
 
-    private Vector[] points;
+    private Pair<Vector, Vector>[] points;
 
-    public PolyForm(Location location, String axis, double dense, FormAction action, Vector... points) {
-        super(location, axis, dense, action);
-        Validate.isTrue(points.length % 2 == 0, "It always has to be multiple of 2 points");
+    public PolyForm(Location location, double dense, FormAction action, Pair<Vector, Vector>... points) {
+        super(location, "", dense, action);
         this.points = points;
     }
 
-    public Vector[] getPoints() {
+    public Pair<Vector, Vector>[] getPoints() {
         return points;
+    }
+
+    public PolyForm setPoints(Pair<Vector, Vector>... points) {
+        this.points = points;
+        return this;
     }
 
     @Override
     public void send(Player p) {
-        for (int i = 0; i < points.length; i += 2) {
-            new PointForm(getLocation(), getAxis(), getDense(), getAction(), getPoints()[i], getPoints()[i + 1]).send(p);
-        }
+        for (int i = 0; i < points.length; i++)
+            new PointForm(getLocation(), getDense(), getAction(), getPoints()[i].getKey(), getPoints()[i].getValue()).send(p);
     }
 }

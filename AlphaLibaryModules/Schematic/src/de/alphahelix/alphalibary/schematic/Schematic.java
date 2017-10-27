@@ -62,6 +62,8 @@ public class Schematic implements Serializable {
 
         MaterialData getBlockData();
 
+        int getBlockPower();
+
         int getX();
 
         int getY();

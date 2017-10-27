@@ -9,10 +9,8 @@ import org.bukkit.entity.Player;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Consumer;
 
 @SuppressWarnings("ALL")
 public class SQLiteDatabase {
@@ -108,9 +106,9 @@ public class SQLiteDatabase {
      * @param p the {@link Player} to check
      * @return if the {@link Player} is inside the table
      */
-    public void containsPlayer(Player p, DatabaseCallback<Boolean> check) {
+    public void containsPlayer(Player p, Consumer<Boolean> check) {
         UUIDFetcher.getUUID(p, id ->
-                getResult("uuid", id.toString(), "uuid", result -> check.done(result != null))
+                getResult("uuid", id.toString(), "uuid", result -> check.accept(result != null))
         );
     }
 
@@ -120,9 +118,9 @@ public class SQLiteDatabase {
      * @param playername the name of the {@link Player} to check
      * @return if the {@link Player} is inside the table
      */
-    public void containsPlayer(String playername, DatabaseCallback<Boolean> check) {
+    public void containsPlayer(String playername, Consumer<Boolean> check) {
         UUIDFetcher.getUUID(playername, id ->
-                getResult("uuid", id.toString(), "uuid", result -> check.done(result != null))
+                getResult("uuid", id.toString(), "uuid", result -> check.accept(result != null))
         );
     }
 
@@ -132,8 +130,8 @@ public class SQLiteDatabase {
      * @param id the UUID of the {@link Player} to check
      * @return if the {@link Player} is inside the table
      */
-    public void containsPlayer(UUID id, DatabaseCallback<Boolean> check) {
-        getResult("uuid", id.toString(), "uuid", result -> check.done(result != null));
+    public void containsPlayer(UUID id, Consumer<Boolean> check) {
+        getResult("uuid", id.toString(), "uuid", result -> check.accept(result != null));
     }
 
     /**
@@ -143,8 +141,8 @@ public class SQLiteDatabase {
      * @param value     the value of the column
      * @return if the table contains it
      */
-    public void contains(String condition, String value, DatabaseCallback<Boolean> check) {
-        getResult(condition, value, condition, result -> check.done(result != null));
+    public void contains(String condition, String value, Consumer<Boolean> check) {
+        getResult(condition, value, condition, result -> check.accept(result != null));
     }
 
     /**
@@ -245,7 +243,7 @@ public class SQLiteDatabase {
      * @param column    the column to get
      * @return the Object which was saved inside the table
      */
-    public void getResult(String condition, String value, String column, DatabaseCallback<Object> callback) {
+    public void getResult(String condition, String value, String column, Consumer<Object> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -262,9 +260,9 @@ public class SQLiteDatabase {
                         if (rs.next()) {
                             Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                                 try {
-                                    callback.done(rs.getObject(column));
+                                    callback.accept(rs.getObject(column));
                                 } catch (SQLException e) {
-                                    callback.done(null);
+                                    callback.accept(null);
                                 }
                             });
                             return;
@@ -273,7 +271,7 @@ public class SQLiteDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -282,7 +280,7 @@ public class SQLiteDatabase {
      *
      * @param qry the query to perform
      */
-    public void customResult(String qry, DatabaseCallback<ResultSet> callback) {
+    public void customResult(String qry, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -290,9 +288,9 @@ public class SQLiteDatabase {
                         PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
 
@@ -301,7 +299,7 @@ public class SQLiteDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -312,7 +310,7 @@ public class SQLiteDatabase {
      * @param columnToOrder the selection to order
      * @param orderBy       the column to order it
      */
-    public void orderAscending(String columnToOrder, String orderBy, DatabaseCallback<ResultSet> callback) {
+    public void orderAscending(String columnToOrder, String orderBy, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -321,9 +319,9 @@ public class SQLiteDatabase {
                         PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
 
@@ -332,7 +330,7 @@ public class SQLiteDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -345,7 +343,7 @@ public class SQLiteDatabase {
      * @param limit         the limit of the list
      * @return the executed query
      */
-    public void orderLimitAscending(String columnToOrder, String orderBy, long limit, DatabaseCallback<ResultSet> callback) {
+    public void orderLimitAscending(String columnToOrder, String orderBy, long limit, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -354,9 +352,9 @@ public class SQLiteDatabase {
                         PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
 
@@ -365,7 +363,7 @@ public class SQLiteDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -377,7 +375,7 @@ public class SQLiteDatabase {
      * @param orderBy       the column to order it
      * @return the executed query
      */
-    public void orderDescending(String columnToOrder, String orderBy, DatabaseCallback<ResultSet> callback) {
+    public void orderDescending(String columnToOrder, String orderBy, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -386,9 +384,9 @@ public class SQLiteDatabase {
                         PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
 
@@ -397,7 +395,7 @@ public class SQLiteDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -410,7 +408,7 @@ public class SQLiteDatabase {
      * @param limit         the limit of the list
      * @return the executed query
      */
-    public void orderLimitDescending(String columnToOrder, String orderBy, long limit, DatabaseCallback<ResultSet> callback) {
+    public void orderLimitDescending(String columnToOrder, String orderBy, long limit, Consumer<ResultSet> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
             if (api != null) {
                 if (api.isConnected()) {
@@ -419,9 +417,9 @@ public class SQLiteDatabase {
                         PreparedStatement prepstate = api.getSQLiteConnection().prepareStatement(qry);
                         Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> {
                             try {
-                                callback.done(prepstate.executeQuery());
+                                callback.accept(prepstate.executeQuery());
                             } catch (SQLException e) {
-                                callback.done(null);
+                                callback.accept(null);
                             }
                         });
                         return;
@@ -429,7 +427,7 @@ public class SQLiteDatabase {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(null));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(null));
         });
     }
 
@@ -473,38 +471,43 @@ public class SQLiteDatabase {
      * @param column the colum to get it's values from
      * @return an {@link ArrayList} with all values
      */
-    public void getList(String column, DatabaseCallback<ArrayList<String>> callback) {
-        ArrayList<String> list = new ArrayList<>();
-
+    public void getList(String column, Consumer<List<String>> callback) {
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
+            List<String> list = new LinkedList<>();
             if (api != null) {
                 if (api.isConnected()) {
                     try {
                         ResultSet rs = api.getSQLiteConnection().prepareStatement("SELECT " + column + " FROM " + tableName + ";").executeQuery();
 
                         if (rs == null) {
-                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
                             return;
                         }
 
                         while (rs.next()) {
-                            if (!rs.getString(column).contains(", ")) {
-                                list.add(rs.getString(column).replace("[", "").replace("]", ""));
-                            } else {
-                                String[] strlist = rs.getString(column).split(", ");
-                                for (String aStrlist : strlist) {
-                                    list.add(aStrlist.replace("[", "").replace("]", ""));
+                            String str = rs.getString(column);
+
+                            if (str.startsWith("{") && str.endsWith("}"))
+                                list.add(str);
+                            else {
+                                if (!str.contains(", ")) {
+                                    list.add(str.replace("[", "").replace("]", ""));
+                                } else {
+                                    String[] strlist = str.split(", ");
+                                    for (String aStrlist : strlist) {
+                                        list.add(aStrlist.replace("[", "").replace("]", ""));
+                                    }
                                 }
                             }
                         }
 
-                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
                         return;
                     } catch (SQLException ignored) {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
         });
     }
 
@@ -515,7 +518,7 @@ public class SQLiteDatabase {
      * @param limit  the limit of the entries
      * @return an {@link ArrayList} with all values
      */
-    public void getLimitedList(String column, long limit, DatabaseCallback<ArrayList<String>> callback) {
+    public void getLimitedList(String column, long limit, Consumer<ArrayList<String>> callback) {
         ArrayList<String> list = new ArrayList<>();
 
         Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
@@ -525,7 +528,7 @@ public class SQLiteDatabase {
                         ResultSet rs = api.getSQLiteConnection().prepareStatement("SELECT " + column + " FROM " + tableName + " LIMIT " + limit + ";").executeQuery();
 
                         if (rs == null) {
-                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+                            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
                             return;
                         }
 
@@ -540,13 +543,13 @@ public class SQLiteDatabase {
                             }
                         }
 
-                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+                        Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
                         return;
                     } catch (SQLException ignored) {
                     }
                 }
             }
-            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.done(list));
+            Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () -> callback.accept(list));
         });
     }
 

@@ -23,6 +23,8 @@ import de.alphahelix.alphalibary.core.utils.JSONUtil;
 import de.alphahelix.alphalibary.storage.IDataStorage;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 @SuppressWarnings("ALL")
 public class JSONDatabase implements IDataStorage {
@@ -41,7 +43,7 @@ public class JSONDatabase implements IDataStorage {
             this.mySQLDatabase = new AsyncMySQLDatabase(table, database);
             this.mySQLDatabase.create(
                     AsyncMySQLDatabase.createColumn(id.name().toLowerCase(), MySQLAPI.MySQLDataType.VARCHAR, 50, "PRIMARY KEY"),
-                    AsyncMySQLDatabase.createColumn("val", MySQLAPI.MySQLDataType.LONGTEXT, 5000));
+                    AsyncMySQLDatabase.createColumn("val", MySQLAPI.MySQLDataType.TEXT, 5000));
             this.sqliteDatabase = null;
         } else if (type == DatabaseType.SQLITE) {
             this.sqliteDatabase = new SQLiteDatabase(table, database);
@@ -111,20 +113,20 @@ public class JSONDatabase implements IDataStorage {
         }
     }
 
-    public <T> void getValue(String idValue, Class<T> define, DatabaseCallback<T> callback) {
+    public <T> void getValue(String idValue, Class<T> define, Consumer<T> callback) {
         if (type == DatabaseType.MYSQL) {
             if (id == null)
                 return;
             this.mySQLDatabase.contains(id.name().toLowerCase(), idValue, result -> {
                 if (result)
-                    this.mySQLDatabase.getResult(id.name().toLowerCase(), idValue, "val", result1 -> callback.done(JSONUtil.getValue(result1.toString(), define)));
+                    this.mySQLDatabase.getResult(id.name().toLowerCase(), idValue, "val", result1 -> callback.accept(JSONUtil.getValue(result1.toString(), define)));
             });
         } else if (type == DatabaseType.SQLITE) {
             if (id == null)
                 return;
             this.sqliteDatabase.contains(id.name().toLowerCase(), idValue, result -> {
                 if (result)
-                    this.sqliteDatabase.getResult(id.name().toLowerCase(), idValue, "val", result1 -> callback.done(JSONUtil.getValue(result1.toString(), define)));
+                    this.sqliteDatabase.getResult(id.name().toLowerCase(), idValue, "val", result1 -> callback.accept(JSONUtil.getValue(result1.toString(), define)));
             });
         }
     }
@@ -150,14 +152,14 @@ public class JSONDatabase implements IDataStorage {
     }
 
     @Override
-    public <T> void getValues(Class<T> definy, DatabaseCallback<ArrayList<T>> callback) {
+    public <T> void getValues(Class<T> definy, Consumer<List<T>> callback) {
         if (type == DatabaseType.MYSQL) {
             this.mySQLDatabase.getList("val", result -> {
                 ArrayList<T> vals = new ArrayList<>();
                 for (String json : result) {
                     vals.add(JSONUtil.getValue(json, definy));
                 }
-                callback.done(vals);
+                callback.accept(vals);
             });
         } else if (type == DatabaseType.SQLITE) {
             this.sqliteDatabase.getList("val", result -> {
@@ -165,7 +167,7 @@ public class JSONDatabase implements IDataStorage {
                 for (String json : result) {
                     vals.add(JSONUtil.getValue(json, definy));
                 }
-                callback.done(vals);
+                callback.accept(vals);
             });
         }
     }
@@ -182,7 +184,7 @@ public class JSONDatabase implements IDataStorage {
         return keys;
     }
 
-    public void hasValue(String idValue, DatabaseCallback<Boolean> callback) {
+    public void hasValue(String idValue, Consumer<Boolean> callback) {
         if (type == DatabaseType.MYSQL)
             this.mySQLDatabase.contains(id.name().toLowerCase(), idValue, callback);
         else if (type == DatabaseType.SQLITE)
@@ -203,7 +205,7 @@ public class JSONDatabase implements IDataStorage {
     }
 
     @Override
-    public <T> void getValue(Object path, Class<T> definy, DatabaseCallback<T> callback) {
+    public <T> void getValue(Object path, Class<T> definy, Consumer<T> callback) {
         getValue(path.toString(), definy, callback);
     }
 
@@ -223,12 +225,12 @@ public class JSONDatabase implements IDataStorage {
     }
 
     @Override
-    public void hasValue(Object path, DatabaseCallback<Boolean> callback) {
+    public void hasValue(Object path, Consumer<Boolean> callback) {
         hasValue(path.toString(), callback);
     }
 
     @Override
-    public void getKeys(DatabaseCallback<ArrayList<String>> callback) {
+    public void getKeys(Consumer<List<String>> callback) {
         if (id != null) {
             if (getType() == DatabaseType.MYSQL)
                 this.mySQLDatabase.getList(id.name(), callback);

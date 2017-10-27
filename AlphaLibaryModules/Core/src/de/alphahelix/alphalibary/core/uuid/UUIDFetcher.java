@@ -41,7 +41,7 @@ public class UUIDFetcher {
     private static final ConcurrentHashMap<String, UUID> UUIDS = new ConcurrentHashMap<>();
 
     /**
-     * Gets the {@link UUID} of a {@link String}
+     * Gets the {@link UUID} of a {@link String} async
      *
      * @param p        the {@link Player}
      * @param callback the {@link UUIDCallback} with the parsed {@link UUID}
@@ -51,7 +51,7 @@ public class UUIDFetcher {
     }
 
     /**
-     * Gets the {@link UUID} of a {@link String}
+     * Gets the {@link UUID} of a {@link String} async
      *
      * @param p        the {@link Player}
      * @param callback the {@link UUIDCallback} with the parsed {@link UUID}
@@ -61,132 +61,50 @@ public class UUIDFetcher {
     }
 
     /**
-     * Gets the {@link UUID} of a {@link String}
+     * Gets the {@link UUID} of a {@link String} async
      *
      * @param name     the name of the {@link Player}
      * @param callback the {@link UUIDCallback} with the parsed {@link UUID}
      */
     public static void getUUID(String name, UUIDCallback callback) {
-        if (name == null) {
-            callback.done(null);
-            return;
-        }
-        name = name.toLowerCase();
-
-        if (UUIDS.containsKey(name)) {
-            callback.done(UUIDS.get(name));
-            return;
-        }
-
-        String finalName = name;
-        Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(
-                        String.format(UUID_URL, finalName, System.currentTimeMillis() / 1000)).openConnection();
-                connection.setReadTimeout(5000);
-
-                PlayerUUID player =
-                        GSON.fromJson(new BufferedReader(new InputStreamReader(connection.getInputStream())),
-                                PlayerUUID.class);
-
-                if (player == null) {
-                    Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
-                            callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId()));
-                    return;
-                }
-
-                if (player.getId() == null) {
-                    Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
-                            callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId()));
-                    return;
-                }
-
-                UUIDS.put(finalName, player.getId());
-
-                Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
-                        callback.done(player.getId()));
-            } catch (Exception e) {
-                Bukkit.getLogger().log(Level.SEVERE, "Your server has no connection to the mojang servers or is runnig slowly. Using offline UUID now");
-                Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
-                        callback.done(Bukkit.getOfflinePlayer(finalName).getUniqueId()));
-            }
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> callback.done(getUUID(name)));
     }
 
     /**
-     * Gets the name of a {@link UUID}
+     * Gets the name of a {@link UUID} async
      *
      * @param uuid     the {@link UUID} of the {@link Player}
      * @param callback the {@link NameCallback} with the parsed name
      */
     public static void getName(UUID uuid, NameCallback callback) {
-        if (NAMES.containsKey(uuid)) {
-            callback.done(NAMES.get(uuid));
-            return;
-        }
-
-        Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(
-                        String.format(NAME_URL, UUIDTypeAdapter.fromUUID(uuid))).openConnection();
-                connection.setReadTimeout(5000);
-
-                PlayerUUID[] allUserNames = GSON.fromJson(
-                        new BufferedReader(new InputStreamReader(connection.getInputStream())), PlayerUUID[].class);
-                PlayerUUID currentName = allUserNames[allUserNames.length - 1];
-
-                if (currentName == null) {
-                    Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
-                            callback.done(Bukkit.getOfflinePlayer(uuid).getName()));
-                    return;
-                }
-
-                if (currentName.getName() == null) {
-                    Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
-                            callback.done(Bukkit.getOfflinePlayer(uuid).getName()));
-                    return;
-                }
-
-                NAMES.put(uuid, currentName.getName());
-
-                Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
-                        callback.done(currentName.getName()));
-            } catch (Exception e) {
-                Bukkit.getLogger().log(Level.SEVERE, "Your server has no connection to the mojang servers or is runnig slowly. Using offline UUID now");
-                Bukkit.getScheduler().runTask(AlphaLibary.getInstance(), () ->
-                        callback.done(Bukkit.getOfflinePlayer(uuid).getName()));
-            }
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> callback.done(getName(uuid)));
     }
 
     /**
-     * Gets the {@link UUID} of a {@link String}
+     * Gets the {@link UUID} of a {@link String} sync
      *
      * @param p the {@link Player}
      * @see UUIDFetcher#getUUID(Player, UUIDCallback)
-     * @deprecated not async
      */
     public static UUID getUUID(Player p) {
         return getUUID(p.getName());
     }
 
     /**
-     * Gets the {@link UUID} of a {@link String}
+     * Gets the {@link UUID} of a {@link String} sync
      *
      * @param p the {@link OfflinePlayer}
      * @see UUIDFetcher#getUUID(OfflinePlayer, UUIDCallback)
-     * @deprecated not async
      */
     public static UUID getUUID(OfflinePlayer p) {
         return getUUID(p.getName());
     }
 
     /**
-     * Gets the {@link UUID} of a {@link String}
+     * Gets the {@link UUID} of a {@link String} sync
      *
      * @param name the name of the {@link Player}
      * @see UUIDFetcher#getName(UUID, NameCallback)
-     * @deprecated not async
      */
     public static UUID getUUID(String name) {
         if (name == null)
@@ -227,11 +145,10 @@ public class UUIDFetcher {
     }
 
     /**
-     * Gets the name of a {@link UUID}
+     * Gets the name of a {@link UUID} sync
      *
      * @param uuid the {@link UUID} of the {@link Player}
      * @see UUIDFetcher#getName(UUID, NameCallback)
-     * @deprecated not async
      */
     public static String getName(UUID uuid) {
         if (NAMES.containsKey(uuid))

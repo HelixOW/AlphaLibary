@@ -1,12 +1,12 @@
 package de.alphahelix.alphalibary.storage;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.storage.sql.DatabaseCallback;
 import de.alphahelix.alphalibary.storage.sql.JSONDatabase;
 import de.alphahelix.alphalibary.storage.sql.MySQLAPI;
 import de.alphahelix.alphalibary.storage.sql.SQLiteAPI;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 @SuppressWarnings("ALL")
 public class DataStorage {
@@ -47,19 +47,19 @@ public class DataStorage {
         getStorage().removeValue(path);
     }
 
-    public <T> void getValue(Object path, Class<T> definy, DatabaseCallback<T> callback) {
+    public <T> void getValue(Object path, Class<T> definy, Consumer<T> callback) {
         getStorage().getValue(path, definy, callback);
     }
 
-    public void getKeys(DatabaseCallback<ArrayList<String>> callback) {
+    public void getKeys(Consumer<List<String>> callback) {
         getStorage().getKeys(callback);
     }
 
-    public <T> void getValues(Class<T> definy, DatabaseCallback<ArrayList<T>> callback) {
+    public <T> void getValues(Class<T> definy, Consumer<List<T>> callback) {
         getStorage().getValues(definy, callback);
     }
 
-    public void hasValue(Object path, DatabaseCallback<Boolean> callback) {
+    public void hasValue(Object path, Consumer<Boolean> callback) {
         getStorage().hasValue(path, callback);
     }
 

@@ -54,6 +54,43 @@ public class GameCountdown implements Serializable {
         this.useTitle = useTitle;
     }
 
+    public void start(Runnable startAction, Runnable timeReachedAction, Runnable endAction) {
+        CountDownStartEvent countDownStartEvent = new CountDownStartEvent(instance, time);
+        Bukkit.getPluginManager().callEvent(countDownStartEvent);
+
+        if (countDownStartEvent.isCancelled()) return;
+
+        startAction.run();
+
+        schedulerID = new BukkitRunnable() {
+            long currentTime = time;
+
+            public void run() {
+                if (Arrays.asList(messageTimes).contains(currentTime)) {
+                    CountDownTimeEvent countDownTimeEvent = new CountDownTimeEvent(instance, currentTime);
+
+                    timeReachedAction.run();
+
+                    Bukkit.getPluginManager().callEvent(countDownTimeEvent);
+                }
+
+                if (currentTime == 0) {
+                    CountDownFinishEvent countDownFinishEvent = new CountDownFinishEvent(instance);
+
+                    endAction.run();
+
+                    Bukkit.getPluginManager().callEvent(countDownFinishEvent);
+
+                    if (!countDownFinishEvent.isCancelled())
+                        stop();
+                    else
+                        currentTime++;
+                }
+                currentTime--;
+            }
+        }.runTaskTimer(AlphaLibary.getInstance(), 0L, 20L).getTaskId();
+    }
+
     /**
      * Starts the countdown
      *

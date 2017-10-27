@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.forms.particles.form.d2;
 
+import de.alphahelix.alphalibary.core.utils.Pair;
 import de.alphahelix.alphalibary.forms.d2.PolyForm;
 import de.alphahelix.alphalibary.forms.particles.data.EffectData;
 import org.apache.commons.lang.Validate;
@@ -9,8 +10,8 @@ import org.bukkit.util.Vector;
 
 @SuppressWarnings("ALL")
 public class PolyParticleForm extends PolyForm {
-    public PolyParticleForm(Effect effect, EffectData<?> effectData, Location location, String axis, double dense, Vector... points) {
-        super(location, axis, dense, null, points);
+    public PolyParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, Pair<Vector, Vector>... points) {
+        super(location, dense, null, points);
 
         if (effectData != null)
             Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");

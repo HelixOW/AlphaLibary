@@ -36,14 +36,13 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public abstract class InputGUI {
 
-    private static final WeakHashMap<UUID, Double> OLD_VALUES = new WeakHashMap<>();
-    private static final ArrayList<String> OPEN_GUIS = new ArrayList<>();
+    private static final Map<UUID, Double> OLD_VALUES = new WeakHashMap<>();
+    private static final List<String> OPEN_GUIS = new ArrayList<>();
+    private static final List<InputHandler> HANDLERS = new ArrayList<>();
 
     static {
         PacketListenerAPI.addPacketHandler(new PacketHandler() {
@@ -94,8 +93,11 @@ public abstract class InputGUI {
                         if (!SignGUI.getOpenGuis().contains(packet.getPlayer().getName())) return;
                         int i = 0;
                         for (String line : (String[]) packet.getPacketValue(1)) {
-                            if (i == 1)
+                            if (i == 1) {
                                 Bukkit.getPluginManager().callEvent(new PlayerInputEvent(packet.getPlayer(), line));
+                                for (InputHandler handler : HANDLERS)
+                                    handler.handle(packet.getPlayer(), line);
+                            }
                             i++;
                         }
                         SignGUI.getOpenGuis().remove(packet.getPlayer().getName());
@@ -117,6 +119,11 @@ public abstract class InputGUI {
                                     Bukkit.getPluginManager().callEvent(event);
                                     Bukkit.getPluginManager().callEvent(new PlayerInputEvent(packet.getPlayer(), is.getItemMeta().getDisplayName()));
 
+                                    for (InputHandler handler : HANDLERS) {
+                                        handler.handle(packet.getPlayer(), view, is.getItemMeta().getDisplayName());
+                                        handler.handle(packet.getPlayer(), is.getItemMeta().getDisplayName());
+                                    }
+
                                     AnvilGUI.getOpenGuis().remove(packet.getPlayer().getName());
 
                                     if (event.isCancelled()) packet.getPlayer().closeInventory();
@@ -129,8 +136,16 @@ public abstract class InputGUI {
         });
     }
 
-    public static ArrayList<String> getOpenGuis() {
+    public static List<String> getOpenGuis() {
         return OPEN_GUIS;
+    }
+
+    public static void addHandler(InputHandler handler) {
+        HANDLERS.add(handler);
+    }
+
+    public static void removeHandler(InputHandler handler) {
+        HANDLERS.remove(handler);
     }
 
     public abstract void openGUI(Player p);

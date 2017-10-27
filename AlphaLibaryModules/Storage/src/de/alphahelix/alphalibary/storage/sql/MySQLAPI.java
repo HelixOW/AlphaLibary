@@ -89,7 +89,7 @@ public class MySQLAPI implements Serializable {
         } else {
             try {
                 Connection c = DriverManager.getConnection(
-                        "jdbc:sql://" + host + ":" + port + "/" + database + "?autoReconnect=true", username, password);
+                        "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", username, password);
 
                 CONNECTIONS.put(database, c);
 
@@ -117,11 +117,10 @@ public class MySQLAPI implements Serializable {
         if (!isConnected()) {
             try {
                 CONNECTIONS.put(database, DriverManager.getConnection(
-                        "jdbc:sql://" + host + ":" + port + "/" + database + "?autoReconnect=true", username, password));
-
-
-            } catch (SQLException ignore) {
-                Bukkit.getLogger().log(Level.WARNING, "Failed to reconnect to " + database + "! Check your sql.yml inside AlphaGameLibary");
+                        "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", username, password));
+            } catch (SQLException e) {
+                Bukkit.getLogger().log(Level.WARNING, "Failed to connect to " + database + "! Check your sql.yml inside AlphaGameLibary");
+                e.printStackTrace();
             }
         }
     }
@@ -176,8 +175,30 @@ public class MySQLAPI implements Serializable {
     }
 
     public enum MySQLDataType implements Serializable {
-        INT, TINYINT, SMALLINT, MEDIUMINT, BIGINT, FLOAT, DOUBLE, DECIMAL, DATE, DATETIME, TIMESTAMP, TIME, YEAR,
-        CHAR, VARCHAR, BLOB, TEXT, TINYBLOB, TINYTEXT, MEDIUMBLOB, MEDIUMTEXT, LONGBLOB, LONGTEXT, ENUM
+        INT,
+        TINYINT,
+        SMALLINT,
+        MEDIUMINT,
+        BIGINT,
+        FLOAT,
+        DOUBLE,
+        DECIMAL,
+        DATE,
+        DATETIME,
+        TIMESTAMP,
+        TIME,
+        YEAR,
+        CHAR,
+        VARCHAR,
+        BLOB,
+        TEXT,
+        TINYBLOB,
+        TINYTEXT,
+        MEDIUMBLOB,
+        MEDIUMTEXT,
+        LONGBLOB,
+        LONGTEXT,
+        ENUM
     }
 }
 

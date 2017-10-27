@@ -1444,6 +1444,23 @@ public class ReflectionUtil {
         return findMethodsReturning(returned, getClasses());
     }
 
+    public static SaveMethod[] findMethodsNamed(String name, Class<?>... classes) {
+        List<SaveMethod> methods = new LinkedList<>();
+
+        for (Class<?> clazz : classes) {
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (m.getName().equals(name))
+                    methods.add(new SaveMethod(m));
+            }
+        }
+
+        return methods.toArray(new SaveMethod[methods.size()]);
+    }
+
+    public static SaveMethod[] findMethodsNamed(String name) {
+        return findMethodsNamed(name, getClasses());
+    }
+
     public static SaveConstructor[] findConstructorAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
         List<SaveConstructor> constructors = new LinkedList<>();
 
@@ -1500,6 +1517,16 @@ public class ReflectionUtil {
         }
 
         SaveField() {
+        }
+
+        public SaveField removeFinal() {
+            try {
+                if (Modifier.isFinal(field().getModifiers()))
+                    field().setInt(field(), field().getModifiers() & ~Modifier.FINAL);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return this;
         }
 
         public Object get(Object instance) {

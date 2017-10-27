@@ -1,8 +1,7 @@
 package de.alphahelix.alphalibary.storage;
 
-import de.alphahelix.alphalibary.storage.sql.DatabaseCallback;
-
-import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public interface IDataStorage {
 
@@ -12,11 +11,11 @@ public interface IDataStorage {
 
     void removeValue(Object path);
 
-    <T> void getValue(Object path, Class<T> definy, DatabaseCallback<T> callback);
+    <T> void getValue(Object path, Class<T> definy, Consumer<T> callback);
 
-    void getKeys(DatabaseCallback<ArrayList<String>> callback);
+    void getKeys(Consumer<List<String>> callback);
 
-    <T> void getValues(Class<T> definy, DatabaseCallback<ArrayList<T>> callback);
+    <T> void getValues(Class<T> definy, Consumer<List<T>> callback);
 
-    void hasValue(Object path, DatabaseCallback<Boolean> callback);
+    void hasValue(Object path, Consumer<Boolean> callback);
 }

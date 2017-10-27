@@ -9,8 +9,8 @@ import org.bukkit.util.Vector;
 
 @SuppressWarnings("ALL")
 public class PointParticleForm extends PointForm {
-    public PointParticleForm(Effect effect, EffectData<?> effectData, Location location, String axis, double dense, Vector p1, Vector p2) {
-        super(location, axis, dense, null, p1, p2);
+    public PointParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, Vector p1, Vector p2) {
+        super(location, dense, null, p1, p2);
 
         if (effectData != null)
             Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");

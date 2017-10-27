@@ -1,8 +1,12 @@
 package de.alphahelix.alphalibary.core.utils;
 
 import com.google.gson.*;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import com.mojang.util.UUIDTypeAdapter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -11,14 +15,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class JSONUtil {
 
     private static final GsonBuilder builder = new GsonBuilder()
             .registerTypeHierarchyAdapter(Location.class, new LocationSerializer())
-//            .registerTypeHierarchyAdapter(GameProfile.class, new GameProfileBuilder.GameProfileSerializer())
+            .registerTypeHierarchyAdapter(GameProfile.class, new GameProfileSerializer())
+            .registerTypeHierarchyAdapter(UUID.class, new UUIDTypeAdapter())
             .registerTypeHierarchyAdapter(PropertyMap.class, new PropertyMap.Serializer())
             .registerTypeHierarchyAdapter(ItemStack.class, new ItemStackSerializer())
 //            .registerTypeHierarchyAdapter(Schematic.LocationDiff.class, new LocationDiffSerializer())
@@ -41,6 +45,10 @@ public class JSONUtil {
 
     public static <T> T getValue(String json, Class<T> definy) {
         return gson.fromJson(json, definy);
+    }
+
+    public static <T> T getValue(JsonElement json, Class<?> definy) {
+        return gson.fromJson(json, (Class<T>) definy);
     }
 
     public static void disableEscaping() {
@@ -101,7 +109,7 @@ class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer
             JsonObject meta = object.getAsJsonObject("meta");
 
             if (meta.has("displayName")) {
-                name = meta.getAsJsonPrimitive("displayName").getAsString();
+                name = ChatColor.translateAlternateColorCodes('&', meta.getAsJsonPrimitive("displayName").getAsString());
             }
 
             if (meta.has("lore")) {
@@ -118,8 +126,13 @@ class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer
         if (name != null)
             meta.setDisplayName(name);
 
-        if (lore != null)
-            meta.setLore(lore);
+        if (lore != null) {
+            List<String> colorLore = new ArrayList<>();
+            for (String lor : lore)
+                colorLore.add(ChatColor.translateAlternateColorCodes('&', lor));
+
+            meta.setLore(colorLore);
+        }
 
         if (flags != null)
             for (String flag : flags)
@@ -162,10 +175,10 @@ class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer
             ItemMeta itemMeta = src.getItemMeta();
 
             if (itemMeta.hasDisplayName())
-                meta.addProperty("displayName", itemMeta.getDisplayName());
+                meta.addProperty("displayName", itemMeta.getDisplayName().replace("§", "&"));
 
             if (itemMeta.hasLore())
-                meta.add("lore", JSONUtil.getGson().toJsonTree(itemMeta.getLore()));
+                meta.add("lore", JSONUtil.getGson().toJsonTree(Arrays.asList(Util.replaceInArray("§", "&", itemMeta.getLore().toArray(new String[itemMeta.getLore().size()])))));
 
             meta.add("flags", JSONUtil.getGson().toJsonTree(itemMeta.getItemFlags()));
 
@@ -174,6 +187,35 @@ class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer
 
         return result;
     }
+}
+
+class GameProfileSerializer implements JsonSerializer<GameProfile>, JsonDeserializer<GameProfile> {
+
+    public GameProfile deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+        JsonObject object = (JsonObject) json;
+        UUID id = object.has("id") ? (UUID) context.deserialize(object.get("id"), UUID.class) : null;
+        String name = object.has("name") ? object.getAsJsonPrimitive("name").getAsString() : null;
+        GameProfile profile = new GameProfile(id, name);
+
+        if (object.has("properties")) {
+            for (Map.Entry<String, Property> prop : ((PropertyMap) context.deserialize(object.get("properties"), PropertyMap.class)).entries()) {
+                profile.getProperties().put(prop.getKey(), prop.getValue());
+            }
+        }
+        return profile;
+    }
+
+    public JsonElement serialize(GameProfile profile, Type type, JsonSerializationContext context) {
+        JsonObject result = new JsonObject();
+        if (profile.getId() != null)
+            result.add("id", context.serialize(profile.getId()));
+        if (profile.getName() != null)
+            result.addProperty("name", profile.getName());
+        if (!profile.getProperties().isEmpty())
+            result.add("properties", context.serialize(profile.getProperties()));
+        return result;
+    }
+
 }
 
 //class LocationDiffSerializer implements JsonSerializer<Schematic.LocationDiff>, JsonDeserializer<Schematic.LocationDiff> {

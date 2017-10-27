@@ -74,6 +74,7 @@ public class SimpleMovingInventory extends SimpleListener implements Serializabl
                 page.addItem(item);
             }
         }
+
         PAGES.add(page);
         p.openInventory(PAGES.get(currpage));
         USERS.put(p.getUniqueId(), this);

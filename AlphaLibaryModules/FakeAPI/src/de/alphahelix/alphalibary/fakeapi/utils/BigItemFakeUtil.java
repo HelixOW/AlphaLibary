@@ -87,7 +87,7 @@ public class BigItemFakeUtil {
 
         FakeBigItem fBI = new FakeBigItem(loc, name, fakeGiant.getNmsEntity(), stack);
 
-        FakeAPI.addFakeBigItem(p, fBI);
+        FakeAPI.addFakeEntity(p, fBI);
         return fBI;
     }
 
@@ -99,7 +99,7 @@ public class BigItemFakeUtil {
      */
     public static void destroyBigItem(Player p, FakeBigItem item) {
         ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(item.getNmsEntity())));
-        FakeAPI.removeFakeBigItem(p, item);
+        FakeAPI.removeFakeEntity(p, item);
     }
 
     /**

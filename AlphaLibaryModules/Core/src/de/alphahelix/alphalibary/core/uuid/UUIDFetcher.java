@@ -29,6 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class UUIDFetcher {
@@ -44,9 +45,9 @@ public class UUIDFetcher {
      * Gets the {@link UUID} of a {@link String} async
      *
      * @param p        the {@link Player}
-     * @param callback the {@link UUIDCallback} with the parsed {@link UUID}
+     * @param callback the {@link Consumer<UUID>} with the parsed {@link UUID}
      */
-    public static void getUUID(Player p, UUIDCallback callback) {
+    public static void getUUID(Player p, Consumer<UUID> callback) {
         getUUID(p.getName(), callback);
     }
 
@@ -54,9 +55,9 @@ public class UUIDFetcher {
      * Gets the {@link UUID} of a {@link String} async
      *
      * @param p        the {@link Player}
-     * @param callback the {@link UUIDCallback} with the parsed {@link UUID}
+     * @param callback the {@link Consumer<UUID>} with the parsed {@link UUID}
      */
-    public static void getUUID(OfflinePlayer p, UUIDCallback callback) {
+    public static void getUUID(OfflinePlayer p, Consumer<UUID> callback) {
         getUUID(p.getName(), callback);
     }
 
@@ -64,27 +65,27 @@ public class UUIDFetcher {
      * Gets the {@link UUID} of a {@link String} async
      *
      * @param name     the name of the {@link Player}
-     * @param callback the {@link UUIDCallback} with the parsed {@link UUID}
+     * @param callback the {@link Consumer<UUID>} with the parsed {@link UUID}
      */
-    public static void getUUID(String name, UUIDCallback callback) {
-        Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> callback.done(getUUID(name)));
+    public static void getUUID(String name, Consumer<UUID> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> callback.accept(getUUID(name)));
     }
 
     /**
      * Gets the name of a {@link UUID} async
      *
      * @param uuid     the {@link UUID} of the {@link Player}
-     * @param callback the {@link NameCallback} with the parsed name
+     * @param callback the {@link Consumer<String>} with the parsed name
      */
-    public static void getName(UUID uuid, NameCallback callback) {
-        Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> callback.done(getName(uuid)));
+    public static void getName(UUID uuid, Consumer<String> callback) {
+        Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> callback.accept(getName(uuid)));
     }
 
     /**
      * Gets the {@link UUID} of a {@link String} sync
      *
      * @param p the {@link Player}
-     * @see UUIDFetcher#getUUID(Player, UUIDCallback)
+     * @see UUIDFetcher#getUUID(Player, Consumer<UUID>)
      */
     public static UUID getUUID(Player p) {
         return getUUID(p.getName());
@@ -94,7 +95,7 @@ public class UUIDFetcher {
      * Gets the {@link UUID} of a {@link String} sync
      *
      * @param p the {@link OfflinePlayer}
-     * @see UUIDFetcher#getUUID(OfflinePlayer, UUIDCallback)
+     * @see UUIDFetcher#getUUID(OfflinePlayer, Consumer<UUID>)
      */
     public static UUID getUUID(OfflinePlayer p) {
         return getUUID(p.getName());
@@ -104,7 +105,7 @@ public class UUIDFetcher {
      * Gets the {@link UUID} of a {@link String} sync
      *
      * @param name the name of the {@link Player}
-     * @see UUIDFetcher#getName(UUID, NameCallback)
+     * @see UUIDFetcher#getName(UUID, Consumer<String>)
      */
     public static UUID getUUID(String name) {
         if (name == null)
@@ -148,7 +149,7 @@ public class UUIDFetcher {
      * Gets the name of a {@link UUID} sync
      *
      * @param uuid the {@link UUID} of the {@link Player}
-     * @see UUIDFetcher#getName(UUID, NameCallback)
+     * @see UUIDFetcher#getName(UUID, Consumer<String>)
      */
     public static String getName(UUID uuid) {
         if (NAMES.containsKey(uuid))

@@ -17,7 +17,7 @@ public class BannerData implements ItemData {
     }
 
     @Override
-    public void applyOn(ItemStack applyOn) throws WrongDataException {
+    public void applyOn(ItemStack applyOn) {
         if (applyOn.getType() != Material.BANNER) return;
 
         BannerMeta meta = (BannerMeta) applyOn.getItemMeta();

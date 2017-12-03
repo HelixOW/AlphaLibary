@@ -31,15 +31,37 @@ import java.util.jar.JarFile;
 
 public class AlphaLibary extends JavaPlugin {
 
+    private static final List<AlphaModule> MODULES = new ArrayList<>();
+
     private static AlphaLibary instance;
 
     public static AlphaLibary getInstance() {
         return instance;
     }
 
+    public static List<AlphaModule> getModules() {
+        return MODULES;
+    }
+
+    public static void registerModule(AlphaModule module) {
+        if (!MODULES.contains(module))
+            MODULES.add(module);
+    }
+
+    @Override
+    public void onLoad() {
+        for (AlphaModule module : MODULES)
+            module.load();
+    }
+
     @Override
     public void onEnable() {
         instance = this;
+
+        for (AlphaModule module : MODULES)
+            module.enable();
+
+        new PluginWatcher(this).run();
 
         for (Class<?> loaded : findClassesImplementing(SimpleLoader.class)) {
             try {
@@ -48,6 +70,12 @@ public class AlphaLibary extends JavaPlugin {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onDisable() {
+        for (AlphaModule module : MODULES)
+            module.disable();
     }
 
     private Class<?>[] getClasses(File jarFile) {

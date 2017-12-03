@@ -23,7 +23,16 @@ import de.alphahelix.alphalibary.reflection.nms.BlockPos;
 import de.alphahelix.alphalibary.reflection.nms.packets.PPOOpenSignEditor;
 import org.bukkit.entity.Player;
 
-public class SignGUI extends InputGUI {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SignGUI implements InputGUI {
+
+    private static List<String> openGUIs = new ArrayList<>();
+
+    public static List<String> getOpenGUIs() {
+        return openGUIs;
+    }
 
     @Override
     public void openGUI(Player p) {
@@ -46,6 +55,6 @@ public class SignGUI extends InputGUI {
 
         ReflectionUtil.sendPacket(p, new PPOOpenSignEditor(s).getPacket(false));
 
-        getOpenGuis().add(p.getName());
+        openGUIs.add(p.getName());
     }
 }

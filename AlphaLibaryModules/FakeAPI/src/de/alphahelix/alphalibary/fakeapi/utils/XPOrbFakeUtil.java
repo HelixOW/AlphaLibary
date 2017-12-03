@@ -46,7 +46,7 @@ public class XPOrbFakeUtil {
 
         FakeRegister.getXpOrbLocationsFile().addXPOrbToFile(fXO);
 
-        FakeAPI.addFakeXPOrb(p, fXO);
+        FakeAPI.addFakeEntity(p, fXO);
         return fXO;
     }
 
@@ -68,7 +68,7 @@ public class XPOrbFakeUtil {
 
         FakeXPOrb fXO = new FakeXPOrb(loc, name, orb);
 
-        FakeAPI.addFakeXPOrb(p, fXO);
+        FakeAPI.addFakeEntity(p, fXO);
         return fXO;
     }
 
@@ -80,7 +80,7 @@ public class XPOrbFakeUtil {
      */
     public static void destroyOrb(Player p, FakeXPOrb orb) {
         ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(orb.getNmsEntity())));
-        FakeAPI.removeFakeXPOrb(p, orb);
+        FakeAPI.removeFakeEntity(p, orb);
     }
 
     /**

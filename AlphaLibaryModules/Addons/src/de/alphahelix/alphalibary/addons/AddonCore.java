@@ -3,11 +3,12 @@ package de.alphahelix.alphalibary.addons;
 
 import de.alphahelix.alphalibary.addons.core.AddonManager;
 import de.alphahelix.alphalibary.addons.core.SimpleAddonManager;
+import de.alphahelix.alphalibary.core.AlphaModule;
 
 import java.io.File;
 import java.util.logging.Level;
 
-public class AddonCore {
+public class AddonCore implements AlphaModule {
 
     private static File addonFolder;
     private static AddonLogger logger;
@@ -25,7 +26,8 @@ public class AddonCore {
         return addonManager;
     }
 
-    public static void enable() {
+    @Override
+    public void enable() {
         logger = new AddonLogger();
 
         addonFolder = new File("plugins/AlphaLibary/Addons");

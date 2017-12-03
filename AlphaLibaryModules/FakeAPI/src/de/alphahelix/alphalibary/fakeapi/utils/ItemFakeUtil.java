@@ -76,7 +76,7 @@ public class ItemFakeUtil {
 
         FakeItem fI = new FakeItem(loc, name, item, type);
 
-        FakeAPI.addFakeItem(p, fI);
+        FakeAPI.addFakeEntity(p, fI);
         return fI;
     }
 
@@ -88,7 +88,7 @@ public class ItemFakeUtil {
      */
     public static void destroyItem(Player p, FakeItem item) {
         ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(item.getNmsEntity())));
-        FakeAPI.removeFakeItem(p, item);
+        FakeAPI.removeFakeEntity(p, item);
     }
 
     /**

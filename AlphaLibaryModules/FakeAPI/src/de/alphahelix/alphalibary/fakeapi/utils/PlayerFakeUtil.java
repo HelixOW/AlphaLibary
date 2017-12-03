@@ -39,13 +39,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Consumer;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.UUID;
 
-@SuppressWarnings("ALL")
 public class PlayerFakeUtil {
 
     private static final HashMap<String, BukkitTask> FOLLOW_MAP = new HashMap<>();
@@ -66,10 +66,10 @@ public class PlayerFakeUtil {
      * @param skin       the {@link OfflinePlayer} which has the skin for the {@link FakePlayer}
      * @param customName of the {@link FakePlayer} inside the file and above his head
      */
-    public static void spawnPlayer(Player p, Location loc, OfflinePlayer skin, String customName, SpawnCallback<FakePlayer> callback) {
+    public static void spawnPlayer(Player p, Location loc, OfflinePlayer skin, String customName, Consumer<FakePlayer> callback) {
         spawnTemporaryPlayer(p, loc, skin, customName, entity -> {
             FakeRegister.getPlayerLocationsFile().addPlayerToFile(entity);
-            callback.done(entity);
+            callback.accept(entity);
         });
     }
 
@@ -80,7 +80,7 @@ public class PlayerFakeUtil {
      * @param loc        {@link Location} where the {@link FakePlayer} should be spawned at
      * @param skin       the {@link OfflinePlayer} which has the skin for the {@link FakePlayer}
      * @param customName of the {@link FakePlayer} inside the file and above his head
-     * @see PlayerFakeUtil#spawnPlayer(Player, Location, OfflinePlayer, String, SpawnCallback)
+     * @see PlayerFakeUtil#spawnPlayer(Player, Location, OfflinePlayer, String, Consumer)
      * @deprecated not async {@link UUID} retrieving
      */
     @Deprecated
@@ -94,7 +94,7 @@ public class PlayerFakeUtil {
     }
 
     /**
-     * @see PlayerFakeUtil#spawnPlayer(Player, Location, UUID, String, SpawnCallback)
+     * @see PlayerFakeUtil#s(Player, Location, UUID, String, Consumer)
      * @deprecated not async {@link UUID} retrieving
      */
     @Deprecated
@@ -108,10 +108,10 @@ public class PlayerFakeUtil {
     }
 
 
-    public static void spawnPlayer(Player p, Location loc, UUID skin, String name, SpawnCallback<FakePlayer> callback) {
+    public static void spawnPlayer(Player p, Location loc, UUID skin, String name, Consumer<FakePlayer> callback) {
         spawnTemporaryPlayer(p, loc, skin, name, entity -> {
             FakeRegister.getPlayerLocationsFile().addPlayerToFile(entity);
-            callback.done(entity);
+            callback.accept(entity);
         });
     }
 
@@ -134,9 +134,9 @@ public class PlayerFakeUtil {
      * @param skin       the {@link OfflinePlayer} which has the skin for the {@link FakePlayer}
      * @param customName of the {@link FakePlayer} inside the file and above his head
      */
-    public static void spawnTemporaryPlayer(Player p, Location loc, OfflinePlayer skin, String customName, SpawnCallback<FakePlayer> callback) {
+    public static void spawnTemporaryPlayer(Player p, Location loc, OfflinePlayer skin, String customName, Consumer<FakePlayer> callback) {
         UUIDFetcher.getUUID(skin, id ->
-                GameProfileBuilder.fetch(id, gameProfile -> callback.done(spawnTemporaryPlayer(p, loc, gameProfile, customName)))
+                GameProfileBuilder.fetch(id, gameProfile -> callback.accept(spawnTemporaryPlayer(p, loc, gameProfile, customName)))
         );
     }
 
@@ -147,7 +147,7 @@ public class PlayerFakeUtil {
      * @param loc        {@link Location} where the {@link FakePlayer} should be spawned at
      * @param skin       the {@link OfflinePlayer} which has the skin for the {@link FakePlayer}
      * @param customName of the {@link FakePlayer} inside the file and above his head
-     * @see PlayerFakeUtil#spawnTemporaryPlayer(Player, Location, OfflinePlayer, String, SpawnCallback)
+     * @see PlayerFakeUtil#spawnTemporaryPlayer(Player, Location, OfflinePlayer, String, Consumer)
      * @deprecated not async UUID retrieving
      */
     @Deprecated
@@ -155,12 +155,17 @@ public class PlayerFakeUtil {
         return spawnTemporaryPlayer(p, loc, GameProfileBuilder.fetch(UUIDFetcher.getUUID(skin)), customName);
     }
 
-    public static void spawnTemporaryPlayer(Player p, Location loc, UUID skin, String customName, SpawnCallback<FakePlayer> callback) {
-        GameProfileBuilder.fetch(skin, gameProfile -> callback.done(spawnTemporaryPlayer(p, loc, gameProfile, customName)));
+    public static void spawnTemporaryPlayer(Player p, Location loc, UUID skin, String customName, Consumer<FakePlayer> callback) {
+        GameProfileBuilder.fetch(skin, gameProfile -> {
+
+            System.out.println(gameProfile);
+
+            callback.accept(spawnTemporaryPlayer(p, loc, gameProfile, customName));
+        });
     }
 
     /**
-     * @see PlayerFakeUtil#spawnTemporaryPlayer(Player, Location, UUID, String, SpawnCallback)
+     * @see PlayerFakeUtil#spawnTemporaryPlayer(Player, Location, UUID, String, Consumer)
      * @deprecated not async UUID retrieving
      */
     @Deprecated
@@ -205,7 +210,7 @@ public class PlayerFakeUtil {
 
         FakePlayer fakePlayer = new FakePlayer(loc, customName, skin.getId(), npc);
 
-        FakeAPI.addFakePlayer(p, fakePlayer);
+        FakeAPI.addFakeEntity(p, fakePlayer);
 
         return fakePlayer;
     }
@@ -219,7 +224,7 @@ public class PlayerFakeUtil {
     public static void removePlayer(Player p, FakePlayer npc) {
         ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(npc.getNmsEntity())));
 
-        FakeAPI.removeFakePlayer(p, npc);
+        FakeAPI.removeFakeEntity(p, npc);
     }
 
     /**
@@ -389,7 +394,7 @@ public class PlayerFakeUtil {
      * @param damage   the damage which should be done by the {@link FakePlayer}
      */
     public static void attackPlayer(Player p, Player toAttack, FakePlayer npc, double damage) {
-        if (!FakeAPI.getFakePlayersInRadius(toAttack, 4).contains(npc)) return;
+        if (!FakeAPI.getFakeEntitysInRadius(toAttack, 4).contains(npc)) return;
 
         lookAtPlayer(p, toAttack, npc);
 

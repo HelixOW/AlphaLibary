@@ -81,7 +81,7 @@ public class EndercrystalFakeUtil {
 
         FakeEndercrystal fE = new FakeEndercrystal(loc, name, endercrystal);
 
-        FakeAPI.addFakeEndercrystal(p, fE);
+        FakeAPI.addFakeEntity(p, fE);
         return fE;
     }
 
@@ -164,7 +164,7 @@ public class EndercrystalFakeUtil {
      */
     public static void destroyEndercrystal(Player p, FakeEndercrystal endercrystal) {
         ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(endercrystal.getNmsEntity())));
-        FakeAPI.removeFakeEndercrystal(p, endercrystal);
+        FakeAPI.removeFakeEntity(p, endercrystal);
     }
 
     /**

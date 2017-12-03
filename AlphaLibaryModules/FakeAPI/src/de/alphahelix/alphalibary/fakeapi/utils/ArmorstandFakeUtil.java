@@ -85,7 +85,7 @@ public class ArmorstandFakeUtil {
 
         FakeArmorstand fA = new FakeArmorstand(loc, name, armorstand);
 
-        FakeAPI.addFakeArmorstand(p, fA);
+        FakeAPI.addFakeEntity(p, fA);
         return fA;
     }
 
@@ -256,7 +256,7 @@ public class ArmorstandFakeUtil {
      */
     public static void destroyArmorstand(Player p, FakeArmorstand armorstand) {
         ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(armorstand.getNmsEntity())).getPacket(false));
-        FakeAPI.removeFakeArmorstand(p, armorstand);
+        FakeAPI.removeFakeEntity(p, armorstand);
     }
 
     /**

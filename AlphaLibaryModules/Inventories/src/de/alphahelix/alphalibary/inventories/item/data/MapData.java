@@ -33,7 +33,7 @@ public class MapData implements ItemData {
     }
 
     @Override
-    public void applyOn(ItemStack applyOn) throws WrongDataException {
+    public void applyOn(ItemStack applyOn) {
         if (applyOn.getType() != Material.EMPTY_MAP || applyOn.getType() != Material.MAP) return;
 
         MapMeta meta = (MapMeta) applyOn.getItemMeta();

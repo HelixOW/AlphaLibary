@@ -34,7 +34,7 @@ public class SkullData implements ItemData {
     }
 
     @Override
-    public void applyOn(ItemStack applyOn) throws WrongDataException {
+    public void applyOn(ItemStack applyOn) {
         try {
             if (!(applyOn.getType() == Material.SKULL_ITEM)) {
                 return;

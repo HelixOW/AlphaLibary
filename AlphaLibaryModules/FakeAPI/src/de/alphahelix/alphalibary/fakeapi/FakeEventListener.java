@@ -94,30 +94,23 @@ public class FakeEventListener extends SimpleListener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
-        if (FakeAPI.getFakePlayers().containsKey(p.getName())) {
+        if (FakeAPI.getFakeEntities().containsKey(p.getName())) {
             PlayerFakeUtil.unFollowPlayer(p);
             PlayerFakeUtil.normalizeLook(p);
             PlayerFakeUtil.cancelAllSplittedTasks(p);
-            FakeAPI.getFakePlayers().remove(p.getName());
-        }
-        if (FakeAPI.getFakeArmorstands().containsKey(p.getName())) {
+
             ArmorstandFakeUtil.unFollowArmorstand(p);
             ArmorstandFakeUtil.cancelAllSplittedTasks(p);
-            FakeAPI.getFakeArmorstands().remove(p.getName());
-        }
-        if (FakeAPI.getFakeEndercrystals().containsKey(p.getName())) {
+
             EndercrystalFakeUtil.cancelAllSplittedTasks(p);
-            FakeAPI.getFakeEndercrystals().remove(p.getName());
-        }
-        if (FakeAPI.getFakeMobs().containsKey(p.getName())) {
+
             MobFakeUtil.unFollowPlayer(p);
             MobFakeUtil.normalizeLook(p);
             MobFakeUtil.cancelAllSplittedTasks(p);
-            FakeAPI.getFakeMobs().remove(p.getName());
-        }
-        if (FakeAPI.getFakeBigItems().containsKey(p.getName())) {
+
             BigItemFakeUtil.cancelAllSplittedTasks(p);
-            FakeAPI.getFakeBigItems().remove(p.getName());
+
+            FakeAPI.getFakeEntities().remove(p.getName());
         }
     }
 }

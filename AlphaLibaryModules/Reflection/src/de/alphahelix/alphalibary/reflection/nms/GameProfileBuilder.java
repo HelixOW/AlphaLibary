@@ -5,6 +5,7 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.util.UUIDTypeAdapter;
 import de.alphahelix.alphalibary.core.AlphaLibary;
 import de.alphahelix.alphalibary.core.utils.JSONUtil;
+import de.alphahelix.alphalibary.core.utils.Util;
 import org.bukkit.Bukkit;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @SuppressWarnings("ALL")
 public class GameProfileBuilder {
@@ -39,7 +41,7 @@ public class GameProfileBuilder {
      * @param uuid The player uuid
      * @see GameProfile
      */
-    public static void fetch(UUID uuid, GameProfileCallback callback) {
+    public static void fetch(UUID uuid, Consumer<GameProfile> callback) {
         fetch(uuid, false, callback);
     }
 
@@ -63,11 +65,16 @@ public class GameProfileBuilder {
      * @param forceNew If true the CACHE is ignored
      * @see GameProfile
      */
-    public static void fetch(UUID uuid, boolean forceNew, GameProfileCallback callback) {
+    public static void fetch(UUID uuid, boolean forceNew, Consumer<GameProfile> callback) {
         if (!forceNew && CACHE.containsKey(uuid) && CACHE.get(uuid).isValid())
-            callback.done(CACHE.get(uuid).profile);
+            callback.accept(CACHE.get(uuid).profile);
         else Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-            callback.done(fetch(uuid, forceNew));
+            GameProfile prof = fetch(uuid, forceNew);
+
+            System.out.println(callback == null);
+
+            callback.accept(prof);
+            // callback.accept(fetch(uuid, forceNew));
         });
     }
 
@@ -79,9 +86,9 @@ public class GameProfileBuilder {
      * @see GameProfileBuilder#fetch(UUID, boolean, GameProfileCallback)
      */
     public static GameProfile fetch(UUID uuid, boolean forceNew) {
-        if (!forceNew && CACHE.containsKey(uuid) && CACHE.get(uuid).isValid())
+        if (!forceNew && CACHE.containsKey(uuid)) {
             return CACHE.get(uuid).profile;
-        else {
+        } else {
             HttpURLConnection connection = null;
 
             try {
@@ -89,7 +96,7 @@ public class GameProfileBuilder {
             } catch (IOException ignored) {
             }
 
-            if (connection == null) return null;
+            if (connection == null) return new GameProfile(UUID.randomUUID(), Util.generateRandomString(15));
 
             connection.setReadTimeout(5000);
 
@@ -98,16 +105,17 @@ public class GameProfileBuilder {
                     String json = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
 
                     GameProfile result = JSONUtil.getGson().fromJson(json, GameProfile.class);
+
                     CACHE.put(uuid, new CachedProfile(result));
 
                     return result;
-                } else if (!forceNew && CACHE.containsKey(uuid))
-                    return CACHE.get(uuid).profile;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            return new GameProfile(UUID.randomUUID(), Util.generateRandomString(15));
         }
-        return null;
     }
 
     /**

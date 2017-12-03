@@ -96,7 +96,7 @@ public class MobFakeUtil {
 
         FakeMob fM = new FakeMob(loc, name, mob, type, baby);
 
-        FakeAPI.addFakeMob(p, fM);
+        FakeAPI.addFakeEntity(p, fM);
         return fM;
     }
 
@@ -108,7 +108,7 @@ public class MobFakeUtil {
      */
     public static void removeMob(Player p, FakeMob mob) {
         ReflectionUtil.sendPacket(p, new PPOEntityDestroy(ReflectionUtil.getEntityID(mob.getNmsEntity())));
-        FakeAPI.removeFakeMob(p, mob);
+        FakeAPI.removeFakeEntity(p, mob);
     }
 
     /**
@@ -167,7 +167,7 @@ public class MobFakeUtil {
             ReflectionUtil.sendPacket(p, new PPOEntityHeadRotation(a, loc.getYaw()));
             ReflectionUtil.sendPacket(p, new PPOEntityLook(ReflectionUtil.getEntityID(a), loc.getYaw(), loc.getPitch(), false));
 
-            FakeAPI.getFakeMobByObject(p, mob).setCurrentlocation(loc);
+            FakeAPI.getFakeEntityByObject(p, mob).setCurrentlocation(loc);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -278,7 +278,7 @@ public class MobFakeUtil {
      * @param damage   the damage which should be done by the {@link FakeMob}
      */
     public static void attackPlayer(Player p, Player toAttack, FakeMob mob, double damage) {
-        if (!FakeAPI.getFakeMobsInRadius(toAttack, 4).contains(mob)) return;
+        if (!FakeAPI.getFakeEntitysInRadius(toAttack, 4).contains(mob)) return;
 
         lookAtPlayer(p, toAttack, mob);
 

@@ -39,7 +39,7 @@ public class FireworkData implements ItemData {
     }
 
     @Override
-    public void applyOn(ItemStack applyOn) throws WrongDataException {
+    public void applyOn(ItemStack applyOn) {
         try {
             if (!(applyOn.getType() == Material.FIREWORK)) {
                 return;

@@ -25,12 +25,25 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class AnvilGUI extends InputGUI {
+import java.util.ArrayList;
+import java.util.List;
+
+public class AnvilGUI implements InputGUI {
+
+    private static List<String> openGUIs = new ArrayList<>();
+
+    public static List<String> getOpenGUIs() {
+        return openGUIs;
+    }
+
     @Override
     public void openGUI(Player p) {
         Inventory anvil = Bukkit.createInventory(p, InventoryType.ANVIL);
 
         anvil.setItem(0, new ItemStack(Material.PAPER));
+
+        openGUIs.add(p.getName());
+
         p.openInventory(anvil);
     }
 }

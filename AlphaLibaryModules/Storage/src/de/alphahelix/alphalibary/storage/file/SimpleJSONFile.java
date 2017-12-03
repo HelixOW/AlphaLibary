@@ -11,8 +11,10 @@ import org.apache.commons.io.FileUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,24 +23,23 @@ import java.util.function.Consumer;
 
 public class SimpleJSONFile extends AbstractFile implements IDataStorage {
 
-    private final JsonObject head = new JsonObject();
+    private JsonObject head = new JsonObject();
+
+    public SimpleJSONFile(File parent, String child) {
+        super(parent, child);
+    }
+
+    public SimpleJSONFile(URI uri) {
+        super(uri);
+    }
 
     public SimpleJSONFile(String parent, String child) {
         super(parent, child);
-        if (!this.exists() && !isDirectory()) {
-            try {
-                getParentFile().mkdirs();
-                createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
-    public SimpleJSONFile(JavaPlugin pl, String child) {
-        this(pl.getDataFolder().getAbsolutePath(), child);
+    public SimpleJSONFile(JavaPlugin plugin, String child) {
+        super(plugin, child);
     }
-
 
     @Override
     public void removeValue(Object path) {
@@ -80,10 +81,9 @@ public class SimpleJSONFile extends AbstractFile implements IDataStorage {
     }
 
     public boolean jsonContains(Object path) {
+        JsonObject val = read();
 
-        JsonObject obj = read();
-
-        return obj != null && obj.get(path.toString()) != null;
+        return val != null && val.get(path.toString()) != null;
 
     }
 
@@ -144,10 +144,6 @@ public class SimpleJSONFile extends AbstractFile implements IDataStorage {
         head.add(path.toString(), JSONUtil.getGson().toJsonTree(value));
 
         update();
-    }
-
-    private void createSection(JsonObject obj) {
-
     }
 
     public <T> T[] getListValues(Object path, Class<T[]> definy) {

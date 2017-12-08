@@ -392,4 +392,12 @@ public class Util {
             return string;
         }
     }
+
+    public static List<String> upperEverything(List<String> list) {
+        List<String> nL = new LinkedList<>();
+        for (String str : list)
+            nL.add(str.toUpperCase());
+
+        return nL;
+    }
 }

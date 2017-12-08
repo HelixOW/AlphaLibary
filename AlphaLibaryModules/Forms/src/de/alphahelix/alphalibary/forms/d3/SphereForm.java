@@ -10,8 +10,14 @@ public class SphereForm extends Form {
 
     private double radius;
 
+    /*
+    x = r * cos b * cos a
+    y = r * cos b * sin a
+    z = r * sin b
+     */
+
     public SphereForm(Location location, double dense, double radius, FormAction action) {
-        super(location, "", dense, action, x -> Math.sqrt(radius * radius - x[0] * x[0] - x[1] * x[1]));
+        super(location, "", dense, action);
         this.radius = radius;
     }
 
@@ -26,12 +32,13 @@ public class SphereForm extends Form {
 
     @Override
     public void send(Player p) {
-        for (double x = -radius; x < radius; x += getDense()) {
-            for (double z = -radius; z < radius; z += getDense()) {
-                double y = getFormFunctions()[0].f(x, z);
-
-                getAction().action(p, getLocation().clone().subtract(0, y, 0).add(x, 0, z));
-                getAction().action(p, getLocation().clone().add(0, y, 0).subtract(x, 0, z));
+        for (float angleB = 0; angleB < 360; angleB++) {
+            for (float angleA = 0; angleA < 360; angleA++) {
+                getAction().action(p, getLocation().clone().add(
+                        getRadius() * Math.cos(angleB) * Math.cos(angleA),
+                        getRadius() * Math.cos(angleB) * Math.sin(angleA),
+                        getRadius() * Math.sin(angleB)
+                ));
             }
         }
     }

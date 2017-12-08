@@ -1,9 +1,8 @@
 package de.alphahelix.alphalibary.annotations;
 
-import de.alphahelix.alphalibary.core.SimpleLoader;
+import org.bukkit.event.Listener;
 
-@SuppressWarnings("ALL")
-public class SimpleAnnotatedCommand implements SimpleLoader {
+public class SimpleAnnotatedCommand implements Listener {
     public SimpleAnnotatedCommand() {
         Annotations.COMMAND.registerCommands(this);
     }

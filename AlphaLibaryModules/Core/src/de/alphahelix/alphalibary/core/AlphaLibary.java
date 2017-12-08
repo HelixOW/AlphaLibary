@@ -24,6 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -63,7 +64,7 @@ public class AlphaLibary extends JavaPlugin {
 
         new PluginWatcher(this).run();
 
-        for (Class<?> loaded : findClassesImplementing(SimpleLoader.class)) {
+        for (Class<?> loaded : findClassesAnnotatedWith(SimpleLoader.class)) {
             try {
                 Bukkit.getPluginManager().registerEvents((Listener) loaded.getDeclaredConstructors()[0].newInstance(), this);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -87,7 +88,8 @@ public class AlphaLibary extends JavaPlugin {
                 String jarName = jarEntry.getName().replace('/', '.');
 
                 if (jarName.endsWith(".class")) {
-                    classes.add(Class.forName(jarName.substring(0, jarName.length() - 6)));
+                    if (!jarName.contains("1_8") && !jarName.contains("1_9") && !jarName.contains("1_10") && !jarName.contains("1_11") && !jarName.contains("1_7"))
+                        classes.add(Class.forName(jarName.substring(0, jarName.length() - 6)));
                 }
             }
             file.close();
@@ -113,11 +115,11 @@ public class AlphaLibary extends JavaPlugin {
         return classes.toArray(new Class[classes.size()]);
     }
 
-    private Class<?>[] findClassesImplementing(Class<?> implementedClazz) {
+    private Class<?>[] findClassesAnnotatedWith(Class<? extends Annotation> annotation) {
         List<Class<?>> classes = new LinkedList<>();
 
         for (Class<?> clazz : getClasses()) {
-            if (implementedClazz.isAssignableFrom(clazz) && !implementedClazz.equals(clazz))
+            if (clazz.isAnnotationPresent(annotation) && !annotation.equals(clazz))
                 classes.add(clazz);
         }
 

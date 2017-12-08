@@ -37,7 +37,6 @@ import org.bukkit.util.Vector;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-@SuppressWarnings("ALL")
 public class ArmorstandFakeUtil {
 
     private static final HashMap<String, BukkitTask> FOLLOW_MAP = new HashMap<>();

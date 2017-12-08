@@ -1,6 +1,14 @@
 package de.alphahelix.alphalibary.core;
 
-import org.bukkit.event.Listener;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface SimpleLoader extends Listener {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface SimpleLoader {
+
+    String version() default "1.12.2";
+
 }

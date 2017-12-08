@@ -3,6 +3,7 @@ package de.alphahelix.alphalibary.annotations.command;
 import de.alphahelix.alphalibary.annotations.Accessor;
 import de.alphahelix.alphalibary.annotations.command.errors.ErrorHandler;
 import de.alphahelix.alphalibary.annotations.command.exceptions.*;
+import de.alphahelix.alphalibary.core.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
@@ -13,6 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -93,7 +95,7 @@ public class AnnotatedCommand {
                 if (!(sender instanceof Player)) throw new IllegalSenderException();
 
             if (!hasPerm(sender))
-                throw new InvalidLenghtException(cmdAnnotation.min(), args.length);
+                throw new PermissionException(permission);
 
             if (cmdAnnotation.max() != -1 && args.length > cmdAnnotation.max())
                 throw new InvalidLenghtException(cmdAnnotation.max(), args.length);
@@ -131,19 +133,26 @@ public class AnnotatedCommand {
 
                     if (i >= parsedArgs.length) break;
 
-                    parsedArgs[i] = parseArgument(paramTypes[i], args[i - 1]);
+                    General general = getMethodParameterAnnotation(cmdMethod, General.class);
+
+                    String arg = args[i - 1];
+
+                    if (general != null && Util.upperEverything(Arrays.<String>asList(general.enterable())).contains(arg.toUpperCase()))
+                        parsedArgs[i] = parseArgument(paramTypes[i], general.enterable()[0]);
+                    else
+                        parsedArgs[i] = parseArgument(paramTypes[i], arg);
                 }
                 parsedArgs[0] = sender;
 
                 if (paramTypes.length - 1 > args.length) {
                     for (int i = args.length; i < paramTypes.length; i++) {
-                        if (parsedArgs[i] != null) continue;
-
                         Optional optional = getMethodParameterAnnotation(cmdMethod, i, Optional.class);
 
-                        if (optional != null)
-                            if (!optional.define().isEmpty())
+                        if (optional != null) {
+                            if (!optional.define().isEmpty()) {
                                 parsedArgs[i] = parseArgument(paramTypes[i], optional.define());
+                            }
+                        }
                     }
                 }
 
@@ -317,15 +326,13 @@ public class AnnotatedCommand {
                     parseName = "Int";
 
                 return parameterType.getDeclaredMethod("parse" + parseName, String.class).invoke(null, argument);
-            }
-            if (Enum.class.isAssignableFrom(parameterType)) {
+            } else if (Enum.class.isAssignableFrom(parameterType)) {
                 try {
                     return Enum.valueOf((Class<? extends Enum>) parameterType, argument.toUpperCase());
                 } catch (Exception ignored) {
 
                 }
             }
-            throw new ArgumentException("Failed to parse argument '" + argument + "' to " + parameterType, argument, parameterType);
         } catch (ReflectiveOperationException e) {
             if (e instanceof InvocationTargetException) {
                 Throwable cause = e.getCause();
@@ -334,6 +341,7 @@ public class AnnotatedCommand {
             }
             throw new ArgumentException("Exception while parsing argument '" + argument + "' to " + parameterType, e, argument, parameterType);
         }
+        throw new ArgumentException("Failed to parse argument '" + argument + "' to " + parameterType, argument, parameterType);
     }
 
     public final AnnotatedCommand register() {

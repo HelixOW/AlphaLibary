@@ -15,12 +15,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-interface UndoSave {
-    Material getType();
+class UndoSave {
+    private final Material type;
+    private final MaterialData data;
+    private final Location old;
 
-    MaterialData getData();
+    public UndoSave(Material type, MaterialData data, Location old) {
+        this.type = type;
+        this.data = data;
+        this.old = old;
+    }
 
-    Location getOld();
+    public Material getType() {
+        return type;
+    }
+
+    public MaterialData getData() {
+        return data;
+    }
+
+    public Location getOld() {
+        return old;
+    }
 }
 
 @SuppressWarnings("ALL")
@@ -39,22 +55,7 @@ public class SchematicManager {
         for (Schematic.LocationDiff diff : schematic.getBlocks()) {
             Block toEdit = loc.clone().add(diff.getX(), diff.getY(), diff.getZ()).getBlock();
 
-            save.add(new UndoSave() {
-                @Override
-                public Material getType() {
-                    return toEdit.getType();
-                }
-
-                @Override
-                public MaterialData getData() {
-                    return toEdit.getState().getData();
-                }
-
-                @Override
-                public Location getOld() {
-                    return toEdit.getLocation();
-                }
-            });
+            save.add(new UndoSave(toEdit.getType(), toEdit.getState().getData(), toEdit.getLocation()));
 
             toEdit.setType(diff.getBlockType());
             toEdit.getState().setData(diff.getBlockData());
@@ -77,38 +78,7 @@ public class SchematicManager {
 
         for (Block block : blocks) {
             if (block.getType() == Material.AIR) continue;
-
-            b.add(new Schematic.LocationDiff() {
-                @Override
-                public Material getBlockType() {
-                    return block.getType();
-                }
-
-                @Override
-                public MaterialData getBlockData() {
-                    return block.getState().getData();
-                }
-
-                @Override
-                public int getBlockPower() {
-                    return block.getBlockPower();
-                }
-
-                @Override
-                public int getX() {
-                    return block.getX() - l1.getBlockX();
-                }
-
-                @Override
-                public int getY() {
-                    return block.getY() - l1.getBlockY();
-                }
-
-                @Override
-                public int getZ() {
-                    return block.getZ() - l1.getBlockZ();
-                }
-            });
+            b.add(new Schematic.LocationDiff(block, l1));
         }
 
         return b;

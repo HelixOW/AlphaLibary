@@ -1,7 +1,9 @@
 package de.alphahelix.alphalibary.schematic;
 
 import com.google.common.base.Objects;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.material.MaterialData;
 
 import java.io.Serializable;
@@ -57,17 +59,42 @@ public class Schematic implements Serializable {
                 '}';
     }
 
-    public interface LocationDiff {
-        Material getBlockType();
+    public static class LocationDiff {
+        private final Material blockType;
+        private final MaterialData blockData;
+        private final int blockPower, x, y, z;
 
-        MaterialData getBlockData();
+        public LocationDiff(Block b, Location location) {
+            this.blockType = b.getType();
+            this.blockData = b.getState().getData();
+            this.blockPower = b.getBlockPower();
+            this.x = b.getX() - location.getBlockX();
+            this.y = b.getY() - location.getBlockY();
+            this.z = b.getZ() - location.getBlockZ();
+        }
 
-        int getBlockPower();
+        public Material getBlockType() {
+            return blockType;
+        }
 
-        int getX();
+        public MaterialData getBlockData() {
+            return blockData;
+        }
 
-        int getY();
+        public int getBlockPower() {
+            return blockPower;
+        }
 
-        int getZ();
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public int getZ() {
+            return z;
+        }
     }
 }

@@ -10,5 +10,4 @@ public interface AlphaModule {
 
     default void load() {
     }
-
 }

@@ -1,10 +1,11 @@
 package de.alphahelix.alphalibary.annotations;
 
-import org.bukkit.event.Listener;
+import de.alphahelix.alphalibary.core.SimpleListener;
 
-public class SimpleAnnotatedItemListener implements Listener {
+public class SimpleAnnotatedItemListener extends SimpleListener {
 
     public SimpleAnnotatedItemListener() {
+        super();
         Annotations.ITEM.registerItems(this);
     }
 }

@@ -133,12 +133,12 @@ public class AnnotatedCommand {
 
                     if (i >= parsedArgs.length) break;
 
-                    General general = getMethodParameterAnnotation(cmdMethod, General.class);
+                    Alias alias = getMethodParameterAnnotation(cmdMethod, Alias.class);
 
                     String arg = args[i - 1];
 
-                    if (general != null && Util.upperEverything(Arrays.<String>asList(general.enterable())).contains(arg.toUpperCase()))
-                        parsedArgs[i] = parseArgument(paramTypes[i], general.enterable()[0]);
+                    if (alias != null && Util.upperEverything(Arrays.<String>asList(alias.alias())).contains(arg.toUpperCase()))
+                        parsedArgs[i] = parseArgument(paramTypes[i], alias.alias()[0]);
                     else
                         parsedArgs[i] = parseArgument(paramTypes[i], arg);
                 }

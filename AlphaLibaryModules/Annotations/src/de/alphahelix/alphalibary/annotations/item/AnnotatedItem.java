@@ -28,14 +28,14 @@ class AnnotatedItem {
     private final Potion potionAnnotation;
     private final SpawnEgg spawnEggAnnotation;
 
-    private String name = "";
-    private String[] enchantments = {};
-    private ItemFlag[] itemflags = {};
-    private Material material = Material.AIR;
-    private int amount = 1;
-    private short damage = 0;
-    private String[] lore = {};
-    private boolean unbreakable = false;
+    private final String name;
+    private final String[] enchantments;
+    private final ItemFlag[] itemflags;
+    private final Material material;
+    private final int amount;
+    private final short damage;
+    private final String[] lore;
+    private final boolean unbreakable;
 
 
     AnnotatedItem(Object itemClass, Field itemField, Item itemAnnotation, Skull skullAnnotation, Color colorAnnotation, Banner bannerAnnotation, Map mapAnnotation, Potion potionAnnotation, SpawnEgg spawnEggAnnotation) {

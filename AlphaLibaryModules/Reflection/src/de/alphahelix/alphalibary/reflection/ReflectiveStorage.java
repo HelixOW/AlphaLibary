@@ -1,27 +1,28 @@
 package de.alphahelix.alphalibary.reflection;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ReflectiveStorage {
 
-    private static final ConcurrentHashMap<ReflectionUtil.ClassInfo, Class<?>> CLASSES = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ReflectionUtil.MethodInfo, ReflectionUtil.SaveMethod> METHODS = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ReflectionUtil.ConstructorInfo, ReflectionUtil.SaveConstructor<?>> CONSTRUCTORS = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<ReflectionUtil.JarInfo, Class<?>[]> JARS = new ConcurrentHashMap<>();
+    private static final Map<ReflectionUtil.ClassInfo, Class<?>> CLASSES = new ConcurrentHashMap<>();
+    private static final Map<ReflectionUtil.MethodInfo, ReflectionUtil.SaveMethod> METHODS = new ConcurrentHashMap<>();
+    private static final Map<ReflectionUtil.ConstructorInfo, ReflectionUtil.SaveConstructor<?>> CONSTRUCTORS = new ConcurrentHashMap<>();
+    private static final Map<ReflectionUtil.JarInfo, Class<?>[]> JARS = new ConcurrentHashMap<>();
 
-    public static ConcurrentHashMap<ReflectionUtil.ClassInfo, Class<?>> getClasses() {
+    public static Map<ReflectionUtil.ClassInfo, Class<?>> getClasses() {
         return CLASSES;
     }
 
-    public static ConcurrentHashMap<ReflectionUtil.MethodInfo, ReflectionUtil.SaveMethod> getMethods() {
+    public static Map<ReflectionUtil.MethodInfo, ReflectionUtil.SaveMethod> getMethods() {
         return METHODS;
     }
 
-    public static ConcurrentHashMap<ReflectionUtil.ConstructorInfo, ReflectionUtil.SaveConstructor<?>> getConstructors() {
+    public static Map<ReflectionUtil.ConstructorInfo, ReflectionUtil.SaveConstructor<?>> getConstructors() {
         return CONSTRUCTORS;
     }
 
-    public static ConcurrentHashMap<ReflectionUtil.JarInfo, Class<?>[]> getJars() {
+    public static Map<ReflectionUtil.JarInfo, Class<?>[]> getJars() {
         return JARS;
     }
 }

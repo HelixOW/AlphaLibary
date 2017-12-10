@@ -65,7 +65,7 @@ public class PlayerInfoDataWrapper {
     }
 
     public Object getPlayerInfoData() {
-        return P_ID_CONSTUCTOR.newInstance(true, getPlayerinfoaction(), getProfile(), getPing(), getGameMode(), ReflectionUtil.serializeString(getName()));
+        return P_ID_CONSTUCTOR.newInstance(true, getPlayerinfoaction(), getProfile(), getPing(), getGameMode(), ReflectionUtil.toIChatBaseComponentArray(getName()));
     }
 
     @Override

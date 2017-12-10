@@ -3,15 +3,16 @@ package de.alphahelix.alphalibary.core.utils;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("ALL")
 public class PlayerUtil {
 
-    private static final ArrayList<String> TOTAL_PLAYERS = new ArrayList<>();
-    private static final ArrayList<String> ALIVE_PLAYERS = new ArrayList<>();
-    private static final ArrayList<String> DEAD_PLAYERS = new ArrayList<>();
+    private static final List<String> TOTAL_PLAYERS = new ArrayList<>();
+    private static final List<String> ALIVE_PLAYERS = new ArrayList<>();
+    private static final List<String> DEAD_PLAYERS = new ArrayList<>();
 
-    public static ArrayList<String> getTotalPlayers() {
+    public static List<String> getTotalPlayers() {
         return TOTAL_PLAYERS;
     }
 
@@ -40,7 +41,7 @@ public class PlayerUtil {
         removeTotalPlayer(player.getName());
     }
 
-    public static ArrayList<String> getAlivePlayers() {
+    public static List<String> getAlivePlayers() {
         return ALIVE_PLAYERS;
     }
 
@@ -72,7 +73,7 @@ public class PlayerUtil {
         return isPlayerAlive(player.getName());
     }
 
-    public static ArrayList<String> getDeadPlayers() {
+    public static List<String> getDeadPlayers() {
         return DEAD_PLAYERS;
     }
 

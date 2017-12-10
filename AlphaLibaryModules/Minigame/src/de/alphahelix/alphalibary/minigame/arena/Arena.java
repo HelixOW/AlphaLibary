@@ -1,6 +1,7 @@
 package de.alphahelix.alphalibary.minigame.arena;
 
 import com.google.common.base.Objects;
+import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.core.AlphaLibary;
 import de.alphahelix.alphalibary.core.utils.Util;
 import de.alphahelix.alphalibary.storage.file.SimpleFolder;
@@ -9,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.WorldCreator;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -19,23 +21,26 @@ import java.util.ArrayList;
 @SuppressWarnings("ALL")
 public class Arena implements Serializable {
 
-    private static final ArenaFile ARENA_FILE = new ArenaFile();
-
-    static {
-        new SimpleFolder("plugins/AlphaGameLibary", "arenas");
-    }
+    private static ArenaFile arenaFile;
 
     private final String name;
     private final String fileName;
     private final ArenaFile.ArenaItem icon;
+    @Expose
+    private final transient JavaPlugin plugin;
+    @Expose
     private final transient ArrayList<Location> realSpawns = new ArrayList<>();
     private ArrayList<ArenaFile.NotInitLocation> spawns = new ArrayList<>();
 
-    public Arena(String name, String fileName, ArenaFile.ArenaItem icon, ArrayList<ArenaFile.NotInitLocation> spawns) {
+    public Arena(JavaPlugin plugin, String name, String fileName, ArenaFile.ArenaItem icon, ArrayList<ArenaFile.NotInitLocation> spawns) {
         this.name = name;
         this.fileName = fileName;
         this.icon = icon;
         this.spawns = spawns;
+        this.plugin = plugin;
+
+        arenaFile = new ArenaFile(plugin);
+        new SimpleFolder(plugin, "arenas");
     }
 
     /**
@@ -45,14 +50,14 @@ public class Arena implements Serializable {
      * @return the instance
      */
     public static Arena getArena(String name) {
-        return ARENA_FILE.getArena(ChatColor.stripColor(name).replace(" ", "_"));
+        return arenaFile.getArena(ChatColor.stripColor(name).replace(" ", "_"));
     }
 
     /**
      * Transforms the arena into a world
      */
     public void loadArena() {
-        Util.unzip("plugins/AlphaGameLibary/arenas/" + fileName + ".zip", Bukkit.getWorlds().get(0).getWorldFolder().getParent());
+        Util.unzip(plugin.getDataFolder().getAbsolutePath() + "/arenas/" + fileName + ".zip", Bukkit.getWorlds().get(0).getWorldFolder().getParent());
         new BukkitRunnable() {
             public void run() {
                 Bukkit.createWorld(new WorldCreator(fileName));

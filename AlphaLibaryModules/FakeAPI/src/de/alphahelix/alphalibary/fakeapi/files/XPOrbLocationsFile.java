@@ -18,11 +18,12 @@ package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakeXPOrb;
 import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class XPOrbLocationsFile extends SimpleJSONFile {
 
-    public XPOrbLocationsFile() {
-        super("plugins/AlphaLibary", "fake_xporb.json");
+    public XPOrbLocationsFile(JavaPlugin plugin) {
+        super(plugin, "fake_xporb.json");
     }
 
     public void addXPOrbToFile(FakeXPOrb fakeXPOrb) {

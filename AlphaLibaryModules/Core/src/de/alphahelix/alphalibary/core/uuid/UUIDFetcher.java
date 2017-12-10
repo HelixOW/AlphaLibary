@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -38,8 +39,8 @@ public class UUIDFetcher {
     private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/%s?at=%d";
     private static final String NAME_URL = "https://api.mojang.com/user/profiles/%s/NAMES";
 
-    private static final ConcurrentHashMap<UUID, String> NAMES = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, UUID> UUIDS = new ConcurrentHashMap<>();
+    private static final Map<UUID, String> NAMES = new ConcurrentHashMap<>();
+    private static final Map<String, UUID> UUIDS = new ConcurrentHashMap<>();
 
     /**
      * Gets the {@link UUID} of a {@link String} async

@@ -17,6 +17,7 @@
 package de.alphahelix.alphalibary.fakeapi;
 
 import de.alphahelix.alphalibary.core.SimpleListener;
+import de.alphahelix.alphalibary.core.SimpleLoader;
 import de.alphahelix.alphalibary.core.uuid.UUIDFetcher;
 import de.alphahelix.alphalibary.fakeapi.instances.*;
 import de.alphahelix.alphalibary.fakeapi.utils.*;
@@ -25,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+@SimpleLoader
 public class FakeEventListener extends SimpleListener {
 
     @EventHandler

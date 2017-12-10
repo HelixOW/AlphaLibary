@@ -18,17 +18,17 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object s) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object s) {
         String[] sentDataAndJson = ((String) s).split("-::=::-");
         String data = sentDataAndJson[0];
         String json = sentDataAndJson[1];
 
         if (EchoClient.getRequests().containsKey(data))
-            EchoClient.getRequests().get(data).done(new JsonParser().parse(json));
+            EchoClient.getRequests().get(data).accept(new JsonParser().parse(json));
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
     }

@@ -36,11 +36,12 @@ import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ArmorstandFakeUtil {
 
-    private static final HashMap<String, BukkitTask> FOLLOW_MAP = new HashMap<>();
-    private static final HashMap<String, BukkitTask> SPLIT_MAP = new HashMap<>();
+    private static final Map<String, BukkitTask> FOLLOW_MAP = new HashMap<>();
+    private static final Map<String, BukkitTask> SPLIT_MAP = new HashMap<>();
 
     private static final ReflectionUtil.SaveConstructor ENTITY_ARMORSTAND =
             ReflectionUtil.getDeclaredConstructor("EntityArmorStand", ReflectionUtil.getNmsClass("World"));

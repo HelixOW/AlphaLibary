@@ -1,11 +1,12 @@
 package de.alphahelix.alphalibary.server;
 
-import de.alphahelix.alphalibary.server.netty.NettyCallback;
+import com.google.gson.JsonElement;
 import de.alphahelix.alphalibary.server.netty.RequestProcessor;
 import de.alphahelix.alphalibary.server.netty.client.EchoClient;
 import de.alphahelix.alphalibary.server.netty.server.EchoServer;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.function.Consumer;
 
 public class ServerConnector {
 
@@ -40,7 +41,7 @@ public class ServerConnector {
         return client;
     }
 
-    public void makeRequest(String request, NettyCallback callback) {
+    public void makeRequest(String request, Consumer<JsonElement> callback) {
         getClient().request(request, callback);
     }
 

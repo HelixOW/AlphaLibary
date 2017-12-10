@@ -18,11 +18,12 @@ package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakeArmorstand;
 import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class ArmorstandLocationsFile extends SimpleJSONFile {
 
-    public ArmorstandLocationsFile() {
-        super("plugins/AlphaLibary", "fake_armorstand.json");
+    public ArmorstandLocationsFile(JavaPlugin plugin) {
+        super(plugin, "fake_armorstand.json");
     }
 
     public void addArmorstandToFile(FakeArmorstand armorstand) {

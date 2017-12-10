@@ -18,11 +18,12 @@ package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakePlayer;
 import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class PlayerLocationsFile extends SimpleJSONFile {
 
-    public PlayerLocationsFile() {
-        super("plugins/AlphaLibary", "fake_players.json");
+    public PlayerLocationsFile(JavaPlugin plugin) {
+        super(plugin, "fake_players.json");
     }
 
     public void addPlayerToFile(FakePlayer fakePlayer) {

@@ -9,12 +9,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 @SuppressWarnings("ALL")
 public class Kit implements Serializable {
 
-    private static final WeakHashMap<String, Kit> KITS = new WeakHashMap<>();
+    private static final Map<String, Kit> KITS = new WeakHashMap<>();
     private final ItemStack[] items;
     private String name;
     private String rawName;

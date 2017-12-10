@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.server.netty.client;
 
-import de.alphahelix.alphalibary.server.netty.NettyCallback;
+import com.google.gson.JsonElement;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -11,12 +11,14 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class EchoClient {
 
     //Request name -> CallBack
-    private static final ConcurrentHashMap<String, NettyCallback> REQUESTS = new ConcurrentHashMap<>();
+    private static final Map<String, Consumer<JsonElement>> REQUESTS = new ConcurrentHashMap<>();
     private EchoClientHandler ech = new EchoClientHandler();
 
     public EchoClient(String host, int port) {
@@ -29,7 +31,7 @@ public class EchoClient {
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+                    protected void initChannel(SocketChannel socketChannel) {
                         socketChannel.pipeline()
                                 .addLast(new StringDecoder())
                                 .addLast(new StringEncoder())
@@ -40,11 +42,11 @@ public class EchoClient {
         b.connect(host, port);
     }
 
-    public static ConcurrentHashMap<String, NettyCallback> getRequests() {
+    public static Map<String, Consumer<JsonElement>> getRequests() {
         return REQUESTS;
     }
 
-    public void request(String sentData, NettyCallback nettyCallback) {
+    public void request(String sentData, Consumer<JsonElement> nettyCallback) {
         ech.requestData(sentData);
         REQUESTS.put(sentData, nettyCallback);
     }

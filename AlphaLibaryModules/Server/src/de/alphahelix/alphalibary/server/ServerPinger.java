@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.Objects;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @SuppressWarnings("ALL")
 public class ServerPinger {
@@ -19,7 +20,7 @@ public class ServerPinger {
         this.port = port;
     }
 
-    public void ping(ServerCallback callback) {
+    public void ping(Consumer<ServerResult> callback) {
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
 
         exec.schedule(() -> {
@@ -39,10 +40,10 @@ public class ServerPinger {
                         str.append((char) b);
 
                 String[] data = str.toString().split("§");
-                callback.done(new ServerResult(Integer.parseInt(data[1]), Integer.parseInt(data[2]), data[0]));
+                callback.accept(new ServerResult(Integer.parseInt(data[1]), Integer.parseInt(data[2]), data[0]));
             } catch (IOException e) {
                 e.printStackTrace();
-                callback.done(null);
+                callback.accept(null);
             }
         }, 1, TimeUnit.MILLISECONDS);
     }

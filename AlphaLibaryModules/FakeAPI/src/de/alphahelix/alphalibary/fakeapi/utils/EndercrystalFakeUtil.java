@@ -35,11 +35,12 @@ import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("ALL")
 public class EndercrystalFakeUtil {
 
-    private static final HashMap<String, BukkitTask> SPLIT_MAP = new HashMap<>();
+    private static final Map<String, BukkitTask> SPLIT_MAP = new HashMap<>();
 
     private static final ReflectionUtil.SaveConstructor ENTITY_ENDERCRYSTAL =
             ReflectionUtil.getDeclaredConstructor("EntityEnderCrystal", ReflectionUtil.getNmsClass("World"));

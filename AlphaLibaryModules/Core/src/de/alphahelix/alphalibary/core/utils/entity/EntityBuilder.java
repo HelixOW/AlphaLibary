@@ -27,48 +27,59 @@ public class EntityBuilder implements Serializable {
         this.entityClazz = entityClazz;
     }
 
-    public void setType(EntityType type) {
+    public EntityBuilder setType(EntityType type) {
         this.type = type;
+        return this;
     }
 
-    public void setEntityClazz(Class<? extends Entity> entityClazz) {
+    public EntityBuilder setEntityClazz(Class<? extends Entity> entityClazz) {
         this.entityClazz = entityClazz;
+        return this;
     }
 
-    public void setName(String name) {
+    public EntityBuilder setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public void setHealth(double health) {
+    public EntityBuilder setHealth(double health) {
         this.health = health;
+        return this;
     }
 
-    public void setMove(boolean move) {
+    public EntityBuilder setMove(boolean move) {
         this.move = move;
+        return this;
     }
 
-    public void setItemPickup(boolean itemPickup) {
+    public EntityBuilder setItemPickup(boolean itemPickup) {
         this.itemPickup = itemPickup;
+        return this;
     }
 
-    public void setGlowing(boolean glowing) {
+    public EntityBuilder setGlowing(boolean glowing) {
         this.glowing = glowing;
+        return this;
     }
 
-    public void setGravity(boolean gravity) {
+    public EntityBuilder setGravity(boolean gravity) {
         this.gravity = gravity;
+        return this;
     }
 
-    public void setInvincible(boolean invincible) {
+    public EntityBuilder setInvincible(boolean invincible) {
         this.invincible = invincible;
+        return this;
     }
 
-    public void setAge(EntityAge age) {
-        this.age = age;
-    }
-
-    public void setAgeLock(boolean ageLock) {
+    public EntityBuilder setAgeLock(boolean ageLock) {
         this.ageLock = ageLock;
+        return this;
+    }
+
+    public EntityBuilder setAge(EntityAge age) {
+        this.age = age;
+        return this;
     }
 
     public Entity spawn(Location where) {

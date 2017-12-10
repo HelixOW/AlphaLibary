@@ -277,11 +277,10 @@ public class Util {
     }
 
     public static String[] replaceInArray(String pattern, String replace, String... array) {
-        String[] a = array;
         for (int i = 0; i < array.length; i++) {
-            a[i] = a[i].replace(pattern, replace);
+            array[i] = array[i].replace(pattern, replace);
         }
-        return a;
+        return array;
     }
 
     public static boolean isLong(String s) {
@@ -351,35 +350,29 @@ public class Util {
         return new Vector(face.getModX(), face.getModY(), face.getModZ()).multiply(length);
     }
 
-    /**
-     * @param vec   Vector to rotate
-     * @param axis  Axis to rotate along
-     * @param angle Angle to rotate
-     * @return the rotated Vector
+    public static Vector rotate(Vector toRotate, double yawAngle, double pitchAngle) {
+        /*
+    x = mx + r * cos b * cos a
+    y = my + r * cos b * sin a
+    z = mz + r * sin b
      */
-    public static Vector rotateVector(Vector vec, Vector axis, double angle) {
-        double x, y, z;
-        double u, v, w;
 
-        x = vec.getX();
-        y = vec.getY();
-        z = vec.getZ();
+        Vector zeroDegreeYaw = new Vector(1, 0, 0);
+        Vector zeroDegreePitch = new Vector(0, 1, 0);
 
-        u = axis.getX();
-        v = axis.getY();
-        w = axis.getZ();
+        double oldYaw = toRotate.angle(zeroDegreeYaw);
+        double oldPitch = toRotate.angle(zeroDegreePitch);
 
-        double xPrime = u * (u * x + v * y + w * z) * (1.0 - Math.cos(angle))
-                + x * Math.cos(angle)
-                + (-w * y + v * z) * Math.sin(angle);
-        double yPrime = v * (u * x + v * y + w * z) * (1.0 - Math.cos(angle))
-                + y * Math.cos(angle)
-                + (w * x - u * z) * Math.sin(angle);
-        double zPrime = w * (u * x + v * y + w * z) * (1.0 - Math.cos(angle))
-                + z * Math.cos(angle)
-                + (-v * x + u * y) * Math.sin(angle);
+        double yaw = oldYaw + yawAngle;
+        double pitch = oldPitch + pitchAngle;
 
-        return new Vector(xPrime, yPrime, zPrime);
+        double x = Math.cos(yaw) * Math.cos(pitch);
+        double z = Math.cos(yaw) * Math.sin(pitch);
+        double y = Math.sin(yaw);
+
+        System.out.println(x + " " + y + " " + z);
+
+        return new Vector(x, y, z);
     }
 
     public static String replaceLast(String string, String toReplace, String replacement) {

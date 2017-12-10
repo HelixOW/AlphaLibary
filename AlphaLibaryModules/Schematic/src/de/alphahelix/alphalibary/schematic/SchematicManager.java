@@ -8,12 +8,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.material.MaterialData;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class UndoSave {
     private final Material type;
@@ -42,15 +44,15 @@ class UndoSave {
 @SuppressWarnings("ALL")
 public class SchematicManager {
 
-    private static final HashMap<String, ArrayList<UndoSave>> SAVE_MAP = new HashMap<>();
+    private static final Map<String, List<UndoSave>> SAVE_MAP = new HashMap<>();
 
-    public static void save(Location location1, Location location2, String name) {
-        new SchematicFile(new Schematic(name, SchematicManager.getBlocks(location1, location2)));
+    public static void save(JavaPlugin plugin, Location location1, Location location2, String name) {
+        new SchematicFile(plugin, new Schematic(name, SchematicManager.getBlocks(location1, location2)));
     }
 
     public static void paste(String name, Location loc) {
         Schematic schematic = SchematicFile.getSchematic(name);
-        ArrayList<UndoSave> save = new ArrayList<>();
+        List<UndoSave> save = new ArrayList<>();
 
         for (Schematic.LocationDiff diff : schematic.getBlocks()) {
             Block toEdit = loc.clone().add(diff.getX(), diff.getY(), diff.getZ()).getBlock();
@@ -72,8 +74,8 @@ public class SchematicManager {
             }
     }
 
-    private static ArrayList<Schematic.LocationDiff> getBlocks(Location l1, Location l2) {
-        ArrayList<Schematic.LocationDiff> b = new ArrayList<>();
+    private static List<Schematic.LocationDiff> getBlocks(Location l1, Location l2) {
+        List<Schematic.LocationDiff> b = new ArrayList<>();
         List<Block> blocks = new Cuboid(l1, l2).getBlocks();
 
         for (Block block : blocks) {
@@ -87,8 +89,8 @@ public class SchematicManager {
 
 class SchematicFile extends SimpleJSONFile {
 
-    public SchematicFile(Schematic schematic) {
-        super("plugins/AlphaLibary/schematics", schematic.getName() + ".json");
+    public SchematicFile(JavaPlugin plugin, Schematic schematic) {
+        super(plugin.getDataFolder().getAbsolutePath() + "/schematics", schematic.getName() + ".json");
         setValue(schematic.getName(), Base64Coder.encodeString(JSONUtil.getGson().toJson(schematic)));
     }
 

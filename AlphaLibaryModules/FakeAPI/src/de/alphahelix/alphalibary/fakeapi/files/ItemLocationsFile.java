@@ -18,11 +18,12 @@ package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakeItem;
 import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class ItemLocationsFile extends SimpleJSONFile {
 
-    public ItemLocationsFile() {
-        super("plugins/AlphaLibary", "fake_items.json");
+    public ItemLocationsFile(JavaPlugin plugin) {
+        super(plugin, "fake_items.json");
     }
 
     public void addItemToFile(FakeItem fakeItem) {

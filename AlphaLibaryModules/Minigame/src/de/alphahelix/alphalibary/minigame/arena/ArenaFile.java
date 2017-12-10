@@ -6,13 +6,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 
 @SuppressWarnings("ALL")
 public class ArenaFile extends SimpleJSONFile {
-    public ArenaFile() {
-        super("plugins/AlphaGameLibary", "arena.json");
+
+    private final JavaPlugin plugin;
+
+    public ArenaFile(JavaPlugin plugin) {
+        super(plugin, "arena.json");
+
+        this.plugin = plugin;
+
         addValues();
     }
 
@@ -24,7 +31,7 @@ public class ArenaFile extends SimpleJSONFile {
             locs.add(new NotInitLocation(10, 55, 5, 0, 0, "example"));
 
             setValue("example_arena",
-                    new Arena(
+                    new Arena(plugin,
                             "&7Example Arena",
                             "example_arena",
                             new ArenaItem(new ItemStack(Material.NAME_TAG), "example_arena"),

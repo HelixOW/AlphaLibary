@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.command.arguments.Argument;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
@@ -14,7 +15,7 @@ import java.util.WeakHashMap;
 @Deprecated
 public class CommandWatcher {
 
-    private final WeakHashMap<Integer, Argument<?>> args = new WeakHashMap<>();
+    private final Map<Integer, Argument<?>> args = new WeakHashMap<>();
     private final String[] argsGiven;
 
     public CommandWatcher(String[] argsGiven) {

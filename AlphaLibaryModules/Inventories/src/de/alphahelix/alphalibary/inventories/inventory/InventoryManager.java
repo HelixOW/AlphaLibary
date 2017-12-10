@@ -1,6 +1,7 @@
 package de.alphahelix.alphalibary.inventories.inventory;
 
 import de.alphahelix.alphalibary.core.SimpleListener;
+import de.alphahelix.alphalibary.core.SimpleLoader;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SimpleLoader
 public class InventoryManager extends SimpleListener {
 
     private static final Map<UUID, AdvancedInventory> INVENTORIES = new ConcurrentHashMap<>();

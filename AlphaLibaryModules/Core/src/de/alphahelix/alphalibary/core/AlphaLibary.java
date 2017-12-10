@@ -25,7 +25,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -51,6 +50,13 @@ public class AlphaLibary extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        for (Class<?> loaded : findClassesAnnotatedWith(SimpleLoader.class)) {
+            try {
+                Bukkit.getPluginManager().registerEvents((Listener) loaded.getDeclaredConstructors()[0].newInstance(), this);
+            } catch (ReflectiveOperationException ignored) {
+            }
+        }
+
         for (AlphaModule module : MODULES)
             module.load();
     }
@@ -63,14 +69,6 @@ public class AlphaLibary extends JavaPlugin {
             module.enable();
 
         new PluginWatcher(this).run();
-
-        for (Class<?> loaded : findClassesAnnotatedWith(SimpleLoader.class)) {
-            try {
-                Bukkit.getPluginManager().registerEvents((Listener) loaded.getDeclaredConstructors()[0].newInstance(), this);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override

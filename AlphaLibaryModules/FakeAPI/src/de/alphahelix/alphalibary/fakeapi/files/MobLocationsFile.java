@@ -18,11 +18,12 @@ package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakeMob;
 import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class MobLocationsFile extends SimpleJSONFile {
 
-    public MobLocationsFile() {
-        super("plugins/AlphaLibary", "fake_mobs.json");
+    public MobLocationsFile(JavaPlugin plugin) {
+        super(plugin, "fake_mobs.json");
     }
 
     public void addMobToFile(FakeMob fakeMob) {

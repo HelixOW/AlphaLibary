@@ -6,9 +6,6 @@ public class SimpleAnnotatedPack extends SimpleListener {
 
     public SimpleAnnotatedPack() {
         super();
-
-        Annotations.COMMAND.registerCommands(this);
-        Annotations.RANDOM.registerRandoms(this);
-        Annotations.ITEM.registerItems(this);
+        Annotations.loadAll(this);
     }
 }

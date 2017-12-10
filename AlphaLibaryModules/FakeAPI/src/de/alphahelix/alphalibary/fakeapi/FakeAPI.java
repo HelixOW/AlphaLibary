@@ -18,7 +18,6 @@ package de.alphahelix.alphalibary.fakeapi;
 
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.core.AlphaLibary;
-import de.alphahelix.alphalibary.core.AlphaModule;
 import de.alphahelix.alphalibary.core.utils.PlayerMap;
 import de.alphahelix.alphalibary.core.uuid.UUIDFetcher;
 import de.alphahelix.alphalibary.fakeapi.events.FakeEntityClickEvent;
@@ -38,11 +37,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
-@SuppressWarnings("ALL")
-public class FakeAPI implements AlphaModule {
+public class FakeAPI {
 
     private static final PacketListenerAPI PACKET_LISTENER_API = new PacketListenerAPI();
     private static final PlayerMap<List<FakeEntity>> FAKE_ENTITIES = new PlayerMap<>();
@@ -158,9 +157,8 @@ public class FakeAPI implements AlphaModule {
         return NPCS;
     }
 
-    @Override
-    public void enable() {
-        new FakeRegister().initAll();
+    public void enable(JavaPlugin plugin) {
+        new FakeRegister().initAll(plugin);
         PACKET_LISTENER_API.load();
         PACKET_LISTENER_API.init();
 
@@ -227,7 +225,6 @@ public class FakeAPI implements AlphaModule {
         });
     }
 
-    @Override
     public void disable() {
         PACKET_LISTENER_API.disable();
     }

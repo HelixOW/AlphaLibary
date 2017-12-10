@@ -17,6 +17,7 @@
 package de.alphahelix.alphalibary.fakeapi;
 
 import de.alphahelix.alphalibary.fakeapi.files.*;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class FakeRegister {
 
@@ -57,14 +58,13 @@ public class FakeRegister {
     }
 
 
-    void initAll() {
-        armorstandLocationsFile = new ArmorstandLocationsFile();
-        endercrystalLocationsFile = new EndercrystalLocationsFile();
-        playerLocationsFile = new PlayerLocationsFile();
-        itemLocationsFile = new ItemLocationsFile();
-        mobLocationsFile = new MobLocationsFile();
-        bigItemLocationsFile = new BigItemLocationsFile();
-        xpOrbLocationsFile = new XPOrbLocationsFile();
-        new FakeEventListener();
+    void initAll(JavaPlugin plugin) {
+        armorstandLocationsFile = new ArmorstandLocationsFile(plugin);
+        endercrystalLocationsFile = new EndercrystalLocationsFile(plugin);
+        playerLocationsFile = new PlayerLocationsFile(plugin);
+        itemLocationsFile = new ItemLocationsFile(plugin);
+        mobLocationsFile = new MobLocationsFile(plugin);
+        bigItemLocationsFile = new BigItemLocationsFile(plugin);
+        xpOrbLocationsFile = new XPOrbLocationsFile(plugin);
     }
 }

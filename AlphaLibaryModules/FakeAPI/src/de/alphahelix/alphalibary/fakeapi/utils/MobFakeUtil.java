@@ -39,13 +39,14 @@ import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("ALL")
 public class MobFakeUtil {
 
-    private static final HashMap<String, BukkitTask> FOLLOW_MAP = new HashMap<>();
-    private static final HashMap<String, BukkitTask> STARE_MAP = new HashMap<>();
-    private static final HashMap<String, BukkitTask> SPLIT_MAP = new HashMap<>();
+    private static final Map<String, BukkitTask> FOLLOW_MAP = new HashMap<>();
+    private static final Map<String, BukkitTask> STARE_MAP = new HashMap<>();
+    private static final Map<String, BukkitTask> SPLIT_MAP = new HashMap<>();
 
     /**
      * Spawns in a {@link FakeMob} for the {@link Player}

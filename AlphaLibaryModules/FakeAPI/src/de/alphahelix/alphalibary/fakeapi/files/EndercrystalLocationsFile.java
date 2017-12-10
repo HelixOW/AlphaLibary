@@ -18,11 +18,12 @@ package de.alphahelix.alphalibary.fakeapi.files;
 
 import de.alphahelix.alphalibary.fakeapi.instances.FakeEndercrystal;
 import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class EndercrystalLocationsFile extends SimpleJSONFile {
 
-    public EndercrystalLocationsFile() {
-        super("plugins/AlphaLibary", "fake_endercrystals.json");
+    public EndercrystalLocationsFile(JavaPlugin plugin) {
+        super(plugin, "fake_endercrystals.json");
     }
 
     public void addEndercrystalToFile(FakeEndercrystal fakeEndercrystal) {

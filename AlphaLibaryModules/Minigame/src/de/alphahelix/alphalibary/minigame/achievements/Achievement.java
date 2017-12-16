@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("ALL")
+
 public class Achievement implements Serializable {
 
     private String name;

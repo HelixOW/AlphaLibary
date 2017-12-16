@@ -9,6 +9,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Alias {
 
+    /**
+     * First argument always has to be the expected entered (and parseable) type </br>
+     * Followed by all aliases for the argument
+     *
+     * @return all acceptable aliases for a argument inside the command
+     */
     String[] alias() default {};
 
 }

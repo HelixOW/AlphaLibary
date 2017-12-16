@@ -21,7 +21,11 @@ package de.alphahelix.alphalibary.addons.core;
 import java.io.File;
 
 /**
- * This ones need to be extended for a Addon of a certain plugin
+ * @author AlphaHelix
+ * @version 1.9
+ * @since 1.9
+ *
+ * This needs to be extended by every Addon main class, to load the Addon.
  */
 public abstract class Addon {
 

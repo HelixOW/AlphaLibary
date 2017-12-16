@@ -18,17 +18,16 @@
 
 package de.alphahelix.alphalibary.addons.csv;
 
-@SuppressWarnings("ALL")
 public interface CrossSystemVariable {
     /**
-     * Gets a serialized String
+     * To send a variable across addons, you need to specify a value in serialized JSON to access it inside the other Addons
      *
      * @return a serialized String of the {@link CrossSystemVariable}
      */
     String value();
 
     /**
-     * Gets the name of the String
+     * To access a value of another Addon, you need to specify a key for the value
      *
      * @return the name of the String
      */

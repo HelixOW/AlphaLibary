@@ -10,6 +10,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Complete {
 
+    /**
+     * Defines the name of the command, where auto completion should be available
+     *
+     * @return the name of the command
+     */
     String name() default "";
 
 }

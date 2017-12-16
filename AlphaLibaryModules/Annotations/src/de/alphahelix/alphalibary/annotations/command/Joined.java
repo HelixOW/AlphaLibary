@@ -10,6 +10,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Joined {
 
+    /**
+     * Can only be used once at the end of the parameters </br>
+     * Is used to create a String out of the left over arguments
+     *
+     * @return the newly created String
+     */
     String joinIn() default " ";
 
 }

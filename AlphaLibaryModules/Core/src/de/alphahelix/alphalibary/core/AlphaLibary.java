@@ -51,10 +51,11 @@ public class AlphaLibary extends JavaPlugin {
     @Override
     public void onLoad() {
         for (Class<?> loaded : findClassesAnnotatedWith(SimpleLoader.class)) {
-            try {
-                Bukkit.getPluginManager().registerEvents((Listener) loaded.getDeclaredConstructors()[0].newInstance(), this);
-            } catch (ReflectiveOperationException ignored) {
-            }
+            if (Listener.class.isInstance(loaded))
+                try {
+                    Bukkit.getPluginManager().registerEvents((Listener) loaded.getDeclaredConstructors()[0].newInstance(), this);
+                } catch (ReflectiveOperationException ignored) {
+                }
         }
 
         for (AlphaModule module : MODULES)

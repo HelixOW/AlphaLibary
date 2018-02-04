@@ -1,23 +1,19 @@
 package de.alphahelix.alphalibary.forms.d3;
 
+import de.alphahelix.alphalibary.core.utils.Util;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 @SuppressWarnings("ALL")
 public class SphereForm extends Form {
 
     private double radius;
 
-    /*
-    x = r * cos b * cos a
-    y = r * cos b * sin a
-    z = r * sin b
-     */
-
     public SphereForm(Location location, double dense, double radius, FormAction action) {
-        super(location, "", dense, action);
+        super(location, new Vector(1, 0, 0), dense, 0, action);
         this.radius = radius;
     }
 
@@ -32,14 +28,10 @@ public class SphereForm extends Form {
 
     @Override
     public void send(Player p) {
-        for (float angleB = 0; angleB < 360; angleB++) {
-            for (float angleA = 0; angleA < 360; angleA++) {
-                getAction().action(p, getLocation().clone().add(
-                        getRadius() * Math.cos(angleB) * Math.cos(angleA),
-                        getRadius() * Math.cos(angleB) * Math.sin(angleA),
-                        getRadius() * Math.sin(angleB)
-                ));
-            }
+        for (float angle = 0; angle < 180; angle += getDense()) {
+            Vector v = new Vector(getRadius() * Math.cos(angle), getRadius() * Math.sin(angle), 0);
+
+            getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), angle)));
         }
     }
 }

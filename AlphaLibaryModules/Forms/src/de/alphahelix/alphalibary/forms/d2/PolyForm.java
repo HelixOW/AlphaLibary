@@ -13,7 +13,7 @@ public class PolyForm extends Form {
     private Pair<Vector, Vector>[] points;
 
     public PolyForm(Location location, double dense, FormAction action, Pair<Vector, Vector>... points) {
-        super(location, "", dense, action);
+        super(location, new Vector(0, 0, 0), dense, 0, action);
         this.points = points;
     }
 

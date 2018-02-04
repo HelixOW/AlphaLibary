@@ -5,11 +5,12 @@ import de.alphahelix.alphalibary.forms.particles.data.EffectData;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
 @SuppressWarnings("ALL")
 public class CircleParticleForm extends CircleForm {
-    public CircleParticleForm(Effect effect, EffectData<?> effectData, Location location, String axis, double dense, double radius) {
-        super(location, axis, dense, radius, null);
+    public CircleParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector axis, double dense, double angle, double radius) {
+        super(location, axis, dense, radius, angle, null);
 
         if (effectData != null)
             Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");

@@ -11,7 +11,7 @@ public class CuboidForm extends Form {
     private double width;
 
     public CuboidForm(RectangleForm rectangleForm, double width) {
-        super(rectangleForm.getLocation(), rectangleForm.getAxis(), rectangleForm.getDense(), rectangleForm.getAction());
+        super(rectangleForm.getLocation(), rectangleForm.getAxis(), rectangleForm.getDense(), rectangleForm.getAngle(), rectangleForm.getAction());
         this.width = width;
         this.rectangleForm = rectangleForm;
     }
@@ -36,11 +36,10 @@ public class CuboidForm extends Form {
 
     @Override
     public void send(Player p) {
-        new RectangleForm(getLocation(), getAxis(), getDense(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), getRectangleForm().isFilled(), getAction()).send(p);
-        new RectangleForm(getLocation().clone().add(0, 0, getWidth()), getAxis(), getDense(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), getRectangleForm().isFilled(), getAction()).send(p);
+        new RectangleForm(getLocation(), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), getRectangleForm().isFilled(), getAction()).send(p);
+        new RectangleForm(getLocation().add(0, 0, getWidth()), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), getRectangleForm().isFilled(), getAction()).send(p);
 
-        for (double w = getDense(); w < (getWidth() - getDense()); w += getDense()) {
-            new RectangleForm(getLocation().clone().add(0, 0, w), getAxis(), getDense(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), false, getAction()).send(p);
-        }
+        for (double w = getDense(); w < (getWidth() - getDense()); w += getDense())
+            new RectangleForm(getLocation().add(0, 0, w), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), false, getAction()).send(p);
     }
 }

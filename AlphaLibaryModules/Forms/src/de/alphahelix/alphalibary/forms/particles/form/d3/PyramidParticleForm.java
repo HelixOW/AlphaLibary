@@ -5,12 +5,12 @@ import de.alphahelix.alphalibary.forms.particles.data.EffectData;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
+import org.bukkit.util.Vector;
 
 @SuppressWarnings("ALL")
 public class PyramidParticleForm extends PyramidForm {
-    public PyramidParticleForm(Effect effect, EffectData<?> effectData, Location location, String axis, double dense, double basis, double size, boolean filled, BlockFace direction) {
-        super(location, axis, dense, basis, size, filled, direction, null);
+    public PyramidParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector axis, double dense, double angle, double basis, double size, boolean filled) {
+        super(location, axis, dense, angle, basis, size, filled, null);
 
         if (effectData != null)
             Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");

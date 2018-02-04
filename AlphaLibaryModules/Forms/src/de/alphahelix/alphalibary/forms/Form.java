@@ -3,6 +3,7 @@ package de.alphahelix.alphalibary.forms;
 import com.google.common.base.Objects;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -13,15 +14,16 @@ public abstract class Form implements Serializable {
     private FormFunction[] formFunctions;
     private FormAction formAction;
     private Location location;
-    private String axis;
-    private double dense;
+    private Vector axis;
+    private double dense, angle;
 
-    public Form(Location location, String axis, double dense, FormAction action, FormFunction... formFunctions) {
+    public Form(Location location, Vector axis, double dense, double angle, FormAction action, FormFunction... formFunctions) {
         this.formFunctions = formFunctions;
         this.formAction = action;
         this.location = location;
         this.axis = axis;
         this.dense = dense;
+        this.angle = angle;
     }
 
     public FormFunction[] getFormFunctions() {
@@ -34,7 +36,7 @@ public abstract class Form implements Serializable {
     }
 
     public Location getLocation() {
-        return location;
+        return location.clone();
     }
 
     public Form setLocation(Location location) {
@@ -42,11 +44,11 @@ public abstract class Form implements Serializable {
         return this;
     }
 
-    public String getAxis() {
+    public Vector getAxis() {
         return axis;
     }
 
-    public Form setAxis(String axis) {
+    public Form setAxis(Vector axis) {
         this.axis = axis;
         return this;
     }
@@ -57,6 +59,15 @@ public abstract class Form implements Serializable {
 
     public Form setDense(double dense) {
         this.dense = dense;
+        return this;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public Form setAngle(double angle) {
+        this.angle = angle;
         return this;
     }
 

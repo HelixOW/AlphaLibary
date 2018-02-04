@@ -181,4 +181,48 @@ public class SimpleDatabaseList<T> {
     public void hasValue(T value, Consumer<Boolean> callback) {
         hasValue(value, callback, false);
     }
+
+    public void hasUIDValue(Object key, Consumer<Boolean> callback, boolean cached) {
+        if (cached) {
+            for (T t : cache.getListCache()) {
+                check(key, t, callback);
+            }
+            return;
+        }
+
+        getValues(ts -> {
+            if (ts == null) {
+                callback.accept(false);
+                return;
+            }
+
+            for (T t : ts) {
+                check(key, t, callback);
+            }
+        });
+    }
+
+    public void hasUIDValue(Object key, Consumer<Boolean> callback) {
+        hasUIDValue(key, callback, false);
+    }
+
+    private void check(Object key, T t, Consumer<Boolean> callback) {
+        for (ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, t.getClass())) {
+            Field f = sf.field();
+
+            if (f.isAnnotationPresent(PrimaryKey.class)) {
+                Object fVal = sf.get(t);
+                if (fVal.equals(key)) {
+                    callback.accept(true);
+                    return;
+                }
+            } else if (f.isAnnotationPresent(Unique.class)) {
+                Object fVal = sf.get(t);
+                if (fVal.equals(key)) {
+                    callback.accept(true);
+                    return;
+                }
+            }
+        }
+    }
 }

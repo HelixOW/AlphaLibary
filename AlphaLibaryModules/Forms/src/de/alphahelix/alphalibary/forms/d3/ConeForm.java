@@ -4,8 +4,8 @@ import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import de.alphahelix.alphalibary.forms.d2.CircleForm;
 import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 @SuppressWarnings("ALL")
 public class ConeForm extends Form {
@@ -13,14 +13,12 @@ public class ConeForm extends Form {
     private final double baseRadius;
     private double size;
     private boolean filled;
-    private BlockFace direction;
 
-    public ConeForm(Location location, double dense, double baseRadius, double size, boolean filled, BlockFace direction, FormAction action) {
-        super(location, "", dense, action);
+    public ConeForm(Location location, Vector axis, double dense, double angle, double baseRadius, double size, boolean filled, FormAction action) {
+        super(location, axis, dense, angle, action);
         this.baseRadius = baseRadius;
         this.size = size;
         this.filled = filled;
-        this.direction = direction;
     }
 
     public double getBaseRadius() {
@@ -40,35 +38,9 @@ public class ConeForm extends Form {
         return this;
     }
 
-    public BlockFace getDirection() {
-        return direction;
-    }
-
-    public ConeForm setDirection(BlockFace direction) {
-        this.direction = direction;
-        return this;
-    }
-
     @Override
     public void send(Player p) {
-        if (direction == BlockFace.UP) {
-            for (double r = baseRadius; r > 0 && size != 0; r -= getDense(), size -= getDense())
-                new CircleForm(getLocation().clone().subtract(0, r, 0), "y", getDense(), r, getAction()).send(p);
-        } else if (direction == BlockFace.EAST) {
-            for (double r = baseRadius; r > 0 && size != 0; r -= getDense(), size -= getDense())
-                new CircleForm(getLocation().clone().subtract(r, 0, 0), "z", getDense(), r, getAction()).send(p);
-        } else if (direction == BlockFace.WEST) {
-            for (double r = baseRadius; r > 0 && size != 0; r -= getDense(), size -= getDense())
-                new CircleForm(getLocation().clone().add(r, 0, 0), "z", getDense(), r, getAction()).send(p);
-        } else if (direction == BlockFace.SOUTH) {
-            for (double r = baseRadius; r > 0 && size != 0; r -= getDense(), size -= getDense())
-                new CircleForm(getLocation().clone().subtract(0, 0, r), "x", getDense(), r, getAction()).send(p);
-        } else if (direction == BlockFace.NORTH) {
-            for (double r = baseRadius; r > 0 && size != 0; r -= getDense(), size -= getDense())
-                new CircleForm(getLocation().clone().add(0, 0, r), "x", getDense(), r, getAction()).send(p);
-        } else {
-            for (double r = baseRadius; r > 0 && size != 0; r -= getDense(), size -= getDense())
-                new CircleForm(getLocation().clone().add(0, r, 0), "y", getDense(), r, getAction()).send(p);
-        }
+        for (double r = baseRadius; r > 0 && size != 0; r -= getDense(), size -= getDense())
+            new CircleForm(getLocation().subtract(0, r, 0), getAxis(), getDense(), getAngle(), r, getAction()).send(p);
     }
 }

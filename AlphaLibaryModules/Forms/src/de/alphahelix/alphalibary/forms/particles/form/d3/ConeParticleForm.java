@@ -5,12 +5,12 @@ import de.alphahelix.alphalibary.forms.particles.data.EffectData;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
+import org.bukkit.util.Vector;
 
 @SuppressWarnings("ALL")
 public class ConeParticleForm extends ConeForm {
-    public ConeParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, double baseRadius, double size, boolean filled, BlockFace direction) {
-        super(location, dense, baseRadius, size, filled, direction, null);
+    public ConeParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector axis, double dense, double angle, double baseRadius, double size, boolean filled) {
+        super(location, axis, dense, angle, baseRadius, size, filled, null);
 
         if (effectData != null)
             Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");

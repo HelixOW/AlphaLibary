@@ -12,7 +12,7 @@ public class RayForm extends Form {
     private Vector direction;
 
     public RayForm(Location location, Vector direction, double dense, double lenght, FormAction action) {
-        super(location, "", dense, action);
+        super(location, new Vector(0, 0, 0), dense, 0, action);
         this.lenght = lenght;
         this.direction = direction;
     }
@@ -40,7 +40,7 @@ public class RayForm extends Form {
         Vector view = getDirection().clone().normalize();
 
         for (double d = 0; d < getLenght(); d += getDense()) {
-            getAction().action(p, getLocation().clone().add(view.clone().multiply(d)));
+            getAction().action(p, getLocation().add(view.clone().multiply(d)));
         }
     }
 }

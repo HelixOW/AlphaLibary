@@ -38,15 +38,15 @@ public class SimpleConfigLoader extends SimpleJSONFile {
         cfgLoader.applyValue(value);
     }
 
-    public static void initValues(JavaPlugin plugin, de.alphahelix.alphalibary.storage.file.ConfigValue value, String replaced) {
+    public static void initValues(JavaPlugin plugin, Object value, String replaced) {
         initValues(plugin.getDataFolder().getAbsolutePath(), value, replaced);
     }
 
-    public static void initValues(String path, de.alphahelix.alphalibary.storage.file.ConfigValue value) {
+    public static void initValues(String path, Object value) {
         initValues(path, value, "");
     }
 
-    public static void initValues(JavaPlugin plugin, de.alphahelix.alphalibary.storage.file.ConfigValue value) {
+    public static void initValues(JavaPlugin plugin, Object value) {
         initValues(plugin, value, "");
     }
 

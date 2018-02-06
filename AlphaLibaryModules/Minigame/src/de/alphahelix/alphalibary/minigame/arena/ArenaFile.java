@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("ALL")
+
 public class ArenaFile extends SimpleJSONFile {
 
     private final JavaPlugin plugin;

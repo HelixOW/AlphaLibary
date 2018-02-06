@@ -7,7 +7,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class PyramidParticleForm extends PyramidForm {
     public PyramidParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector axis, double dense, double angle, double basis, double size, boolean filled) {
         super(location, axis, dense, angle, basis, size, filled, null);

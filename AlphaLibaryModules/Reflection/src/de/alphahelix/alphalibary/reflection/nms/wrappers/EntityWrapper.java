@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.Location;
 
-@SuppressWarnings("ALL")
+
 public class EntityWrapper {
 
     private static final ReflectionUtil.SaveMethod SLOC = ReflectionUtil.getDeclaredMethod("setLocation", "Entity",

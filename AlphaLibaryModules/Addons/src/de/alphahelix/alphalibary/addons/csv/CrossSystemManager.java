@@ -21,7 +21,7 @@ package de.alphahelix.alphalibary.addons.csv;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("ALL")
+
 public class CrossSystemManager {
 
     private static final List<CrossSystemVariable> CROSS_SYSTEM_VARIABLES = new ArrayList<>();

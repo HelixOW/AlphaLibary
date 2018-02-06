@@ -14,7 +14,7 @@ import org.bukkit.inventory.Inventory;
 import java.io.Serializable;
 import java.util.HashMap;
 
-@SuppressWarnings("ALL")
+
 public class MenuManager extends SimpleListener implements Serializable {
     private HashMap<String, Menu> menuHashMap = new HashMap<>();
 

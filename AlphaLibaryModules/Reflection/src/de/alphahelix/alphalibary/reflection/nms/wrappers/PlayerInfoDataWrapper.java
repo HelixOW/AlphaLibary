@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
-@SuppressWarnings("ALL")
+
 public class PlayerInfoDataWrapper {
 
     private static final Class<?> P_ID_CLAZZ = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");

@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
 
 import java.util.WeakHashMap;
 
-@SuppressWarnings("ALL")
+
 public class ArenaStatus {
 
     @Expose

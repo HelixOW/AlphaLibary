@@ -5,7 +5,7 @@ import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.enums.REnumEquipSlot;
 import org.bukkit.inventory.ItemStack;
 
-@SuppressWarnings("ALL")
+
 public class PPOEntityEquipment implements IPacket {
 
     private static final ReflectionUtil.SaveConstructor PACKET =

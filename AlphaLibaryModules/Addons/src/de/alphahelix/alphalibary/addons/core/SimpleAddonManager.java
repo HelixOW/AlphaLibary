@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("ALL")
+
 public class SimpleAddonManager implements AddonManager {
 
     private final static Pattern JAR_PATTERN = Pattern.compile("(.+?)(\\.jar)");

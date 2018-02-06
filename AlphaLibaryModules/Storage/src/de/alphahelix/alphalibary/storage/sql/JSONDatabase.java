@@ -26,7 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-@SuppressWarnings("ALL")
+/**
+ * @see de.alphahelix.alphalibary.storage.sql2.special.JSONDatabase
+ * @deprecated
+ */
 public class JSONDatabase implements IDataStorage {
 
     private final UniqueIdentifier id;

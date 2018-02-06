@@ -33,7 +33,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
-@SuppressWarnings("ALL")
+
 public class ItemBuilder extends SimpleListener implements Serializable {
 
     private final ArrayList<ItemFlag> itemflags = new ArrayList<>();

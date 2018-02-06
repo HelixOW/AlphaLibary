@@ -22,4 +22,8 @@ public class SimpleTXTFile extends SimpleCSVFile<String> {
     public SimpleTXTFile(JavaPlugin plugin, String child) {
         super(plugin, child, new StringSerializer());
     }
+
+    public SimpleTXTFile(AbstractFile file) {
+        super(file, new StringSerializer());
+    }
 }

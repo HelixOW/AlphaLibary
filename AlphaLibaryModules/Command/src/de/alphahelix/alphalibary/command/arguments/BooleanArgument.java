@@ -2,7 +2,7 @@ package de.alphahelix.alphalibary.command.arguments;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("ALL")
+
 public class BooleanArgument extends Argument<Boolean> {
 
     private final ArrayList<String> trueStrings = new ArrayList<>();

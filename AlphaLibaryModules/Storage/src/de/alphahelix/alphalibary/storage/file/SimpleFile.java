@@ -13,8 +13,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -54,11 +56,32 @@ public class SimpleFile extends AbstractFile implements IDataStorage {
         this(plugin.getDataFolder().getAbsolutePath(), name);
     }
 
+    public SimpleFile(File parent, String child) {
+        this(parent.getAbsolutePath(), child);
+    }
+
+    public SimpleFile(URI uri) {
+        super(uri);
+        try {
+            head = YAML.loadAs(new FileReader(this), Map.class);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (head == null)
+            head = new HashMap();
+
+        addValues();
+    }
+
+    public SimpleFile(AbstractFile file) {
+        this(file.getParent(), file.getName());
+    }
+
     /**
      * Overridden method to add new standard values to a config
      */
     public void addValues() {
-
     }
 
     public boolean contains(Object path) {
@@ -367,7 +390,6 @@ public class SimpleFile extends AbstractFile implements IDataStorage {
         ArrayList<String> stacks = new ArrayList<>();
         Collections.addAll(stacks, materials);
         setValue(path, stacks);
-        save();
     }
 
     /**
@@ -695,7 +717,7 @@ public class SimpleFile extends AbstractFile implements IDataStorage {
     public void save() {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(this));
-            bw.write(YAML.dumpAsMap(head));
+            bw.write(YAML.dumpAs(head, Tag.MAP, DumperOptions.FlowStyle.FLOW));
 
             bw.close();
         } catch (IOException e) {
@@ -717,8 +739,6 @@ public class SimpleFile extends AbstractFile implements IDataStorage {
             value = ((String) value).replaceAll("§", "&");
 
         setValue(path, value);
-
-        save();
     }
 
     @Override

@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
-@SuppressWarnings("ALL")
+
 public class SimpleMovingInventory extends SimpleListener implements Serializable {
 
     private static final HashMap<UUID, SimpleMovingInventory> USERS = new HashMap<>();

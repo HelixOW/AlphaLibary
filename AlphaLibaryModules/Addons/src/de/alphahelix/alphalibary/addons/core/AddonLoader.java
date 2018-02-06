@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-@SuppressWarnings("ALL")
+
 public class AddonLoader {
 
     private static final Map<String, AddonClassLoader> LOADERS = new HashMap<>();

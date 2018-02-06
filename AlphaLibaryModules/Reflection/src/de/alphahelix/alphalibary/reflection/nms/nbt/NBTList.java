@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 
 import java.util.logging.Level;
 
-@SuppressWarnings("ALL")
+
 public class NBTList {
 
     private final String name;

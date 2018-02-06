@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("ALL")
+
 public class PacketHandler {
 
     private static final List<PacketHandler> handlers = new ArrayList<>();

@@ -5,7 +5,7 @@ import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 import java.util.Arrays;
 
-@SuppressWarnings("ALL")
+
 public class PPOEntityDestroy implements IPacket {
 
     private static final ReflectionUtil.SaveConstructor PACKET =

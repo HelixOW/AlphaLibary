@@ -7,7 +7,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class PointParticleForm extends PointForm {
     public PointParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, Vector p1, Vector p2) {
         super(location, dense, null, p1, p2);

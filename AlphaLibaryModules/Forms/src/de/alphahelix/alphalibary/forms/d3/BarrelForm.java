@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class BarrelForm extends Form {
 
     private double depth, radius;

@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigValue {
+public @interface YamlConfigFile {
 
-    String name() default "config";
+    String filename() default "";
 
 }

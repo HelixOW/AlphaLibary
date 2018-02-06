@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class ArrowForm extends Form {
 
     private double lenght, width, angle;
@@ -15,7 +15,6 @@ public class ArrowForm extends Form {
     public ArrowForm(Location location, Vector axis, double dense, double angle, double lenght, double width, FormAction action) {
         super(location, axis, dense, angle, action,
                 x -> x[0] * (-1),
-                x -> x[0],
                 x -> x[0]);
         this.lenght = lenght;
         this.width = width;
@@ -51,11 +50,11 @@ public class ArrowForm extends Form {
         for (double x = ((width / 2) * (-1)); x < 0; x += getDense()) {
             v = new Vector(x, getFormFunctions()[1].f(x), 0);
 
-            getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), getAngle())));
+            getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), (-1) * getAngle())));
         }
 
         for (double x = 0; x < lenght; x += getDense()) {
-            v = new Vector(x, getFormFunctions()[1].f(x), 0);
+            v = new Vector(x, x, 0);
 
             getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), getAngle())));
         }

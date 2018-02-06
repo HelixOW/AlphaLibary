@@ -12,7 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-@SuppressWarnings("ALL")
+/**
+ * @see de.alphahelix.alphalibary.storage.sql2
+ * @deprecated
+ */
 public class SQLiteAPI {
 
     private static final ArrayList<SQLiteAPI> SQ_LITE_APIS = new ArrayList<>();

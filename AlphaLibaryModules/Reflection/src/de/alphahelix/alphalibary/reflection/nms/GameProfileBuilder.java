@@ -17,7 +17,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
 
-@SuppressWarnings("ALL")
+
 public class GameProfileBuilder {
 
     private static final String SERVICE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false";

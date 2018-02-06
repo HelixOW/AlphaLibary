@@ -5,7 +5,7 @@ import de.alphahelix.alphalibary.minigame.countdown.GameCountdown;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-@SuppressWarnings("ALL")
+
 public class CountDownTimeEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();

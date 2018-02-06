@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.enums.EntityStatus;
 
-@SuppressWarnings("ALL")
+
 public class PPOEntityStatus implements IPacket {
 
     private static final ReflectionUtil.SaveConstructor PACKET =

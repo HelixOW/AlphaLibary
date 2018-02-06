@@ -11,7 +11,7 @@ import java.util.WeakHashMap;
  * @see de.alphahelix.alphalibary.annotations.command.Command
  * @deprecated
  */
-@SuppressWarnings("ALL")
+
 @Deprecated
 public class CommandWatcher {
 

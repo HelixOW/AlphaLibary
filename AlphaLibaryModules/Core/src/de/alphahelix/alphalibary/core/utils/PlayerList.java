@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 
-@SuppressWarnings("ALL")
+
 public class PlayerList extends LinkedList<String> {
     public void add(Player p) {
         add(p.getName());

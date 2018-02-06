@@ -6,7 +6,7 @@ import de.alphahelix.alphalibary.forms.particles.data.EffectData;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Effect;
 
-@SuppressWarnings("ALL")
+
 public class CuboidParticleForm extends CuboidForm {
     public CuboidParticleForm(Effect effect, EffectData<?> effectData, RectangleForm rectangleForm, double width) {
         super(rectangleForm, width);

@@ -41,7 +41,7 @@ class UndoSave {
     }
 }
 
-@SuppressWarnings("ALL")
+
 public class SchematicManager {
 
     private static final Map<String, List<UndoSave>> SAVE_MAP = new HashMap<>();

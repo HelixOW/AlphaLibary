@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import java.io.Serializable;
 import java.util.*;
 
-@SuppressWarnings("ALL")
+
 public class PlayerStatistic implements Serializable {
 
     private final UUID player;

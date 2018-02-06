@@ -3,7 +3,7 @@ package de.alphahelix.alphalibary.server;
 import java.io.Serializable;
 import java.util.Objects;
 
-@SuppressWarnings("ALL")
+
 public class ServerResult implements Serializable {
     private final int playercount;
     private final int maximumPlayers;

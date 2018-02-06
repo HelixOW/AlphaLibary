@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.WeakHashMap;
 
-@SuppressWarnings("ALL")
+
 public class GameTeam implements Serializable {
 
     @Expose

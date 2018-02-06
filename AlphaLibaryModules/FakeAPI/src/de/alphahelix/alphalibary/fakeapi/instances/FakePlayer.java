@@ -23,7 +23,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.UUID;
 
-@SuppressWarnings("ALL")
+
 public class FakePlayer extends FakeEntity {
 
     private final UUID skinUUID;

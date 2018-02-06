@@ -1,7 +1,10 @@
 package de.alphahelix.alphalibary.storage.sql2;
 
+import de.alphahelix.alphalibary.storage.file.AbstractFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -19,6 +22,14 @@ public final class SQLConnectionHandler {
     public SQLConnectionHandler(JavaPlugin plugin, SQLInformation information, SQLConnector connector) {
         this.information = information;
         this.plugin = plugin;
+
+        if (information.getDatabaseName().contains(".")) {
+            try {
+                new AbstractFile(new URI(information.getDatabaseName()));
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
 
         CONNECTORS.put(information.getDatabaseName(), connector);
     }

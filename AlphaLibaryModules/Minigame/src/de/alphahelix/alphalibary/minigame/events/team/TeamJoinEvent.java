@@ -7,7 +7,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-@SuppressWarnings("ALL")
+
 public class TeamJoinEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();

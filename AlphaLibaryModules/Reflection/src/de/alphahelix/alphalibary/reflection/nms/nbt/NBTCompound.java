@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 
-@SuppressWarnings("ALL")
+
 public class NBTCompound {
 
     private final String name;

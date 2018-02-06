@@ -21,7 +21,7 @@ package de.alphahelix.alphalibary.minigame.voting;
 import java.util.WeakHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-@SuppressWarnings("ALL")
+
 public class VoteManager {
 
     private final WeakHashMap<VoteItem, Integer> votes = new WeakHashMap<>();

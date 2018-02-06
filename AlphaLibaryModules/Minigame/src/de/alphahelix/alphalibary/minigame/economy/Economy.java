@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 import java.io.Serializable;
 import java.util.UUID;
 
-@SuppressWarnings("ALL")
+
 public class Economy implements Serializable {
 
     private final UUID owner;

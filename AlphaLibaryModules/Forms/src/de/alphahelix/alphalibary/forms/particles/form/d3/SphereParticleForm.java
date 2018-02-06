@@ -6,7 +6,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 
-@SuppressWarnings("ALL")
+
 public class SphereParticleForm extends SphereForm {
 
     public SphereParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, double radius) {

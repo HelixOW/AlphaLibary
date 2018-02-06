@@ -25,7 +25,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.InventoryView;
 
-@SuppressWarnings("ALL")
+
 public class ItemRenameEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();

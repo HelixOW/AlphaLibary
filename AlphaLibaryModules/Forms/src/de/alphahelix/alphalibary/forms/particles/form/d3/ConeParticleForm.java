@@ -7,7 +7,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class ConeParticleForm extends ConeForm {
     public ConeParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector axis, double dense, double angle, double baseRadius, double size, boolean filled) {
         super(location, axis, dense, angle, baseRadius, size, filled, null);

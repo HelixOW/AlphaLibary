@@ -2,7 +2,7 @@ package de.alphahelix.alphalibary.command.arguments;
 
 import com.google.common.base.Objects;
 
-@SuppressWarnings("ALL")
+
 public abstract class Argument<T> {
 
     private String enteredArgument;

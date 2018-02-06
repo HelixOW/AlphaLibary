@@ -23,7 +23,7 @@ import de.alphahelix.alphalibary.inventories.item.InventoryItem;
 
 import java.io.Serializable;
 
-@SuppressWarnings("ALL")
+
 public class VoteItem<T> implements Serializable {
 
     private String name;

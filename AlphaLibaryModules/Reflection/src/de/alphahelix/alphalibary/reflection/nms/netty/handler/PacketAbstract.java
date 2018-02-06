@@ -6,7 +6,7 @@ import de.alphahelix.alphalibary.reflection.nms.netty.channel.ChannelWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
-@SuppressWarnings("ALL")
+
 public abstract class PacketAbstract {
 
     private final Cancellable cancellable;

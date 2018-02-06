@@ -8,7 +8,7 @@ import de.alphahelix.alphalibary.storage.sql.SQLiteAPI;
 import java.util.List;
 import java.util.function.Consumer;
 
-@SuppressWarnings("ALL")
+
 public class DataStorage {
 
     private IDataStorage storage;

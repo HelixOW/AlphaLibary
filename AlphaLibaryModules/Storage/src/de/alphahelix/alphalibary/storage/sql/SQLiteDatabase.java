@@ -12,7 +12,10 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Consumer;
 
-@SuppressWarnings("ALL")
+/**
+ * @see de.alphahelix.alphalibary.storage.sql2
+ * @deprecated
+ */
 public class SQLiteDatabase {
 
     private static transient final HashMap<String, String> TABLEINFO = new HashMap<>();

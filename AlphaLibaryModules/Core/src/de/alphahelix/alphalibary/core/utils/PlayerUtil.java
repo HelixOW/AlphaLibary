@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("ALL")
+
 public class PlayerUtil {
 
     private static final List<String> TOTAL_PLAYERS = new ArrayList<>();

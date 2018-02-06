@@ -41,6 +41,10 @@ public class SimpleJSONFile extends AbstractFile implements IDataStorage {
         super(plugin, child);
     }
 
+    public SimpleJSONFile(AbstractFile file) {
+        super(file);
+    }
+
     @Override
     public void removeValue(Object path) {
         if (!contains(path)) return;

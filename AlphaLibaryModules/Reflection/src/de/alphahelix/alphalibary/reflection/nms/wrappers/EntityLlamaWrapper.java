@@ -2,7 +2,7 @@ package de.alphahelix.alphalibary.reflection.nms.wrappers;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
-@SuppressWarnings("ALL")
+
 public class EntityLlamaWrapper extends EntityWrapper {
 
     private static final ReflectionUtil.SaveMethod SVAR = ReflectionUtil.getDeclaredMethod("setVariant", "EntityLlama",

@@ -28,7 +28,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
-@SuppressWarnings("ALL")
+/**
+ * @see de.alphahelix.alphalibary.storage.sql2
+ * @deprecated
+ */
 public class MySQLDatabase implements Serializable {
 
     // Tablename -> Columns

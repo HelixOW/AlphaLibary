@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-@SuppressWarnings("ALL")
+
 public class ServerPinger {
 
     private final String server;

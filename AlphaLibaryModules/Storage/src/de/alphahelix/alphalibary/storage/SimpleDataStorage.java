@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-@SuppressWarnings("ALL")
+
 public class SimpleDataStorage<K, V> {
 
     private final IDataStorage storage;

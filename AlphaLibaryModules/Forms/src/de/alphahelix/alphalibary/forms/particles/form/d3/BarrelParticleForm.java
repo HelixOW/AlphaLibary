@@ -7,7 +7,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class BarrelParticleForm extends BarrelForm {
     public BarrelParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector axis, double dense, double angle, double depth, double radius) {
         super(location, axis, dense, angle, depth, radius, null);

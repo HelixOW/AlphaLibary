@@ -39,4 +39,8 @@ public class AbstractFile extends File {
     public AbstractFile(JavaPlugin plugin, String child) {
         this(plugin.getDataFolder().getAbsolutePath(), child);
     }
+
+    public AbstractFile(AbstractFile file) {
+        this(file.getParent(), file.getName());
+    }
 }

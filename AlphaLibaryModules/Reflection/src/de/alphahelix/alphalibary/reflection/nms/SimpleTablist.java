@@ -20,7 +20,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 
-@SuppressWarnings("ALL")
 public class SimpleTablist {
 
     private static final ReflectionUtil.SaveConstructor CHAT_COMPONENT_TEXT = ReflectionUtil.getDeclaredConstructor("ChatComponentText", String.class);

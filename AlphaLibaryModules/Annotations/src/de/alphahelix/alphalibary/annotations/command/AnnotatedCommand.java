@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("ALL")
+
 public class AnnotatedCommand {
 
     private final Object cmdClass;
@@ -137,7 +137,7 @@ public class AnnotatedCommand {
 
                     String arg = args[i - 1];
 
-                    if (alias != null && Util.upperEverything(Arrays.<String>asList(alias.alias())).contains(arg.toUpperCase()))
+                    if (alias != null && Util.upperEverything(Arrays.asList(alias.alias())).contains(arg.toUpperCase()))
                         parsedArgs[i] = parseArgument(paramTypes[i], alias.alias()[0]);
                     else
                         parsedArgs[i] = parseArgument(paramTypes[i], arg);

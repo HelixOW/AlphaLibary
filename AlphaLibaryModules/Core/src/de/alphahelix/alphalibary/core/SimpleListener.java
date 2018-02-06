@@ -18,7 +18,7 @@ package de.alphahelix.alphalibary.core;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
-@SuppressWarnings("ALL")
+
 public class SimpleListener implements Listener {
 
     /**

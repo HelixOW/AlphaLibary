@@ -27,7 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-@SuppressWarnings("ALL")
+/**
+ * @see de.alphahelix.alphalibary.storage.sql2
+ * @deprecated
+ */
 public class MySQLAPI implements Serializable {
 
     private static final ArrayList<MySQLAPI> MY_SQLAPIS = new ArrayList<>();
@@ -206,9 +209,9 @@ class MySQLFileManager extends SimpleFile {
 
     MySQLFileManager() {
         super("plugins/AlphaLibary", "sql.yml");
-        addValues();
     }
 
+    @Override
     public void addValues() {
         if (getKeys().size() > 0) return;
 

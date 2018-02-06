@@ -2,7 +2,7 @@ package de.alphahelix.alphalibary.core.utils;
 
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("ALL")
+
 enum DefaultFontInfo {
 
     A('A', 5),
@@ -139,7 +139,7 @@ enum DefaultFontInfo {
     }
 }
 
-@SuppressWarnings("ALL")
+
 public class MessageUtil {
 
     private final static int CENTER_PX = 154;

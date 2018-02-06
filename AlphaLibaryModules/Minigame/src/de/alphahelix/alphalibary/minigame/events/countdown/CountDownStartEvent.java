@@ -6,7 +6,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-@SuppressWarnings("ALL")
+
 public class CountDownStartEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();

@@ -13,7 +13,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 
-@SuppressWarnings("ALL")
 public class PacketListenerAPI implements IPacketListener, Listener {
 
     protected boolean injected = false;

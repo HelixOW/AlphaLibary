@@ -7,7 +7,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class ArrowParticleForm extends ArrowForm {
 
     public ArrowParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector axis, double dense, double angle, double lenght, double width) {

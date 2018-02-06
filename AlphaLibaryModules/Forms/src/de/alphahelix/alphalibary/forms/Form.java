@@ -8,7 +8,7 @@ import org.bukkit.util.Vector;
 import java.io.Serializable;
 import java.util.Arrays;
 
-@SuppressWarnings("ALL")
+
 public abstract class Form implements Serializable {
 
     private FormFunction[] formFunctions;
@@ -50,6 +50,11 @@ public abstract class Form implements Serializable {
 
     public Form setAxis(Vector axis) {
         this.axis = axis;
+        return this;
+    }
+
+    public Form setAxis(double x, double y, double z) {
+        this.axis = new Vector(x, y, z);
         return this;
     }
 

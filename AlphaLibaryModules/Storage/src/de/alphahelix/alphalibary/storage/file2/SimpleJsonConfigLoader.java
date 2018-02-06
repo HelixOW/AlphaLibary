@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import de.alphahelix.alphalibary.core.utils.JSONUtil;
 import de.alphahelix.alphalibary.storage.ReflectionHelper;
+import de.alphahelix.alphalibary.storage.file.AbstractFile;
 import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,26 +14,33 @@ import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
-public class SimpleConfigLoader extends SimpleJSONFile {
+/**
+ * @see JsonConfigFile
+ */
+public class SimpleJsonConfigLoader extends SimpleJSONFile {
 
-    public SimpleConfigLoader(File parent, String child) {
+    public SimpleJsonConfigLoader(File parent, String child) {
         super(parent, child);
     }
 
-    public SimpleConfigLoader(URI uri) {
+    public SimpleJsonConfigLoader(URI uri) {
         super(uri);
     }
 
-    public SimpleConfigLoader(String parent, String child) {
+    public SimpleJsonConfigLoader(String parent, String child) {
         super(parent, child);
     }
 
-    public SimpleConfigLoader(JavaPlugin plugin, String child) {
+    public SimpleJsonConfigLoader(JavaPlugin plugin, String child) {
         super(plugin, child);
     }
 
+    public SimpleJsonConfigLoader(AbstractFile file) {
+        super(file);
+    }
+
     public static <T> void initValues(String path, T value, String replaced) {
-        SimpleConfigLoader cfgLoader = new SimpleConfigLoader(path, value.getClass().getSimpleName().toLowerCase().replace(replaced, "") + ".json");
+        SimpleJsonConfigLoader cfgLoader = new SimpleJsonConfigLoader(path, value.getClass().getSimpleName().toLowerCase().replace(replaced, "") + ".json");
 
         cfgLoader.addValue(value);
         cfgLoader.applyValue(value);
@@ -51,7 +59,7 @@ public class SimpleConfigLoader extends SimpleJSONFile {
     }
 
     public <T> void addValue(T value) {
-        ConfigValue val = value.getClass().getAnnotation(ConfigValue.class);
+        JsonConfigFile val = value.getClass().getAnnotation(JsonConfigFile.class);
 
         if (val == null) return;
 
@@ -59,7 +67,7 @@ public class SimpleConfigLoader extends SimpleJSONFile {
     }
 
     public <T> T applyValue(T defaultConfig) {
-        ConfigValue val = defaultConfig.getClass().getAnnotation(ConfigValue.class);
+        JsonConfigFile val = defaultConfig.getClass().getAnnotation(JsonConfigFile.class);
 
         if (val == null) return defaultConfig;
 

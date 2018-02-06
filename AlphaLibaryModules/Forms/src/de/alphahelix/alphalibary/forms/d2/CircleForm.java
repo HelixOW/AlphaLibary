@@ -22,8 +22,8 @@ public class CircleForm extends Form {
 
     @Override
     public void send(Player p) {
-        for (float angle = 0; angle < 180; angle += getDense()) {
-            Vector v = new Vector(getRadius() * Math.cos(angle), getRadius() * Math.sin(angle), 0);
+        for (float alpha = 0; alpha < 180; alpha += getDense()) {
+            Vector v = new Vector(getRadius() * Math.cos(alpha), getRadius() * Math.sin(alpha), 0);
 
             getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), getAngle())));
         }

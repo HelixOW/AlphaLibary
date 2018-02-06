@@ -9,7 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-@SuppressWarnings("ALL")
+
 public class AddonClassLoader extends URLClassLoader {
 
     final AddonDescriptionFile description;

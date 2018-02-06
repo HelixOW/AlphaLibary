@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-@SuppressWarnings("ALL")
+
 public class Arena implements Serializable {
 
     private static ArenaFile arenaFile;

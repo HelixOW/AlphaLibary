@@ -2,7 +2,7 @@ package de.alphahelix.alphalibary.core.utils;
 
 import java.util.*;
 
-@SuppressWarnings("ALL")
+
 public class SortMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> tempMap;

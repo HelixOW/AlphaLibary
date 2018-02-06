@@ -23,7 +23,7 @@ import org.bukkit.Location;
 import java.io.Serializable;
 import java.util.UUID;
 
-@SuppressWarnings("ALL")
+
 public class FakeEntity implements Serializable {
 
     private Location startLocation;

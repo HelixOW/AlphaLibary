@@ -40,7 +40,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("ALL")
+
 public class BigItemFakeUtil {
 
     private static final Map<String, BukkitTask> SPLIT_MAP = new HashMap<>();

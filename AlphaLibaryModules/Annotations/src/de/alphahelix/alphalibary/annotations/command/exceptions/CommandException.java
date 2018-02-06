@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.annotations.command.exceptions;
 
-@SuppressWarnings("ALL")
+
 public class CommandException extends RuntimeException {
 
     public CommandException(String message) {

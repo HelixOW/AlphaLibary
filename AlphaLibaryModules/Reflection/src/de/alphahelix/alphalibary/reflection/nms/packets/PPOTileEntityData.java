@@ -5,7 +5,7 @@ import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.BlockPos;
 import de.alphahelix.alphalibary.reflection.nms.nbt.NBTCompound;
 
-@SuppressWarnings("ALL")
+
 public class PPOTileEntityData implements IPacket {
 
     private static final ReflectionUtil.SaveConstructor PACKET =

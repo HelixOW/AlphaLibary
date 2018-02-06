@@ -12,7 +12,10 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Consumer;
 
-@SuppressWarnings("ALL")
+/**
+ * @see de.alphahelix.alphalibary.storage.sql2
+ * @deprecated
+ */
 public class AsyncMySQLDatabase {
 
     // Tablename -> Columns
@@ -45,7 +48,7 @@ public class AsyncMySQLDatabase {
      * @return the sql query string to create a column
      */
     public static String createColumn(String name, MySQLAPI.MySQLDataType type, long size, String... arg) {
-        if (Arrays.<String>asList(arg).isEmpty())
+        if (Arrays.asList(arg).isEmpty())
             return name + " " + type.name() + "(" + size + ")";
         return name + " " + type.name() + "(" + size + ") " + Arrays.toString(arg).replace(", ", " ").replace("[", "").replace("]", "");
     }

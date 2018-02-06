@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-@SuppressWarnings("ALL")
+
 public abstract class ChannelAbstract {
 
     static final Class<?> PACKET_CLASS = ReflectionUtil.getNmsClass("Packet");

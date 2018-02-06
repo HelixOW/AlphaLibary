@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class PyramidForm extends Form {
 
     private final double basis;

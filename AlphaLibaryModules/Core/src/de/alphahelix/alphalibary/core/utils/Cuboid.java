@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Level;
 
-@SuppressWarnings("ALL")
+
 public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializable, Serializable {
     protected final String worldName;
     protected final int x1, y1, z1;

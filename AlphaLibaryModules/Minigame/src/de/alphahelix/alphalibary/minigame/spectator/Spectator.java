@@ -9,7 +9,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.HashMap;
 
-@SuppressWarnings("ALL")
+
 public class Spectator {
 
     private static final HashMap<String, String> PREFIXES = new HashMap<>();

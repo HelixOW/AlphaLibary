@@ -6,7 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 
-@SuppressWarnings("ALL")
+
 public class SpawnEggData implements ItemData {
 
     EntityType spawnedType;
@@ -21,7 +21,7 @@ public class SpawnEggData implements ItemData {
     }
 
     @Override
-    public void applyOn(ItemStack applyOn) throws WrongDataException {
+    public void applyOn(ItemStack applyOn) {
         if (applyOn.getType() != Material.MONSTER_EGG) return;
 
         SpawnEggMeta meta = (SpawnEggMeta) applyOn.getItemMeta();

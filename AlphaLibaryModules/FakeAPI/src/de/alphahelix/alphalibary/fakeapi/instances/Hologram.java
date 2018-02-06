@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
 
 import java.io.Serializable;
 
-@SuppressWarnings("ALL")
+
 public class Hologram extends SimpleListener implements Serializable {
 
     private String name;

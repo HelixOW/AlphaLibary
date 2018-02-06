@@ -16,7 +16,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 
-@SuppressWarnings("ALL")
+
 public class Updater {
 
     private final JavaPlugin pluginToUpdate;

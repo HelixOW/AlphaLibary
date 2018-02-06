@@ -5,7 +5,7 @@ import de.alphahelix.alphalibary.reflection.nms.netty.channel.ChannelAbstract;
 import de.alphahelix.alphalibary.reflection.nms.netty.channel.INCChannel;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("ALL")
+
 public class ChannelInjector {
 
     private ChannelAbstract channel;

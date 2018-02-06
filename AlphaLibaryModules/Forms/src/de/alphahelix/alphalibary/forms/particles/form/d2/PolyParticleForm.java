@@ -8,7 +8,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class PolyParticleForm extends PolyForm {
     public PolyParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, Pair<Vector, Vector>... points) {
         super(location, dense, null, points);

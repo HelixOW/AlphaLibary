@@ -7,7 +7,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class RayParticleForm extends RayForm {
 
     public RayParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector direction, double dense, double lenght) {

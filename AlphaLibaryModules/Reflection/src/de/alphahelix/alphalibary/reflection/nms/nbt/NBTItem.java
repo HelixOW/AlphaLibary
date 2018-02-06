@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.inventory.ItemStack;
 
-@SuppressWarnings("ALL")
+
 public class NBTItem extends NBTCompound {
 
     private ItemStack itemStack;

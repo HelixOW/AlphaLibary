@@ -33,6 +33,11 @@ public class SimpleCSVFile<T> extends AbstractFile {
         this.serializer = serializer;
     }
 
+    public SimpleCSVFile(AbstractFile file, CSVSerializer<T> serializer) {
+        super(file);
+        this.serializer = serializer;
+    }
+
     public void setValue(T value) {
         csvs.add(serializer.encode(value));
 

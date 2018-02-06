@@ -30,7 +30,7 @@ import java.util.Map;
  * @see de.alphahelix.alphalibary.inventorys.item.data.ColorData
  * @deprecated
  */
-@SuppressWarnings("ALL")
+
 public class LeatherItemBuilder extends ItemBuilder implements Serializable {
 
     private Color color = Color.BLACK;

@@ -2,7 +2,7 @@ package de.alphahelix.alphalibary.minigame.statistics;
 
 import com.google.common.base.Objects;
 
-@SuppressWarnings("ALL")
+
 public class GameStatistic<T> {
 
     private final String name;

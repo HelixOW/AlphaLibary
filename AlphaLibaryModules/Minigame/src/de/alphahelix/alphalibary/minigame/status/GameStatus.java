@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
 import java.io.Serializable;
 import java.util.WeakHashMap;
 
-@SuppressWarnings("ALL")
+
 public class GameStatus implements Serializable {
 
     @Expose

@@ -20,7 +20,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 
-@SuppressWarnings("ALL")
+
 public class LocationUtil {
 
     /**

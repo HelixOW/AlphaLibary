@@ -3,7 +3,7 @@ package de.alphahelix.alphalibary.reflection.nms.wrappers;
 import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
-@SuppressWarnings("ALL")
+
 public class DataWatcherWrapper {
 
     private static final ReflectionUtil.SaveMethod S =

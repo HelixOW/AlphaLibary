@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 import java.util.HashSet;
 import java.util.Set;
 
-@SuppressWarnings("ALL")
+
 public class NBTListCompound {
 
     private final NBTList owner;

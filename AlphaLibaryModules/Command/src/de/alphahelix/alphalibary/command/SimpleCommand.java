@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @see SimpleAnnotatedCommand
  */
-@SuppressWarnings("ALL")
+
 public abstract class SimpleCommand extends Command {
 
     /**

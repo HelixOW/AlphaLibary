@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("ALL")
+
 public class PolyForm extends Form {
 
     private Pair<Vector, Vector>[] points;

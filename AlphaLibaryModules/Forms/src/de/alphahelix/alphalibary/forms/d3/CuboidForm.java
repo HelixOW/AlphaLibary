@@ -4,7 +4,7 @@ import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.d2.RectangleForm;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("ALL")
+
 public class CuboidForm extends Form {
 
     private RectangleForm rectangleForm;

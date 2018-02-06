@@ -9,7 +9,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.io.Serializable;
 
-@SuppressWarnings("ALL")
+
 public class EntityBuilder implements Serializable {
 
     private EntityType type;

@@ -18,8 +18,8 @@ package de.alphahelix.alphalibary.fakeapi;
 
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.core.AlphaLibary;
-import de.alphahelix.alphalibary.core.utils.PlayerMap;
-import de.alphahelix.alphalibary.core.uuid.UUIDFetcher;
+import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
+import de.alphahelix.alphalibary.core.utilites.players.PlayerMap;
 import de.alphahelix.alphalibary.fakeapi.events.FakeEntityClickEvent;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeEntity;
 import de.alphahelix.alphalibary.fakeapi.instances.NoSuchFakeEntityException;

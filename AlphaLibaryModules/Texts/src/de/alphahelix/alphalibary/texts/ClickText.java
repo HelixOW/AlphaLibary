@@ -1,7 +1,7 @@
 package de.alphahelix.alphalibary.texts;
 
 import de.alphahelix.alphalibary.command.SimpleCommand;
-import de.alphahelix.alphalibary.core.uuid.UUIDFetcher;
+import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;

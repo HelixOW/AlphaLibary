@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.forms.d2;
 
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.RotationUtil;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;
@@ -24,8 +24,8 @@ public class CircleForm extends Form {
     public void send(Player p) {
         for (float alpha = 0; alpha < 180; alpha += getDense()) {
             Vector v = new Vector(getRadius() * Math.cos(alpha), getRadius() * Math.sin(alpha), 0);
-
-            getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), getAngle())));
+	
+	        getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
         }
     }
 }

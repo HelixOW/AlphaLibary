@@ -1,8 +1,9 @@
-package de.alphahelix.alphalibary.core.utils;
+package de.alphahelix.alphalibary.core.utilites;
 
 import com.google.common.base.Objects;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import de.alphahelix.alphalibary.core.utils.JSONUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;

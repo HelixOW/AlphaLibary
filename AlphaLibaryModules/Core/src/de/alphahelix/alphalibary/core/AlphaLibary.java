@@ -18,6 +18,7 @@
 
 package de.alphahelix.alphalibary.core;
 
+import de.alphahelix.alphalibary.core.utilites.PluginWatcher;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;

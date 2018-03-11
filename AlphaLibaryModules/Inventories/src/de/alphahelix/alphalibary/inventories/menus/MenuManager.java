@@ -2,7 +2,7 @@ package de.alphahelix.alphalibary.inventories.menus;
 
 import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.core.AlphaLibary;
-import de.alphahelix.alphalibary.core.SimpleListener;
+import de.alphahelix.alphalibary.core.utilites.SimpleListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

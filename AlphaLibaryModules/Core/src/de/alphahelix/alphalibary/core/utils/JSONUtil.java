@@ -25,7 +25,6 @@ public class JSONUtil {
             .registerTypeHierarchyAdapter(UUID.class, new UUIDTypeAdapter())
             .registerTypeHierarchyAdapter(PropertyMap.class, new PropertyMap.Serializer())
             .registerTypeHierarchyAdapter(ItemStack.class, new ItemStackSerializer())
-//            .registerTypeHierarchyAdapter(Schematic.LocationDiff.class, new LocationDiffSerializer())
             ;
 
     private static Gson gson = builder.create();
@@ -178,7 +177,7 @@ class ItemStackSerializer implements JsonSerializer<ItemStack>, JsonDeserializer
                 meta.addProperty("displayName", itemMeta.getDisplayName().replace("§", "&"));
 
             if (itemMeta.hasLore())
-                meta.add("lore", JSONUtil.getGson().toJsonTree(Arrays.asList(Util.replaceInArray("§", "&", itemMeta.getLore().toArray(new String[itemMeta.getLore().size()])))));
+	            meta.add("lore", JSONUtil.getGson().toJsonTree(Arrays.asList(ArrayUtil.replaceInArray("§", "&", itemMeta.getLore().toArray(new String[itemMeta.getLore().size()])))));
 
             meta.add("flags", JSONUtil.getGson().toJsonTree(itemMeta.getItemFlags()));
 

@@ -19,7 +19,7 @@
 package de.alphahelix.alphalibary.minigame;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.core.SimpleListener;
+import de.alphahelix.alphalibary.core.utilites.SimpleListener;
 import de.alphahelix.alphalibary.minigame.status.GameStatus;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

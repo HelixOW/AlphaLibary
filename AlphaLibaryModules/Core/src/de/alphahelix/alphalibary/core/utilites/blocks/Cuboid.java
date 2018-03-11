@@ -1,4 +1,4 @@
-package de.alphahelix.alphalibary.core.utils;
+package de.alphahelix.alphalibary.core.utilites.blocks;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -146,9 +146,9 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
     }
 
     /**
-     * Get the blocks in the Cuboid.
+     * Get the players in the Cuboid.
      *
-     * @return The blocks in the Cuboid
+     * @return The players in the Cuboid
      */
     public List<Block> getBlocks() {
         Iterator<Block> blockI = this.iterator();
@@ -283,6 +283,18 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
         res[7] = w.getBlockAt(this.x2, this.y2, this.z2);
         return res;
     }
+	
+	/**
+	 * Shift the Cuboid in the given direction by the given amount.
+	 *
+	 * @param dir    - The direction in which to shift
+	 * @param amount - The number of players by which to shift
+	 *
+	 * @return A new Cuboid shifted by the given direction and amount
+	 */
+	public Cuboid shift (CuboidDirection dir, int amount) {
+		return expand(dir, amount).expand(dir.opposite(), -amount);
+	}
 
     /**
      * Expand the Cuboid in the given direction by the given amount. Negative
@@ -291,7 +303,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
      * valid Cuboid.
      *
      * @param dir    - The direction in which to expand
-     * @param amount - The number of blocks by which to expand
+     * @param amount - The number of players by which to expand
      * @return A new Cuboid expanded by the given direction and amount
      */
     public Cuboid expand(CuboidDirection dir, int amount) {
@@ -314,22 +326,11 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
     }
 
     /**
-     * Shift the Cuboid in the given direction by the given amount.
-     *
-     * @param dir    - The direction in which to shift
-     * @param amount - The number of blocks by which to shift
-     * @return A new Cuboid shifted by the given direction and amount
-     */
-    public Cuboid shift(CuboidDirection dir, int amount) {
-        return expand(dir, amount).expand(dir.opposite(), -amount);
-    }
-
-    /**
      * Outset (grow) the Cuboid in the given direction by the given amount.
      *
      * @param dir    - The direction in which to outset (must be Horizontal,
      *               Vertical, or Both)
-     * @param amount - The number of blocks by which to outset
+     * @param amount - The number of players by which to outset
      * @return A new Cuboid outset by the given direction and amount
      */
     public Cuboid outset(CuboidDirection dir, int amount) {
@@ -357,7 +358,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
      *
      * @param dir    - The direction in which to inset (must be Horizontal,
      *               Vertical, or Both)
-     * @param amount - The number of blocks by which to inset
+     * @param amount - The number of players by which to inset
      * @return A new Cuboid inset by the given direction and amount
      */
     public Cuboid inset(CuboidDirection dir, int amount) {
@@ -399,15 +400,15 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
     /**
      * Get the volume of this Cuboid.
      *
-     * @return The Cuboid volume, in blocks
+     * @return The Cuboid volume, in players
      */
     public int getVolume() {
         return this.getSizeX() * this.getSizeY() * this.getSizeZ();
     }
-
-    /**
-     * Get the average light level of all empty (air) blocks in the Cuboid.
-     * Returns 0 if there are no empty blocks.
+	
+	/**
+	 * Get the average light level of all empty (air) players in the Cuboid.
+	 * Returns 0 if there are no empty players.
      *
      * @return The average light level of this Cuboid
      */
@@ -425,9 +426,9 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
 
     /**
      * Contract the Cuboid, returning a Cuboid with any air around the edges
-     * removed, just large enough to include all non-air blocks.
+     * removed, just large enough to include all non-air players.
      *
-     * @return A new Cuboid with no external air blocks
+     * @return A new Cuboid with no external air players
      */
     public Cuboid contract() {
         return this.contract(CuboidDirection.Down).contract(CuboidDirection.South).contract(CuboidDirection.East)
@@ -505,12 +506,12 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
                 throw new IllegalArgumentException("Invalid direction " + dir);
         }
     }
-
-    /**
-     * Check if the Cuboid contains only blocks of the given type
+	
+	/**
+	 * Check if the Cuboid contains only players of the given type
      *
      * @param blockId - The block ID to check for
-     * @return true if this Cuboid contains only blocks of the given type
+	 * @return true if this Cuboid contains only players of the given type
      */
     @SuppressWarnings("deprecation")
     public boolean containsOnly(int blockId) {

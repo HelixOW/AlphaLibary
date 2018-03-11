@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.annotations.entity;
 
-import de.alphahelix.alphalibary.core.utils.entity.EntityAge;
+import de.alphahelix.alphalibary.core.utilites.entity.EntityAge;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

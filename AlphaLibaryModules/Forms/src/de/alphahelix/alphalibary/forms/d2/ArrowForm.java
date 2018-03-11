@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.forms.d2;
 
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.RotationUtil;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;
@@ -43,20 +43,20 @@ public class ArrowForm extends Form {
         Vector v;
         for (double x = 0; x < (width / 2); x += getDense()) {
             v = new Vector(x, getFormFunctions()[0].f(x), 0);
-
-            getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), getAngle())));
+	
+	        getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
         }
 
         for (double x = ((width / 2) * (-1)); x < 0; x += getDense()) {
             v = new Vector(x, getFormFunctions()[1].f(x), 0);
-
-            getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), (-1) * getAngle())));
+	
+	        getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), (-1) * getAngle())));
         }
 
         for (double x = 0; x < lenght; x += getDense()) {
             v = new Vector(x, x, 0);
-
-            getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), getAngle())));
+	
+	        getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
         }
     }
 }

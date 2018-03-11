@@ -1,7 +1,7 @@
 package de.alphahelix.alphalibary.reflection.nms.packets;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.MathUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 
@@ -39,7 +39,7 @@ public class PPOEntityHeadRotation implements IPacket {
 
     @Override
     public Object getPacket(boolean stackTrace) {
-        return PACKET.newInstance(stackTrace, entity, Util.toAngle(yaw));
+        return PACKET.newInstance(stackTrace, entity, MathUtil.toAngle(yaw));
     }
 
     @Override

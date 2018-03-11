@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.forms.d2;
 
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.RotationUtil;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;
@@ -53,24 +53,24 @@ public class RectangleForm extends Form {
             for (double x = 0; x < (height); x += getDense()) {
                 Vector a = new Vector(x, 0, 0);
                 Vector b = new Vector(x, height, 0);
-
-                getAction().action(p, getLocation().add(Util.rotate(a, getAxis(), getAngle())));
-                getAction().action(p, getLocation().add(Util.rotate(b, getAxis(), getAngle())));
+	
+	            getAction().action(p, getLocation().add(RotationUtil.rotate(a, getAxis(), getAngle())));
+	            getAction().action(p, getLocation().add(RotationUtil.rotate(b, getAxis(), getAngle())));
             }
 
             for (double y = 0; y < (lenght); y += getDense()) {
                 Vector a = new Vector(0, y, 0);
                 Vector b = new Vector(lenght, y, 0);
-
-                getAction().action(p, getLocation().add(Util.rotate(a, getAxis(), getAngle())));
-                getAction().action(p, getLocation().add(Util.rotate(b, getAxis(), getAngle())));
+	
+	            getAction().action(p, getLocation().add(RotationUtil.rotate(a, getAxis(), getAngle())));
+	            getAction().action(p, getLocation().add(RotationUtil.rotate(b, getAxis(), getAngle())));
             }
         } else {
             for (double x = 0; x < lenght; x += getDense()) {
                 for (double y = 0; y < height; y += getDense()) {
                     Vector v = new Vector(x, y, 0);
-
-                    getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), getAngle())));
+	
+	                getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
                 }
             }
         }

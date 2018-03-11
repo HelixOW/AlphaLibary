@@ -3,7 +3,7 @@ package de.alphahelix.alphalibary.annotations.command;
 import de.alphahelix.alphalibary.annotations.Accessor;
 import de.alphahelix.alphalibary.annotations.command.errors.ErrorHandler;
 import de.alphahelix.alphalibary.annotations.command.exceptions.*;
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
@@ -136,8 +136,8 @@ public class AnnotatedCommand {
                     Alias alias = getMethodParameterAnnotation(cmdMethod, Alias.class);
 
                     String arg = args[i - 1];
-
-                    if (alias != null && Util.upperEverything(Arrays.asList(alias.alias())).contains(arg.toUpperCase()))
+	
+	                if(alias != null && StringUtil.upperEverything(Arrays.asList(alias.alias())).contains(arg.toUpperCase()))
                         parsedArgs[i] = parseArgument(paramTypes[i], alias.alias()[0]);
                     else
                         parsedArgs[i] = parseArgument(paramTypes[i], arg);

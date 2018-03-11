@@ -93,9 +93,9 @@ public class ArmorstandFakeUtil {
      * Moves the given {@link FakeArmorstand}
      *
      * @param p          the {@link Player} to move the {@link FakeArmorstand} for
-     * @param x          blocks in x direction
-     * @param y          blocks in y direction
-     * @param z          blocks in z direction
+     * @param x          players in x direction
+     * @param y          players in y direction
+     * @param z          players in z direction
      * @param armorstand the {@link FakeArmorstand} which should be moved
      */
     public static void moveArmorstand(Player p, double x, double y, double z, FakeArmorstand armorstand) {

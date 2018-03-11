@@ -1,4 +1,4 @@
-package de.alphahelix.alphalibary.core.utils;
+package de.alphahelix.alphalibary.core.utilites;
 
 import java.util.Objects;
 

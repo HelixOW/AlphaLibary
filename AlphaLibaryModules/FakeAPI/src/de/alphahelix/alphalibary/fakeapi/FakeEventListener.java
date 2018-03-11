@@ -16,9 +16,9 @@
 
 package de.alphahelix.alphalibary.fakeapi;
 
-import de.alphahelix.alphalibary.core.SimpleListener;
 import de.alphahelix.alphalibary.core.SimpleLoader;
-import de.alphahelix.alphalibary.core.uuid.UUIDFetcher;
+import de.alphahelix.alphalibary.core.utilites.SimpleListener;
+import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import de.alphahelix.alphalibary.fakeapi.instances.*;
 import de.alphahelix.alphalibary.fakeapi.utils.*;
 import org.bukkit.entity.Player;

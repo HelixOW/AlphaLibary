@@ -1,7 +1,7 @@
 package de.alphahelix.alphalibary.annotations.random;
 
 import de.alphahelix.alphalibary.annotations.Accessor;
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.StringUtil;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -58,7 +58,7 @@ public class AnnotatedRandom {
     final AnnotatedRandom apply() {
         try {
             if (strIntDouble instanceof String)
-                Accessor.access(randomField).set(randomClazz, Util.generateRandomString(length));
+                Accessor.access(randomField).set(randomClazz, StringUtil.generateRandomString(length));
             else if (strIntDouble instanceof Integer)
                 Accessor.access(randomField).set(randomClazz, ThreadLocalRandom.current().nextInt(length));
             else if (strIntDouble instanceof Double)

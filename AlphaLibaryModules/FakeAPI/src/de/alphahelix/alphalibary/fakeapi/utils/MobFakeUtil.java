@@ -116,9 +116,9 @@ public class MobFakeUtil {
      * Moves the given {@link FakeMob}
      *
      * @param p     the {@link Player} to move the {@link FakeMob} for
-     * @param x     blocks in x direction
-     * @param y     blocks in y direction
-     * @param z     blocks in z direction
+     * @param x     players in x direction
+     * @param y     players in y direction
+     * @param z     players in z direction
      * @param yaw   new yaw
      * @param pitch new pitch
      * @param mob   the {@link FakeMob} which should be moved

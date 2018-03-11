@@ -1,7 +1,7 @@
 package de.alphahelix.alphalibary.reflection.nms.packets;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.MathUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 
@@ -70,7 +70,7 @@ public class PPORelEntityMove implements IPacket {
 
     @Override
     public Object getPacket(boolean stackTrace) {
-        return PACKET.newInstance(stackTrace, entityID, Util.toDelta(x), Util.toDelta(y), Util.toDelta(z), onGround);
+        return PACKET.newInstance(stackTrace, entityID, MathUtil.toDelta(x), MathUtil.toDelta(y), MathUtil.toDelta(z), onGround);
     }
 
     @Override

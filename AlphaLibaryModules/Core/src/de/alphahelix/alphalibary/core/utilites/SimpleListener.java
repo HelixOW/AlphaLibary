@@ -13,18 +13,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.alphahelix.alphalibary.core;
+package de.alphahelix.alphalibary.core.utilites;
 
+import de.alphahelix.alphalibary.core.AlphaLibary;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
 
 public class SimpleListener implements Listener {
-
-    /**
-     * Automatic registering {@link Listener}
-     */
-    public SimpleListener() {
-        Bukkit.getPluginManager().registerEvents(this, AlphaLibary.getInstance());
-    }
+	
+	/**
+	 * Automatic registering {@link Listener}
+	 */
+	public SimpleListener () {
+		Bukkit.getPluginManager().registerEvents(this, AlphaLibary.getInstance());
+	}
 }

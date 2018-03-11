@@ -5,7 +5,7 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.util.UUIDTypeAdapter;
 import de.alphahelix.alphalibary.core.AlphaLibary;
 import de.alphahelix.alphalibary.core.utils.JSONUtil;
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.StringUtil;
 import org.bukkit.Bukkit;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
@@ -92,8 +92,8 @@ public class GameProfileBuilder {
                 connection = (HttpURLConnection) new URL(String.format(SERVICE_URL, UUIDTypeAdapter.fromUUID(uuid))).openConnection();
             } catch (IOException ignored) {
             }
-
-            if (connection == null) return new GameProfile(UUID.randomUUID(), Util.generateRandomString(15));
+    
+            if(connection == null) return new GameProfile(UUID.randomUUID(), StringUtil.generateRandomString(15));
 
             connection.setReadTimeout(5000);
 
@@ -110,8 +110,8 @@ public class GameProfileBuilder {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            return new GameProfile(UUID.randomUUID(), Util.generateRandomString(15));
+    
+            return new GameProfile(UUID.randomUUID(), StringUtil.generateRandomString(15));
         }
     }
 

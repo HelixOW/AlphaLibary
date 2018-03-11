@@ -1,7 +1,7 @@
 package de.alphahelix.alphalibary.inventories.item;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.ItemUtil;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
@@ -43,7 +43,7 @@ public class InventoryItem implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         InventoryItem that = (InventoryItem) o;
         return getSlot() == that.getSlot() &&
-                Util.isSame(getItemStack(), that.getItemStack());
+                ItemUtil.isSame(getItemStack(), that.getItemStack());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.forms.particles.form.d2;
 
-import de.alphahelix.alphalibary.core.utils.Pair;
+import de.alphahelix.alphalibary.core.utilites.Pair;
 import de.alphahelix.alphalibary.forms.d2.PolyForm;
 import de.alphahelix.alphalibary.forms.particles.data.EffectData;
 import org.apache.commons.lang.Validate;

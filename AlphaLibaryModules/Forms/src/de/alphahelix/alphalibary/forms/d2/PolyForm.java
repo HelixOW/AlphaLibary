@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.forms.d2;
 
-import de.alphahelix.alphalibary.core.utils.Pair;
+import de.alphahelix.alphalibary.core.utilites.Pair;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;

@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.forms.d3;
 
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.RotationUtil;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;
@@ -30,8 +30,8 @@ public class SphereForm extends Form {
     public void send(Player p) {
         for (float angle = 0; angle < 180; angle += getDense()) {
             Vector v = new Vector(getRadius() * Math.cos(angle), getRadius() * Math.sin(angle), 0);
-
-            getAction().action(p, getLocation().add(Util.rotate(v, getAxis(), angle)));
+	
+	        getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), angle)));
         }
     }
 }

@@ -15,10 +15,14 @@
  */
 package de.alphahelix.alphalibary.core.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 public class LocationUtil {
@@ -157,4 +161,11 @@ public class LocationUtil {
         double z = Math.sin(radians);
         return new EulerAngle(x, 0, z);
     }
+	
+	public static World getRandomWorld () {
+		Optional<World> optionalWorld = Bukkit.getWorlds().stream().findAny();
+		if(optionalWorld.isPresent())
+			return optionalWorld.get();
+		throw new NoSuchElementException("Cannot find any world");
+	}
 }

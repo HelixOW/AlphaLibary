@@ -1,4 +1,4 @@
-package de.alphahelix.alphalibary.core.utils.entity;
+package de.alphahelix.alphalibary.core.utilites.entity;
 
 import com.google.common.base.Objects;
 import org.bukkit.Location;

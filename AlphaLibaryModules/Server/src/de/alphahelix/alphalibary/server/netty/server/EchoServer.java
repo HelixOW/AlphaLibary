@@ -41,7 +41,7 @@ public class EchoServer {
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+                    protected void initChannel (SocketChannel socketChannel) {
                         System.out.println("New client connected! (" + socketChannel.localAddress() + ")");
 
                         socketChannel.pipeline().addLast(new StringEncoder()).addLast(new StringEncoder()).addLast(new EchoServerHandler());

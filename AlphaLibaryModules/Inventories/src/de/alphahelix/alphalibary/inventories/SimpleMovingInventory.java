@@ -16,7 +16,7 @@
 package de.alphahelix.alphalibary.inventories;
 
 import de.alphahelix.alphalibary.core.AlphaLibary;
-import de.alphahelix.alphalibary.core.SimpleListener;
+import de.alphahelix.alphalibary.core.utilites.SimpleListener;
 import de.alphahelix.alphalibary.inventories.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

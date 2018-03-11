@@ -55,7 +55,7 @@ public class Schematic implements Serializable {
     public String toString() {
         return "Schematic{" +
                 "name='" + name + '\'' +
-                ", blocks=" + blocks +
+		        ", players=" + blocks +
                 '}';
     }
 

@@ -1,6 +1,6 @@
 package de.alphahelix.alphalibary.schematic;
 
-import de.alphahelix.alphalibary.core.utils.Cuboid;
+import de.alphahelix.alphalibary.core.utilites.blocks.Cuboid;
 import de.alphahelix.alphalibary.core.utils.JSONUtil;
 import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
 import org.apache.commons.lang.Validate;

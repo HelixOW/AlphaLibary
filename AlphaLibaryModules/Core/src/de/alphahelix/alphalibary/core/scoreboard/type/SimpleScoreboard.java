@@ -3,7 +3,7 @@ package de.alphahelix.alphalibary.core.scoreboard.type;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import de.alphahelix.alphalibary.core.AlphaLibary;
-import de.alphahelix.alphalibary.core.utils.Util;
+import de.alphahelix.alphalibary.core.utils.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -166,7 +166,7 @@ public class SimpleScoreboard implements Scoreboard {
         String name;
         // If the text has a length less than 16, teams need not to be be created
         if (text.length() <= 16) {
-            name = text + Util.repeat(" ", offset);
+	        name = text + StringUtil.repeat(" ", offset);
         } else {
             String prefix;
             String suffix = "";

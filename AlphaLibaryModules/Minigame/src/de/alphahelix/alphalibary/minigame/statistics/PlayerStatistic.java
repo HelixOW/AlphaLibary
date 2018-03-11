@@ -1,7 +1,7 @@
 package de.alphahelix.alphalibary.minigame.statistics;
 
+import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import de.alphahelix.alphalibary.core.utils.SerializationUtil;
-import de.alphahelix.alphalibary.core.uuid.UUIDFetcher;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 

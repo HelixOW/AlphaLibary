@@ -2,7 +2,7 @@ package de.alphahelix.alphalibary.storage.sql;
 
 import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.core.AlphaLibary;
-import de.alphahelix.alphalibary.core.uuid.UUIDFetcher;
+import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

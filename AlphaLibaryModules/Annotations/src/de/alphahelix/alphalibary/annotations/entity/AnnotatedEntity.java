@@ -1,8 +1,8 @@
 package de.alphahelix.alphalibary.annotations.entity;
 
 import de.alphahelix.alphalibary.annotations.Accessor;
-import de.alphahelix.alphalibary.core.utils.entity.EntityAge;
-import de.alphahelix.alphalibary.core.utils.entity.EntityBuilder;
+import de.alphahelix.alphalibary.core.utilites.entity.EntityAge;
+import de.alphahelix.alphalibary.core.utilites.entity.EntityBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

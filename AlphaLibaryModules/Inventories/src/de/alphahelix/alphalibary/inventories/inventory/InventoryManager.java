@@ -1,7 +1,7 @@
 package de.alphahelix.alphalibary.inventories.inventory;
 
-import de.alphahelix.alphalibary.core.SimpleListener;
 import de.alphahelix.alphalibary.core.SimpleLoader;
+import de.alphahelix.alphalibary.core.utilites.SimpleListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;

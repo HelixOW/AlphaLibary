@@ -19,7 +19,7 @@
 package de.alphahelix.alphalibary.fakeapi.instances;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.core.SimpleListener;
+import de.alphahelix.alphalibary.core.utilites.SimpleListener;
 import de.alphahelix.alphalibary.fakeapi.utils.ArmorstandFakeUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

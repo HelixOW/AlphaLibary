@@ -3,7 +3,7 @@ package de.alphahelix.alphalibary.input;
 import de.alphahelix.alphalibary.core.AlphaLibary;
 import de.alphahelix.alphalibary.core.AlphaModule;
 import de.alphahelix.alphalibary.core.SimpleLoader;
-import de.alphahelix.alphalibary.core.uuid.UUIDFetcher;
+import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import de.alphahelix.alphalibary.input.events.ArmorChangeEvent;
 import de.alphahelix.alphalibary.input.events.ItemRenameEvent;
 import de.alphahelix.alphalibary.input.events.PlayerInputEvent;

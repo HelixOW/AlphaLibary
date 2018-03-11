@@ -18,8 +18,8 @@ package de.alphahelix.alphalibary.fakeapi.utils;
 
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.core.AlphaLibary;
+import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import de.alphahelix.alphalibary.core.utils.LocationUtil;
-import de.alphahelix.alphalibary.core.uuid.UUIDFetcher;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeEntity;
@@ -232,9 +232,9 @@ public class PlayerFakeUtil {
      * Moves the given {@link FakePlayer}
      *
      * @param p     the {@link Player} to move the {@link FakePlayer} for
-     * @param x     blocks in x direction
-     * @param y     blocks in y direction
-     * @param z     blocks in z direction
+     * @param x     players in x direction
+     * @param y     players in y direction
+     * @param z     players in z direction
      * @param yaw   new yaw
      * @param pitch new pitch
      * @param npc   the {@link FakePlayer} which should be moved

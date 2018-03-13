@@ -21,34 +21,34 @@ import org.bukkit.entity.Player;
 
 
 public class SimpleTablist {
-
-    private static final ReflectionUtil.SaveConstructor CHAT_COMPONENT_TEXT = ReflectionUtil.getDeclaredConstructor("ChatComponentText", String.class);
-    private static final ReflectionUtil.SaveConstructor PACKET_PLAY_OUT_PLAYER_LIST_HEADER_FOOTER = ReflectionUtil.getDeclaredConstructor("PacketPlayOutPlayerListHeaderFooter");
-
-    /**
-     * Set the tablist of the {@link Player}
-     *
-     * @param p      you want to change the tablist for
-     * @param header what stands above the players
-     * @param footer what stands below the players
-     */
-    public static void setTablistHeaderFooter(Player p, String header, String footer) {
-        if (header == null)
-            header = "";
-        if (footer == null)
-            footer = "";
-
-        Object headerComponent = CHAT_COMPONENT_TEXT.newInstance(true, ChatColor.translateAlternateColorCodes('&', header));
-        Object footerComponent = CHAT_COMPONENT_TEXT.newInstance(true, ChatColor.translateAlternateColorCodes('&', footer));
-
-        Object packetPlayOutPlayerListHeaderFooter = PACKET_PLAY_OUT_PLAYER_LIST_HEADER_FOOTER.newInstance(true);
-
-        ReflectionUtil.SaveField h = ReflectionUtil.getDeclaredField("a", packetPlayOutPlayerListHeaderFooter.getClass());
-        ReflectionUtil.SaveField f = ReflectionUtil.getDeclaredField("b", packetPlayOutPlayerListHeaderFooter.getClass());
-
-        h.set(packetPlayOutPlayerListHeaderFooter, headerComponent, true);
-        f.set(packetPlayOutPlayerListHeaderFooter, footerComponent, true);
-
-        ReflectionUtil.sendPacket(p, packetPlayOutPlayerListHeaderFooter);
-    }
+	
+	private static final ReflectionUtil.SaveConstructor CHAT_COMPONENT_TEXT = ReflectionUtil.getDeclaredConstructor("ChatComponentText", String.class);
+	private static final ReflectionUtil.SaveConstructor PACKET_PLAY_OUT_PLAYER_LIST_HEADER_FOOTER = ReflectionUtil.getDeclaredConstructor("PacketPlayOutPlayerListHeaderFooter");
+	
+	/**
+	 * Set the tablist of the {@link Player}
+	 *
+	 * @param p      you want to change the tablist for
+	 * @param header what stands above the players
+	 * @param footer what stands below the players
+	 */
+	public static void setTablistHeaderFooter(Player p, String header, String footer) {
+		if(header == null)
+			header = "";
+		if(footer == null)
+			footer = "";
+		
+		Object headerComponent = CHAT_COMPONENT_TEXT.newInstance(true, ChatColor.translateAlternateColorCodes('&', header));
+		Object footerComponent = CHAT_COMPONENT_TEXT.newInstance(true, ChatColor.translateAlternateColorCodes('&', footer));
+		
+		Object packetPlayOutPlayerListHeaderFooter = PACKET_PLAY_OUT_PLAYER_LIST_HEADER_FOOTER.newInstance(true);
+		
+		ReflectionUtil.SaveField h = ReflectionUtil.getDeclaredField("a", packetPlayOutPlayerListHeaderFooter.getClass());
+		ReflectionUtil.SaveField f = ReflectionUtil.getDeclaredField("b", packetPlayOutPlayerListHeaderFooter.getClass());
+		
+		h.set(packetPlayOutPlayerListHeaderFooter, headerComponent, true);
+		f.set(packetPlayOutPlayerListHeaderFooter, footerComponent, true);
+		
+		ReflectionUtil.sendPacket(p, packetPlayOutPlayerListHeaderFooter);
+	}
 }

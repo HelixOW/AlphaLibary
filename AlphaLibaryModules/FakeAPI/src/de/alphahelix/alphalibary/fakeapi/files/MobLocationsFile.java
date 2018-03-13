@@ -21,17 +21,17 @@ import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MobLocationsFile extends SimpleJSONFile {
-
-    public MobLocationsFile(JavaPlugin plugin) {
-        super(plugin, "fake_mobs.json");
-    }
-
-    public void addMobToFile(FakeMob fakeMob) {
-        addValuesToList("Mobs", fakeMob);
-    }
-
-    public FakeMob[] getFakeMobsFromFile() {
-        if (jsonContains("Mobs")) return getListValues("Mobs", FakeMob[].class);
-        return new FakeMob[]{};
-    }
+	
+	public MobLocationsFile(JavaPlugin plugin) {
+		super(plugin, "fake_mobs.json");
+	}
+	
+	public void addMobToFile(FakeMob fakeMob) {
+		addValuesToList("Mobs", fakeMob);
+	}
+	
+	public FakeMob[] getFakeMobsFromFile() {
+		if(jsonContains("Mobs")) return getListValues("Mobs", FakeMob[].class);
+		return new FakeMob[]{};
+	}
 }

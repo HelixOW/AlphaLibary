@@ -21,41 +21,41 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 public class FakeItem extends FakeEntity {
-
-    private final Material type;
-
-    public FakeItem(Location location, String name, Object fake, Material type) {
-        super(location, name, fake);
-        this.type = type;
-    }
-
-    /**
-     * Gets the Material of the {@link FakeItem}
-     *
-     * @return the Material of the {@link FakeItem}
-     */
-    public Material getType() {
-        return type;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        FakeItem fakeItem = (FakeItem) o;
-        return getType() == fakeItem.getType();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(super.hashCode(), getType());
-    }
-
-    @Override
-    public String toString() {
-        return "FakeItem{" +
-                "type=" + type +
-                "} " + super.toString();
-    }
+	
+	private final Material type;
+	
+	public FakeItem(Location location, String name, Object fake, Material type) {
+		super(location, name, fake);
+		this.type = type;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(super.hashCode(), getType());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		if(!super.equals(o)) return false;
+		FakeItem fakeItem = (FakeItem) o;
+		return getType() == fakeItem.getType();
+	}
+	
+	/**
+	 * Gets the Material of the {@link FakeItem}
+	 *
+	 * @return the Material of the {@link FakeItem}
+	 */
+	public Material getType() {
+		return type;
+	}
+	
+	@Override
+	public String toString() {
+		return "FakeItem{" +
+				"type=" + type +
+				"} " + super.toString();
+	}
 }

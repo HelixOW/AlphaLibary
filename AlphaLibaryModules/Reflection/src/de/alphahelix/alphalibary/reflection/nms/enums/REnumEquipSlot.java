@@ -21,36 +21,36 @@ import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import java.io.Serializable;
 
 public enum REnumEquipSlot implements Serializable {
-
-    HELMET(4, 5),
-    CHESTPLATE(3, 4),
-    LEGGINGS(2, 3),
-    BOOTS(1, 2),
-    OFF_HAND(0, 1),
-    HAND(0, 0);
-
-    private final int nmsSlot;
-    private final int past;
-
-    REnumEquipSlot(int nmsSlot, int past) {
-        this.nmsSlot = nmsSlot;
-        this.past = past;
-    }
-
-    public Object getNmsSlot() {
-        try {
-            return ReflectionUtil.getNmsClass("EnumItemSlot").getEnumConstants()[past];
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "REnumEquipSlot{" +
-                "nmsSlot=" + nmsSlot +
-                ", past=" + past +
-                '}';
-    }
+	
+	HELMET(4, 5),
+	CHESTPLATE(3, 4),
+	LEGGINGS(2, 3),
+	BOOTS(1, 2),
+	OFF_HAND(0, 1),
+	HAND(0, 0);
+	
+	private final int nmsSlot;
+	private final int past;
+	
+	REnumEquipSlot(int nmsSlot, int past) {
+		this.nmsSlot = nmsSlot;
+		this.past = past;
+	}
+	
+	public Object getNmsSlot() {
+		try {
+			return ReflectionUtil.getNmsClass("EnumItemSlot").getEnumConstants()[past];
+		} catch(Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return "REnumEquipSlot{" +
+				"nmsSlot=" + nmsSlot +
+				", past=" + past +
+				'}';
+	}
 }

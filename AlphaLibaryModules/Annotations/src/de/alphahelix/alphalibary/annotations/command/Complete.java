@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Complete {
-
-    /**
-     * Defines the name of the command, where auto completion should be available
-     *
-     * @return the name of the command
-     */
-    String name() default "";
-
+	
+	/**
+	 * Defines the name of the command, where auto completion should be available
+	 *
+	 * @return the name of the command
+	 */
+	String name() default "";
+	
 }

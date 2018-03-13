@@ -12,27 +12,27 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Item {
-
-
-    /**
-     * Need to be as follows:
-     * <p>
-     * NAME of Enchantment:level
-     */
-    String[] enchantments() default {};
-
-    ItemFlag[] itemflags() default {};
-
-    String name() default "";
-
-    Material material() default Material.AIR;
-
-    int amount() default 1;
-
-    short damage() default 0;
-
-    String[] lore() default {};
-
-    boolean unbreakable() default false;
-
+	
+	
+	/**
+	 * Need to be as follows:
+	 * <p>
+	 * NAME of Enchantment:level
+	 */
+	String[] enchantments() default {};
+	
+	ItemFlag[] itemflags() default {};
+	
+	String name() default "";
+	
+	Material material() default Material.AIR;
+	
+	int amount() default 1;
+	
+	short damage() default 0;
+	
+	String[] lore() default {};
+	
+	boolean unbreakable() default false;
+	
 }

@@ -25,49 +25,48 @@ import java.util.UUID;
 
 
 public class FakePlayer extends FakeEntity {
-
-    private final UUID skinUUID;
-    private final transient OfflinePlayer skinPlayer;
-
-    public FakePlayer(Location location, String name, UUID skin, Object fake) {
-        super(location, name, fake);
-        this.skinPlayer = Bukkit.getOfflinePlayer(skin);
-        this.skinUUID = skin;
-    }
-
-
-    /**
-     * Gets the {@link UUID} of the owner of this {@link FakePlayer}'s skin
-     *
-     * @return the {@link UUID} of the skinowner of this {@link FakePlayer}
-     */
-    public UUID getSkinUUID() {
-        return skinUUID;
-    }
-
-    public OfflinePlayer getSkinPlayer() {
-        return skinPlayer;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        FakePlayer that = (FakePlayer) o;
-        return Objects.equal(getSkinUUID(), that.getSkinUUID()) &&
-                Objects.equal(getSkinPlayer(), that.getSkinPlayer());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(super.hashCode(), getSkinUUID(), getSkinPlayer());
-    }
-
-    @Override
-    public String toString() {
-        return "FakePlayer{" +
-                ", skinUUID=" + skinUUID +
-                "} " + super.toString();
-    }
+	
+	private final UUID skinUUID;
+	private final transient OfflinePlayer skinPlayer;
+	
+	public FakePlayer(Location location, String name, UUID skin, Object fake) {
+		super(location, name, fake);
+		this.skinPlayer = Bukkit.getOfflinePlayer(skin);
+		this.skinUUID = skin;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(super.hashCode(), getSkinUUID(), getSkinPlayer());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		if(!super.equals(o)) return false;
+		FakePlayer that = (FakePlayer) o;
+		return Objects.equal(getSkinUUID(), that.getSkinUUID()) &&
+				Objects.equal(getSkinPlayer(), that.getSkinPlayer());
+	}
+	
+	@Override
+	public String toString() {
+		return "FakePlayer{" +
+				", skinUUID=" + skinUUID +
+				"} " + super.toString();
+	}
+	
+	/**
+	 * Gets the {@link UUID} of the owner of this {@link FakePlayer}'s skin
+	 *
+	 * @return the {@link UUID} of the skinowner of this {@link FakePlayer}
+	 */
+	public UUID getSkinUUID() {
+		return skinUUID;
+	}
+	
+	public OfflinePlayer getSkinPlayer() {
+		return skinPlayer;
+	}
 }

@@ -19,7 +19,7 @@ package de.alphahelix.alphalibary.fakeapi.instances;
 import org.bukkit.Location;
 
 public class FakeArmorstand extends FakeEntity {
-    public FakeArmorstand(Location location, String name, Object fake) {
-        super(location, name, fake);
-    }
+	public FakeArmorstand(Location location, String name, Object fake) {
+		super(location, name, fake);
+	}
 }

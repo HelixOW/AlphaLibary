@@ -29,21 +29,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnvilGUI implements InputGUI {
-
-    private static List<String> openGUIs = new ArrayList<>();
-
-    public static List<String> getOpenGUIs() {
-        return openGUIs;
-    }
-
-    @Override
-    public void openGUI(Player p) {
-        Inventory anvil = Bukkit.createInventory(p, InventoryType.ANVIL);
-
-        anvil.setItem(0, new ItemStack(Material.PAPER));
-
-        openGUIs.add(p.getName());
-
-        p.openInventory(anvil);
-    }
+	
+	private static final List<String> OPEN_GUIS = new ArrayList<>();
+	
+	public static List<String> getOpenGUIs() {
+		return OPEN_GUIS;
+	}
+	
+	@Override
+	public void openGUI(Player p) {
+		Inventory anvil = Bukkit.createInventory(p, InventoryType.ANVIL);
+		
+		anvil.setItem(0, new ItemStack(Material.PAPER));
+		
+		OPEN_GUIS.add(p.getName());
+		
+		p.openInventory(anvil);
+	}
 }

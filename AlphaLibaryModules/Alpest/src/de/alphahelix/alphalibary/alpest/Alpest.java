@@ -15,14 +15,14 @@ public class Alpest {
 		}
 	}
 	
+	public static void registerPlayer(VirtualPlayer player) {
+		VIRTUAL_PLAYERS.put(player.getUniqueId(), player);
+	}
+	
 	public static void registerRandomPlayer(JavaPlugin plugin, String name, int amount) {
 		for(int i = 0; i < amount; i++) {
 			registerPlayer(new VirtualPlayer(plugin, name, Bukkit.getWorlds().get(0).getSpawnLocation()));
 		}
-	}
-	
-	public static void registerPlayer(VirtualPlayer player) {
-		VIRTUAL_PLAYERS.put(player.getUniqueId(), player);
 	}
 	
 	public static void unregisterPlayer(VirtualPlayer player) {

@@ -14,14 +14,14 @@ public class PluginWatcher {
 	private final long time;
 	private final JavaPlugin plugin;
 	
-	public PluginWatcher (JavaPlugin plugin) {
+	public PluginWatcher(JavaPlugin plugin) {
 		this(plugin, 20);
 	}
 	
-	public PluginWatcher (JavaPlugin plugin, long time) {
+	public PluginWatcher(JavaPlugin plugin, long time) {
 		this.task = new BukkitRunnable() {
 			@Override
-			public void run () {
+			public void run() {
 				if(check())
 					Bukkit.reload();
 			}
@@ -32,17 +32,17 @@ public class PluginWatcher {
 		this.plugin = plugin;
 	}
 	
-	public boolean check () {
+	public boolean check() {
 		File otherJarFile = new File("plugins/", plugin.getName() + ".jar");
 		
 		return lastModified < otherJarFile.lastModified();
 	}
 	
-	public void run () {
+	public void run() {
 		task.runTaskTimer(AlphaLibary.getInstance(), time, time);
 	}
 	
-	public BukkitRunnable getTask () {
+	public BukkitRunnable getTask() {
 		return task;
 	}
 }

@@ -9,7 +9,7 @@ public enum REnumDifficulty {
 	NORMAL(2),
 	HARD(3);
 	
-	private int id;
+	private final int id;
 	
 	REnumDifficulty(int id) {
 		this.id = id;

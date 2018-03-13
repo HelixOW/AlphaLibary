@@ -21,18 +21,18 @@ import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PlayerLocationsFile extends SimpleJSONFile {
-
-    public PlayerLocationsFile(JavaPlugin plugin) {
-        super(plugin, "fake_players.json");
-    }
-
-    public void addPlayerToFile(FakePlayer fakePlayer) {
-        addValuesToList("Players", fakePlayer);
-    }
-
-    public FakePlayer[] getFakePlayersFromFile() {
-        if (jsonContains("Players"))
-            return getListValues("Players", FakePlayer[].class);
-        return new FakePlayer[]{};
-    }
+	
+	public PlayerLocationsFile(JavaPlugin plugin) {
+		super(plugin, "fake_players.json");
+	}
+	
+	public void addPlayerToFile(FakePlayer fakePlayer) {
+		addValuesToList("Players", fakePlayer);
+	}
+	
+	public FakePlayer[] getFakePlayersFromFile() {
+		if(jsonContains("Players"))
+			return getListValues("Players", FakePlayer[].class);
+		return new FakePlayer[]{};
+	}
 }

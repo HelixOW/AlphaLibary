@@ -114,7 +114,6 @@ public class AdvancedPlayer {
 	public void fakeRespawn() {
 		Location loc = player.getLocation();
 		REnumDifficulty difficulty = REnumDifficulty.EASY;
-		Object enumGameMode = ReflectionUtil.getEnumGamemode(player);
 		int level = player.getLevel();
 		double health = player.getHealth();
 		float sat = player.getSaturation();

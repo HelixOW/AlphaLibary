@@ -21,44 +21,44 @@ import de.alphahelix.alphalibary.fakeapi.FakeMobType;
 import org.bukkit.Location;
 
 public class FakeMob extends FakeEntity {
-
-    private final FakeMobType fakeMobType;
-    private final boolean baby;
-
-    public FakeMob(Location location, String name, Object nmsEntity, FakeMobType type, boolean baby) {
-        super(location, name, nmsEntity);
-        this.fakeMobType = type;
-        this.baby = baby;
-    }
-
-    public FakeMobType getFakeMobType() {
-        return fakeMobType;
-    }
-
-    public boolean isBaby() {
-        return baby;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        FakeMob fakeMob = (FakeMob) o;
-        return isBaby() == fakeMob.isBaby() &&
-                getFakeMobType() == fakeMob.getFakeMobType();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(super.hashCode(), getFakeMobType(), isBaby());
-    }
-
-    @Override
-    public String toString() {
-        return "FakeMob{" +
-                "fakeMobType=" + fakeMobType +
-                ", baby=" + baby +
-                "} " + super.toString();
-    }
+	
+	private final FakeMobType fakeMobType;
+	private final boolean baby;
+	
+	public FakeMob(Location location, String name, Object nmsEntity, FakeMobType type, boolean baby) {
+		super(location, name, nmsEntity);
+		this.fakeMobType = type;
+		this.baby = baby;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(super.hashCode(), getFakeMobType(), isBaby());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		if(!super.equals(o)) return false;
+		FakeMob fakeMob = (FakeMob) o;
+		return isBaby() == fakeMob.isBaby() &&
+				getFakeMobType() == fakeMob.getFakeMobType();
+	}
+	
+	public boolean isBaby() {
+		return baby;
+	}
+	
+	public FakeMobType getFakeMobType() {
+		return fakeMobType;
+	}
+	
+	@Override
+	public String toString() {
+		return "FakeMob{" +
+				"fakeMobType=" + fakeMobType +
+				", baby=" + baby +
+				"} " + super.toString();
+	}
 }

@@ -17,7 +17,7 @@
 package de.alphahelix.alphalibary.fakeapi.instances;
 
 public class NoSuchFakeEntityException extends Exception {
-    public NoSuchFakeEntityException() {
-        super("There is no such FakeEntity");
-    }
+	public NoSuchFakeEntityException() {
+		super("There is no such FakeEntity");
+	}
 }

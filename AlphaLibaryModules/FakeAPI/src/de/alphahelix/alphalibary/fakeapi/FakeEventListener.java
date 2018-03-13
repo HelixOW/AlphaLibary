@@ -28,91 +28,91 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 @SimpleLoader
 public class FakeEventListener extends SimpleListener {
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-
-        UUIDFetcher.getUUID(p, id -> FakeAPI.getEntityIds().put(p.getEntityId(), id));
-
-        for (FakeArmorstand stands : FakeRegister.getArmorstandLocationsFile().getFakeArmorstandFromFile()) {
-            ArmorstandFakeUtil.spawnTemporaryArmorstand(
-                    p,
-                    stands.getStartLocation(),
-                    stands.getName());
-        }
-
-        for (FakeBigItem bigItem : FakeRegister.getBigItemLocationsFile().getFakeBigItemFromFile()) {
-            BigItemFakeUtil.spawnTemporaryBigItem(
-                    p,
-                    bigItem.getStartLocation(),
-                    bigItem.getName(),
-                    bigItem.getItemStack());
-        }
-
-        for (FakeEndercrystal endercrystal : FakeRegister.getEndercrystalLocationsFile().getFakeEndercrystalsFromFile()) {
-            EndercrystalFakeUtil.spawnTemporaryEndercrystal(
-                    p,
-                    endercrystal.getStartLocation(),
-                    endercrystal.getName());
-        }
-
-        for (FakeItem item : FakeRegister.getItemLocationsFile().getFakeItemsFromFile()) {
-            ItemFakeUtil.spawnTemporaryItem(
-                    p,
-                    item.getStartLocation(),
-                    item.getName(),
-                    item.getType());
-        }
-
-        for (FakeMob mob : FakeRegister.getMobLocationsFile().getFakeMobsFromFile()) {
-            MobFakeUtil.spawnTemporaryMob(
-                    p,
-                    mob.getStartLocation(),
-                    mob.getName(),
-                    mob.getFakeMobType(),
-                    mob.isBaby());
-        }
-
-        for (FakePlayer player : FakeRegister.getPlayerLocationsFile().getFakePlayersFromFile()) {
-            PlayerFakeUtil.spawnTemporaryPlayer(
-                    p,
-                    player.getStartLocation(),
-                    player.getSkinUUID(),
-                    player.getName(),
-                    entity -> {
-                    }
-            );
-        }
-
-        for (FakeXPOrb xpOrb : FakeRegister.getXpOrbLocationsFile().getFakeXPOrbFromFile()) {
-            XPOrbFakeUtil.spawnTemporaryXPOrb(
-                    p,
-                    xpOrb.getStartLocation(),
-                    xpOrb.getName());
-        }
-    }
-
-    @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        Player p = e.getPlayer();
-        if (FakeAPI.getFakeEntities().containsKey(p.getName())) {
-            PlayerFakeUtil.unFollowPlayer(p);
-            PlayerFakeUtil.normalizeLook(p);
-            PlayerFakeUtil.cancelAllSplittedTasks(p);
-
-            ArmorstandFakeUtil.unFollowArmorstand(p);
-            ArmorstandFakeUtil.cancelAllSplittedTasks(p);
-
-            EndercrystalFakeUtil.cancelAllSplittedTasks(p);
-
-            MobFakeUtil.unFollowPlayer(p);
-            MobFakeUtil.normalizeLook(p);
-            MobFakeUtil.cancelAllSplittedTasks(p);
-
-            BigItemFakeUtil.cancelAllSplittedTasks(p);
-
-            FakeAPI.getFakeEntities().remove(p.getName());
-        }
-    }
+	
+	@EventHandler
+	public void onJoin(PlayerJoinEvent e) {
+		Player p = e.getPlayer();
+		
+		UUIDFetcher.getUUID(p, id -> FakeAPI.getEntityIds().put(p.getEntityId(), id));
+		
+		for(FakeArmorstand stands : FakeRegister.getArmorstandLocationsFile().getFakeArmorstandFromFile()) {
+			ArmorstandFakeUtil.spawnTemporaryArmorstand(
+					p,
+					stands.getStartLocation(),
+					stands.getName());
+		}
+		
+		for(FakeBigItem bigItem : FakeRegister.getBigItemLocationsFile().getFakeBigItemFromFile()) {
+			BigItemFakeUtil.spawnTemporaryBigItem(
+					p,
+					bigItem.getStartLocation(),
+					bigItem.getName(),
+					bigItem.getItemStack());
+		}
+		
+		for(FakeEndercrystal endercrystal : FakeRegister.getEndercrystalLocationsFile().getFakeEndercrystalsFromFile()) {
+			EndercrystalFakeUtil.spawnTemporaryEndercrystal(
+					p,
+					endercrystal.getStartLocation(),
+					endercrystal.getName());
+		}
+		
+		for(FakeItem item : FakeRegister.getItemLocationsFile().getFakeItemsFromFile()) {
+			ItemFakeUtil.spawnTemporaryItem(
+					p,
+					item.getStartLocation(),
+					item.getName(),
+					item.getType());
+		}
+		
+		for(FakeMob mob : FakeRegister.getMobLocationsFile().getFakeMobsFromFile()) {
+			MobFakeUtil.spawnTemporaryMob(
+					p,
+					mob.getStartLocation(),
+					mob.getName(),
+					mob.getFakeMobType(),
+					mob.isBaby());
+		}
+		
+		for(FakePlayer player : FakeRegister.getPlayerLocationsFile().getFakePlayersFromFile()) {
+			PlayerFakeUtil.spawnTemporaryPlayer(
+					p,
+					player.getStartLocation(),
+					player.getSkinUUID(),
+					player.getName(),
+					entity -> {
+					}
+			);
+		}
+		
+		for(FakeXPOrb xpOrb : FakeRegister.getXpOrbLocationsFile().getFakeXPOrbFromFile()) {
+			XPOrbFakeUtil.spawnTemporaryXPOrb(
+					p,
+					xpOrb.getStartLocation(),
+					xpOrb.getName());
+		}
+	}
+	
+	@EventHandler
+	public void onQuit(PlayerQuitEvent e) {
+		Player p = e.getPlayer();
+		if(FakeAPI.getFakeEntities().containsKey(p.getName())) {
+			PlayerFakeUtil.unFollowPlayer(p);
+			PlayerFakeUtil.normalizeLook(p);
+			PlayerFakeUtil.cancelAllSplittedTasks(p);
+			
+			ArmorstandFakeUtil.unFollowArmorstand(p);
+			ArmorstandFakeUtil.cancelAllSplittedTasks(p);
+			
+			EndercrystalFakeUtil.cancelAllSplittedTasks(p);
+			
+			MobFakeUtil.unFollowPlayer(p);
+			MobFakeUtil.normalizeLook(p);
+			MobFakeUtil.cancelAllSplittedTasks(p);
+			
+			BigItemFakeUtil.cancelAllSplittedTasks(p);
+			
+			FakeAPI.getFakeEntities().remove(p.getName());
+		}
+	}
 }

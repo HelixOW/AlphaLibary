@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface SimpleLoader {
-
-    String version() default "1.12.2";
+	
+	String version() default "1.12.2";
 
 }

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JsonConfigFile {
-
-    String name() default "config";
-
+	
+	String name() default "config";
+	
 }

@@ -9,11 +9,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Potion {
-
-    int[] duration() default {};
-
-    int[] amplifier() default {};
-
-    String[] type() default {};
-
+	
+	int[] duration() default {};
+	
+	int[] amplifier() default {};
+	
+	String[] type() default {};
+	
 }

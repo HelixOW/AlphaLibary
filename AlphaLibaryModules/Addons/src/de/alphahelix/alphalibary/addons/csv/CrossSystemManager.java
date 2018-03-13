@@ -23,38 +23,40 @@ import java.util.List;
 
 
 public class CrossSystemManager {
-
-    private static final List<CrossSystemVariable> CROSS_SYSTEM_VARIABLES = new ArrayList<>();
-
-    /**
-     * Adds in a new variable which can be accessed across addons
-     *
-     * @param crossSystemVariable the {@link CrossSystemVariable} to add
-     */
-    public static void addVar(CrossSystemVariable crossSystemVariable) {
-        CROSS_SYSTEM_VARIABLES.add(crossSystemVariable);
-    }
-
-    /**
-     * Checks if there is a certain variable available
-     *
-     * @param name the name of the {@link CrossSystemVariable}
-     * @return if the variable is available inside the system
-     */
-    public static boolean hasVar(String name) {
-        return getVar(name) != null;
-    }
-
-    /**
-     * Gets the serialized String of the {@link CrossSystemVariable}
-     *
-     * @param name the name of the {@link CrossSystemVariable}
-     * @return the serialized String of the {@link CrossSystemVariable}
-     */
-    public static String getVar(String name) {
-        for (CrossSystemVariable vars : CROSS_SYSTEM_VARIABLES) {
-            if (vars.name().equals(name)) return vars.value();
-        }
-        return null;
-    }
+	
+	private static final List<CrossSystemVariable> CROSS_SYSTEM_VARIABLES = new ArrayList<>();
+	
+	/**
+	 * Adds in a new variable which can be accessed across addons
+	 *
+	 * @param crossSystemVariable the {@link CrossSystemVariable} to add
+	 */
+	public static void addVar(CrossSystemVariable crossSystemVariable) {
+		CROSS_SYSTEM_VARIABLES.add(crossSystemVariable);
+	}
+	
+	/**
+	 * Checks if there is a certain variable available
+	 *
+	 * @param name the name of the {@link CrossSystemVariable}
+	 *
+	 * @return if the variable is available inside the system
+	 */
+	public static boolean hasVar(String name) {
+		return getVar(name) != null;
+	}
+	
+	/**
+	 * Gets the serialized String of the {@link CrossSystemVariable}
+	 *
+	 * @param name the name of the {@link CrossSystemVariable}
+	 *
+	 * @return the serialized String of the {@link CrossSystemVariable}
+	 */
+	public static String getVar(String name) {
+		for(CrossSystemVariable vars : CROSS_SYSTEM_VARIABLES) {
+			if(vars.name().equals(name)) return vars.value();
+		}
+		return null;
+	}
 }

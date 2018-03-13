@@ -7,23 +7,23 @@ import java.io.File;
 import java.net.URI;
 
 public class SimpleTXTFile extends SimpleCSVFile<String> {
-    public SimpleTXTFile(String parent, String child) {
-        super(parent, child, new StringSerializer());
-    }
-
-    public SimpleTXTFile(File parent, String child) {
-        super(parent, child, new StringSerializer());
-    }
-
-    public SimpleTXTFile(URI uri) {
-        super(uri, new StringSerializer());
-    }
-
-    public SimpleTXTFile(JavaPlugin plugin, String child) {
-        super(plugin, child, new StringSerializer());
-    }
-
-    public SimpleTXTFile(AbstractFile file) {
-        super(file, new StringSerializer());
-    }
+	public SimpleTXTFile(String parent, String child) {
+		super(parent, child, new StringSerializer());
+	}
+	
+	public SimpleTXTFile(File parent, String child) {
+		super(parent, child, new StringSerializer());
+	}
+	
+	public SimpleTXTFile(URI uri) {
+		super(uri, new StringSerializer());
+	}
+	
+	public SimpleTXTFile(JavaPlugin plugin, String child) {
+		super(plugin, child, new StringSerializer());
+	}
+	
+	public SimpleTXTFile(AbstractFile file) {
+		super(file, new StringSerializer());
+	}
 }

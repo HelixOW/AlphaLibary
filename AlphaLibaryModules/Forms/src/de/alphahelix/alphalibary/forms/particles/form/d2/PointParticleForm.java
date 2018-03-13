@@ -9,18 +9,18 @@ import org.bukkit.util.Vector;
 
 
 public class PointParticleForm extends PointForm {
-    public PointParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, Vector p1, Vector p2) {
-        super(location, dense, null, p1, p2);
-
-        if (effectData != null)
-            Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");
-        else {
-            Validate.isTrue(effect.getData() == null, "Wrong kind of effectData for this effect!");
-            effectData = new EffectData<>(null);
-        }
-
-        EffectData<?> finalEffectData = effectData;
-
-        setAction((p, loc) -> p.playEffect(loc, effect, finalEffectData.getDataValue()));
-    }
+	public PointParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, Vector p1, Vector p2) {
+		super(location, dense, null, p1, p2);
+		
+		if(effectData != null)
+			Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");
+		else {
+			Validate.isTrue(effect.getData() == null, "Wrong kind of effectData for this effect!");
+			effectData = new EffectData<>(null);
+		}
+		
+		EffectData<?> finalEffectData = effectData;
+		
+		setAction((p, loc) -> p.playEffect(loc, effect, finalEffectData.getDataValue()));
+	}
 }

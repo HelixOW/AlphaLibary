@@ -7,11 +7,11 @@ import java.util.function.Consumer;
  * @deprecated Use <<code>Consumer<T></code> instead
  */
 public interface DatabaseCallback<T> extends Consumer<T> {
-
-    void done(T t);
-
-    @Override
-    default void accept(T t) {
-        done(t);
-    }
+	
+	@Override
+	default void accept(T t) {
+		done(t);
+	}
+	
+	void done(T t);
 }

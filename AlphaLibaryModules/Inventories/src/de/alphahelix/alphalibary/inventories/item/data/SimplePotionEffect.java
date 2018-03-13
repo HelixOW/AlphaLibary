@@ -22,49 +22,49 @@ import org.bukkit.potion.PotionEffectType;
 import java.io.Serializable;
 
 public class SimplePotionEffect implements Serializable {
-
-    private int durationInSec = 0;
-    private PotionEffectType potionType = PotionEffectType.SPEED;
-    private int amplifier = 0;
-
-    /**
-     * Creates a new {@link SimplePotionEffect} to modify {@link org.bukkit.potion.Potion}s
-     *
-     * @param durationInSec the amount of seconds the {@link org.bukkit.potion.Potion} should stay active
-     * @param type          the {@link PotionEffectType} of the {@link org.bukkit.potion.Potion}
-     * @param amplifier     the level of the {@link org.bukkit.potion.Potion}
-     */
-    public SimplePotionEffect(int durationInSec, PotionEffectType type, int amplifier) {
-        this.durationInSec = durationInSec;
-        this.potionType = type;
-        this.amplifier = amplifier;
-    }
-
-    public PotionEffect createEffect() {
-        return new PotionEffect(this.potionType, this.durationInSec * 20, this.amplifier);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SimplePotionEffect that = (SimplePotionEffect) o;
-        return durationInSec == that.durationInSec &&
-                amplifier == that.amplifier &&
-                Objects.equal(potionType, that.potionType);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(durationInSec, potionType, amplifier);
-    }
-
-    @Override
-    public String toString() {
-        return "SimplePotionEffect{" +
-                "durationInSec=" + durationInSec +
-                ", potionType=" + potionType +
-                ", amplifier=" + amplifier +
-                '}';
-    }
+	
+	private int durationInSec;
+	private PotionEffectType potionType;
+	private int amplifier;
+	
+	/**
+	 * Creates a new {@link SimplePotionEffect} to modify Potion
+	 *
+	 * @param durationInSec the amount of seconds the Potion should stay active
+	 * @param type          the {@link PotionEffectType} of the Potion
+	 * @param amplifier     the level of the Potion
+	 */
+	public SimplePotionEffect(int durationInSec, PotionEffectType type, int amplifier) {
+		this.durationInSec = durationInSec;
+		this.potionType = type;
+		this.amplifier = amplifier;
+	}
+	
+	public PotionEffect createEffect() {
+		return new PotionEffect(this.potionType, this.durationInSec * 20, this.amplifier);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(durationInSec, potionType, amplifier);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		SimplePotionEffect that = (SimplePotionEffect) o;
+		return durationInSec == that.durationInSec &&
+				amplifier == that.amplifier &&
+				Objects.equal(potionType, that.potionType);
+	}
+	
+	@Override
+	public String toString() {
+		return "SimplePotionEffect{" +
+				"durationInSec=" + durationInSec +
+				", potionType=" + potionType +
+				", amplifier=" + amplifier +
+				'}';
+	}
 }

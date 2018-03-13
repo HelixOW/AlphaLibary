@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Map {
-    int[] color() default {};
-
-    String locationName() default "";
-
-    boolean scaling() default false;
+	int[] color() default {};
+	
+	String locationName() default "";
+	
+	boolean scaling() default false;
 }

@@ -9,13 +9,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Joined {
-
-    /**
-     * Can only be used once at the end of the parameters </br>
-     * Is used to create a String out of the left over arguments
-     *
-     * @return the newly created String
-     */
-    String joinIn() default " ";
-
+	
+	/**
+	 * Can only be used once at the end of the parameters </br>
+	 * Is used to create a String out of the left over arguments
+	 *
+	 * @return the newly created String
+	 */
+	String joinIn() default " ";
+	
 }

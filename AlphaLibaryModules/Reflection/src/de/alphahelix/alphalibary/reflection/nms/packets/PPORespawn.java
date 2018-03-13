@@ -16,9 +16,9 @@ public class PPORespawn implements IPacket {
 					ReflectionUtil.getNmsClass("WorldType"),
 					ReflectionUtil.getNmsClass("EnumGamemode"));
 	
-	private REnumDifficulty difficulty;
-	private WorldType worldType;
-	private REnumGamemode gamemode;
+	private final REnumDifficulty difficulty;
+	private final WorldType worldType;
+	private final REnumGamemode gamemode;
 	
 	public PPORespawn(REnumDifficulty difficulty, WorldType worldType, REnumGamemode gamemode) {
 		this.difficulty = difficulty;

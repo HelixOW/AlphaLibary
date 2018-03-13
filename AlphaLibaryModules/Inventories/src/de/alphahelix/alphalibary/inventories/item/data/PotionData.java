@@ -23,52 +23,52 @@ import org.bukkit.potion.PotionEffect;
 import java.util.ArrayList;
 
 public class PotionData implements ItemData {
-
-    private final ArrayList<PotionEffect> toApply = new ArrayList<>();
-
-    /**
-     * Creates a new {@link PotionData} with an array of {@link SimplePotionEffect}
-     *
-     * @param effects an Array of {@link SimplePotionEffect}s
-     */
-    public PotionData(SimplePotionEffect... effects) {
-        for (SimplePotionEffect effect : effects) {
-            this.toApply.add(effect.createEffect());
-        }
-    }
-
-    @Override
-    public void applyOn(ItemStack applyOn) throws WrongDataException {
-        try {
-
-            PotionMeta meta = (PotionMeta) applyOn.getItemMeta();
-            for (PotionEffect effect : toApply) {
-                meta.addCustomEffect(effect, false);
-            }
-            applyOn.setItemMeta(meta);
-
-        } catch (Exception e) {
-            throw new WrongDataException(this);
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PotionData that = (PotionData) o;
-        return Objects.equal(toApply, that.toApply);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(toApply);
-    }
-
-    @Override
-    public String toString() {
-        return "PotionData{" +
-                "toApply=" + toApply +
-                '}';
-    }
+	
+	private final ArrayList<PotionEffect> toApply = new ArrayList<>();
+	
+	/**
+	 * Creates a new {@link PotionData} with an array of {@link SimplePotionEffect}
+	 *
+	 * @param effects an Array of {@link SimplePotionEffect}s
+	 */
+	public PotionData(SimplePotionEffect... effects) {
+		for(SimplePotionEffect effect : effects) {
+			this.toApply.add(effect.createEffect());
+		}
+	}
+	
+	@Override
+	public void applyOn(ItemStack applyOn) throws WrongDataException {
+		try {
+			
+			PotionMeta meta = (PotionMeta) applyOn.getItemMeta();
+			for(PotionEffect effect : toApply) {
+				meta.addCustomEffect(effect, false);
+			}
+			applyOn.setItemMeta(meta);
+			
+		} catch(Exception e) {
+			throw new WrongDataException(this);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(toApply);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		PotionData that = (PotionData) o;
+		return Objects.equal(toApply, that.toApply);
+	}
+	
+	@Override
+	public String toString() {
+		return "PotionData{" +
+				"toApply=" + toApply +
+				'}';
+	}
 }

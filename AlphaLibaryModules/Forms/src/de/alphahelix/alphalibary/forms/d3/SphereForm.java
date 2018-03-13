@@ -9,29 +9,29 @@ import org.bukkit.util.Vector;
 
 
 public class SphereForm extends Form {
-
-    private double radius;
-
-    public SphereForm(Location location, double dense, double radius, FormAction action) {
-        super(location, new Vector(1, 0, 0), dense, 0, action);
-        this.radius = radius;
-    }
-
-    public double getRadius() {
-        return radius;
-    }
-
-    public SphereForm setRadius(double radius) {
-        this.radius = radius;
-        return this;
-    }
-
-    @Override
-    public void send(Player p) {
-        for (float angle = 0; angle < 180; angle += getDense()) {
-            Vector v = new Vector(getRadius() * Math.cos(angle), getRadius() * Math.sin(angle), 0);
 	
-	        getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), angle)));
-        }
-    }
+	private double radius;
+	
+	public SphereForm(Location location, double dense, double radius, FormAction action) {
+		super(location, new Vector(1, 0, 0), dense, 0, action);
+		this.radius = radius;
+	}
+	
+	@Override
+	public void send(Player p) {
+		for(float angle = 0; angle < 180; angle += getDense()) {
+			Vector v = new Vector(getRadius() * Math.cos(angle), getRadius() * Math.sin(angle), 0);
+			
+			getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), angle)));
+		}
+	}
+	
+	public double getRadius() {
+		return radius;
+	}
+	
+	public SphereForm setRadius(double radius) {
+		this.radius = radius;
+		return this;
+	}
 }

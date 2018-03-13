@@ -27,34 +27,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SignGUI implements InputGUI {
-
-    private static List<String> openGUIs = new ArrayList<>();
-
-    public static List<String> getOpenGUIs() {
-        return openGUIs;
-    }
-
-    @Override
-    public void openGUI(Player p) {
-        BlockPos s = new BlockPos() {
-            @Override
-            public int getX() {
-                return 0;
-            }
-
-            @Override
-            public int getY() {
-                return 0;
-            }
-
-            @Override
-            public int getZ() {
-                return 0;
-            }
-        };
-
-        ReflectionUtil.sendPacket(p, new PPOOpenSignEditor(s).getPacket(false));
-
-        openGUIs.add(p.getName());
-    }
+	
+	private static final List<String> OPEN_GUIS = new ArrayList<>();
+	
+	public static List<String> getOpenGUIs() {
+		return OPEN_GUIS;
+	}
+	
+	@Override
+	public void openGUI(Player p) {
+		BlockPos s = new BlockPos() {
+			@Override
+			public int getX() {
+				return 0;
+			}
+			
+			@Override
+			public int getY() {
+				return 0;
+			}
+			
+			@Override
+			public int getZ() {
+				return 0;
+			}
+		};
+		
+		ReflectionUtil.sendPacket(p, new PPOOpenSignEditor(s).getPacket(false));
+		
+		OPEN_GUIS.add(p.getName());
+	}
 }

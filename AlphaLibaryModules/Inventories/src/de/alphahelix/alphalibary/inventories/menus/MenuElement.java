@@ -5,7 +5,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public interface MenuElement {
-    ItemStack getIcon(Player p);
-
-    void click(InventoryClickEvent e);
+	ItemStack getIcon(Player p);
+	
+	void click(InventoryClickEvent e);
 }

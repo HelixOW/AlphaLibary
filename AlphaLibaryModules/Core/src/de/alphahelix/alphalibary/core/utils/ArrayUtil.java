@@ -9,15 +9,16 @@ import java.util.Set;
 
 public class ArrayUtil {
 	
-	public static <T> T[] makeArray (T... types) {
+	@SafeVarargs
+	public static <T> T[] makeArray(T... types) {
 		return types;
 	}
 	
-	public static Player[] makePlayerArray (Player... types) {
+	public static Player[] makePlayerArray(Player... types) {
 		return types;
 	}
 	
-	public static Player[] makePlayerArray (List<String> types) {
+	public static Player[] makePlayerArray(List<String> types) {
 		ArrayList<Player> playerArrayList = new ArrayList<>();
 		
 		for(String type : types) {
@@ -28,7 +29,7 @@ public class ArrayUtil {
 		return playerArrayList.toArray(new Player[playerArrayList.size()]);
 	}
 	
-	public static Player[] makePlayerArray (Set<String> types) {
+	public static Player[] makePlayerArray(Set<String> types) {
 		ArrayList<Player> playerArrayList = new ArrayList<>();
 		
 		for(String type : types) {
@@ -39,14 +40,14 @@ public class ArrayUtil {
 		return playerArrayList.toArray(new Player[playerArrayList.size()]);
 	}
 	
-	public static String[] replaceInArray (String pattern, String replace, String... array) {
+	public static String[] replaceInArray(String pattern, String replace, String... array) {
 		for(int i = 0; i < array.length; i++) {
 			array[i] = array[i].replace(pattern, replace);
 		}
 		return array;
 	}
 	
-	public static <T> List<T> getTypesOf (Class<T> clazzType, List<Object> inList) {
+	public static <T> List<T> getTypesOf(Class<T> clazzType, List<Object> inList) {
 		List<T> types = new ArrayList<>();
 		for(Object e : inList)
 			if(e.getClass().isInstance(clazzType))

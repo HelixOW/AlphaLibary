@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class StringUtil {
 	
-	public static String generateRandomString (int size) {
+	public static String generateRandomString(int size) {
 		char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 		
 		StringBuilder sb = new StringBuilder();
@@ -21,7 +21,7 @@ public class StringUtil {
 		return sb.toString();
 	}
 	
-	public static String getProgessBar (int current, int maximum, int total, char symbol, ChatColor completed, ChatColor uncompleted) {
+	public static String getProgessBar(int current, int maximum, int total, char symbol, ChatColor completed, ChatColor uncompleted) {
 		float percent = current / maximum;
 		int progress = (int) (total * percent);
 		
@@ -29,7 +29,7 @@ public class StringUtil {
 				+ Strings.repeat("" + uncompleted + symbol, total - progress);
 	}
 	
-	public static boolean isLong (String s) {
+	public static boolean isLong(String s) {
 		Scanner sc = new Scanner(s.trim());
 		
 		if(!sc.hasNextLong()) return false;
@@ -38,7 +38,7 @@ public class StringUtil {
 		return !sc.hasNext();
 	}
 	
-	public static boolean isDouble (String s) {
+	public static boolean isDouble(String s) {
 		Scanner sc = new Scanner(s.trim());
 		
 		if(!sc.hasNextDouble()) return false;
@@ -47,7 +47,7 @@ public class StringUtil {
 		return !sc.hasNext();
 	}
 	
-	public static String getFirstColors (String input) {
+	public static String getFirstColors(String input) {
 		StringBuilder result = new StringBuilder();
 		int length = input.length();
 		
@@ -70,7 +70,7 @@ public class StringUtil {
 		return result.toString();
 	}
 	
-	public static String repeat (String string, int count) {
+	public static String repeat(String string, int count) {
 		if(count <= 1) {
 			return count == 0 ? "" : string;
 		} else {
@@ -92,7 +92,7 @@ public class StringUtil {
 		}
 	}
 	
-	public static String replaceLast (String string, String toReplace, String replacement) {
+	public static String replaceLast(String string, String toReplace, String replacement) {
 		int pos = string.lastIndexOf(toReplace);
 		if(pos > -1) {
 			return string.substring(0, pos)
@@ -103,14 +103,14 @@ public class StringUtil {
 		}
 	}
 	
-	public static List<String> upperEverything (List<String> list) {
+	public static List<String> upperEverything(List<String> list) {
 		List<String> nL = new LinkedList<>();
 		for(String str : list)
 			nL.add(str.toUpperCase());
 		return nL;
 	}
 	
-	public static List<String> lowerEverything (List<String> list) {
+	public static List<String> lowerEverything(List<String> list) {
 		List<String> nL = new LinkedList<>();
 		for(String str : list)
 			nL.add(str.toLowerCase());

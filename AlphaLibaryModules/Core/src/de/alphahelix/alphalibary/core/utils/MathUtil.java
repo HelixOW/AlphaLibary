@@ -9,7 +9,7 @@ public class MathUtil {
 	 *
 	 * @return the converted angle as a byte
 	 */
-	public static byte toAngle (float v) {
+	public static byte toAngle(float v) {
 		return (byte) ((int) (v * 256.0F / 360.0F));
 	}
 	
@@ -20,7 +20,7 @@ public class MathUtil {
 	 *
 	 * @return the converted delta as a double
 	 */
-	public static double toDelta (double v) {
+	public static double toDelta(double v) {
 		return ((v * 32) * 128);
 	}
 	
@@ -31,12 +31,12 @@ public class MathUtil {
 	 *
 	 * @return the floored int
 	 */
-	public static int floor (double var0) {
+	public static int floor(double var0) {
 		int var2 = (int) var0;
 		return var0 < (double) var2 ? var2 - 1 : var2;
 	}
 	
-	public static int toMultipleOfNine (int val) {
+	public static int toMultipleOfNine(int val) {
 		return ((val / 9) + 1) * 9;
 	}
 	
@@ -48,7 +48,7 @@ public class MathUtil {
 	 *
 	 * @return the rounded up {@link Double}
 	 */
-	public static double round (double value, int precision) {
+	public static double round(double value, int precision) {
 		int scale = (int) Math.pow(10, precision);
 		return (double) Math.round(value * scale) / scale;
 	}

@@ -23,49 +23,49 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 public class VoteManager {
-
-    private final WeakHashMap<VoteItem, Integer> votes = new WeakHashMap<>();
-
-    public void addVote(VoteItem item) {
-        if (votes.containsKey(item)) {
-            votes.put(item, votes.get(item) + 1);
-        } else {
-            votes.put(item, 1);
-        }
-    }
-
-    public void removeItem(VoteItem item) {
-        if (votes.containsKey(item)) {
-            if (votes.get(item) == 1) {
-                votes.remove(item);
-            } else {
-                votes.put(item, votes.get(item) - 1);
-            }
-        }
-    }
-
-    public int getVotes(VoteItem item) {
-        if (votes.containsKey(item)) {
-            return votes.get(item);
-        }
-        return 0;
-    }
-
-    public VoteItem getHighestVotedItem() {
-        VoteItem winner = null;
-
-        for (VoteItem items : votes.keySet()) {
-            if (winner == null) {
-                winner = items;
-            } else {
-                if (votes.get(items) > votes.get(winner)) winner = items;
-            }
-        }
-
-        return winner;
-    }
-
-    public VoteItem getRandomItem() {
-        return votes.keySet().toArray(new VoteItem[votes.keySet().size()])[ThreadLocalRandom.current().nextInt(votes.keySet().size())];
-    }
+	
+	private final WeakHashMap<VoteItem, Integer> votes = new WeakHashMap<>();
+	
+	public void addVote(VoteItem item) {
+		if(votes.containsKey(item)) {
+			votes.put(item, votes.get(item) + 1);
+		} else {
+			votes.put(item, 1);
+		}
+	}
+	
+	public void removeItem(VoteItem item) {
+		if(votes.containsKey(item)) {
+			if(votes.get(item) == 1) {
+				votes.remove(item);
+			} else {
+				votes.put(item, votes.get(item) - 1);
+			}
+		}
+	}
+	
+	public int getVotes(VoteItem item) {
+		if(votes.containsKey(item)) {
+			return votes.get(item);
+		}
+		return 0;
+	}
+	
+	public VoteItem getHighestVotedItem() {
+		VoteItem winner = null;
+		
+		for(VoteItem items : votes.keySet()) {
+			if(winner == null) {
+				winner = items;
+			} else {
+				if(votes.get(items) > votes.get(winner)) winner = items;
+			}
+		}
+		
+		return winner;
+	}
+	
+	public VoteItem getRandomItem() {
+		return votes.keySet().toArray(new VoteItem[votes.keySet().size()])[ThreadLocalRandom.current().nextInt(votes.keySet().size())];
+	}
 }

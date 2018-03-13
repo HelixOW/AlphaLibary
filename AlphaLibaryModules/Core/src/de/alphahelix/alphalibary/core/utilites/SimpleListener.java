@@ -25,7 +25,7 @@ public class SimpleListener implements Listener {
 	/**
 	 * Automatic registering {@link Listener}
 	 */
-	public SimpleListener () {
+	public SimpleListener() {
 		Bukkit.getPluginManager().registerEvents(this, AlphaLibary.getInstance());
 	}
 }

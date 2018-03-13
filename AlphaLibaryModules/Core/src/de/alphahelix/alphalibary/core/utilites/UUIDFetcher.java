@@ -48,7 +48,7 @@ public class UUIDFetcher {
 	 * @param p        the {@link Player}
 	 * @param callback the {@link Consumer<UUID>} with the parsed {@link UUID}
 	 */
-	public static void getUUID (Player p, Consumer<UUID> callback) {
+	public static void getUUID(Player p, Consumer<UUID> callback) {
 		getUUID(p.getName(), callback);
 	}
 	
@@ -58,7 +58,7 @@ public class UUIDFetcher {
 	 * @param name     the name of the {@link Player}
 	 * @param callback the {@link Consumer<UUID>} with the parsed {@link UUID}
 	 */
-	public static void getUUID (String name, Consumer<UUID> callback) {
+	public static void getUUID(String name, Consumer<UUID> callback) {
 		Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> callback.accept(getUUID(name)));
 	}
 	
@@ -69,7 +69,7 @@ public class UUIDFetcher {
 	 *
 	 * @see UUIDFetcher#getName(UUID, Consumer<String>)
 	 */
-	public static UUID getUUID (String name) {
+	public static UUID getUUID(String name) {
 		if(name == null)
 			return null;
 		
@@ -113,7 +113,7 @@ public class UUIDFetcher {
 	 * @param p        the {@link Player}
 	 * @param callback the {@link Consumer<UUID>} with the parsed {@link UUID}
 	 */
-	public static void getUUID (OfflinePlayer p, Consumer<UUID> callback) {
+	public static void getUUID(OfflinePlayer p, Consumer<UUID> callback) {
 		getUUID(p.getName(), callback);
 	}
 	
@@ -123,7 +123,7 @@ public class UUIDFetcher {
 	 * @param uuid     the {@link UUID} of the {@link Player}
 	 * @param callback the {@link Consumer<String>} with the parsed name
 	 */
-	public static void getName (UUID uuid, Consumer<String> callback) {
+	public static void getName(UUID uuid, Consumer<String> callback) {
 		Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> callback.accept(getName(uuid)));
 	}
 	
@@ -134,7 +134,8 @@ public class UUIDFetcher {
 	 *
 	 * @see UUIDFetcher#getName(UUID, Consumer<String>)
 	 */
-	public static String getName (UUID uuid) {
+	@SuppressWarnings("JavaDoc")
+	public static String getName(UUID uuid) {
 		if(NAMES.containsKey(uuid))
 			return NAMES.get(uuid);
 		
@@ -169,7 +170,7 @@ public class UUIDFetcher {
 	 *
 	 * @see UUIDFetcher#getUUID(Player, Consumer<UUID>)
 	 */
-	public static UUID getUUID (Player p) {
+	public static UUID getUUID(Player p) {
 		return getUUID(p.getName());
 	}
 	
@@ -180,7 +181,7 @@ public class UUIDFetcher {
 	 *
 	 * @see UUIDFetcher#getUUID(OfflinePlayer, Consumer<UUID>)
 	 */
-	public static UUID getUUID (OfflinePlayer p) {
+	public static UUID getUUID(OfflinePlayer p) {
 		return getUUID(p.getName());
 	}
 }
@@ -190,11 +191,11 @@ class PlayerUUID {
 	private String name;
 	private UUID id;
 	
-	public String getName () {
+	public String getName() {
 		return name;
 	}
 	
-	public UUID getId () {
+	public UUID getId() {
 		return id;
 	}
 	

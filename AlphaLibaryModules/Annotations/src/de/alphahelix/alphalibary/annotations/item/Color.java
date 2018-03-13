@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Color {
-
-    int[] rgbColor() default {0, 0, 0};
-
+	
+	int[] rgbColor() default {0, 0, 0};
+	
 }

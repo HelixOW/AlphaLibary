@@ -10,18 +10,19 @@ import org.bukkit.util.Vector;
 
 
 public class PolyParticleForm extends PolyForm {
-    public PolyParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, Pair<Vector, Vector>... points) {
-        super(location, dense, null, points);
-
-        if (effectData != null)
-            Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");
-        else {
-            Validate.isTrue(effect.getData() == null, "Wrong kind of effectData for this effect!");
-            effectData = new EffectData<>(null);
-        }
-
-        EffectData<?> finalEffectData = effectData;
-
-        setAction((p, loc) -> p.playEffect(loc, effect, finalEffectData.getDataValue()));
-    }
+	@SafeVarargs
+	public PolyParticleForm(Effect effect, EffectData<?> effectData, Location location, double dense, Pair<Vector, Vector>... points) {
+		super(location, dense, null, points);
+		
+		if(effectData != null)
+			Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");
+		else {
+			Validate.isTrue(effect.getData() == null, "Wrong kind of effectData for this effect!");
+			effectData = new EffectData<>(null);
+		}
+		
+		EffectData<?> finalEffectData = effectData;
+		
+		setAction((p, loc) -> p.playEffect(loc, effect, finalEffectData.getDataValue()));
+	}
 }

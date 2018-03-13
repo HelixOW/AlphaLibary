@@ -25,99 +25,98 @@ import java.util.UUID;
 
 
 public class FakeEntity implements Serializable {
-
-    private Location startLocation;
-    private String name;
-    private UUID uuid;
-
-    @Expose
-    private transient Object nmsEntity;
-    @Expose
-    private transient Location currentlocation;
-
-    public FakeEntity() {
-    }
-
-    public FakeEntity(Location startLocation, String name, Object nmsEntity) {
-        this.startLocation = startLocation;
-        this.currentlocation = startLocation;
-        this.name = name;
-        this.nmsEntity = nmsEntity;
-        this.uuid = UUID.randomUUID();
-    }
-
-
-    /**
-     * Gets the {@link Location} where the {@link FakeEntity} currently is
-     *
-     * @return the current {@link Location} of the {@link FakeEntity}
-     */
-    public Location getCurrentlocation() {
-        return currentlocation;
-    }
-
-    /**
-     * Sets the {@link Location} of the {@link FakeEntity}
-     *
-     * @param currentlocation the new {@link Location} of the {@link FakeEntity}
-     */
-    public void setCurrentlocation(Location currentlocation) {
-        this.currentlocation = currentlocation;
-    }
-
-    /**
-     * Gets the name of the {@link FakeEntity} which is saved inside the FileHelp
-     *
-     * @return the name of the {@link FakeEntity} inside the file
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the NMS Class of the {@link FakeEntity} which is saved inside the FileHelp
-     *
-     * @return the instance of the NMS Class of the {@link FakeEntity}
-     */
-    public Object getNmsEntity() {
-        return nmsEntity;
-    }
-
-    /**
-     * Gets the {@link Location} of the {@link FakeEntity} where it was spawned
-     *
-     * @return the {@link Location} where the {@link FakeEntity} was spawned
-     */
-    public Location getStartLocation() {
-        return startLocation;
-    }
-
-    public UUID getUUID() {
-        return uuid;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FakeEntity that = (FakeEntity) o;
-        return Objects.equal(getStartLocation(), that.getStartLocation()) &&
-                Objects.equal(getName(), that.getName()) &&
-                Objects.equal(uuid, that.uuid) &&
-                Objects.equal(getCurrentlocation(), that.getCurrentlocation());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getStartLocation(), getName(), uuid, getCurrentlocation());
-    }
-
-    @Override
-    public String toString() {
-        return "FakeEntity{" +
-                "startLocation=" + startLocation +
-                ", name='" + name + '\'' +
-                ", uuid=" + uuid +
-                '}';
-    }
+	
+	private Location startLocation;
+	private String name;
+	private UUID uuid;
+	
+	@Expose
+	private transient Object nmsEntity;
+	@Expose
+	private transient Location currentlocation;
+	
+	public FakeEntity() {
+	}
+	
+	public FakeEntity(Location startLocation, String name, Object nmsEntity) {
+		this.startLocation = startLocation;
+		this.currentlocation = startLocation;
+		this.name = name;
+		this.nmsEntity = nmsEntity;
+		this.uuid = UUID.randomUUID();
+	}
+	
+	/**
+	 * Gets the NMS Class of the {@link FakeEntity} which is saved inside the FileHelp
+	 *
+	 * @return the instance of the NMS Class of the {@link FakeEntity}
+	 */
+	public Object getNmsEntity() {
+		return nmsEntity;
+	}
+	
+	public UUID getUUID() {
+		return uuid;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(getStartLocation(), getName(), uuid, getCurrentlocation());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		FakeEntity that = (FakeEntity) o;
+		return Objects.equal(getStartLocation(), that.getStartLocation()) &&
+				Objects.equal(getName(), that.getName()) &&
+				Objects.equal(uuid, that.uuid) &&
+				Objects.equal(getCurrentlocation(), that.getCurrentlocation());
+	}
+	
+	@Override
+	public String toString() {
+		return "FakeEntity{" +
+				"startLocation=" + startLocation +
+				", name='" + name + '\'' +
+				", uuid=" + uuid +
+				'}';
+	}
+	
+	/**
+	 * Gets the {@link Location} of the {@link FakeEntity} where it was spawned
+	 *
+	 * @return the {@link Location} where the {@link FakeEntity} was spawned
+	 */
+	public Location getStartLocation() {
+		return startLocation;
+	}
+	
+	/**
+	 * Gets the name of the {@link FakeEntity} which is saved inside the FileHelp
+	 *
+	 * @return the name of the {@link FakeEntity} inside the file
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Gets the {@link Location} where the {@link FakeEntity} currently is
+	 *
+	 * @return the current {@link Location} of the {@link FakeEntity}
+	 */
+	public Location getCurrentlocation() {
+		return currentlocation;
+	}
+	
+	/**
+	 * Sets the {@link Location} of the {@link FakeEntity}
+	 *
+	 * @param currentlocation the new {@link Location} of the {@link FakeEntity}
+	 */
+	public void setCurrentlocation(Location currentlocation) {
+		this.currentlocation = currentlocation;
+	}
 }

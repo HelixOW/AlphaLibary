@@ -4,21 +4,21 @@ import org.bukkit.util.Vector;
 
 public class RotationUtil {
 	
-	public static Vector rotatePitch (Vector toRotate, double pitch) {
+	public static Vector rotatePitch(Vector toRotate, double pitch) {
 		return rotate(toRotate, 0, pitch);
 	}
 	
-	public static Vector rotate (Vector toRotate, double yaw, double pitch) {
+	public static Vector rotate(Vector toRotate, double yaw, double pitch) {
 		return rotate(toRotate, yaw, pitch, 0);
 	}
 	
-	public static Vector rotate (Vector toRotate, double yaw, double pitch, double roll) {
+	public static Vector rotate(Vector toRotate, double yaw, double pitch, double roll) {
 		Vector temp1 = rotate(toRotate, new Vector(0, 1, 0), yaw);
 		Vector temp2 = rotate(temp1, new Vector(1, 0, 0), pitch);
 		return rotate(temp2, new Vector(0, 0, 1), roll);
 	}
 	
-	public static Vector rotate (Vector toRotate, Vector around, double angle) {
+	public static Vector rotate(Vector toRotate, Vector around, double angle) {
 		if(angle == 0)
 			return toRotate;
 
@@ -48,7 +48,7 @@ public class RotationUtil {
 		return new Vector(x1, y1, z1);
 	}
 	
-	public static Vector rotateYaw (Vector toRotate, double yaw) {
+	public static Vector rotateYaw(Vector toRotate, double yaw) {
 		return rotate(toRotate, yaw, 0);
 	}
 	

@@ -19,11 +19,11 @@
 package de.alphahelix.alphalibary.reflection.nms;
 
 public interface BlockPos {
-
-    int getX();
-
-    int getY();
-
-    int getZ();
-
+	
+	int getX();
+	
+	int getY();
+	
+	int getZ();
+	
 }

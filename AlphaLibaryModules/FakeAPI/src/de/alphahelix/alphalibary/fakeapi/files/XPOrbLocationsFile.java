@@ -21,17 +21,17 @@ import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class XPOrbLocationsFile extends SimpleJSONFile {
-
-    public XPOrbLocationsFile(JavaPlugin plugin) {
-        super(plugin, "fake_xporb.json");
-    }
-
-    public void addXPOrbToFile(FakeXPOrb fakeXPOrb) {
-        addValuesToList("XPOrbs", fakeXPOrb);
-    }
-
-    public FakeXPOrb[] getFakeXPOrbFromFile() {
-        if (jsonContains("XPOrbs")) return getListValues("XPOrbs", FakeXPOrb[].class);
-        return new FakeXPOrb[]{};
-    }
+	
+	public XPOrbLocationsFile(JavaPlugin plugin) {
+		super(plugin, "fake_xporb.json");
+	}
+	
+	public void addXPOrbToFile(FakeXPOrb fakeXPOrb) {
+		addValuesToList("XPOrbs", fakeXPOrb);
+	}
+	
+	public FakeXPOrb[] getFakeXPOrbFromFile() {
+		if(jsonContains("XPOrbs")) return getListValues("XPOrbs", FakeXPOrb[].class);
+		return new FakeXPOrb[]{};
+	}
 }

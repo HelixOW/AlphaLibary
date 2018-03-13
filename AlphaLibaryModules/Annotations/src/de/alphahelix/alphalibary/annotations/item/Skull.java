@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Skull {
-    String owner() default "";
-
-    String url() default "";
+	String owner() default "";
+	
+	String url() default "";
 }

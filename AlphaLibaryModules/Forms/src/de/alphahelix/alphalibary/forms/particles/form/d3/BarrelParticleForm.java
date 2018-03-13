@@ -9,18 +9,18 @@ import org.bukkit.util.Vector;
 
 
 public class BarrelParticleForm extends BarrelForm {
-    public BarrelParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector axis, double dense, double angle, double depth, double radius) {
-        super(location, axis, dense, angle, depth, radius, null);
-
-        if (effectData != null)
-            Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");
-        else {
-            Validate.isTrue(effect.getData() == null, "Wrong kind of effectData for this effect!");
-            effectData = new EffectData<>(null);
-        }
-
-        EffectData<?> finalEffectData = effectData;
-
-        setAction((p, loc) -> p.playEffect(loc, effect, finalEffectData.getDataValue()));
-    }
+	public BarrelParticleForm(Effect effect, EffectData<?> effectData, Location location, Vector axis, double dense, double angle, double depth, double radius) {
+		super(location, axis, dense, angle, depth, radius, null);
+		
+		if(effectData != null)
+			Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(effectData.getDataValue().getClass()), "Wrong kind of effectData for this effect!");
+		else {
+			Validate.isTrue(effect.getData() == null, "Wrong kind of effectData for this effect!");
+			effectData = new EffectData<>(null);
+		}
+		
+		EffectData<?> finalEffectData = effectData;
+		
+		setAction((p, loc) -> p.playEffect(loc, effect, finalEffectData.getDataValue()));
+	}
 }

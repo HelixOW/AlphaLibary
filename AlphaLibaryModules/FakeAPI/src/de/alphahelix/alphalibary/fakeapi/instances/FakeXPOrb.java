@@ -19,7 +19,7 @@ package de.alphahelix.alphalibary.fakeapi.instances;
 import org.bukkit.Location;
 
 public class FakeXPOrb extends FakeEntity {
-    public FakeXPOrb(Location location, String name, Object nmsEntity) {
-        super(location, name, nmsEntity);
-    }
+	public FakeXPOrb(Location location, String name, Object nmsEntity) {
+		super(location, name, nmsEntity);
+	}
 }

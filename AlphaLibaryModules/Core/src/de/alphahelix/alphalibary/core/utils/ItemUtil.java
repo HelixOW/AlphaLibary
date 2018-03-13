@@ -5,7 +5,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemUtil {
 	
-	public static boolean isSame (ItemStack a, ItemStack b) {
+	public static boolean isSame(ItemStack a, ItemStack b) {
 		if(a == null || b == null) return false;
 		
 		boolean type = a.getType() == b.getType();
@@ -19,7 +19,7 @@ public class ItemUtil {
 				(itemMeta) && isSameMeta(a.getItemMeta(), b.getItemMeta());
 	}
 	
-	private static boolean isSameMeta (ItemMeta a, ItemMeta b) {
+	private static boolean isSameMeta(ItemMeta a, ItemMeta b) {
 		if(a == null || b == null) return false;
 		
 		boolean dn = a.hasDisplayName() == b.hasDisplayName();

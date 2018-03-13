@@ -21,5 +21,5 @@ package de.alphahelix.alphalibary.input;
 import org.bukkit.entity.Player;
 
 public interface InputGUI {
-    void openGUI(Player p);
+	void openGUI(Player p);
 }

@@ -21,18 +21,18 @@ import de.alphahelix.alphalibary.storage.file.SimpleJSONFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class EndercrystalLocationsFile extends SimpleJSONFile {
-
-    public EndercrystalLocationsFile(JavaPlugin plugin) {
-        super(plugin, "fake_endercrystals.json");
-    }
-
-    public void addEndercrystalToFile(FakeEndercrystal fakeEndercrystal) {
-        addValuesToList("Endercrystals", fakeEndercrystal);
-    }
-
-    public FakeEndercrystal[] getFakeEndercrystalsFromFile() {
-        if (jsonContains("Endercrystals"))
-            return getListValues("Endercrystals", FakeEndercrystal[].class);
-        return new FakeEndercrystal[]{};
-    }
+	
+	public EndercrystalLocationsFile(JavaPlugin plugin) {
+		super(plugin, "fake_endercrystals.json");
+	}
+	
+	public void addEndercrystalToFile(FakeEndercrystal fakeEndercrystal) {
+		addValuesToList("Endercrystals", fakeEndercrystal);
+	}
+	
+	public FakeEndercrystal[] getFakeEndercrystalsFromFile() {
+		if(jsonContains("Endercrystals"))
+			return getListValues("Endercrystals", FakeEndercrystal[].class);
+		return new FakeEndercrystal[]{};
+	}
 }

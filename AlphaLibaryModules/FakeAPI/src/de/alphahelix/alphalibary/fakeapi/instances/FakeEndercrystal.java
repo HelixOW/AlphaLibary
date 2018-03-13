@@ -19,7 +19,7 @@ package de.alphahelix.alphalibary.fakeapi.instances;
 import org.bukkit.Location;
 
 public class FakeEndercrystal extends FakeEntity {
-    public FakeEndercrystal(Location location, String name, Object fake) {
-        super(location, name, fake);
-    }
+	public FakeEndercrystal(Location location, String name, Object fake) {
+		super(location, name, fake);
+	}
 }

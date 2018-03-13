@@ -4,5 +4,5 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public interface FormAction {
-    void action(Player p, Location loc);
+	void action(Player p, Location loc);
 }

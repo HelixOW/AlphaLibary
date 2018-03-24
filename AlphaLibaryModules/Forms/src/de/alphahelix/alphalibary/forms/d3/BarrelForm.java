@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.List;
+
 
 public class BarrelForm extends Form {
 	
@@ -16,6 +18,7 @@ public class BarrelForm extends Form {
 		super(location, axis, dense, angle, action);
 		this.depth = depth;
 		this.radius = radius;
+		apply();
 	}
 	
 	@Override
@@ -25,6 +28,11 @@ public class BarrelForm extends Form {
 		
 		for(double d = getDense(); d < getDepth() - getDense(); d += getDense())
 			new CircleForm(getLocation().add(0, d, 0), getAxis(), getDense(), getAngle(), getRadius(), getAction()).send(p);
+	}
+	
+	@Override
+	public void calculate(List<Location> locations) {
+	
 	}
 	
 	public double getRadius() {

@@ -4,8 +4,9 @@ import de.alphahelix.alphalibary.core.utils.RotationUtil;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.List;
 
 
 public class ArrowForm extends Form {
@@ -18,6 +19,7 @@ public class ArrowForm extends Form {
 				x -> x[0]);
 		this.lenght = lenght;
 		this.width = width;
+		apply();
 	}
 	
 	public double getLenght() {
@@ -39,24 +41,24 @@ public class ArrowForm extends Form {
 	}
 	
 	@Override
-	public void send(Player p) {
+	public void calculate(List<Location> locations) {
 		Vector v;
 		for(double x = 0; x < (width / 2); x += getDense()) {
 			v = new Vector(x, getFormFunctions()[0].f(x), 0);
 			
-			getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
+			locations.add(getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
 		}
 		
 		for(double x = ((width / 2) * (-1)); x < 0; x += getDense()) {
 			v = new Vector(x, getFormFunctions()[1].f(x), 0);
 			
-			getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), (-1) * getAngle())));
+			locations.add(getLocation().add(RotationUtil.rotate(v, getAxis(), (-1) * getAngle())));
 		}
 		
 		for(double x = 0; x < lenght; x += getDense()) {
 			v = new Vector(x, x, 0);
 			
-			getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
+			locations.add(getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
 		}
 	}
 }

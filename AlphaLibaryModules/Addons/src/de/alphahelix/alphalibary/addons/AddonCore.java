@@ -8,6 +8,15 @@ import de.alphahelix.alphalibary.core.AlphaModule;
 import java.io.File;
 import java.util.logging.Level;
 
+/**
+ * Used to load the {@link de.alphahelix.alphalibary.addons.core.Addon}s when the {@link de.alphahelix.alphalibary.core.AlphaLibary} is loaded
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see de.alphahelix.alphalibary.addons.core.Addon
+ * @see de.alphahelix.alphalibary.core.AlphaLibary
+ * @since 1.9.2.1
+ */
 public class AddonCore implements AlphaModule {
 	
 	private static File addonFolder;

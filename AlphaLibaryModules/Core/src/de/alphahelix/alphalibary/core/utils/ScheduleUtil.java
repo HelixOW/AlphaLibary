@@ -52,5 +52,4 @@ public class ScheduleUtil {
 				}
 			}.runTaskTimer(AlphaLibary.getInstance(), wait, ticks);
 	}
-	
 }

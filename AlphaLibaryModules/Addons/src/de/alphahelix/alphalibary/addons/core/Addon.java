@@ -21,11 +21,12 @@ package de.alphahelix.alphalibary.addons.core;
 import java.io.File;
 
 /**
+ * Needs to be extended, to let the {@link de.alphahelix.alphalibary.core.AlphaLibary} realize it's a Addon
+ *
  * @author AlphaHelix
- * @version 1.9
- * @since 1.9
- * <p>
- * This needs to be extended by every Addon main class, to load the Addon.
+ * @since 1.9.2.1
+ * @version 1.0
+ * @see de.alphahelix.alphalibary.core.AlphaLibary
  */
 public abstract class Addon {
 	
@@ -33,6 +34,13 @@ public abstract class Addon {
 	private AddonDescriptionFile description;
 	private ClassLoader loader;
 	
+	/**
+	 * Inits / reinits the values
+	 *
+	 * @param classLoader the {@link AddonClassLoader} to use
+	 * @param dataFolder  the folder in which all File should be stored
+	 * @param description the addon.yml file
+	 */
 	final void init(AddonClassLoader classLoader, File dataFolder, AddonDescriptionFile description) {
 		this.dataFolder = dataFolder;
 		this.description = description;
@@ -40,6 +48,9 @@ public abstract class Addon {
 		onEnable();
 	}
 	
+	/**
+	 * Is called when the {@link de.alphahelix.alphalibary.core.AlphaLibary} loads the {@link Addon}
+	 */
 	public abstract void onEnable();
 	
 	public File getDataFolder() {

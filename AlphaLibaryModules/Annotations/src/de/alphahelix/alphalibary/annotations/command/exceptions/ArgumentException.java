@@ -1,5 +1,12 @@
 package de.alphahelix.alphalibary.annotations.command.exceptions;
 
+/**
+ * Thrown when a doesn't match the actual expected type
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @since 1.9.2.1
+ */
 public class ArgumentException extends CommandException {
 	
 	private String argument;

@@ -1,5 +1,5 @@
 name: AlphaLibary
-version: 1.9.2
+version: 1.9.2.1
 main: de.alphahelix.alphalibary.core.AlphaLibary
 authors: [AlphaHelix]
 description: Libary for Plugins of AlphaHelix. Credits to Inventivetalent!

@@ -6,7 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public abstract class Form implements Serializable {
@@ -16,6 +18,7 @@ public abstract class Form implements Serializable {
 	private Location location;
 	private Vector axis;
 	private double dense, angle;
+	private List<Location> toSpawn;
 	
 	public Form(Location location, Vector axis, double dense, double angle, FormAction action, FormFunction... formFunctions) {
 		this.formFunctions = formFunctions;
@@ -54,7 +57,25 @@ public abstract class Form implements Serializable {
 		return this;
 	}
 	
-	public abstract void send(Player p);
+	public void send(Player p) {
+		for(Location loc : getToSpawn()) {
+			getAction().action(p, loc);
+		}
+	}
+	
+	public List<Location> getToSpawn() {
+		return toSpawn;
+	}
+	
+	public void apply() {
+		List<Location> locations = new ArrayList<>();
+		
+		calculate(locations);
+		
+		this.toSpawn = locations;
+	}
+	
+	public abstract void calculate(List<Location> locations);
 	
 	@Override
 	public int hashCode() {

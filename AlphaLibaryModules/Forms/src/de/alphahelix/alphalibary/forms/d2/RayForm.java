@@ -3,8 +3,9 @@ package de.alphahelix.alphalibary.forms.d2;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.List;
 
 public class RayForm extends Form {
 	
@@ -15,14 +16,15 @@ public class RayForm extends Form {
 		super(location, new Vector(0, 0, 0), dense, 0, action);
 		this.lenght = lenght;
 		this.direction = direction;
+		apply();
 	}
 	
 	@Override
-	public void send(Player p) {
+	public void calculate(List<Location> locations) {
 		Vector view = getDirection().clone().normalize();
 		
 		for(double d = 0; d < getLenght(); d += getDense()) {
-			getAction().action(p, getLocation().add(view.clone().multiply(d)));
+			locations.add(getLocation().add(view.clone().multiply(d)));
 		}
 	}
 	

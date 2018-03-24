@@ -7,6 +7,18 @@ import java.lang.reflect.Field;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Used to apply the random values
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see StringRandom
+ * @see IntegerRandom
+ * @see DoubleRandom
+ * @see BooleanRandom
+ * @see UUIDRandom
+ * @since 1.9.2.1
+ */
 public class AnnotatedRandom {
 	
 	private final Object randomClazz;

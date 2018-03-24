@@ -14,7 +14,15 @@ import java.net.MalformedURLException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-
+/**
+ * Used to load the {@link Addon} into the {@link AddonClassLoader}
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see Addon
+ * @see AddonClassLoader
+ * @since 1.9.2.1
+ */
 public class AddonLoader {
 	
 	public static Addon loadAddon(File file) throws InvalidAddonException {

@@ -9,6 +9,15 @@ import org.bukkit.entity.Entity;
 
 import java.lang.reflect.Field;
 
+/**
+ * Used to transfer the {@link de.alphahelix.alphalibary.annotations.entity.Entity} annotation into a actual {@link Entity}
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see de.alphahelix.alphalibary.annotations.entity.Entity
+ * @see Entity
+ * @since 1.9.2.1
+ */
 public class AnnotatedEntity {
 	
 	private final Object entityClazz;

@@ -5,7 +5,13 @@ import de.alphahelix.alphalibary.annotations.entity.EntityAnnotations;
 import de.alphahelix.alphalibary.annotations.item.ItemAnnotations;
 import de.alphahelix.alphalibary.annotations.random.RandomAnnotations;
 
-
+/**
+ * Used to load all annotations
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @since 1.9.2.1
+ */
 public class Annotations {
 	
 	public static final CommandAnnotations COMMAND = new CommandAnnotations();

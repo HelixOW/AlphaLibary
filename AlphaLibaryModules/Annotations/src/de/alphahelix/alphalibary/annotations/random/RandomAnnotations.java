@@ -1,11 +1,20 @@
 package de.alphahelix.alphalibary.annotations.random;
 
 import de.alphahelix.alphalibary.annotations.IAnnotation;
+import de.alphahelix.alphalibary.annotations.item.Item;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Used to register the randoms
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see Item
+ * @since 1.9.2.1
+ */
 public class RandomAnnotations implements IAnnotation {
 	
 	@Override

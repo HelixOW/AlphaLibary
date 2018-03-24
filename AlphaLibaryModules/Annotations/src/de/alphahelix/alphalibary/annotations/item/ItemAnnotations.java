@@ -6,6 +6,14 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Used to register the items
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see Item
+ * @since 1.9.2.1
+ */
 public class ItemAnnotations implements IAnnotation {
 	
 	@Override

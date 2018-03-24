@@ -1,7 +1,10 @@
 package de.alphahelix.alphalibary.core.utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +22,7 @@ public class ArrayUtil {
 	}
 	
 	public static Player[] makePlayerArray(List<String> types) {
-		ArrayList<Player> playerArrayList = new ArrayList<>();
+		List<Player> playerArrayList = new ArrayList<>();
 		
 		for(String type : types) {
 			if(Bukkit.getPlayer(type) == null) continue;
@@ -30,7 +33,7 @@ public class ArrayUtil {
 	}
 	
 	public static Player[] makePlayerArray(Set<String> types) {
-		ArrayList<Player> playerArrayList = new ArrayList<>();
+		List<Player> playerArrayList = new ArrayList<>();
 		
 		for(String type : types) {
 			if(Bukkit.getPlayer(type) == null) continue;
@@ -38,6 +41,24 @@ public class ArrayUtil {
 		}
 		
 		return playerArrayList.toArray(new Player[playerArrayList.size()]);
+	}
+	
+	public static Vector[] makeVectorArray(Location... locations) {
+		Vector[] vectors = new Vector[locations.length];
+		
+		for(int i = 0; i < vectors.length; i++)
+			vectors[i] = locations[i].toVector();
+		
+		return vectors;
+	}
+	
+	public static Vector[] makeLocationArray(World world, Vector... vectors) {
+		Location[] locations = new Location[vectors.length];
+		
+		for(int i = 0; i < locations.length; i++)
+			locations[i] = vectors[i].toLocation(world);
+		
+		return vectors;
 	}
 	
 	public static String[] replaceInArray(String pattern, String replace, String... array) {
@@ -53,5 +74,82 @@ public class ArrayUtil {
 			if(e.getClass().isInstance(clazzType))
 				types.add((T) e);
 		return types;
+	}
+	
+	public static void checkForArguments(Object[] array, int min, int max) {
+		if(array.length < min || array.length > max)
+			throw new ArrayIndexOutOfBoundsException("You have to at least parse " + min + " arguments and up to " + max);
+	}
+	
+	public static double min(double... a) {
+		double lowest = a[0];
+		
+		for(double l : a)
+			lowest = Math.min(l, lowest);
+		
+		return lowest;
+	}
+	
+	public static int min(int... a) {
+		int lowest = a[0];
+		
+		for(int l : a)
+			lowest = Math.min(l, lowest);
+		
+		return lowest;
+	}
+	
+	public static long min(long... a) {
+		long lowest = a[0];
+		
+		for(long l : a)
+			lowest = Math.min(l, lowest);
+		
+		return lowest;
+	}
+	
+	public static float min(float... a) {
+		float lowest = a[0];
+		
+		for(float l : a)
+			lowest = Math.min(l, lowest);
+		
+		return lowest;
+	}
+	
+	public static double max(double... a) {
+		double highest = a[0];
+		
+		for(double l : a)
+			highest = Math.max(l, highest);
+		
+		return highest;
+	}
+	
+	public static int max(int... a) {
+		int highest = a[0];
+		
+		for(int l : a)
+			highest = Math.max(l, highest);
+		
+		return highest;
+	}
+	
+	public static long max(long... a) {
+		long highest = a[0];
+		
+		for(long l : a)
+			highest = Math.max(l, highest);
+		
+		return highest;
+	}
+	
+	public static float max(float... a) {
+		float highest = a[0];
+		
+		for(float l : a)
+			highest = Math.max(l, highest);
+		
+		return highest;
 	}
 }

@@ -21,7 +21,15 @@ package de.alphahelix.alphalibary.addons.csv;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Used to share variables across {@link de.alphahelix.alphalibary.addons.core.Addon}s
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see de.alphahelix.alphalibary.addons.core.Addon
+ * @see CrossSystemVariable
+ * @since 1.9.2.1
+ */
 public class CrossSystemManager {
 	
 	private static final List<CrossSystemVariable> CROSS_SYSTEM_VARIABLES = new ArrayList<>();

@@ -10,7 +10,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-
+/**
+ * Default implementation of the {@link AddonManager}
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see AddonManager
+ * @since 1.9.2.1
+ */
 public class SimpleAddonManager implements AddonManager {
 	
 	private final static Pattern JAR_PATTERN = Pattern.compile("(.+?)(\\.jar)");

@@ -4,6 +4,15 @@ import de.alphahelix.alphalibary.annotations.command.exceptions.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+/**
+ * Default implementation of {@link ErrorHandler}
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see ErrorHandler
+ * @see VoidErrorHandler
+ * @since 1.9.2.1
+ */
 public class ResultErrorHandler implements ErrorHandler {
 	
 	@Override

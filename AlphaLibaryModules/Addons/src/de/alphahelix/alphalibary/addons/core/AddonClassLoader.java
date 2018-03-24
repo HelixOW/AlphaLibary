@@ -9,7 +9,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-
+/**
+ * Used to load the classes of the {@link Addon}
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see Addon
+ * @since 1.9.2.1
+ */
 public class AddonClassLoader extends URLClassLoader {
 	
 	final AddonDescriptionFile description;
@@ -52,6 +59,11 @@ public class AddonClassLoader extends URLClassLoader {
 		this.initialize(this.addon);
 	}
 	
+	/**
+	 * Initialize a {@link Addon}
+	 *
+	 * @param addon the {@link Addon} to init
+	 */
 	private synchronized void initialize(Addon addon) {
 		Validate.notNull(addon, "Initializing addon cannot be null");
 		Validate.isTrue(addon.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");

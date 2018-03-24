@@ -4,6 +4,15 @@ import de.alphahelix.alphalibary.annotations.command.exceptions.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+/**
+ * Used to handle all possible Errors
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see ResultErrorHandler
+ * @see VoidErrorHandler
+ * @since 1.9.2.1
+ */
 public interface ErrorHandler {
 	
 	default String getUnknown() {

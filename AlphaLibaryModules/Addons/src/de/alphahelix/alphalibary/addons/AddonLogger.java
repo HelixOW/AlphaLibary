@@ -2,6 +2,14 @@ package de.alphahelix.alphalibary.addons;
 
 import java.util.logging.Level;
 
+/**
+ * Used to log for a {@link de.alphahelix.alphalibary.addons.core.Addon}
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see de.alphahelix.alphalibary.addons.core.Addon
+ * @since 1.9.2.1
+ */
 public class AddonLogger {
 	
 	private static final String PREFIX = "[AlphaLibaryAddon] ";

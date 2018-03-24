@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.List;
+
 
 public class PyramidForm extends Form {
 	
@@ -19,6 +21,7 @@ public class PyramidForm extends Form {
 		this.basis = basis;
 		this.size = size;
 		this.filled = filled;
+		apply();
 	}
 	
 	public double getBasis() {
@@ -38,6 +41,11 @@ public class PyramidForm extends Form {
 	public void send(Player p) {
 		for(double r = basis; r > 0 && size != 0; r -= getDense(), size -= getDense())
 			new RectangleForm(getLocation().subtract(0, r, 0), getAxis(), getDense(), getAngle(), r, r, isFilled(), getAction()).send(p);
+	}
+	
+	@Override
+	public void calculate(List<Location> locations) {
+	
 	}
 	
 	public boolean isFilled() {

@@ -2,7 +2,10 @@ package de.alphahelix.alphalibary.forms.d3;
 
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.d2.RectangleForm;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 
 public class CuboidForm extends Form {
@@ -14,6 +17,7 @@ public class CuboidForm extends Form {
 		super(rectangleForm.getLocation(), rectangleForm.getAxis(), rectangleForm.getDense(), rectangleForm.getAngle(), rectangleForm.getAction());
 		this.width = width;
 		this.rectangleForm = rectangleForm;
+		apply();
 	}
 	
 	@Override
@@ -23,6 +27,11 @@ public class CuboidForm extends Form {
 		
 		for(double w = getDense(); w < (getWidth() - getDense()); w += getDense())
 			new RectangleForm(getLocation().add(0, 0, w), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), false, getAction()).send(p);
+	}
+	
+	@Override
+	public void calculate(List<Location> locations) {
+	
 	}
 	
 	public RectangleForm getRectangleForm() {

@@ -11,6 +11,15 @@ import org.yaml.snakeyaml.nodes.Tag;
 import java.io.InputStream;
 import java.util.Map;
 
+/**
+ * Used to load the important information relevant to the {@link Addon}.
+ * The actual file (addon.yml) needs to be inside the .jar of the {@link Addon} and has to be structured like a plugin.yml
+ *
+ * @author Alphahelix
+ * @version 1.0
+ * @see Addon
+ * @since 1.9.2.1
+ */
 public class AddonDescriptionFile {
 	
 	private static final ThreadLocal<Yaml> YAML = new ThreadLocal<Yaml>() {

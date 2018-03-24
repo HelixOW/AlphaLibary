@@ -18,7 +18,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-
+/**
+ * Used to transfer the {@link Command} annotation into a actual command
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see Command
+ * @see Permission
+ * @see Complete
+ * @see Joined
+ * @see Permission
+ * @see Optional
+ * @since 1.9.2.1
+ */
 public class AnnotatedCommand {
 	
 	private final Object cmdClass;

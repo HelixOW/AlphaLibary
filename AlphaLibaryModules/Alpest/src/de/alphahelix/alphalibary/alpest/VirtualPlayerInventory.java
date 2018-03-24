@@ -13,6 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * Used to simulate a {@link PlayerInventory} to the server
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see VirtualPlayer
+ * @see PlayerInventory
+ * @since 1.9.2.1
+ */
 public class VirtualPlayerInventory implements PlayerInventory {
 	
 	private final Inventory inv;

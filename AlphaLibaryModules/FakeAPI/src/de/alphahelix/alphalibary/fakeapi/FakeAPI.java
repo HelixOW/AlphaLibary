@@ -17,7 +17,6 @@
 package de.alphahelix.alphalibary.fakeapi;
 
 import com.mojang.authlib.GameProfile;
-import de.alphahelix.alphalibary.core.AlphaLibary;
 import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import de.alphahelix.alphalibary.core.utilites.players.PlayerMap;
 import de.alphahelix.alphalibary.fakeapi.events.FakeEntityClickEvent;
@@ -142,11 +141,6 @@ public class FakeAPI {
 	
 	public void enable(JavaPlugin plugin) {
 		new FakeRegister().initAll(plugin);
-		PACKET_LISTENER_API.load();
-		PACKET_LISTENER_API.init();
-		
-		Bukkit.getPluginManager().registerEvents(PACKET_LISTENER_API, AlphaLibary.getInstance());
-		
 		
 		Bukkit.getOnlinePlayers().forEach(o -> UUIDFetcher.getUUID(o, id -> getEntityIds().put(o.getEntityId(), id)));
 		

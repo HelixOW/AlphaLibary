@@ -1,6 +1,8 @@
 package de.alphahelix.alphalibary.reflection.nms.netty;
 
 import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.core.AlphaLibary;
+import de.alphahelix.alphalibary.core.AlphaModule;
 import de.alphahelix.alphalibary.reflection.nms.netty.channel.ChannelWrapper;
 import de.alphahelix.alphalibary.reflection.nms.netty.handler.PacketHandler;
 import de.alphahelix.alphalibary.reflection.nms.netty.handler.ReceivedPacket;
@@ -13,10 +15,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 
-public class PacketListenerAPI implements IPacketListener, Listener {
+public class PacketListenerAPI implements IPacketListener, Listener, AlphaModule {
 	
 	protected boolean injected = false;
 	private ChannelInjector channelInjector;
+	
+	public PacketListenerAPI() {
+		Bukkit.getPluginManager().registerEvents(this, AlphaLibary.getInstance());
+	}
 	
 	public static boolean addPacketHandler(PacketHandler handler) {
 		return PacketHandler.addHandler(handler);
@@ -26,30 +32,14 @@ public class PacketListenerAPI implements IPacketListener, Listener {
 		return PacketHandler.removeHandler(handler);
 	}
 	
-	/**
-	 * Call onLoad
-	 */
-	public void load() {
-		channelInjector = new ChannelInjector();
-		
-		channelInjector.inject(this);
-		
-		injected = true;
-		channelInjector.addServerChannel();
-	}
-	
-	/**
-	 * Call onEnable
-	 */
-	public void init() {
+	@Override
+	public void enable() {
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			channelInjector.addChannel(player);
 		}
 	}
 	
-	/**
-	 * Call onDisable
-	 */
+	@Override
 	public void disable() {
 		if(!injected) return;
 		
@@ -60,6 +50,16 @@ public class PacketListenerAPI implements IPacketListener, Listener {
 		while(!PacketHandler.getHandlers().isEmpty()) {
 			PacketHandler.removeHandler(PacketHandler.getHandlers().get(0));
 		}
+	}
+	
+	@Override
+	public void load() {
+		channelInjector = new ChannelInjector();
+		
+		channelInjector.inject(this);
+		
+		injected = true;
+		channelInjector.addServerChannel();
 	}
 	
 	@EventHandler

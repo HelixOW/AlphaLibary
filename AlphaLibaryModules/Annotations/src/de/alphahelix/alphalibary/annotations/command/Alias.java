@@ -5,12 +5,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Defines a alias for a parameter
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see Command
+ * @since 1.9.2.1
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Alias {
 	
 	/**
-	 * First argument always has to be the expected entered (and parseable) type </br>
+	 * First argument always has to be the expected entered (and parsable) type </br>
 	 * Followed by all aliases for the argument
 	 *
 	 * @return all acceptable aliases for a argument inside the command

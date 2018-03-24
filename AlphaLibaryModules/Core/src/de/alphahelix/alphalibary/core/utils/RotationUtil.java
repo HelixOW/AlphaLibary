@@ -4,6 +4,12 @@ import org.bukkit.util.Vector;
 
 public class RotationUtil {
 	
+	public static Vector findPerpendicularVector(Vector from) {
+		Vector x = new Vector(1, 0, 0);
+		
+		return from.getCrossProduct(x);
+	}
+	
 	public static Vector rotatePitch(Vector toRotate, double pitch) {
 		return rotate(toRotate, 0, pitch);
 	}

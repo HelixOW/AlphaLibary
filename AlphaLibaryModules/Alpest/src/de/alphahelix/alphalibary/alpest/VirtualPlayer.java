@@ -1,5 +1,6 @@
 package de.alphahelix.alphalibary.alpest;
 
+import de.alphahelix.alphalibary.core.utils.ScheduleUtil;
 import de.alphahelix.alphalibary.core.utils.StringUtil;
 import de.alphahelix.alphalibary.storage.file.SimpleTXTFile;
 import org.bukkit.*;
@@ -41,6 +42,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Used to spawn a {@link Player} which is no real User, but can be treated as one by plugins
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see Player
+ * @see VirtualPlayerInventory
+ * @since 1.9.2.1
+ */
 public class VirtualPlayer implements Player {
 	
 	private final String name;
@@ -56,10 +66,6 @@ public class VirtualPlayer implements Player {
 	private float exp, exhaustion, saturation;
 	private boolean allowFlight;
 	
-	public SimpleTXTFile getConsole() {
-		return txtfile;
-	}
-	
 	private boolean fly;
 	private float flySpeed;
 	private float walkSpeed;
@@ -69,16 +75,6 @@ public class VirtualPlayer implements Player {
 	private Entity specTarget;
 	private Vector velocity;
 	
-	private <E extends Event> void callEvent(E e, Consumer<E> action) {
-		Bukkit.getPluginManager().callEvent(e);
-		
-		if(e instanceof Cancellable) {
-			if(!((Cancellable) e).isCancelled())
-				action.accept(e);
-		} else
-			action.accept(e);
-	}
-	
 	private int fireTicks;
 	private List<Entity> passenger;
 	private float fallDistance;
@@ -86,26 +82,10 @@ public class VirtualPlayer implements Player {
 	private int ticksLived;
 	private Vehicle vehicle;
 	
-	@Override
-	public void setCompassTarget(Location loc) {
-	
-	}
-	
 	private boolean glowing;
 	private boolean invincible;
-	
-	@Override
-	public Location getCompassTarget() {
-		return fakeLocation;
-	}
-	
 	private boolean silent;
 	private boolean gravity;
-	
-	@Override
-	public InetSocketAddress getAddress() {
-		return InetSocketAddress.createUnresolved("127.0.0.1", 25565);
-	}
 	
 	private int portalCooldown;
 	private Set<String> scoreboardtags;
@@ -119,109 +99,39 @@ public class VirtualPlayer implements Player {
 	private ItemStack inHand;
 	private ItemStack onCursor;
 	
-	@Override
-	public void sendRawMessage(String message) {
-		if(getConsole() == null) return;
-		getConsole().setValue("[" + dtf.format(LocalDateTime.now()) + "] " + message);
-	}
-	
 	private int sleepTicks;
 	private GameMode mode;
-	
-	@Override
-	public void kickPlayer(String message) {
-		callEvent(new PlayerKickEvent(this, "Kicked by Plugin", message), playerKickEvent ->
-				sendRawMessage("KICKED -> " + message));
-	}
 	
 	private boolean blocking;
 	private boolean handRaised;
 	
-	@Override
-	public void chat(String msg) {
-		sendRawMessage("CHAT -> " + msg);
-		callEvent(new AsyncPlayerChatEvent(true, this, msg, new HashSet<>(Bukkit.getOnlinePlayers())),
-				asyncPlayerChatEvent -> sendRawMessage("CHAT -> " + msg));
-	}
-	
 	private int exptoLevel;
 	private Entity shoulderLeft;
-	
-	@Override
-	public boolean performCommand(String command) {
-		sendRawMessage("COMMAND -> " + command);
-		return Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-	}
 	
 	private Entity shoulderRight;
 	private double eyehight;
 	
-	@Override
-	public boolean isSneaking() {
-		return sneak;
-	}
-	
 	private Location eyeLocation;
 	private List<Block> lineOfSight = new ArrayList<>();
-	
-	@Override
-	public void setSneaking(boolean sneak) {
-		callEvent(new PlayerToggleSneakEvent(this, sneak), playerToggleSneakEvent -> {
-			this.sneak = sneak;
-			sendRawMessage("Is now sneaking? -> " + sneak);
-		});
-	}
 	
 	private Block targetBlock;
 	private List<Block> lastTwoTargetBlocks = new ArrayList<>();
 	
-	@Override
-	public boolean isSprinting() {
-		return sprint;
-	}
-	
 	private int remainAir;
 	private int maxAir;
-	
-	@Override
-	public void setSprinting(boolean sprinting) {
-		callEvent(new PlayerToggleSprintEvent(this, sprinting), playerToggleSprintEvent -> {
-			this.sprint = sprinting;
-			sendRawMessage("Is now sprinting? -> " + sprinting);
-		});
-	}
 	
 	private int maxNoDmg;
 	private double lastDamage;
 	
-	@Override
-	public void saveData() {
-	
-	}
-	
 	private int noDmg;
 	private Player killer;
-	
-	@Override
-	public void loadData() {
-	
-	}
 	
 	private Collection<PotionEffect> potionEffects = new ArrayList<>();
 	private boolean gliding;
 	
-	@Override
-	public void setSleepingIgnored(boolean isSleeping) {
-	
-	}
-	
 	private double health;
 	private double maxHealth;
 	
-	@Override
-	public boolean isSleepingIgnored() {
-		return false;
-	}
 	
 	public VirtualPlayer(JavaPlugin plugin, String name, Location fakeLocation) {
 		this(plugin, name, UUID.randomUUID(), fakeLocation);
@@ -235,11 +145,6 @@ public class VirtualPlayer implements Player {
 		Bukkit.getPluginManager().callEvent(new PlayerJoinEvent(this, ""));
 	}
 	
-	@Override
-	public void playNote(Location loc, byte instrument, byte note) {
-		sendRawMessage("Played instrument " + instrument + ", note " + note + " at " + loc);
-	}
-	
 	public VirtualPlayer(JavaPlugin plugin, UUID id, Location fakeLocation) {
 		this(plugin, StringUtil.generateRandomString(15), id, fakeLocation);
 	}
@@ -248,9 +153,8 @@ public class VirtualPlayer implements Player {
 		this(plugin, StringUtil.generateRandomString(15), UUID.randomUUID(), fakeLocation);
 	}
 	
-	@Override
-	public void playNote(Location loc, Instrument instrument, Note note) {
-		sendRawMessage("Played instrument " + instrument + ", note " + note + " at " + loc);
+	public SimpleTXTFile getConsole() {
+		return txtfile;
 	}
 	
 	public UUID getId() {
@@ -259,11 +163,6 @@ public class VirtualPlayer implements Player {
 	
 	public Location getFakeLocation() {
 		return fakeLocation;
-	}
-	
-	@Override
-	public void playSound(Location location, Sound sound, float volume, float pitch) {
-		sendRawMessage("Played Sound " + sound + " with volume " + volume + " and pitch of " + pitch + " at " + location);
 	}
 	
 	public VirtualPlayer setFakeLocation(Location fakeLocation) {
@@ -276,11 +175,6 @@ public class VirtualPlayer implements Player {
 		return this;
 	}
 	
-	@Override
-	public void playSound(Location location, String sound, float volume, float pitch) {
-		sendRawMessage("Played Sound " + sound + " with volume " + volume + " and pitch of " + pitch + " at " + location);
-	}
-	
 	public Location getFakeBed() {
 		return fakeBed;
 	}
@@ -288,6 +182,245 @@ public class VirtualPlayer implements Player {
 	public VirtualPlayer setFakeBed(Location fakeBed) {
 		this.fakeBed = fakeBed;
 		return this;
+	}
+	
+	@Override
+	public InventoryView openInventory(Inventory inventory) {
+		this.inventoryView = new InventoryView() {
+			@Override
+			public Inventory getTopInventory() {
+				return inventory;
+			}
+			
+			@Override
+			public Inventory getBottomInventory() {
+				return vpi;
+			}
+			
+			@Override
+			public HumanEntity getPlayer() {
+				return (HumanEntity) vpi;
+			}
+			
+			@Override
+			public InventoryType getType() {
+				return inventory.getType();
+			}
+		};
+		
+		callEvent(new InventoryOpenEvent(inventoryView), inventoryOpenEvent -> sendRawMessage("Opened a inventory " + inventory));
+		return inventoryView;
+	}
+	
+	@Override
+	public void setCompassTarget(Location loc) {
+	
+	}
+	
+	public InventoryView openPlayerInventory() {
+		this.inventoryView = new InventoryView() {
+			@Override
+			public Inventory getTopInventory() {
+				return null;
+			}
+			
+			@Override
+			public Inventory getBottomInventory() {
+				return vpi;
+			}
+			
+			@Override
+			public HumanEntity getPlayer() {
+				return (HumanEntity) vpi;
+			}
+			
+			@Override
+			public InventoryType getType() {
+				return InventoryType.PLAYER;
+			}
+		};
+		
+		callEvent(new InventoryOpenEvent(inventoryView), inventoryOpenEvent -> sendRawMessage("Opened the players inventory"));
+		return inventoryView;
+	}
+	
+	@Override
+	public Location getCompassTarget() {
+		return fakeLocation;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, id, txtfile, dtf, fakeLocation, fakeBed, sneak, sprint, playedBefore, level, totalExp, foodLevel, exp, exhaustion, saturation, allowFlight, hidden, fly, flySpeed, walkSpeed, board, healthScaled, healthScale, specTarget, velocity, nearbyEntities, fireTicks, passenger, fallDistance, ldmgc, ticksLived, vehicle, glowing, invincible, silent, gravity, portalCooldown, scoreboardtags, vpi, enderchest, inventoryView, inHand, onCursor, cooldown, sleepTicks, mode, blocking, handRaised, exptoLevel, shoulderLeft, shoulderRight, eyehight, eyeLocation, lineOfSight, targetBlock, lastTwoTargetBlocks, remainAir, maxAir, maxNoDmg, lastDamage, noDmg, killer, potionEffects, gliding, health, maxHealth);
+	}
+	
+	@Override
+	public InetSocketAddress getAddress() {
+		return InetSocketAddress.createUnresolved("127.0.0.1", 25565);
+	}
+	
+	@Override
+	public void sendRawMessage(String message) {
+		if(getConsole() == null) return;
+		getConsole().setValue("[" + dtf.format(LocalDateTime.now()) + "] " + message);
+	}
+	
+	@Override
+	public void kickPlayer(String message) {
+		callEvent(new PlayerKickEvent(this, "Kicked by Plugin", message), playerKickEvent ->
+				sendRawMessage("KICKED -> " + message));
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		VirtualPlayer that = (VirtualPlayer) o;
+		return sneak == that.sneak &&
+				sprint == that.sprint &&
+				playedBefore == that.playedBefore &&
+				level == that.level &&
+				totalExp == that.totalExp &&
+				foodLevel == that.foodLevel &&
+				Float.compare(that.exp, exp) == 0 &&
+				Float.compare(that.exhaustion, exhaustion) == 0 &&
+				Float.compare(that.saturation, saturation) == 0 &&
+				allowFlight == that.allowFlight &&
+				fly == that.fly &&
+				Float.compare(that.flySpeed, flySpeed) == 0 &&
+				Float.compare(that.walkSpeed, walkSpeed) == 0 &&
+				healthScaled == that.healthScaled &&
+				Double.compare(that.healthScale, healthScale) == 0 &&
+				fireTicks == that.fireTicks &&
+				Float.compare(that.fallDistance, fallDistance) == 0 &&
+				ticksLived == that.ticksLived &&
+				glowing == that.glowing &&
+				invincible == that.invincible &&
+				silent == that.silent &&
+				gravity == that.gravity &&
+				portalCooldown == that.portalCooldown &&
+				sleepTicks == that.sleepTicks &&
+				blocking == that.blocking &&
+				handRaised == that.handRaised &&
+				exptoLevel == that.exptoLevel &&
+				Double.compare(that.eyehight, eyehight) == 0 &&
+				remainAir == that.remainAir &&
+				maxAir == that.maxAir &&
+				maxNoDmg == that.maxNoDmg &&
+				Double.compare(that.lastDamage, lastDamage) == 0 &&
+				noDmg == that.noDmg &&
+				gliding == that.gliding &&
+				Double.compare(that.health, health) == 0 &&
+				Double.compare(that.maxHealth, maxHealth) == 0 &&
+				Objects.equals(name, that.name) &&
+				Objects.equals(id, that.id) &&
+				Objects.equals(txtfile, that.txtfile) &&
+				Objects.equals(dtf, that.dtf) &&
+				Objects.equals(fakeLocation, that.fakeLocation) &&
+				Objects.equals(fakeBed, that.fakeBed) &&
+				Objects.equals(hidden, that.hidden) &&
+				Objects.equals(board, that.board) &&
+				Objects.equals(specTarget, that.specTarget) &&
+				Objects.equals(velocity, that.velocity) &&
+				Objects.equals(nearbyEntities, that.nearbyEntities) &&
+				Objects.equals(passenger, that.passenger) &&
+				Objects.equals(ldmgc, that.ldmgc) &&
+				Objects.equals(vehicle, that.vehicle) &&
+				Objects.equals(scoreboardtags, that.scoreboardtags) &&
+				Objects.equals(vpi, that.vpi) &&
+				Objects.equals(enderchest, that.enderchest) &&
+				Objects.equals(inventoryView, that.inventoryView) &&
+				Objects.equals(inHand, that.inHand) &&
+				Objects.equals(onCursor, that.onCursor) &&
+				Objects.equals(cooldown, that.cooldown) &&
+				mode == that.mode &&
+				Objects.equals(shoulderLeft, that.shoulderLeft) &&
+				Objects.equals(shoulderRight, that.shoulderRight) &&
+				Objects.equals(eyeLocation, that.eyeLocation) &&
+				Objects.equals(lineOfSight, that.lineOfSight) &&
+				Objects.equals(targetBlock, that.targetBlock) &&
+				Objects.equals(lastTwoTargetBlocks, that.lastTwoTargetBlocks) &&
+				Objects.equals(killer, that.killer) &&
+				Objects.equals(potionEffects, that.potionEffects);
+	}
+	
+	@Override
+	public void chat(String msg) {
+		ScheduleUtil.runLater(0, true, () -> callEvent(new AsyncPlayerChatEvent(true, this, msg, new HashSet<>(Bukkit.getOnlinePlayers())),
+				asyncPlayerChatEvent -> sendRawMessage("CHAT -> " + msg)));
+		
+	}
+	
+	@Override
+	public boolean performCommand(String command) {
+		sendRawMessage("COMMAND -> " + command);
+		return Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+	}
+	
+	@Override
+	public boolean isSneaking() {
+		return sneak;
+	}
+	
+	@Override
+	public void setSneaking(boolean sneak) {
+		callEvent(new PlayerToggleSneakEvent(this, sneak), playerToggleSneakEvent -> {
+			this.sneak = sneak;
+			sendRawMessage("Is now sneaking? -> " + sneak);
+		});
+	}
+	
+	@Override
+	public boolean isSprinting() {
+		return sprint;
+	}
+	
+	@Override
+	public void setSprinting(boolean sprinting) {
+		callEvent(new PlayerToggleSprintEvent(this, sprinting), playerToggleSprintEvent -> {
+			this.sprint = sprinting;
+			sendRawMessage("Is now sprinting? -> " + sprinting);
+		});
+	}
+	
+	@Override
+	public void saveData() {
+	
+	}
+	
+	@Override
+	public void loadData() {
+	
+	}
+	
+	@Override
+	public void setSleepingIgnored(boolean isSleeping) {
+	
+	}
+	
+	@Override
+	public boolean isSleepingIgnored() {
+		return false;
+	}
+	
+	@Override
+	public void playNote(Location loc, byte instrument, byte note) {
+		sendRawMessage("Played instrument " + instrument + ", note " + note + " at " + loc);
+	}
+	
+	@Override
+	public void playNote(Location loc, Instrument instrument, Note note) {
+		sendRawMessage("Played instrument " + instrument + ", note " + note + " at " + loc);
+	}
+	
+	@Override
+	public void playSound(Location location, Sound sound, float volume, float pitch) {
+		sendRawMessage("Played Sound " + sound + " with volume " + volume + " and pitch of " + pitch + " at " + location);
+	}
+	
+	@Override
+	public void playSound(Location location, String sound, float volume, float pitch) {
+		sendRawMessage("Played Sound " + sound + " with volume " + volume + " and pitch of " + pitch + " at " + location);
 	}
 	
 	@Override
@@ -529,32 +662,77 @@ public class VirtualPlayer implements Player {
 	}
 	
 	@Override
-	public InventoryView openInventory(Inventory inventory) {
-		this.inventoryView = new InventoryView() {
-			@Override
-			public Inventory getTopInventory() {
-				return inventory;
-			}
-			
-			@Override
-			public Inventory getBottomInventory() {
-				return vpi;
-			}
-			
-			@Override
-			public HumanEntity getPlayer() {
-				return vpi.getHolder();
-			}
-			
-			@Override
-			public InventoryType getType() {
-				return inventory.getType();
-			}
-		};
-		
-		callEvent(new InventoryOpenEvent(inventoryView), inventoryOpenEvent -> sendRawMessage("Opened a inventory " + inventory));
-		return inventoryView;
+	public String toString() {
+		return "VirtualPlayer{" +
+				"name='" + name + '\'' +
+				", id=" + id +
+				", txtfile=" + txtfile +
+				", dtf=" + dtf +
+				", fakeLocation=" + fakeLocation +
+				", fakeBed=" + fakeBed +
+				", sneak=" + sneak +
+				", sprint=" + sprint +
+				", playedBefore=" + playedBefore +
+				", level=" + level +
+				", totalExp=" + totalExp +
+				", foodLevel=" + foodLevel +
+				", exp=" + exp +
+				", exhaustion=" + exhaustion +
+				", saturation=" + saturation +
+				", allowFlight=" + allowFlight +
+				", hidden=" + hidden +
+				", fly=" + fly +
+				", flySpeed=" + flySpeed +
+				", walkSpeed=" + walkSpeed +
+				", board=" + board +
+				", healthScaled=" + healthScaled +
+				", healthScale=" + healthScale +
+				", specTarget=" + specTarget +
+				", velocity=" + velocity +
+				", nearbyEntities=" + nearbyEntities +
+				", fireTicks=" + fireTicks +
+				", passenger=" + passenger +
+				", fallDistance=" + fallDistance +
+				", ldmgc=" + ldmgc +
+				", ticksLived=" + ticksLived +
+				", vehicle=" + vehicle +
+				", glowing=" + glowing +
+				", invincible=" + invincible +
+				", silent=" + silent +
+				", gravity=" + gravity +
+				", portalCooldown=" + portalCooldown +
+				", scoreboardtags=" + scoreboardtags +
+				", vpi=" + vpi +
+				", enderchest=" + enderchest +
+				", inventoryView=" + inventoryView +
+				", inHand=" + inHand +
+				", onCursor=" + onCursor +
+				", cooldown=" + cooldown +
+				", sleepTicks=" + sleepTicks +
+				", mode=" + mode +
+				", blocking=" + blocking +
+				", handRaised=" + handRaised +
+				", exptoLevel=" + exptoLevel +
+				", shoulderLeft=" + shoulderLeft +
+				", shoulderRight=" + shoulderRight +
+				", eyehight=" + eyehight +
+				", eyeLocation=" + eyeLocation +
+				", lineOfSight=" + lineOfSight +
+				", targetBlock=" + targetBlock +
+				", lastTwoTargetBlocks=" + lastTwoTargetBlocks +
+				", remainAir=" + remainAir +
+				", maxAir=" + maxAir +
+				", maxNoDmg=" + maxNoDmg +
+				", lastDamage=" + lastDamage +
+				", noDmg=" + noDmg +
+				", killer=" + killer +
+				", potionEffects=" + potionEffects +
+				", gliding=" + gliding +
+				", health=" + health +
+				", maxHealth=" + maxHealth +
+				'}';
 	}
+	
 	
 	@Override
 	public InventoryView openWorkbench(Location location, boolean force) {
@@ -1317,156 +1495,6 @@ public class VirtualPlayer implements Player {
 	}
 	
 	@Override
-	public int hashCode() {
-		return Objects.hash(name, id, txtfile, dtf, fakeLocation, fakeBed, sneak, sprint, playedBefore, level, totalExp, foodLevel, exp, exhaustion, saturation, allowFlight, hidden, fly, flySpeed, walkSpeed, board, healthScaled, healthScale, specTarget, velocity, nearbyEntities, fireTicks, passenger, fallDistance, ldmgc, ticksLived, vehicle, glowing, invincible, silent, gravity, portalCooldown, scoreboardtags, vpi, enderchest, inventoryView, inHand, onCursor, cooldown, sleepTicks, mode, blocking, handRaised, exptoLevel, shoulderLeft, shoulderRight, eyehight, eyeLocation, lineOfSight, targetBlock, lastTwoTargetBlocks, remainAir, maxAir, maxNoDmg, lastDamage, noDmg, killer, potionEffects, gliding, health, maxHealth);
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		VirtualPlayer that = (VirtualPlayer) o;
-		return sneak == that.sneak &&
-				sprint == that.sprint &&
-				playedBefore == that.playedBefore &&
-				level == that.level &&
-				totalExp == that.totalExp &&
-				foodLevel == that.foodLevel &&
-				Float.compare(that.exp, exp) == 0 &&
-				Float.compare(that.exhaustion, exhaustion) == 0 &&
-				Float.compare(that.saturation, saturation) == 0 &&
-				allowFlight == that.allowFlight &&
-				fly == that.fly &&
-				Float.compare(that.flySpeed, flySpeed) == 0 &&
-				Float.compare(that.walkSpeed, walkSpeed) == 0 &&
-				healthScaled == that.healthScaled &&
-				Double.compare(that.healthScale, healthScale) == 0 &&
-				fireTicks == that.fireTicks &&
-				Float.compare(that.fallDistance, fallDistance) == 0 &&
-				ticksLived == that.ticksLived &&
-				glowing == that.glowing &&
-				invincible == that.invincible &&
-				silent == that.silent &&
-				gravity == that.gravity &&
-				portalCooldown == that.portalCooldown &&
-				sleepTicks == that.sleepTicks &&
-				blocking == that.blocking &&
-				handRaised == that.handRaised &&
-				exptoLevel == that.exptoLevel &&
-				Double.compare(that.eyehight, eyehight) == 0 &&
-				remainAir == that.remainAir &&
-				maxAir == that.maxAir &&
-				maxNoDmg == that.maxNoDmg &&
-				Double.compare(that.lastDamage, lastDamage) == 0 &&
-				noDmg == that.noDmg &&
-				gliding == that.gliding &&
-				Double.compare(that.health, health) == 0 &&
-				Double.compare(that.maxHealth, maxHealth) == 0 &&
-				Objects.equals(name, that.name) &&
-				Objects.equals(id, that.id) &&
-				Objects.equals(txtfile, that.txtfile) &&
-				Objects.equals(dtf, that.dtf) &&
-				Objects.equals(fakeLocation, that.fakeLocation) &&
-				Objects.equals(fakeBed, that.fakeBed) &&
-				Objects.equals(hidden, that.hidden) &&
-				Objects.equals(board, that.board) &&
-				Objects.equals(specTarget, that.specTarget) &&
-				Objects.equals(velocity, that.velocity) &&
-				Objects.equals(nearbyEntities, that.nearbyEntities) &&
-				Objects.equals(passenger, that.passenger) &&
-				Objects.equals(ldmgc, that.ldmgc) &&
-				Objects.equals(vehicle, that.vehicle) &&
-				Objects.equals(scoreboardtags, that.scoreboardtags) &&
-				Objects.equals(vpi, that.vpi) &&
-				Objects.equals(enderchest, that.enderchest) &&
-				Objects.equals(inventoryView, that.inventoryView) &&
-				Objects.equals(inHand, that.inHand) &&
-				Objects.equals(onCursor, that.onCursor) &&
-				Objects.equals(cooldown, that.cooldown) &&
-				mode == that.mode &&
-				Objects.equals(shoulderLeft, that.shoulderLeft) &&
-				Objects.equals(shoulderRight, that.shoulderRight) &&
-				Objects.equals(eyeLocation, that.eyeLocation) &&
-				Objects.equals(lineOfSight, that.lineOfSight) &&
-				Objects.equals(targetBlock, that.targetBlock) &&
-				Objects.equals(lastTwoTargetBlocks, that.lastTwoTargetBlocks) &&
-				Objects.equals(killer, that.killer) &&
-				Objects.equals(potionEffects, that.potionEffects);
-	}
-	
-	@Override
-	public String toString() {
-		return "VirtualPlayer{" +
-				"name='" + name + '\'' +
-				", id=" + id +
-				", txtfile=" + txtfile +
-				", dtf=" + dtf +
-				", fakeLocation=" + fakeLocation +
-				", fakeBed=" + fakeBed +
-				", sneak=" + sneak +
-				", sprint=" + sprint +
-				", playedBefore=" + playedBefore +
-				", level=" + level +
-				", totalExp=" + totalExp +
-				", foodLevel=" + foodLevel +
-				", exp=" + exp +
-				", exhaustion=" + exhaustion +
-				", saturation=" + saturation +
-				", allowFlight=" + allowFlight +
-				", hidden=" + hidden +
-				", fly=" + fly +
-				", flySpeed=" + flySpeed +
-				", walkSpeed=" + walkSpeed +
-				", board=" + board +
-				", healthScaled=" + healthScaled +
-				", healthScale=" + healthScale +
-				", specTarget=" + specTarget +
-				", velocity=" + velocity +
-				", nearbyEntities=" + nearbyEntities +
-				", fireTicks=" + fireTicks +
-				", passenger=" + passenger +
-				", fallDistance=" + fallDistance +
-				", ldmgc=" + ldmgc +
-				", ticksLived=" + ticksLived +
-				", vehicle=" + vehicle +
-				", glowing=" + glowing +
-				", invincible=" + invincible +
-				", silent=" + silent +
-				", gravity=" + gravity +
-				", portalCooldown=" + portalCooldown +
-				", scoreboardtags=" + scoreboardtags +
-				", vpi=" + vpi +
-				", enderchest=" + enderchest +
-				", inventoryView=" + inventoryView +
-				", inHand=" + inHand +
-				", onCursor=" + onCursor +
-				", cooldown=" + cooldown +
-				", sleepTicks=" + sleepTicks +
-				", mode=" + mode +
-				", blocking=" + blocking +
-				", handRaised=" + handRaised +
-				", exptoLevel=" + exptoLevel +
-				", shoulderLeft=" + shoulderLeft +
-				", shoulderRight=" + shoulderRight +
-				", eyehight=" + eyehight +
-				", eyeLocation=" + eyeLocation +
-				", lineOfSight=" + lineOfSight +
-				", targetBlock=" + targetBlock +
-				", lastTwoTargetBlocks=" + lastTwoTargetBlocks +
-				", remainAir=" + remainAir +
-				", maxAir=" + maxAir +
-				", maxNoDmg=" + maxNoDmg +
-				", lastDamage=" + lastDamage +
-				", noDmg=" + noDmg +
-				", killer=" + killer +
-				", potionEffects=" + potionEffects +
-				", gliding=" + gliding +
-				", health=" + health +
-				", maxHealth=" + maxHealth +
-				'}';
-	}
-	
-	@Override
 	public boolean getAllowFlight() {
 		return allowFlight;
 	}
@@ -2068,75 +2096,15 @@ public class VirtualPlayer implements Player {
 		return true;
 	}
 	
-
+	private <E extends Event> void callEvent(E e, Consumer<E> action) {
+		Bukkit.getPluginManager().callEvent(e);
+		
+		if(e instanceof Cancellable) {
+			if(!((Cancellable) e).isCancelled())
+				action.accept(e);
+		} else
+			action.accept(e);
+	}
 	
-
 	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
 }

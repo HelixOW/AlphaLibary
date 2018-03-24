@@ -16,6 +16,21 @@ import org.bukkit.potion.PotionEffectType;
 import java.lang.reflect.Field;
 import java.util.*;
 
+/**
+ * Used to transfer the {@link Item} annotation into a actual {@link ItemStack}
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see Item
+ * @see ItemStack
+ * @see Skull
+ * @see Color
+ * @see Banner
+ * @see Map
+ * @see Potion
+ * @see SpawnEgg
+ * @since 1.9.2.1
+ */
 class AnnotatedItem {
 	
 	private final Object itemClass;

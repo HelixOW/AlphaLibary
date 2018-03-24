@@ -6,6 +6,14 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Used to register the commands
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see Command
+ * @since 1.9.2.1
+ */
 public class CommandAnnotations implements IAnnotation {
 	
 	@Override

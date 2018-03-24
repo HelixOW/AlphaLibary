@@ -18,6 +18,14 @@
 
 package de.alphahelix.alphalibary.addons.csv;
 
+/**
+ * Used to define a variable to be shared
+ *
+ * @author AlphaHelix
+ * @version 1.0
+ * @see CrossSystemManager
+ * @since 1.9.2.1
+ */
 public interface CrossSystemVariable {
 	/**
 	 * To send a variable across addons, you need to specify a value in serialized JSON to access it inside the other Addons

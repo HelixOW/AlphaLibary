@@ -15,11 +15,13 @@
  */
 package de.alphahelix.alphalibary.core.utils;
 
+import de.alphahelix.alphalibary.core.utilites.locations.Shape;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -79,21 +81,64 @@ public class LocationUtil {
 	/**
 	 * Checks if a {@link Location} is inside a square of two other locations
 	 *
-	 * @param loc the {@link Location} to check for
-	 * @param l1  the first corner of the square
-	 * @param l2  the seconds corner of the square
+	 * @param loc       the {@link Location} to check for
+	 * @param locations to check if Location is inside
 	 */
-	public static boolean isInside(Location loc, Location l1, Location l2) {
-		int x1 = Math.min(l1.getBlockX(), l2.getBlockX());
-		int y1 = Math.min(l1.getBlockY(), l2.getBlockY());
-		int z1 = Math.min(l1.getBlockZ(), l2.getBlockZ());
-		int x2 = Math.max(l1.getBlockX(), l2.getBlockX());
-		int y2 = Math.max(l1.getBlockY(), l2.getBlockY());
-		int z2 = Math.max(l1.getBlockZ(), l2.getBlockZ());
+	public static boolean isInside(Location loc, Location... locations) {
+		double x1 = ArrayUtil.min(getX(locations));
+		double y1 = ArrayUtil.min(getY(locations));
+		double z1 = ArrayUtil.min(getZ(locations));
+		
+		double x2 = ArrayUtil.max(getX(locations));
+		double y2 = ArrayUtil.max(getY(locations));
+		double z2 = ArrayUtil.max(getZ(locations));
 		
 		return loc.getX() >= x1 && loc.getX() <= x2
 				&& loc.getY() >= y1 && loc.getY() <= y2
 				&& loc.getZ() >= z1 && loc.getZ() <= z2;
+	}
+	
+	public static double[] getX(Location[] locations) {
+		double[] x = new double[locations.length];
+		
+		for(int i = 0; i < locations.length; i++) {
+			x[i] = locations[i].getX();
+		}
+		
+		return x;
+	}
+	
+	public static double[] getY(Location[] locations) {
+		double[] y = new double[locations.length];
+		
+		for(int i = 0; i < locations.length; i++) {
+			y[i] = locations[i].getY();
+		}
+		
+		return y;
+	}
+	
+	public static double[] getZ(Location[] locations) {
+		double[] z = new double[locations.length];
+		
+		for(int i = 0; i < locations.length; i++) {
+			z[i] = locations[i].getZ();
+		}
+		
+		return z;
+	}
+	
+	public static boolean isInShape(Location loc, Shape shape, Vector... locations) {
+		
+		double a = shape.area(locations);
+		double a1 = shape.area(new Lo)
+		
+		double A = area(posA.getX(), posA.getZ(), posB.getX(), posB.getZ(), posC.getX(), posC.getZ());
+		double A1 = area(x, y, posB.getX(), posB.getZ(), posC.getX(), posC.getZ());
+		double A2 = area(posA.getX(), posA.getZ(), x, y, posC.getX(), posC.getZ());
+		double A3 = area(posA.getX(), posA.getZ(), posB.getX(), posB.getZ(), x, y);
+		
+		return (A == A1 + A2 + A3);
 	}
 	
 	/**
@@ -103,38 +148,7 @@ public class LocationUtil {
 	 * @param range the distance to the player
 	 */
 	public static Location getLocationBehindPlayer(Player p, int range) {
-		World world = p.getWorld();
-		Location behind = p.getLocation();
-		int direction = (int) behind.getYaw();
-		
-		if(direction < 0) {
-			direction += 360;
-			direction = (direction + 45) / 90;
-		} else {
-			direction = (direction + 45) / 90;
-		}
-		
-		switch(direction) {
-			case 1:
-				behind = new Location(world, behind.getX() + range, behind.getY(), behind.getZ(), behind.getYaw(), behind.getPitch());
-				break;
-			case 2:
-				behind = new Location(world, behind.getX(), behind.getY(), behind.getZ() + range, behind.getYaw(), behind.getPitch());
-				break;
-			case 3:
-				behind = new Location(world, behind.getX() - range, behind.getY(), behind.getZ(), behind.getYaw(), behind.getPitch());
-				break;
-			case 4:
-				behind = new Location(world, behind.getX(), behind.getY(), behind.getZ() - range, behind.getYaw(), behind.getPitch());
-				break;
-			case 0:
-				behind = new Location(world, behind.getX(), behind.getY(), behind.getZ() - range, behind.getYaw(), behind.getPitch());
-				break;
-			default:
-				break;
-		}
-		
-		return behind;
+		return p.getLocation().clone().add(p.getLocation().getDirection().normalize().multiply(-1).multiply(range));
 	}
 	
 	public static Location getRandomLocation(Location player, int Xminimum, int Xmaximum, int Zminimum, int Zmaximum) {

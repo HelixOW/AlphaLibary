@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.List;
+
 
 public class ConeForm extends Form {
 	
@@ -19,6 +21,7 @@ public class ConeForm extends Form {
 		this.baseRadius = baseRadius;
 		this.size = size;
 		this.filled = filled;
+		apply();
 	}
 	
 	public double getBaseRadius() {
@@ -42,5 +45,10 @@ public class ConeForm extends Form {
 	public void send(Player p) {
 		for(double r = baseRadius; r > 0 && size != 0; r -= getDense(), size -= getDense())
 			new CircleForm(getLocation().subtract(0, r, 0), getAxis(), getDense(), getAngle(), r, getAction()).send(p);
+	}
+	
+	@Override
+	public void calculate(List<Location> locations) {
+	
 	}
 }

@@ -4,8 +4,9 @@ import de.alphahelix.alphalibary.core.utils.RotationUtil;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.List;
 
 public class CircleForm extends Form {
 	
@@ -14,14 +15,15 @@ public class CircleForm extends Form {
 	public CircleForm(Location location, Vector axis, double dense, double angle, double radius, FormAction action) {
 		super(location, axis, dense, angle, action);
 		this.radius = radius;
+		apply();
 	}
 	
 	@Override
-	public void send(Player p) {
+	public void calculate(List<Location> locations) {
 		for(float alpha = 0; alpha < 180; alpha += getDense()) {
 			Vector v = new Vector(getRadius() * Math.cos(alpha), getRadius() * Math.sin(alpha), 0);
 			
-			getAction().action(p, getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
+			locations.add(getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
 		}
 	}
 	

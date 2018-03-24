@@ -1,8 +1,6 @@
 package de.alphahelix.alphalibary.input;
 
-import de.alphahelix.alphalibary.core.AlphaLibary;
 import de.alphahelix.alphalibary.core.AlphaModule;
-import de.alphahelix.alphalibary.core.SimpleLoader;
 import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import de.alphahelix.alphalibary.input.events.ArmorChangeEvent;
 import de.alphahelix.alphalibary.input.events.ItemRenameEvent;
@@ -23,15 +21,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-@SimpleLoader
 public class InputAPI implements AlphaModule {
 	
 	private static final Map<UUID, Double> OLD_VALUES = new WeakHashMap<>();
 	private static final List<InputHandler> HANDLERS = new ArrayList<>();
-	
-	public InputAPI() {
-		AlphaLibary.registerModule(this);
-	}
 	
 	public static void addHandler(InputHandler handler) {
 		HANDLERS.add(handler);

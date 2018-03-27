@@ -79,32 +79,6 @@ public class JSONDatabase implements IDataStorage {
 		return vals;
 	}
 	
-	@Override
-	public int hashCode() {
-		return java.util.Objects.hash(getId(), getSqlDatabaseHandler());
-	}
-	
-	public void addValue(Object val) {
-		this.sqlDatabaseHandler.insert(JSONUtil.toJson(val));
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		JSONDatabase that = (JSONDatabase) o;
-		return getId() == that.getId() &&
-				java.util.Objects.equals(getSqlDatabaseHandler(), that.getSqlDatabaseHandler());
-	}
-	
-	@Override
-	public String toString() {
-		return "JSONDatabase{" +
-				"id=" + id +
-				", sqlDatabaseHandler=" + sqlDatabaseHandler +
-				'}';
-	}
-	
 	public void setValue(String idValue, Object val) {
 		
 		if(id == null) {
@@ -120,6 +94,23 @@ public class JSONDatabase implements IDataStorage {
 		});
 	}
 	
+	public void addValue(Object val) {
+		this.sqlDatabaseHandler.insert(JSONUtil.toJson(val));
+	}
+	
+	@Override
+	public int hashCode() {
+		return java.util.Objects.hash(getId(), getSqlDatabaseHandler());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		JSONDatabase that = (JSONDatabase) o;
+		return getId() == that.getId() &&
+				java.util.Objects.equals(getSqlDatabaseHandler(), that.getSqlDatabaseHandler());
+	}
 	public UniqueIdentifier getId() {
 		return this.id;
 	}
@@ -137,11 +128,24 @@ public class JSONDatabase implements IDataStorage {
 		});
 	}
 	
+	public void hasValue(String idValue, Consumer<Boolean> callback) {
+		this.sqlDatabaseHandler.contains(id.name().toLowerCase(), idValue, callback);
+	}
+	
+	@Override
+	public String toString() {
+		return "JSONDatabase{" +
+				"id=" + id +
+				", sqlDatabaseHandler=" + sqlDatabaseHandler +
+				'}';
+	}
+	
 	public enum UniqueIdentifier {
 		NAME,
 		NUMBER,
 		UUID
 	}
+	
 	
 	@Override
 	public <T> void getValues(Class<T> definy, Consumer<List<T>> callback) {
@@ -152,10 +156,6 @@ public class JSONDatabase implements IDataStorage {
 			}
 			callback.accept(vals);
 		});
-	}
-	
-	public void hasValue(String idValue, Consumer<Boolean> callback) {
-		this.sqlDatabaseHandler.contains(id.name().toLowerCase(), idValue, callback);
 	}
 	
 	@Override
@@ -202,16 +202,4 @@ public class JSONDatabase implements IDataStorage {
 			});
 		}
 	}
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
 }

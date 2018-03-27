@@ -3,6 +3,7 @@ package de.alphahelix.alphalibary.reflection.player;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.enums.REnumDifficulty;
 import de.alphahelix.alphalibary.reflection.nms.enums.REnumGamemode;
@@ -18,8 +19,8 @@ import java.util.UUID;
 
 public class AdvancedPlayer {
 	
-	private static final ReflectionUtil.SaveField gameProfileNameField;
-	private static final ReflectionUtil.SaveConstructor playerInfoPacket;
+	private static final AbstractReflectionUtil.SaveField gameProfileNameField;
+	private static final AbstractReflectionUtil.SaveConstructor playerInfoPacket;
 	
 	static {
 		gameProfileNameField = ReflectionUtil.getDeclaredField("name", GameProfile.class);

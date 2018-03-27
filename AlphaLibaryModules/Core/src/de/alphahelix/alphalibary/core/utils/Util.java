@@ -15,6 +15,9 @@
  */
 package de.alphahelix.alphalibary.core.utils;
 
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractArrayUtil;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractUtil;
+import de.alphahelix.alphalibary.core.utils.implementations.IItemUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -22,15 +25,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class Util {
 	
@@ -73,7 +70,7 @@ public class Util {
 	}
 	
 	/**
-	 * @see ArrayUtil#makePlayerArray(Player...)
+	 * @see ArrayUtil#makeArray(Object[])
 	 * @deprecated
 	 */
 	public static Player[] makePlayerArray(Player... types) {
@@ -89,7 +86,7 @@ public class Util {
 	}
 	
 	/**
-	 * @see ArrayUtil#makePlayerArray(Set)
+	 * @see AbstractArrayUtil#makePlayerArray(Set)
 	 * @deprecated
 	 */
 	public static Player[] makePlayerArray(Set<String> types) {
@@ -113,7 +110,7 @@ public class Util {
 	}
 	
 	/**
-	 * @see ItemUtil#isSame(ItemStack, ItemStack)
+	 * @see IItemUtil#isSame(ItemStack, ItemStack)
 	 * @deprecated
 	 */
 	public static boolean isSame(ItemStack a, ItemStack b) {
@@ -121,7 +118,7 @@ public class Util {
 	}
 	
 	/**
-	 * @see ItemUtil#isSameMeta(ItemMeta, ItemMeta)
+	 * @see IItemUtil#isSameMeta(ItemMeta, ItemMeta)
 	 * @deprecated
 	 */
 	private static boolean isSameMeta(ItemMeta a, ItemMeta b) {
@@ -145,50 +142,11 @@ public class Util {
 	}
 	
 	public static void unzip(String zipPath, String outputFolder) {
-		try {
-			ZipFile zipFile = new ZipFile(zipPath);
-			Enumeration<?> enu = zipFile.entries();
-			
-			File folder = new File(outputFolder);
-			if(!folder.exists()) {
-				folder.mkdir();
-			}
-			
-			while(enu.hasMoreElements()) {
-				ZipEntry zipEntry = (ZipEntry) enu.nextElement();
-				
-				String name = zipEntry.getName();
-				
-				File file = new File(outputFolder + File.separator + name);
-				if(name.endsWith("/")) {
-					file.mkdirs();
-					continue;
-				}
-				
-				File parent = file.getParentFile();
-				if(parent != null) {
-					parent.mkdirs();
-				}
-				
-				InputStream is = zipFile.getInputStream(zipEntry);
-				FileOutputStream fos = new FileOutputStream(file);
-				byte[] bytes = new byte[1024];
-				int length;
-				while((length = is.read(bytes)) >= 0) {
-					fos.write(bytes, 0, length);
-				}
-				
-				is.close();
-				fos.close();
-			}
-			zipFile.close();
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
+		AbstractUtil.instance.unzip(zipPath, outputFolder);
 	}
 	
 	/**
-	 * @see ArrayUtil#getTypesOf(Class, List)
+	 * @see AbstractArrayUtil#getTypesOf(Class, List)
 	 * @deprecated
 	 */
 	public static <T> List<T> getTypesOf(Class<T> clazzType, List<Object> inList) {
@@ -246,7 +204,7 @@ public class Util {
 	}
 	
 	/**
-	 * @see ArrayUtil#replaceInArray(String, String, String...)
+	 * @see AbstractArrayUtil#replaceInArray(String, String, String...)
 	 * @deprecated
 	 */
 	public static String[] replaceInArray(String pattern, String replace, String... array) {
@@ -338,18 +296,18 @@ public class Util {
 	}
 	
 	/**
-	 * @see StringUtil#upperEverything(List)
+	 * @see StringUtil#upperEverything(java.util.Collection)
 	 * @deprecated
 	 */
 	public static List<String> upperEverything(List<String> list) {
-		return StringUtil.upperEverything(list);
+		return (List<String>) StringUtil.upperEverything(list);
 	}
 	
 	/**
-	 * @see StringUtil#lowerEverything(List)
+	 * @see StringUtil#upperEverything(Collection)
 	 * @deprecated
 	 */
 	public static List<String> lowerEverything(List<String> list) {
-		return StringUtil.upperEverything(list);
+		return (List<String>) StringUtil.upperEverything(list);
 	}
 }

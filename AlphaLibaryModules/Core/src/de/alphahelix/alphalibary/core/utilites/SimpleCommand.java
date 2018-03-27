@@ -13,7 +13,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.alphahelix.alphalibary.command;
+package de.alphahelix.alphalibary.core.utilites;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -24,10 +24,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-/**
- * @see SimpleAnnotatedCommand
- */
 
 public abstract class SimpleCommand extends Command {
 	
@@ -92,14 +88,7 @@ public abstract class SimpleCommand extends Command {
 	 * @return the new created {@link String}
 	 */
 	public String buildString(String[] args, int start) {
-		StringBuilder str = new StringBuilder();
-		if(args.length > start) {
-			str.append(args[start]);
-			for(int i = start + 1; i < args.length; i++) {
-				str.append(" ").append(args[i]);
-			}
-		}
-		return str.toString();
+		return buildString(args, start, args.length);
 	}
 	
 	public String buildString(String[] args, int start, int end) {

@@ -18,6 +18,7 @@ package de.alphahelix.alphalibary.fakeapi.utils;
 
 import de.alphahelix.alphalibary.core.AlphaLibary;
 import de.alphahelix.alphalibary.core.utils.LocationUtil;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeEndercrystal;
@@ -42,7 +43,7 @@ public class EndercrystalFakeUtil {
 	
 	private static final Map<String, BukkitTask> SPLIT_MAP = new HashMap<>();
 	
-	private static final ReflectionUtil.SaveConstructor ENTITY_ENDERCRYSTAL =
+	private static final AbstractReflectionUtil.SaveConstructor ENTITY_ENDERCRYSTAL =
 			ReflectionUtil.getDeclaredConstructor("EntityEnderCrystal", ReflectionUtil.getNmsClass("World"));
 	
 	/**

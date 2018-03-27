@@ -16,6 +16,7 @@
 
 package de.alphahelix.alphalibary.fakeapi;
 
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 public enum FakeMobType {
@@ -70,7 +71,7 @@ public enum FakeMobType {
 		return nmsClass;
 	}
 	
-	public ReflectionUtil.SaveConstructor getConstructor() {
+	public AbstractReflectionUtil.SaveConstructor getConstructor() {
 		return ReflectionUtil.getDeclaredConstructor(nmsClass, classes);
 	}
 	

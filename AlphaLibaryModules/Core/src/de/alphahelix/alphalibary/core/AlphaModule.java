@@ -1,5 +1,7 @@
 package de.alphahelix.alphalibary.core;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
 public interface AlphaModule {
 	
 	default void enable() {
@@ -9,5 +11,9 @@ public interface AlphaModule {
 	}
 	
 	default void load() {
+	}
+	
+	default JavaPlugin plugin() {
+		return AlphaLibary.getInstance();
 	}
 }

@@ -18,8 +18,8 @@
 package de.alphahelix.alphalibary.inventories.item;
 
 import de.alphahelix.alphalibary.core.utilites.SimpleListener;
-import de.alphahelix.alphalibary.core.utils.ArrayUtil;
 import de.alphahelix.alphalibary.core.utils.ItemUtil;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractArrayUtil;
 import de.alphahelix.alphalibary.inventories.item.data.ItemData;
 import de.alphahelix.alphalibary.inventories.item.data.WrongDataException;
 import org.bukkit.Material;
@@ -247,7 +247,7 @@ public class ItemBuilder extends SimpleListener implements Serializable {
 	 * @return this {@link ItemBuilder}
 	 */
 	public ItemBuilder setLore(String... newLore) {
-		this.lore = Arrays.asList(ArrayUtil.replaceInArray("&", "§", newLore));
+		this.lore = Arrays.asList(AbstractArrayUtil.instance.replaceInArray("&", "§", newLore));
 		return this;
 	}
 	

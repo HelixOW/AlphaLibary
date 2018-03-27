@@ -202,4 +202,15 @@ public class SimpleDatabaseMap<K, V> {
 	public void getKeys(Consumer<List<Object>> callback) {
 		getKeys(-1, callback, false);
 	}
+	
+	@Override
+	public String toString() {
+		return "SimpleDatabaseMap{" +
+				"fieldNames=" + fieldNames +
+				", keyColumnName='" + keyColumnName + '\'' +
+				", valueClazz=" + valueClazz +
+				", handler=" + handler +
+				", cache=" + cache +
+				'}';
+	}
 }

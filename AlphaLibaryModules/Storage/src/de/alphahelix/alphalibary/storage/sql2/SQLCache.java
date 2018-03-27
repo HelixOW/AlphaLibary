@@ -41,4 +41,12 @@ public final class SQLCache<V> {
 	public List<V> getListCache() {
 		return listCache;
 	}
+	
+	@Override
+	public String toString() {
+		return "SQLCache{" +
+				"cache=" + cache +
+				", listCache=" + listCache +
+				'}';
+	}
 }

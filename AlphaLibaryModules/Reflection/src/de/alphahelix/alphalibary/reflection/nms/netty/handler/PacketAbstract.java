@@ -1,7 +1,7 @@
 package de.alphahelix.alphalibary.reflection.nms.netty.handler;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.reflection.ReflectionUtil;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.netty.channel.ChannelWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -36,7 +36,7 @@ public abstract class PacketAbstract {
 	 */
 	public void setPacketValue(String field, Object value) {
 		try {
-			new ReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).set(getPacket(), value, true);
+			new AbstractReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).set(getPacket(), value, true);
 		} catch(NoSuchFieldException e) {
 			e.printStackTrace();
 		}
@@ -66,7 +66,7 @@ public abstract class PacketAbstract {
 	 */
 	public void setPacketValueSilent(String field, Object value) {
 		try {
-			new ReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).set(getPacket(), value, false);
+			new AbstractReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).set(getPacket(), value, false);
 		} catch(NoSuchFieldException ignored) {
 		
 		}
@@ -80,7 +80,7 @@ public abstract class PacketAbstract {
 	 */
 	public void setPacketValue(int index, Object value) {
 		try {
-			new ReflectionUtil.SaveField(packet.getClass().getDeclaredFields()[index]).set(getPacket(), value, true);
+			new AbstractReflectionUtil.SaveField(packet.getClass().getDeclaredFields()[index]).set(getPacket(), value, true);
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -94,7 +94,7 @@ public abstract class PacketAbstract {
 	 */
 	public void setPacketValueSilent(int index, Object value) {
 		try {
-			new ReflectionUtil.SaveField(packet.getClass().getDeclaredFields()[index]).set(getPacket(), value, false);
+			new AbstractReflectionUtil.SaveField(packet.getClass().getDeclaredFields()[index]).set(getPacket(), value, false);
 		} catch(Exception ignored) {
 		}
 	}
@@ -108,7 +108,7 @@ public abstract class PacketAbstract {
 	 */
 	public Object getPacketValue(String field) {
 		try {
-			return new ReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).get(getPacket());
+			return new AbstractReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).get(getPacket());
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -123,7 +123,7 @@ public abstract class PacketAbstract {
 	 */
 	public Object getPacketValueSilent(String field) {
 		try {
-			return new ReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).get(getPacket());
+			return new AbstractReflectionUtil.SaveField(packet.getClass().getDeclaredField(field)).get(getPacket());
 		} catch(Exception ignored) {
 		}
 		return null;
@@ -138,7 +138,7 @@ public abstract class PacketAbstract {
 	 */
 	public Object getPacketValue(int index) {
 		try {
-			return new ReflectionUtil.SaveField(packet.getClass().getDeclaredFields()[index]).get(getPacket());
+			return new AbstractReflectionUtil.SaveField(packet.getClass().getDeclaredFields()[index]).get(getPacket());
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -153,7 +153,7 @@ public abstract class PacketAbstract {
 	 */
 	public Object getPacketValueSilent(int index) {
 		try {
-			return new ReflectionUtil.SaveField(packet.getClass().getDeclaredFields()[index]).get(getPacket());
+			return new AbstractReflectionUtil.SaveField(packet.getClass().getDeclaredFields()[index]).get(getPacket());
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -15,19 +15,14 @@
  */
 package de.alphahelix.alphalibary.core.utils;
 
-import de.alphahelix.alphalibary.core.utilites.locations.Shape;
-import org.bukkit.Bukkit;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractLocationUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
-
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 
-public class LocationUtil {
+public interface LocationUtil {
 	
 	/**
 	 * Checks if two locations are equal
@@ -37,10 +32,8 @@ public class LocationUtil {
 	 *
 	 * @return are the two locations equal
 	 */
-	public static boolean isSameLocation(Location l1, Location l2) {
-		return ((l1.getBlockX() == l2.getBlockX())
-				&& (l1.getBlockY() == l2.getBlockY())
-				&& (l1.getBlockZ() == l2.getBlockZ()));
+	static boolean isSameLocation(Location l1, Location l2) {
+		return AbstractLocationUtil.instance.isSameLocation(l1, l2);
 	}
 	
 	/**
@@ -51,31 +44,8 @@ public class LocationUtil {
 	 *
 	 * @return the new modified {@link Location}
 	 */
-	public static Location lookAt(Location loc, Location lookat) {
-		loc = loc.clone();
-		double dx = lookat.getX() - loc.getX();
-		double dy = lookat.getY() - loc.getY();
-		double dz = lookat.getZ() - loc.getZ();
-		
-		if(dx != 0) {
-			if(dx < 0) {
-				loc.setYaw((float) (1.5 * Math.PI));
-			} else {
-				loc.setYaw((float) (0.5 * Math.PI));
-			}
-			loc.setYaw(loc.getYaw() - (float) Math.atan(dz / dx));
-		} else if(dz < 0) {
-			loc.setYaw((float) Math.PI);
-		}
-		
-		double dxz = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
-		
-		loc.setPitch((float) -Math.atan(dy / dxz));
-		
-		loc.setYaw(-loc.getYaw() * 180f / (float) Math.PI);
-		loc.setPitch(loc.getPitch() * 180f / (float) Math.PI);
-		
-		return loc;
+	static Location lookAt(Location loc, Location lookat) {
+		return AbstractLocationUtil.instance.lookAt(loc, lookat);
 	}
 	
 	/**
@@ -84,61 +54,20 @@ public class LocationUtil {
 	 * @param loc       the {@link Location} to check for
 	 * @param locations to check if Location is inside
 	 */
-	public static boolean isInside(Location loc, Location... locations) {
-		double x1 = ArrayUtil.min(getX(locations));
-		double y1 = ArrayUtil.min(getY(locations));
-		double z1 = ArrayUtil.min(getZ(locations));
-		
-		double x2 = ArrayUtil.max(getX(locations));
-		double y2 = ArrayUtil.max(getY(locations));
-		double z2 = ArrayUtil.max(getZ(locations));
-		
-		return loc.getX() >= x1 && loc.getX() <= x2
-				&& loc.getY() >= y1 && loc.getY() <= y2
-				&& loc.getZ() >= z1 && loc.getZ() <= z2;
+	static boolean isInside(Location loc, Location... locations) {
+		return AbstractLocationUtil.instance.isInside(loc, locations);
 	}
 	
-	public static double[] getX(Location[] locations) {
-		double[] x = new double[locations.length];
-		
-		for(int i = 0; i < locations.length; i++) {
-			x[i] = locations[i].getX();
-		}
-		
-		return x;
+	static double[] getX(Location[] locations) {
+		return AbstractLocationUtil.instance.getX(locations);
 	}
 	
-	public static double[] getY(Location[] locations) {
-		double[] y = new double[locations.length];
-		
-		for(int i = 0; i < locations.length; i++) {
-			y[i] = locations[i].getY();
-		}
-		
-		return y;
+	static double[] getY(Location[] locations) {
+		return AbstractLocationUtil.instance.getY(locations);
 	}
 	
-	public static double[] getZ(Location[] locations) {
-		double[] z = new double[locations.length];
-		
-		for(int i = 0; i < locations.length; i++) {
-			z[i] = locations[i].getZ();
-		}
-		
-		return z;
-	}
-	
-	public static boolean isInShape(Location loc, Shape shape, Vector... locations) {
-		
-		double a = shape.area(locations);
-		double a1 = shape.area(new Lo)
-		
-		double A = area(posA.getX(), posA.getZ(), posB.getX(), posB.getZ(), posC.getX(), posC.getZ());
-		double A1 = area(x, y, posB.getX(), posB.getZ(), posC.getX(), posC.getZ());
-		double A2 = area(posA.getX(), posA.getZ(), x, y, posC.getX(), posC.getZ());
-		double A3 = area(posA.getX(), posA.getZ(), posB.getX(), posB.getZ(), x, y);
-		
-		return (A == A1 + A2 + A3);
+	static double[] getZ(Location[] locations) {
+		return AbstractLocationUtil.instance.getZ(locations);
 	}
 	
 	/**
@@ -147,39 +76,23 @@ public class LocationUtil {
 	 * @param p     the {@link Player} to get its {@link Location}
 	 * @param range the distance to the player
 	 */
-	public static Location getLocationBehindPlayer(Player p, int range) {
-		return p.getLocation().clone().add(p.getLocation().getDirection().normalize().multiply(-1).multiply(range));
+	static Location getLocationBehindPlayer(Player p, int range) {
+		return AbstractLocationUtil.instance.getLocationBehindPlayer(p, range);
 	}
 	
-	public static Location getRandomLocation(Location player, int Xminimum, int Xmaximum, int Zminimum, int Zmaximum) {
-		try {
-			World world = player.getWorld();
-			double x = Double.parseDouble(
-					Integer.toString(Xminimum + ((int) (Math.random() * ((Xmaximum - Xminimum) + 1))))) + 0.5d;
-			double z = Double.parseDouble(
-					Integer.toString(Zminimum + ((int) (Math.random() * ((Zmaximum - Zminimum) + 1))))) + 0.5d;
-			player.setY(200);
-			return new Location(world, x, player.getY(), z);
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-		}
-		return null;
+	static Location getRandomLocation(Location player, int Xminimum, int Xmaximum, int Zminimum, int Zmaximum) {
+		return AbstractLocationUtil.instance.getRandomLocation(player, Xminimum, Xmaximum, Zminimum, Zmaximum);
 	}
 	
-	public static EulerAngle angleToEulerAngle(int degrees) {
-		return angleToEulerAngle(Math.toRadians(degrees));
+	static EulerAngle angleToEulerAngle(int degrees) {
+		return AbstractLocationUtil.instance.angleToEulerAngle(degrees);
 	}
 	
-	public static EulerAngle angleToEulerAngle(double radians) {
-		double x = Math.cos(radians);
-		double z = Math.sin(radians);
-		return new EulerAngle(x, 0, z);
+	static EulerAngle angleToEulerAngle(double radians) {
+		return AbstractLocationUtil.instance.angleToEulerAngle(radians);
 	}
 	
-	public static World getRandomWorld() {
-		Optional<World> optionalWorld = Bukkit.getWorlds().stream().findAny();
-		if(optionalWorld.isPresent())
-			return optionalWorld.get();
-		throw new NoSuchElementException("Cannot find any world");
+	static World getRandomWorld() {
+		return AbstractLocationUtil.instance.getRandomWorld();
 	}
 }

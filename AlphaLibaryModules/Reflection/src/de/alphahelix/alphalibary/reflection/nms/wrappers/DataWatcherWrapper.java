@@ -1,12 +1,13 @@
 package de.alphahelix.alphalibary.reflection.nms.wrappers;
 
 import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 
 public class DataWatcherWrapper {
 	
-	private static final ReflectionUtil.SaveMethod S =
+	private static final AbstractReflectionUtil.SaveMethod S =
 			ReflectionUtil.getDeclaredMethod("set", "DataWatcher",
 					ReflectionUtil.getNmsClass("DataWatcherObject"), Object.class);
 	

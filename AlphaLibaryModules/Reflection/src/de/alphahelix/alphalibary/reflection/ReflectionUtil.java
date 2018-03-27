@@ -1,25 +1,8 @@
-/*
- *
- * Copyright (C) <2017>  <AlphaHelixDev>
- *
- *       This program is free software: you can redistribute it under the
- *       terms of the GNU General Public License as published by
- *       the Free Software Foundation, either version 3 of the License.
- *
- *       This program is distributed in the hope that it will be useful,
- *       but WITHOUT ANY WARRANTY; without even the implied warranty of
- *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *       GNU General Public License for more details.
- *
- *       You should have received a copy of the GNU General Public License
- *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
 package de.alphahelix.alphalibary.reflection;
 
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.core.utils.JSONUtil;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.BlockPos;
 import de.alphahelix.alphalibary.reflection.nms.nbt.NBTCompound;
 import de.alphahelix.alphalibary.reflection.nms.nbt.NBTList;
@@ -42,18 +25,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class ReflectionUtil {
-	
-	private static final String VERSION;
-	
-	static {
-		String packageName = Bukkit.getServer().getClass().getPackage().getName();
-		VERSION = packageName.substring(packageName.lastIndexOf(".") + 1);
-	}
-	
-	public static String getVersion() {
-		return VERSION;
-	}
+public interface ReflectionUtil {
 	
 	/**
 	 * Gets a accessible {@link Field} out of a {@link Class}
@@ -63,32 +35,32 @@ public class ReflectionUtil {
 	 *
 	 * @return a accessible {@link Field}
 	 */
-	public static SaveField getField(String name, Class<?> clazz) {
+	static AbstractReflectionUtil.SaveField getField(String name, Class<?> clazz) {
 		try {
 			Field f = clazz.getField(name);
-			return new SaveField(f, -1);
+			return new AbstractReflectionUtil.SaveField(f, -1);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return new SaveField();
+			return new AbstractReflectionUtil.SaveField();
 		}
 	}
 	
-	public static SaveField getFirstType(Class<?> type, Class<?> clazz) {
+	static AbstractReflectionUtil.SaveField getFirstType(Class<?> type, Class<?> clazz) {
 		try {
 			for(Field field : clazz.getDeclaredFields()) {
 				if(field.getType().equals(type)) {
-					return new SaveField(field, -1);
+					return new AbstractReflectionUtil.SaveField(field, -1);
 				}
 			}
 			
 			throw new NoSuchFieldException("Could not resolve field of type '" + type.toString() + "' in class " + clazz);
 		} catch(NoSuchFieldException e) {
 			e.printStackTrace();
-			return new SaveField();
+			return new AbstractReflectionUtil.SaveField();
 		}
 	}
 	
-	public static SaveField getLastType(Class<?> type, Class<?> clazz) {
+	static AbstractReflectionUtil.SaveField getLastType(Class<?> type, Class<?> clazz) {
 		Field field = null;
 		for(Field field1 : clazz.getDeclaredFields()) {
 			if(field1.getType().equals(type)) {
@@ -101,13 +73,13 @@ public class ReflectionUtil {
 				throw new NoSuchFieldException("Could not resolve field of type '" + type.toString() + "' in class " + clazz);
 			} catch(NoSuchFieldException e) {
 				e.printStackTrace();
-				return new SaveField();
+				return new AbstractReflectionUtil.SaveField();
 			}
 		}
-		return new SaveField(field, -1);
+		return new AbstractReflectionUtil.SaveField(field, -1);
 	}
 	
-	public static SaveMethod getDeclaredMethod(String name, String nmsClazz, Class<?>... parameterClasses) {
+	static AbstractReflectionUtil.SaveMethod getDeclaredMethod(String name, String nmsClazz, Class<?>... parameterClasses) {
 		return getDeclaredMethod(name, getNmsClass(nmsClazz), parameterClasses);
 	}
 	
@@ -118,10 +90,10 @@ public class ReflectionUtil {
 	 * @param clazz            the {@link Class} where the {@link Method} is located at
 	 * @param parameterClasses the classes of the parameters for the method
 	 *
-	 * @return a accessible {@link SaveMethod}
+	 * @return a accessible {@link AbstractReflectionUtil.SaveMethod}
 	 */
-	public static SaveMethod getDeclaredMethod(String name, Class<?> clazz, Class<?>... parameterClasses) {
-		return getDeclaredMethod(new MethodInfo(name, clazz, parameterClasses));
+	static AbstractReflectionUtil.SaveMethod getDeclaredMethod(String name, Class<?> clazz, Class<?>... parameterClasses) {
+		return getDeclaredMethod(new AbstractReflectionUtil.MethodInfo(name, clazz, parameterClasses));
 	}
 	
 	/**
@@ -131,38 +103,38 @@ public class ReflectionUtil {
 	 *
 	 * @return the NMS {@link Class}
 	 */
-	public static Class<?> getNmsClass(String name) {
+	static Class<?> getNmsClass(String name) {
 		return getClass(getNmsPrefix() + name, false);
 	}
 	
-	public static SaveMethod getDeclaredMethod(MethodInfo methodInfo) {
+	static AbstractReflectionUtil.SaveMethod getDeclaredMethod(AbstractReflectionUtil.MethodInfo methodInfo) {
 		if(ReflectiveStorage.getMethods().containsKey(methodInfo))
 			return ReflectiveStorage.getMethods().get(methodInfo);
 		
 		try {
-			SaveMethod sm = new SaveMethod(methodInfo.getType().getDeclaredMethod(methodInfo.getName(), methodInfo.getParameters()));
+			AbstractReflectionUtil.SaveMethod sm = new AbstractReflectionUtil.SaveMethod(methodInfo.getType().getDeclaredMethod(methodInfo.getName(), methodInfo.getParameters()));
 			
 			ReflectiveStorage.getMethods().put(methodInfo, sm);
 			
 			return sm;
 		} catch(Exception e) {
 			e.printStackTrace();
-			return new SaveMethod();
+			return new AbstractReflectionUtil.SaveMethod();
 		}
 	}
 	
-	private static Class<?> getClass(String name, boolean asArray) {
-		return getClass(new ClassInfo(name, asArray));
+	static Class<?> getClass(String name, boolean asArray) {
+		return getClass(new AbstractReflectionUtil.ClassInfo(name, asArray));
 	}
 	
 	/**
 	 * @return the net.minecraft.sserver version {@link String}
 	 */
-	public static String getNmsPrefix() {
-		return "net.minecraft.server." + VERSION + ".";
+	static String getNmsPrefix() {
+		return "net.minecraft.server." + AbstractReflectionUtil.getVersion() + ".";
 	}
 	
-	private static Class<?> getClass(ClassInfo classInfo) {
+	static Class<?> getClass(AbstractReflectionUtil.ClassInfo classInfo) {
 		if(ReflectiveStorage.getClasses().containsKey(classInfo))
 			return ReflectiveStorage.getClasses().get(classInfo);
 		
@@ -170,13 +142,13 @@ public class ReflectionUtil {
 			if(classInfo.isAsArray()) {
 				Class<?> arrayClazz = Array.newInstance(Class.forName(classInfo.getName()), 0).getClass();
 				
-				ReflectiveStorage.getClasses().put(new ClassInfo(classInfo.getName(), true), arrayClazz);
+				ReflectiveStorage.getClasses().put(new AbstractReflectionUtil.ClassInfo(classInfo.getName(), true), arrayClazz);
 				
 				return arrayClazz;
 			} else {
 				Class<?> clazz = Class.forName(classInfo.getName());
 				
-				ReflectiveStorage.getClasses().put(new ClassInfo(classInfo.getName(), false), clazz);
+				ReflectiveStorage.getClasses().put(new AbstractReflectionUtil.ClassInfo(classInfo.getName(), false), clazz);
 				
 				return clazz;
 			}
@@ -193,7 +165,7 @@ public class ReflectionUtil {
 	 *
 	 * @return the NMS {@link Class}[]
 	 */
-	public static Class<?> getNmsClassAsArray(String name) {
+	static Class<?> getNmsClassAsArray(String name) {
 		return getClass(getNmsPrefix() + name, true);
 	}
 	
@@ -204,15 +176,15 @@ public class ReflectionUtil {
 	 *
 	 * @return the obc {@link Class}[]
 	 */
-	public static Class<?> getCraftBukkitClassAsArray(String name) {
+	static Class<?> getCraftBukkitClassAsArray(String name) {
 		return getClass(getCraftBukkitPrefix() + name, true);
 	}
 	
 	/**
 	 * @return the org.bukkit.craftbukkit version {@link String}
 	 */
-	public static String getCraftBukkitPrefix() {
-		return "org.bukkit.craftbukkit." + VERSION + ".";
+	static String getCraftBukkitPrefix() {
+		return "org.bukkit.craftbukkit." + AbstractReflectionUtil.getVersion() + ".";
 	}
 	
 	/**
@@ -222,18 +194,18 @@ public class ReflectionUtil {
 	 *
 	 * @return the EnumGamemode as an {@link Object}
 	 */
-	public static Object getEnumGamemode(OfflinePlayer p) {
+	static Object getEnumGamemode(OfflinePlayer p) {
 		try {
-			SaveField fInteractManager = ReflectionUtil.getDeclaredField("playerInteractManager", "EntityPlayer");
+			AbstractReflectionUtil.SaveField fInteractManager = getDeclaredField("playerInteractManager", "EntityPlayer");
 			
-			return ReflectionUtil.getDeclaredField("gamemode", "PlayerInteractManager").get(fInteractManager.get(getEntityPlayer(p)));
+			return getDeclaredField("gamemode", "PlayerInteractManager").get(fInteractManager.get(getEntityPlayer(p)));
 		} catch(Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public static int getEnumConstantID(Object enumConstant) {
+	static int getEnumConstantID(Object enumConstant) {
 		try {
 			return (int) Enum.class.getMethod("ordinal").invoke(enumConstant);
 		} catch(NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
@@ -249,7 +221,7 @@ public class ReflectionUtil {
 	 *
 	 * @return the EntityPlayer as an {@link Object}
 	 */
-	public static Object getEntityPlayer(OfflinePlayer p) {
+	static Object getEntityPlayer(OfflinePlayer p) {
 		try {
 			return getDeclaredMethod("getHandle", getCraftBukkitClass("entity.CraftPlayer")).invoke(p, true);
 		} catch(Exception e) {
@@ -265,17 +237,17 @@ public class ReflectionUtil {
 	 *
 	 * @return the ping as an {@link Object}
 	 */
-	public static int getPing(Player p) {
+	static int getPing(Player p) {
 		return (int) getDeclaredField("ping", "EntityPlayer").get(getEntityPlayer(p));
 	}
 	
-	public static Object setNBTTag(Object nbtTag, Object nmsItem) {
+	static Object setNBTTag(Object nbtTag, Object nmsItem) {
 		getDeclaredMethod("setTag", nmsItem.getClass(), nbtTag.getClass()).invoke(nmsItem, true, nbtTag);
 		
 		return nmsItem;
 	}
 	
-	public static ItemStack getBukkitItemStack(Object nmsItem) {
+	static ItemStack getBukkitItemStack(Object nmsItem) {
 		return (ItemStack) getDeclaredMethod("asCraftMirror", getCraftBukkitClass("inventory.CraftItemStack"), nmsItem.getClass()).invoke(null, true, nmsItem);
 	}
 	
@@ -286,15 +258,15 @@ public class ReflectionUtil {
 	 *
 	 * @return the NMS {@link Class}
 	 */
-	public static Class<?> getCraftBukkitClass(String name) {
+	static Class<?> getCraftBukkitClass(String name) {
 		return getClass(getCraftBukkitPrefix() + name, false);
 	}
 	
-	public static Object getItemRootNBTTagCompound(Object nmsItem) {
+	static Object getItemRootNBTTagCompound(Object nmsItem) {
 		return getDeclaredMethod("getTag", nmsItem.getClass()).invoke(nmsItem, true);
 	}
 	
-	public static Object getEntityNBTTagCompound(Object nmsEntity) {
+	static Object getEntityNBTTagCompound(Object nmsEntity) {
 		Object nbt = getNewNBTTag();
 		
 		if(nbt == null) return null;
@@ -305,40 +277,40 @@ public class ReflectionUtil {
 		return a;
 	}
 	
-	public static Object getNewNBTTag() {
+	static Object getNewNBTTag() {
 		return getDeclaredConstructor("NBTTagCompound").newInstance(true);
 	}
 	
-	public static SaveConstructor getDeclaredConstructor(String nmsClazz, Class<?>... parameterClasses) {
-		return getDeclaredConstructor(ReflectionUtil.getNmsClass(nmsClazz), parameterClasses);
+	static AbstractReflectionUtil.SaveConstructor getDeclaredConstructor(String nmsClazz, Class<?>... parameterClasses) {
+		return getDeclaredConstructor(getNmsClass(nmsClazz), parameterClasses);
 	}
 	
-	public static SaveConstructor getDeclaredConstructor(Class<?> clazz, Class<?>... parameterClasses) {
-		return getDeclaredConstructor(new ConstructorInfo(clazz, parameterClasses));
+	static AbstractReflectionUtil.SaveConstructor getDeclaredConstructor(Class<?> clazz, Class<?>... parameterClasses) {
+		return getDeclaredConstructor(new AbstractReflectionUtil.ConstructorInfo(clazz, parameterClasses));
 	}
 	
-	public static SaveConstructor getDeclaredConstructor(ConstructorInfo constructorInfo) {
+	static AbstractReflectionUtil.SaveConstructor getDeclaredConstructor(AbstractReflectionUtil.ConstructorInfo constructorInfo) {
 		if(ReflectiveStorage.getConstructors().containsKey(constructorInfo))
 			return ReflectiveStorage.getConstructors().get(constructorInfo);
 		
 		try {
-			SaveConstructor sc = new SaveConstructor<>(constructorInfo.getType().getDeclaredConstructor(constructorInfo.getParameters()));
+			AbstractReflectionUtil.SaveConstructor sc = new AbstractReflectionUtil.SaveConstructor<>(constructorInfo.getType().getDeclaredConstructor(constructorInfo.getParameters()));
 			
 			ReflectiveStorage.getConstructors().put(constructorInfo, sc);
 			
 			return sc;
 		} catch(Exception e) {
 			e.printStackTrace();
-			return new SaveConstructor();
+			return new AbstractReflectionUtil.SaveConstructor();
 		}
 	}
 	
-	public static Object setEntityNBTTag(Object nbtTag, Object nmsEntity) {
+	static Object setEntityNBTTag(Object nbtTag, Object nmsEntity) {
 		getDeclaredMethod("a", getNmsClass("NBTTagCompound")).invoke(nmsEntity, true, nbtTag);
 		return nmsEntity;
 	}
 	
-	public static Object getTileEntityNBTTagCompound(BlockState tile) {
+	static Object getTileEntityNBTTagCompound(BlockState tile) {
 		Object pos = toBlockPosition(new BlockPos() {
 			@Override
 			public int getX() {
@@ -366,7 +338,7 @@ public class ReflectionUtil {
 		return a;
 	}
 	
-	public static void setTileEntityNBTTagCompound(BlockState tile, Object nbtTag) {
+	static void setTileEntityNBTTagCompound(BlockState tile, Object nbtTag) {
 		Object pos = toBlockPosition(new BlockPos() {
 			@Override
 			public int getX() {
@@ -392,11 +364,11 @@ public class ReflectionUtil {
 		getDeclaredMethod("a", getNmsClass("TileEntity"), getNmsClass("NBTTagCompound")).invoke(nmsTile, true, nbtTag);
 	}
 	
-	public static Object getSubNBTTagCompound(Object compound, String name) {
+	static Object getSubNBTTagCompound(Object compound, String name) {
 		return getDeclaredMethod("getCompound", compound.getClass(), String.class).invoke(compound, true, name);
 	}
 	
-	public static void addNBTTagCompound(NBTCompound compound, String name) {
+	static void addNBTTagCompound(NBTCompound compound, String name) {
 		if(name == null) {
 			remove(compound, null);
 			return;
@@ -420,7 +392,7 @@ public class ReflectionUtil {
 		}
 	}
 	
-	public static void remove(NBTCompound compound, String name) {
+	static void remove(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -434,14 +406,14 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static boolean validCompound(NBTCompound compound) {
+	static boolean validCompound(NBTCompound compound) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
 		return (convertToCompound(rootTag, compound)) != null;
 	}
 	
-	public static Object convertToCompound(Object nbtTag, NBTCompound compound) {
+	static Object convertToCompound(Object nbtTag, NBTCompound compound) {
 		Stack<String> stack = new Stack<>();
 		while(compound.getParent() != null) {
 			stack.add(compound.getName());
@@ -456,7 +428,7 @@ public class ReflectionUtil {
 		return nbtTag;
 	}
 	
-	public static void setString(NBTCompound compound, String name, String text) {
+	static void setString(NBTCompound compound, String name, String text) {
 		if(text == null) {
 			remove(compound, name);
 			return;
@@ -476,7 +448,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static String getString(NBTCompound compound, String name) {
+	static String getString(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -490,7 +462,7 @@ public class ReflectionUtil {
 		return (String) getDeclaredMethod("getString", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static Object getContent(NBTCompound compound, String name) {
+	static Object getContent(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -504,7 +476,7 @@ public class ReflectionUtil {
 		return getDeclaredMethod("get", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setInt(NBTCompound compound, String name, Integer i) {
+	static void setInt(NBTCompound compound, String name, Integer i) {
 		if(i == null) {
 			remove(compound, name);
 			return;
@@ -524,7 +496,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static Integer getInt(NBTCompound compound, String name) {
+	static Integer getInt(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -538,7 +510,7 @@ public class ReflectionUtil {
 		return (Integer) getDeclaredMethod("getInt", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setByteArray(NBTCompound compound, String name, byte[] b) {
+	static void setByteArray(NBTCompound compound, String name, byte[] b) {
 		if(b == null) {
 			remove(compound, name);
 			return;
@@ -558,7 +530,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static byte[] getByteArray(NBTCompound compound, String name) {
+	static byte[] getByteArray(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -572,7 +544,7 @@ public class ReflectionUtil {
 		return (byte[]) getDeclaredMethod("getByteArray", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setIntArray(NBTCompound compound, String name, int[] i) {
+	static void setIntArray(NBTCompound compound, String name, int[] i) {
 		if(i == null) {
 			remove(compound, name);
 			return;
@@ -592,7 +564,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static int[] getIntArray(NBTCompound compound, String name) {
+	static int[] getIntArray(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -606,7 +578,7 @@ public class ReflectionUtil {
 		return (int[]) getDeclaredMethod("getIntArray", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setFloat(NBTCompound compound, String name, Float f) {
+	static void setFloat(NBTCompound compound, String name, Float f) {
 		if(f == null) {
 			remove(compound, name);
 			return;
@@ -626,7 +598,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static Float getFloat(NBTCompound compound, String name) {
+	static Float getFloat(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -640,7 +612,7 @@ public class ReflectionUtil {
 		return (Float) getDeclaredMethod("getFloat", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setLong(NBTCompound compound, String name, Long l) {
+	static void setLong(NBTCompound compound, String name, Long l) {
 		if(l == null) {
 			remove(compound, name);
 			return;
@@ -660,7 +632,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static Long getLong(NBTCompound compound, String name) {
+	static Long getLong(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -674,7 +646,7 @@ public class ReflectionUtil {
 		return (Long) getDeclaredMethod("getLong", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setShort(NBTCompound compound, String name, Short s) {
+	static void setShort(NBTCompound compound, String name, Short s) {
 		if(s == null) {
 			remove(compound, name);
 			return;
@@ -694,7 +666,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static Short getShort(NBTCompound compound, String name) {
+	static Short getShort(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -708,7 +680,7 @@ public class ReflectionUtil {
 		return (Short) getDeclaredMethod("getShort", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setByte(NBTCompound compound, String name, Byte b) {
+	static void setByte(NBTCompound compound, String name, Byte b) {
 		if(b == null) {
 			remove(compound, name);
 			return;
@@ -728,7 +700,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static Byte getByte(NBTCompound compound, String name) {
+	static Byte getByte(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -742,7 +714,7 @@ public class ReflectionUtil {
 		return (Byte) getDeclaredMethod("getByte", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setDouble(NBTCompound compound, String name, Double d) {
+	static void setDouble(NBTCompound compound, String name, Double d) {
 		if(d == null) {
 			remove(compound, name);
 			return;
@@ -762,7 +734,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static Double getDouble(NBTCompound compound, String name) {
+	static Double getDouble(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -776,7 +748,7 @@ public class ReflectionUtil {
 		return (Double) getDeclaredMethod("getDouble", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setBoolean(NBTCompound compound, String name, Boolean b) {
+	static void setBoolean(NBTCompound compound, String name, Boolean b) {
 		if(b == null) {
 			remove(compound, name);
 			return;
@@ -796,7 +768,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static Boolean getBoolean(NBTCompound compound, String name) {
+	static Boolean getBoolean(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -810,12 +782,12 @@ public class ReflectionUtil {
 		return (Boolean) getDeclaredMethod("getBoolean", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static void setObject(NBTCompound compound, String name, Object o) {
+	static void setObject(NBTCompound compound, String name, Object o) {
 		String json = JSONUtil.toJson(o);
 		setString(compound, name, json);
 	}
 	
-	public static <T> T getObject(NBTCompound compound, String name, Class<T> type) {
+	static <T> T getObject(NBTCompound compound, String name, Class<T> type) {
 		String json = getString(compound, name);
 		
 		if(json == null) return null;
@@ -823,7 +795,7 @@ public class ReflectionUtil {
 		return JSONUtil.getValue(json, type);
 	}
 	
-	public static void set(NBTCompound compound, String name, Object val) {
+	static void set(NBTCompound compound, String name, Object val) {
 		if(val == null) {
 			remove(compound, name);
 			return;
@@ -843,7 +815,7 @@ public class ReflectionUtil {
 		compound.setCompound(rootTag);
 	}
 	
-	public static byte getType(NBTCompound compound, String name) {
+	static byte getType(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -857,7 +829,7 @@ public class ReflectionUtil {
 		return (byte) getDeclaredMethod("d", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static NBTList getList(NBTCompound compound, String name, NBTType type) {
+	static NBTList getList(NBTCompound compound, String name, NBTType type) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -872,7 +844,7 @@ public class ReflectionUtil {
 				invoke(tag, true, name, type.getId()));
 	}
 	
-	public static Boolean hasKey(NBTCompound compound, String name) {
+	static Boolean hasKey(NBTCompound compound, String name) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -886,7 +858,7 @@ public class ReflectionUtil {
 		return (Boolean) getDeclaredMethod("hasKey", tag.getClass(), String.class).invoke(tag, true, name);
 	}
 	
-	public static Set<String> getKeys(NBTCompound compound) {
+	static Set<String> getKeys(NBTCompound compound) {
 		Object rootTag = compound.getCoumpound();
 		if(rootTag == null)
 			rootTag = getNewNBTTag();
@@ -906,9 +878,9 @@ public class ReflectionUtil {
 	 * @param p       the {@link Player} to receive the Packet
 	 * @param packets the Packet[] to send
 	 */
-	public static void sendPackets(Player p, Object... packets) {
+	static void sendPackets(Player p, Object... packets) {
 		for(Object packet : packets)
-			ReflectionUtil.sendPacket(p, packet);
+			sendPacket(p, packet);
 	}
 	
 	/**
@@ -917,7 +889,7 @@ public class ReflectionUtil {
 	 * @param p      the {@link Player} to receive the Packet
 	 * @param packet the Packet to send
 	 */
-	public static void sendPacket(Player p, Object packet) {
+	static void sendPacket(Player p, Object packet) {
 		try {
 			Object nmsPlayer = getEntityPlayer(p);
 			
@@ -931,11 +903,11 @@ public class ReflectionUtil {
 		}
 	}
 	
-	public static void sendPacket(Player p, IPacket packet) {
+	static void sendPacket(Player p, IPacket packet) {
 		sendPacket(p, packet.getPacket(true));
 	}
 	
-	public static void sendPacket(Player p, IPacket packet, boolean stackTrace) {
+	static void sendPacket(Player p, IPacket packet, boolean stackTrace) {
 		sendPacket(p, packet.getPacket(stackTrace));
 	}
 	
@@ -944,22 +916,22 @@ public class ReflectionUtil {
 	 *
 	 * @param packets the Packet[] to send
 	 */
-	public static void sendPackets(Object... packets) {
+	static void sendPackets(Object... packets) {
 		for(Player p : Bukkit.getOnlinePlayers())
 			for(Object packet : packets)
-				ReflectionUtil.sendPacket(p, packet);
+				sendPacket(p, packet);
 	}
 	
-	public static void sendPackets(IPacket... packets) {
+	static void sendPackets(IPacket... packets) {
 		for(Player p : Bukkit.getOnlinePlayers())
 			for(IPacket packet : packets)
-				ReflectionUtil.sendPacket(p, packet.getPacket(true));
+				sendPacket(p, packet.getPacket(true));
 	}
 	
-	public static void sendPackets(boolean stackTrace, IPacket... packets) {
+	static void sendPackets(boolean stackTrace, IPacket... packets) {
 		for(Player p : Bukkit.getOnlinePlayers())
 			for(IPacket packet : packets)
-				ReflectionUtil.sendPacket(p, packet.getPacket(stackTrace));
+				sendPacket(p, packet.getPacket(stackTrace));
 	}
 	
 	/**
@@ -968,10 +940,10 @@ public class ReflectionUtil {
 	 * @param notFor  the {@link Player} to not send the Packet[] to
 	 * @param packets the Packet[] to send
 	 */
-	public static void sendPacketsNotFor(String notFor, Object... packets) {
+	static void sendPacketsNotFor(String notFor, Object... packets) {
 		for(Player p : Bukkit.getOnlinePlayers())
 			if(!p.getName().equals(notFor)) for(Object packet : packets)
-				ReflectionUtil.sendPacket(p, packet);
+				sendPacket(p, packet);
 	}
 	
 	/**
@@ -980,29 +952,29 @@ public class ReflectionUtil {
 	 * @param notFor  the {@link Player} to not send the Packet[] to
 	 * @param packets the Packet[] to send
 	 */
-	public static void sendPacketsNotFor(Player notFor, Object... packets) {
+	static void sendPacketsNotFor(Player notFor, Object... packets) {
 		sendPacketsNotFor(notFor.getName(), packets);
 	}
 	
-	public static void sendPacketsNotFor(String notFor, IPacket... packets) {
+	static void sendPacketsNotFor(String notFor, IPacket... packets) {
 		for(Player p : Bukkit.getOnlinePlayers())
 			if(!p.getName().equals(notFor))
 				for(IPacket packet : packets)
-					ReflectionUtil.sendPacket(p, packet.getPacket(true));
+					sendPacket(p, packet.getPacket(true));
 	}
 	
-	public static void sendPacketsNotFor(Player notFor, IPacket... packets) {
+	static void sendPacketsNotFor(Player notFor, IPacket... packets) {
 		sendPacketsNotFor(notFor.getName(), packets);
 	}
 	
-	public static void sendPacketsNotFor(String notFor, boolean stackTrace, IPacket... packets) {
+	static void sendPacketsNotFor(String notFor, boolean stackTrace, IPacket... packets) {
 		for(Player p : Bukkit.getOnlinePlayers())
 			if(!p.getName().equals(notFor))
 				for(IPacket packet : packets)
-					ReflectionUtil.sendPacket(p, packet.getPacket(stackTrace));
+					sendPacket(p, packet.getPacket(stackTrace));
 	}
 	
-	public static void sendPacketsNotFor(Player notFor, boolean stackTrace, IPacket... packets) {
+	static void sendPacketsNotFor(Player notFor, boolean stackTrace, IPacket... packets) {
 		sendPacketsNotFor(notFor.getName(), stackTrace, packets);
 	}
 	
@@ -1013,7 +985,7 @@ public class ReflectionUtil {
 	 *
 	 * @return the entity ID
 	 */
-	public static int getEntityID(Entity entity) {
+	static int getEntityID(Entity entity) {
 		return (int) getMethod("getId", getNmsClass("Entity")).invoke(getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true), true);
 	}
 	
@@ -1024,12 +996,12 @@ public class ReflectionUtil {
 	 *
 	 * @return the entity ID
 	 */
-	public static int getEntityID(Object entity) {
+	static int getEntityID(Object entity) {
 		return (int) getDeclaredField("id", "Entity").get(entity);
 	}
 	
-	public static SaveField getDeclaredField(String name, String nmsClazz) {
-		return getDeclaredField(name, ReflectionUtil.getNmsClass(nmsClazz));
+	static AbstractReflectionUtil.SaveField getDeclaredField(String name, String nmsClazz) {
+		return getDeclaredField(name, getNmsClass(nmsClazz));
 	}
 	
 	/**
@@ -1040,13 +1012,13 @@ public class ReflectionUtil {
 	 *
 	 * @return a accessible {@link Field}
 	 */
-	public static SaveField getDeclaredField(String name, Class<?> clazz) {
+	static AbstractReflectionUtil.SaveField getDeclaredField(String name, Class<?> clazz) {
 		try {
 			Field f = clazz.getDeclaredField(name);
-			return new SaveField(f, -1);
+			return new AbstractReflectionUtil.SaveField(f, -1);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return new SaveField();
+			return new AbstractReflectionUtil.SaveField();
 		}
 	}
 	
@@ -1057,7 +1029,7 @@ public class ReflectionUtil {
 	 *
 	 * @return the NMS Entity
 	 */
-	public static Object getCraftbukkitEntity(Entity entity) {
+	static Object getCraftbukkitEntity(Entity entity) {
 		return getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true);
 	}
 	
@@ -1068,25 +1040,25 @@ public class ReflectionUtil {
 	 * @param clazz            the {@link Class} where the {@link Method} is located at
 	 * @param parameterClasses the classes of the parameters for the method
 	 *
-	 * @return a accessible {@link SaveMethod}
+	 * @return a accessible {@link AbstractReflectionUtil.SaveMethod}
 	 */
-	public static SaveMethod getMethod(String name, Class<?> clazz, Class<?>... parameterClasses) {
-		return getMethod(new MethodInfo(name, clazz, parameterClasses));
+	static AbstractReflectionUtil.SaveMethod getMethod(String name, Class<?> clazz, Class<?>... parameterClasses) {
+		return getMethod(new AbstractReflectionUtil.MethodInfo(name, clazz, parameterClasses));
 	}
 	
-	public static SaveMethod getMethod(MethodInfo methodInfo) {
+	static AbstractReflectionUtil.SaveMethod getMethod(AbstractReflectionUtil.MethodInfo methodInfo) {
 		if(ReflectiveStorage.getMethods().containsKey(methodInfo))
 			return ReflectiveStorage.getMethods().get(methodInfo);
 		
 		try {
-			SaveMethod sm = new SaveMethod(methodInfo.getType().getMethod(methodInfo.getName(), methodInfo.getParameters()));
+			AbstractReflectionUtil.SaveMethod sm = new AbstractReflectionUtil.SaveMethod(methodInfo.getType().getMethod(methodInfo.getName(), methodInfo.getParameters()));
 			
 			ReflectiveStorage.getMethods().put(methodInfo, sm);
 			
 			return sm;
 		} catch(Exception e) {
 			e.printStackTrace();
-			return new SaveMethod();
+			return new AbstractReflectionUtil.SaveMethod();
 		}
 	}
 	
@@ -1097,7 +1069,7 @@ public class ReflectionUtil {
 	 *
 	 * @return the WorldServer
 	 */
-	public static Object getWorldServer(World world) {
+	static Object getWorldServer(World world) {
 		return getMethod("getHandle", getCraftBukkitClass("CraftWorld")).invoke(world, true);
 	}
 	
@@ -1106,7 +1078,7 @@ public class ReflectionUtil {
 	 *
 	 * @return the MinecraftServer
 	 */
-	public static Object getMinecraftServer() {
+	static Object getMinecraftServer() {
 		return getMethod("getServer", getCraftBukkitClass("CraftServer")).invoke(Bukkit.getServer(), true);
 	}
 	
@@ -1117,7 +1089,7 @@ public class ReflectionUtil {
 	 *
 	 * @return the ItemStack
 	 */
-	public static Object getNMSItemStack(ItemStack item) {
+	static Object getNMSItemStack(ItemStack item) {
 		return getMethod("asNMSCopy", getCraftBukkitClass("inventory.CraftItemStack"), ItemStack.class).invoke(null, true, item);
 	}
 	
@@ -1128,19 +1100,15 @@ public class ReflectionUtil {
 	 *
 	 * @return the {@link String}
 	 */
-	public static String[] fromIChatBaseComponent(Object... baseComponentArray) {
+	static String[] fromIChatBaseComponent(Object... baseComponentArray) {
 		
 		String[] array = new String[baseComponentArray.length];
 		
 		for(int i = 0; i < array.length; i++) {
-			array[i] = fromIChatBaseComponent(baseComponentArray[i]);
+			array[i] = AbstractReflectionUtil.instance.fromIChatBaseComponent(baseComponentArray[i]);
 		}
 		
 		return array;
-	}
-	
-	private static String fromIChatBaseComponent(Object component) {
-		return (String) getMethod("fromComponent", getCraftBukkitClass("util.CraftChatMessage"), ReflectionUtil.getNmsClass("IChatBaseComponent")).invoke(null, true, component);
 	}
 	
 	/**
@@ -1150,11 +1118,11 @@ public class ReflectionUtil {
 	 *
 	 * @return the IChatBaseComponent
 	 *
-	 * @see ReflectionUtil#toIChatBaseComponent(String...)
+	 * @see de.alphahelix.alphalibary.reflection.ReflectionUtil#toIChatBaseComponent(String...)
 	 * @deprecated
 	 */
 	@Deprecated
-	public static Object[] serializeString(String... strings) {
+	static Object[] serializeString(String... strings) {
 		Object[] array = (Object[]) Array.newInstance(getNmsClass("IChatBaseComponent"), strings.length);
 		
 		for(int i = 0; i < array.length; i++) {
@@ -1164,7 +1132,7 @@ public class ReflectionUtil {
 		return array;
 	}
 	
-	public static Object[] toIChatBaseComponent(String... strings) {
+	static Object[] toIChatBaseComponent(String... strings) {
 		Object[] array = (Object[]) Array.newInstance(getNmsClass("IChatBaseComponent"), strings.length);
 		
 		for(int i = 0; i < array.length; i++) {
@@ -1181,11 +1149,11 @@ public class ReflectionUtil {
 	 *
 	 * @return the CraftChatMessage as an {@link Object}
 	 *
-	 * @see ReflectionUtil#toIChatBaseComponentArray(String) (String)
+	 * @see de.alphahelix.alphalibary.reflection.ReflectionUtil#toIChatBaseComponentArray(String) (String)
 	 * @deprecated
 	 */
 	@Deprecated
-	public static Object serializeString(String s) {
+	static Object serializeString(String s) {
 		try {
 			Class<?> chatSerelizer = getCraftBukkitClass("util.CraftChatMessage");
 			
@@ -1198,46 +1166,46 @@ public class ReflectionUtil {
 		}
 	}
 	
-	public static Object toIChatBaseComponentArray(String s) {
-		SaveMethod mserialize = getDeclaredMethod("fromString", getCraftBukkitClass("util.CraftChatMessage"), String.class);
+	static Object toIChatBaseComponentArray(String s) {
+		AbstractReflectionUtil.SaveMethod mserialize = getDeclaredMethod("fromString", getCraftBukkitClass("util.CraftChatMessage"), String.class);
 		
 		return ((Object[]) mserialize.invoke(null, true, s))[0];
 	}
 	
-	public static Object toBlockPosition(BlockPos loc) {
+	static Object toBlockPosition(BlockPos loc) {
 		return getDeclaredConstructor("BlockPosition", int.class, int.class, int.class).newInstance(true, loc.getX(), loc.getY(), loc.getZ());
 	}
 	
-	public static BlockPos fromBlockPostition(Object nmsLoc) {
+	static BlockPos fromBlockPostition(Object nmsLoc) {
 		Class<?> bP = getNmsClass("BaseBlockPosition");
 		
 		return new BlockPos() {
 			@Override
 			public int getX() {
-				return (int) getDeclaredField("a", bP).get(nmsLoc);
+				return (int) ReflectionUtil.getDeclaredField("a", bP).get(nmsLoc);
 			}
 			
 			@Override
 			public int getY() {
-				return (int) getDeclaredField("b", bP).get(nmsLoc);
+				return (int) ReflectionUtil.getDeclaredField("b", bP).get(nmsLoc);
 			}
 			
 			@Override
 			public int getZ() {
-				return (int) getDeclaredField("c", bP).get(nmsLoc);
+				return (int) ReflectionUtil.getDeclaredField("c", bP).get(nmsLoc);
 			}
 		};
 	}
 	
-	public static GameProfile getGameProfile(Player p) {
+	static GameProfile getGameProfile(Player p) {
 		return (GameProfile) getDeclaredMethod("getProfile", getCraftBukkitClass("entity.CraftPlayer")).invoke(p, true);
 	}
 	
-	public static Class<?>[] getClasses(File jarFile, String pckg) {
-		return getClasses(new JarInfo(jarFile, pckg));
+	static Class<?>[] getClasses(File jarFile, String pckg) {
+		return getClasses(new AbstractReflectionUtil.JarInfo(jarFile, pckg));
 	}
 	
-	public static Class<?>[] getClasses(JarInfo info) {
+	static Class<?>[] getClasses(AbstractReflectionUtil.JarInfo info) {
 		if(ReflectiveStorage.getJars().containsKey(info))
 			return ReflectiveStorage.getJars().get(info);
 		
@@ -1248,7 +1216,7 @@ public class ReflectionUtil {
 				JarEntry jarEntry = entry.nextElement();
 				String jarName = jarEntry.getName().replace('/', '.');
 				
-				if(info.needsPckg) {
+				if(info.isNeedsPckg()) {
 					if(jarName.startsWith(info.getPckg()) && jarName.endsWith(".class")) {
 						classes.add(getClass(jarName.substring(0, jarName.length() - 6), false));
 					}
@@ -1268,7 +1236,7 @@ public class ReflectionUtil {
 		return classArray;
 	}
 	
-	public static Class<?>[] findClassesImplementing(Class<?> implementedClazz) {
+	static Class<?>[] findClassesImplementing(Class<?> implementedClazz) {
 		List<Class<?>> classes = new LinkedList<>();
 		
 		for(Class<?> clazz : getClasses()) {
@@ -1279,7 +1247,7 @@ public class ReflectionUtil {
 		return classes.toArray(new Class[classes.size()]);
 	}
 	
-	public static Class<?>[] getClasses() {
+	static Class<?>[] getClasses() {
 		Set<Class<?>> classes = new HashSet<>();
 		File[] plugins = new File(".", "plugins").listFiles();
 		
@@ -1294,11 +1262,11 @@ public class ReflectionUtil {
 		return classes.toArray(new Class[classes.size()]);
 	}
 	
-	public static Class<?>[] getClasses(File jarFile) {
-		return getClasses(new JarInfo(jarFile, ""));
+	static Class<?>[] getClasses(File jarFile) {
+		return getClasses(new AbstractReflectionUtil.JarInfo(jarFile, ""));
 	}
 	
-	public static Class<?>[] findClassesAnnotatedWith(Class<? extends Annotation> annotation) {
+	static Class<?>[] findClassesAnnotatedWith(Class<? extends Annotation> annotation) {
 		List<Class<?>> classes = new LinkedList<>();
 		
 		for(Class<?> clazz : getClasses()) {
@@ -1309,7 +1277,7 @@ public class ReflectionUtil {
 		return classes.toArray(new Class[classes.size()]);
 	}
 	
-	public static Class<?>[] findClassesNotAnnotatedWith(Class<? extends Annotation> annotation) {
+	static Class<?>[] findClassesNotAnnotatedWith(Class<? extends Annotation> annotation) {
 		List<Class<?>> classes = new LinkedList<>();
 		
 		for(Class<?> clazz : getClasses()) {
@@ -1320,525 +1288,201 @@ public class ReflectionUtil {
 		return classes.toArray(new Class[classes.size()]);
 	}
 	
-	public static SaveField[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation) {
+	static AbstractReflectionUtil.SaveField[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation) {
 		return findFieldsAnnotatedWith(annotation, getClasses());
 	}
 	
-	public static SaveField[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
-		List<SaveField> fields = new LinkedList<>();
+	static AbstractReflectionUtil.SaveField[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveField> fields = new LinkedList<>();
 		int i = 0;
 		
 		for(Class<?> clazz : classes) {
 			for(Field f : clazz.getDeclaredFields()) {
 				if(f.isAnnotationPresent(annotation)) {
-					fields.add(new SaveField(f, i));
+					fields.add(new AbstractReflectionUtil.SaveField(f, i));
 				}
 				i++;
 			}
 			i = 0;
 		}
 		
-		return fields.toArray(new SaveField[fields.size()]);
+		return fields.toArray(new AbstractReflectionUtil.SaveField[fields.size()]);
 	}
 	
-	public static SaveField[] findFieldsNotAnnotatedWith(Class<? extends Annotation> annotation) {
+	static AbstractReflectionUtil.SaveField[] findFieldsNotAnnotatedWith(Class<? extends Annotation> annotation) {
 		return findFieldsNotAnnotatedWith(annotation, getClasses());
 	}
 	
-	public static SaveField[] findFieldsNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
-		List<SaveField> fields = new LinkedList<>();
+	static AbstractReflectionUtil.SaveField[] findFieldsNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveField> fields = new LinkedList<>();
 		int i = 0;
 		
 		for(Class<?> clazz : classes) {
 			for(Field f : clazz.getDeclaredFields()) {
 				if(!f.isAnnotationPresent(annotation)) {
-					fields.add(new SaveField(f, i));
+					fields.add(new AbstractReflectionUtil.SaveField(f, i));
 				}
 				i++;
 			}
 			i = 0;
 		}
 		
-		return fields.toArray(new SaveField[fields.size()]);
+		return fields.toArray(new AbstractReflectionUtil.SaveField[fields.size()]);
 	}
 	
-	public static SaveField[] findFieldsOfType(Class<?> type) {
+	static AbstractReflectionUtil.SaveField[] findFieldsOfType(Class<?> type) {
 		return findFieldsOfType(type, getClasses());
 	}
 	
-	public static SaveField[] findFieldsOfType(Class<?> type, Class<?>... classes) {
-		List<SaveField> fields = new LinkedList<>();
+	static AbstractReflectionUtil.SaveField[] findFieldsOfType(Class<?> type, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveField> fields = new LinkedList<>();
 		int i = 0;
 		
 		for(Class<?> clazz : classes) {
 			for(Field f : clazz.getDeclaredFields()) {
 				if(f.getType().equals(type)) {
-					fields.add(new SaveField(f, i));
+					fields.add(new AbstractReflectionUtil.SaveField(f, i));
 				}
 				i++;
 			}
 			i = 0;
 		}
 		
-		return fields.toArray(new SaveField[fields.size()]);
+		return fields.toArray(new AbstractReflectionUtil.SaveField[fields.size()]);
 	}
 	
-	public static SaveField findFieldAtIndex(int index, Class<?>... classes) {
+	static AbstractReflectionUtil.SaveField findFieldAtIndex(int index, Class<?>... classes) {
 		int i = 0;
 		
 		for(Class<?> clazz : classes) {
 			for(Field f : clazz.getDeclaredFields()) {
 				if(i == index)
-					return new SaveField(f, i);
+					return new AbstractReflectionUtil.SaveField(f, i);
 				i++;
 			}
 		}
 		
-		return new SaveField();
+		return new AbstractReflectionUtil.SaveField();
 	}
 	
-	public static SaveMethod[] findMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
+	static AbstractReflectionUtil.SaveMethod[] findMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
 		return findMethodsAnnotatedWith(annotation, getClasses());
 	}
 	
-	public static SaveMethod[] findMethodsAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
-		List<SaveMethod> methods = new LinkedList<>();
+	static AbstractReflectionUtil.SaveMethod[] findMethodsAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveMethod> methods = new LinkedList<>();
 		
 		for(Class<?> clazz : classes) {
 			for(Method m : clazz.getDeclaredMethods()) {
 				if(m.isAnnotationPresent(annotation))
-					methods.add(new SaveMethod(m));
+					methods.add(new AbstractReflectionUtil.SaveMethod(m));
 			}
 		}
 		
-		return methods.toArray(new SaveMethod[methods.size()]);
+		return methods.toArray(new AbstractReflectionUtil.SaveMethod[methods.size()]);
 	}
 	
-	public static SaveMethod[] findMethodsNotAnnotatedWith(Class<? extends Annotation> annotation) {
+	static AbstractReflectionUtil.SaveMethod[] findMethodsNotAnnotatedWith(Class<? extends Annotation> annotation) {
 		return findMethodsNotAnnotatedWith(annotation, getClasses());
 	}
 	
-	public static SaveMethod[] findMethodsNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
-		List<SaveMethod> methods = new LinkedList<>();
+	static AbstractReflectionUtil.SaveMethod[] findMethodsNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveMethod> methods = new LinkedList<>();
 		
 		for(Class<?> clazz : classes) {
 			for(Method m : clazz.getDeclaredMethods()) {
 				if(m.isAnnotationPresent(annotation))
-					methods.add(new SaveMethod(m));
+					methods.add(new AbstractReflectionUtil.SaveMethod(m));
 			}
 		}
 		
-		return methods.toArray(new SaveMethod[methods.size()]);
+		return methods.toArray(new AbstractReflectionUtil.SaveMethod[methods.size()]);
 	}
 	
-	public static SaveMethod[] findMethodsWithParameters(Class<?>... parameters) {
+	static AbstractReflectionUtil.SaveMethod[] findMethodsWithParameters(Class<?>... parameters) {
 		return findMethodsWithParameters(parameters, getClasses());
 	}
 	
-	public static SaveMethod[] findMethodsWithParameters(Class<?>[] parameters, Class<?>... classes) {
-		List<SaveMethod> methods = new LinkedList<>();
+	static AbstractReflectionUtil.SaveMethod[] findMethodsWithParameters(Class<?>[] parameters, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveMethod> methods = new LinkedList<>();
 		
 		for(Class<?> clazz : classes) {
 			for(Method m : clazz.getDeclaredMethods()) {
 				if(Arrays.equals(m.getParameterTypes(), parameters))
-					methods.add(new SaveMethod(m));
+					methods.add(new AbstractReflectionUtil.SaveMethod(m));
 			}
 		}
 		
-		return methods.toArray(new SaveMethod[methods.size()]);
+		return methods.toArray(new AbstractReflectionUtil.SaveMethod[methods.size()]);
 	}
 	
-	public static SaveMethod[] findMethodsReturning(Class<?> returned) {
+	static AbstractReflectionUtil.SaveMethod[] findMethodsReturning(Class<?> returned) {
 		return findMethodsReturning(returned, getClasses());
 	}
 	
-	public static SaveMethod[] findMethodsReturning(Class<?> returned, Class<?>... classes) {
-		List<SaveMethod> methods = new LinkedList<>();
+	static AbstractReflectionUtil.SaveMethod[] findMethodsReturning(Class<?> returned, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveMethod> methods = new LinkedList<>();
 		
 		for(Class<?> clazz : classes) {
 			for(Method m : clazz.getDeclaredMethods()) {
 				if(m.getReturnType().equals(returned))
-					methods.add(new SaveMethod(m));
+					methods.add(new AbstractReflectionUtil.SaveMethod(m));
 			}
 		}
 		
-		return methods.toArray(new SaveMethod[methods.size()]);
+		return methods.toArray(new AbstractReflectionUtil.SaveMethod[methods.size()]);
 	}
 	
-	public static SaveMethod[] findMethodsNamed(String name) {
+	static AbstractReflectionUtil.SaveMethod[] findMethodsNamed(String name) {
 		return findMethodsNamed(name, getClasses());
 	}
 	
-	public static SaveMethod[] findMethodsNamed(String name, Class<?>... classes) {
-		List<SaveMethod> methods = new LinkedList<>();
+	static AbstractReflectionUtil.SaveMethod[] findMethodsNamed(String name, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveMethod> methods = new LinkedList<>();
 		
 		for(Class<?> clazz : classes) {
 			for(Method m : clazz.getDeclaredMethods()) {
 				if(m.getName().equals(name))
-					methods.add(new SaveMethod(m));
+					methods.add(new AbstractReflectionUtil.SaveMethod(m));
 			}
 		}
 		
-		return methods.toArray(new SaveMethod[methods.size()]);
+		return methods.toArray(new AbstractReflectionUtil.SaveMethod[methods.size()]);
 	}
 	
-	public static SaveConstructor[] findConstructorAnnotatedWith(Class<? extends Annotation> annotation) {
+	static AbstractReflectionUtil.SaveConstructor[] findConstructorAnnotatedWith(Class<? extends Annotation> annotation) {
 		return findConstructorAnnotatedWith(annotation, getClasses());
 	}
 	
-	public static SaveConstructor[] findConstructorAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
-		List<SaveConstructor> constructors = new LinkedList<>();
+	static AbstractReflectionUtil.SaveConstructor[] findConstructorAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveConstructor> constructors = new LinkedList<>();
 		
 		for(Class<?> clazz : classes) {
 			for(Constructor<?> con : clazz.getDeclaredConstructors()) {
 				if(con.isAnnotationPresent(annotation))
-					constructors.add(new SaveConstructor(con));
+					constructors.add(new AbstractReflectionUtil.SaveConstructor(con));
 				
 			}
 		}
 		
-		return constructors.toArray(new SaveConstructor[constructors.size()]);
+		return constructors.toArray(new AbstractReflectionUtil.SaveConstructor[constructors.size()]);
 	}
 	
-	public static SaveConstructor[] findConstructorNotAnnotatedWith(Class<? extends Annotation> annotation) {
+	static AbstractReflectionUtil.SaveConstructor[] findConstructorNotAnnotatedWith(Class<? extends Annotation> annotation) {
 		return findConstructorNotAnnotatedWith(annotation, getClasses());
 	}
 	
-	public static SaveConstructor[] findConstructorNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
-		List<SaveConstructor> constructors = new LinkedList<>();
+	static AbstractReflectionUtil.SaveConstructor[] findConstructorNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
+		List<AbstractReflectionUtil.SaveConstructor> constructors = new LinkedList<>();
 		
 		for(Class<?> clazz : classes) {
 			for(Constructor<?> con : clazz.getDeclaredConstructors()) {
 				if(!con.isAnnotationPresent(annotation))
-					constructors.add(new SaveConstructor(con));
+					constructors.add(new AbstractReflectionUtil.SaveConstructor(con));
 				
 			}
 		}
 		
-		return constructors.toArray(new SaveConstructor[constructors.size()]);
-	}
-	
-	public static class SaveField {
-		
-		private Field f;
-		private int index;
-		
-		public SaveField(Field f) {
-			this(f, -1);
-		}
-		
-		public SaveField(Field f, int index) {
-			try {
-				f.setAccessible(true);
-				this.f = f;
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			this.index = index;
-		}
-		
-		SaveField() {
-		}
-		
-		public SaveField removeFinal() {
-			try {
-				if(Modifier.isFinal(field().getModifiers()))
-					field().setInt(field(), field().getModifiers() & ~Modifier.FINAL);
-			} catch(IllegalAccessException e) {
-				e.printStackTrace();
-			}
-			return this;
-		}
-		
-		public Field field() {
-			return f;
-		}
-		
-		public Object get(Object instance) {
-			if(f == null) return new Object();
-			try {
-				return f.get(instance);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			return new Object();
-		}
-		
-		public Object get(Object instance, boolean stackTrace) {
-			if(f == null) return new Object();
-			try {
-				return f.get(instance);
-			} catch(Exception e) {
-				if(stackTrace) e.printStackTrace();
-			}
-			return new Object();
-		}
-		
-		public void set(Object instance, Object value, boolean stackTrace) {
-			if(f == null) return;
-			try {
-				f.set(instance, value);
-			} catch(Exception e) {
-				if(stackTrace) e.printStackTrace();
-			}
-		}
-		
-		public int index() {
-			return index;
-		}
-	}
-	
-	public static class SaveMethod {
-		
-		private Method m;
-		
-		public SaveMethod(Method m) {
-			try {
-				m.setAccessible(true);
-				this.m = m;
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		SaveMethod() {
-		}
-		
-		public Object invoke(Object instance, Boolean stackTrace, Object... args) {
-			if(m == null) return new Object();
-			try {
-				return m.invoke(instance, args);
-			} catch(Exception e) {
-				if(stackTrace) e.printStackTrace();
-			}
-			return new Object();
-		}
-		
-		public Method method() {
-			return m;
-		}
-	}
-	
-	public static class SaveConstructor<T> {
-		
-		private T type;
-		private Constructor<T> c;
-		
-		public SaveConstructor(Constructor<T> c) {
-			try {
-				c.setAccessible(true);
-				this.c = c;
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		public SaveConstructor(Class<T> c) {
-			try {
-				Constructor<T> con = c.getDeclaredConstructor();
-				con.setAccessible(true);
-				this.c = con;
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		SaveConstructor() {
-		}
-		
-		public T newInstance(Boolean stackTrace, Object... args) {
-			if(c == null) return null;
-			try {
-				return c.newInstance(args);
-			} catch(Exception e) {
-				if(stackTrace) e.printStackTrace();
-			}
-			return null;
-		}
-		
-		public Constructor<T> constructor() {
-			return c;
-		}
-	}
-	
-	public static class FieldInfo {
-		
-		private final String name;
-		private final Class<?> type;
-		
-		public FieldInfo(String name, Class<?> type) {
-			this.name = name;
-			this.type = type;
-		}
-		
-		@Override
-		public int hashCode() {
-			return Objects.hash(getName(), getType());
-		}
-		
-		public String getName() {
-			return name;
-		}
-		
-		public Class<?> getType() {
-			return type;
-		}
-		
-		@Override
-		public boolean equals(Object o) {
-			if(this == o) return true;
-			if(o == null || getClass() != o.getClass()) return false;
-			FieldInfo fieldInfo = (FieldInfo) o;
-			return Objects.equals(getName(), fieldInfo.getName()) &&
-					Objects.equals(getType(), fieldInfo.getType());
-		}
-		
-		
-	}
-	
-	public static class MethodInfo {
-		
-		private final String name;
-		private final Class<?> type;
-		private final Class<?>[] parameters;
-		
-		public MethodInfo(String name, Class<?> type, Class<?>[] parameters) {
-			this.name = name;
-			this.type = type;
-			this.parameters = parameters;
-		}
-		
-		public String getName() {
-			return name;
-		}
-		
-		public Class<?> getType() {
-			return type;
-		}
-		
-		public Class<?>[] getParameters() {
-			return parameters;
-		}
-		
-		@Override
-		public boolean equals(Object o) {
-			if(this == o) return true;
-			if(o == null || getClass() != o.getClass()) return false;
-			MethodInfo that = (MethodInfo) o;
-			return Objects.equals(getName(), that.getName()) &&
-					Objects.equals(getType(), that.getType()) &&
-					Arrays.equals(getParameters(), that.getParameters());
-		}
-		
-		@Override
-		public int hashCode() {
-			return Objects.hash(getName(), getType(), getParameters());
-		}
-	}
-	
-	public static class ConstructorInfo {
-		
-		private final Class<?> type;
-		private final Class<?>[] parameters;
-		
-		public ConstructorInfo(Class<?> type, Class<?>[] parameters) {
-			this.type = type;
-			this.parameters = parameters;
-		}
-		
-		public Class<?> getType() {
-			return type;
-		}
-		
-		public Class<?>[] getParameters() {
-			return parameters;
-		}
-		
-		@Override
-		public boolean equals(Object o) {
-			if(this == o) return true;
-			if(o == null || getClass() != o.getClass()) return false;
-			ConstructorInfo that = (ConstructorInfo) o;
-			return Objects.equals(getType(), that.getType()) &&
-					Arrays.equals(getParameters(), that.getParameters());
-		}
-		
-		@Override
-		public int hashCode() {
-			return Objects.hash(getType(), getParameters());
-		}
-	}
-	
-	public static class ClassInfo {
-		
-		private final String name;
-		private final boolean asArray;
-		
-		public ClassInfo(String name, boolean asArray) {
-			this.name = name;
-			this.asArray = asArray;
-		}
-		
-		public String getName() {
-			return name;
-		}
-		
-		public boolean isAsArray() {
-			return asArray;
-		}
-		
-		@Override
-		public boolean equals(Object o) {
-			if(this == o) return true;
-			if(o == null || getClass() != o.getClass()) return false;
-			ClassInfo classInfo = (ClassInfo) o;
-			return isAsArray() == classInfo.isAsArray() &&
-					Objects.equals(getName(), classInfo.getName());
-		}
-		
-		@Override
-		public int hashCode() {
-			return Objects.hash(getName(), isAsArray());
-		}
-	}
-	
-	public static class JarInfo {
-		
-		private final File jarFile;
-		private final String pckg;
-		private final boolean needsPckg;
-		
-		public JarInfo(File jarFile, String pckg) {
-			this.jarFile = jarFile;
-			this.pckg = pckg;
-			this.needsPckg = pckg.trim().isEmpty();
-		}
-		
-		public File getJarFile() {
-			return jarFile;
-		}
-		
-		public String getPckg() {
-			return pckg;
-		}
-		
-		public boolean isNeedsPckg() {
-			return needsPckg;
-		}
-		
-		@Override
-		public boolean equals(Object o) {
-			if(this == o) return true;
-			if(o == null || getClass() != o.getClass()) return false;
-			JarInfo jarInfo = (JarInfo) o;
-			return isNeedsPckg() == jarInfo.isNeedsPckg() &&
-					Objects.equals(getJarFile(), jarInfo.getJarFile()) &&
-					Objects.equals(getPckg(), jarInfo.getPckg());
-		}
-		
-		@Override
-		public int hashCode() {
-			return Objects.hash(getJarFile(), getPckg(), isNeedsPckg());
-		}
+		return constructors.toArray(new AbstractReflectionUtil.SaveConstructor[constructors.size()]);
 	}
 }

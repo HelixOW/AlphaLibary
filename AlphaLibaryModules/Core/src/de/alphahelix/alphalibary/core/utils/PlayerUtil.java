@@ -1,102 +1,71 @@
 package de.alphahelix.alphalibary.core.utils;
 
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractPlayerUtil;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class PlayerUtil {
+public interface PlayerUtil {
 	
-	private static final List<String> TOTAL_PLAYERS = new ArrayList<>();
-	private static final List<String> ALIVE_PLAYERS = new ArrayList<>();
-	private static final List<String> DEAD_PLAYERS = new ArrayList<>();
-	
-	public static List<String> getTotalPlayers() {
-		return TOTAL_PLAYERS;
+	static void addTotalPlayer(Player player) {
+		AbstractPlayerUtil.instance.addTotalPlayer(player);
 	}
 	
-	public static void addTotalPlayer(Player player) {
-		addTotalPlayer(player.getName());
+	static void addTotalPlayer(String player) {
+		AbstractPlayerUtil.instance.addTotalPlayer(player);
 	}
 	
-	public static void addTotalPlayer(String player) {
-		TOTAL_PLAYERS.add(player);
+	static void removeTotalPlayer(Player player) {
+		AbstractPlayerUtil.instance.removeTotalPlayer(player);
 	}
 	
-	public static void removeTotalPlayer(Player player) {
-		removeTotalPlayer(player.getName());
+	static void removeTotalPlayer(String player) {
+		AbstractPlayerUtil.instance.removeTotalPlayer(player);
 	}
 	
-	public static void removeTotalPlayer(String player) {
-		if(TOTAL_PLAYERS.contains(player))
-			TOTAL_PLAYERS.remove(player);
-		
-		if(ALIVE_PLAYERS.contains(player))
-			ALIVE_PLAYERS.remove(player);
-		
-		if(DEAD_PLAYERS.contains(player))
-			DEAD_PLAYERS.remove(player);
+	static void addAlivePlayer(Player player) {
+		AbstractPlayerUtil.instance.addAlivePlayer(player);
 	}
 	
-	public static List<String> getAlivePlayers() {
-		return ALIVE_PLAYERS;
+	static void addAlivePlayer(String player) {
+		AbstractPlayerUtil.instance.addAlivePlayer(player);
 	}
 	
-	public static void addAlivePlayer(Player player) {
-		addAlivePlayer(player.getName());
+	static void removeAlivePlayer(Player player) {
+		AbstractPlayerUtil.instance.removeAlivePlayer(player);
 	}
 	
-	public static void addAlivePlayer(String player) {
-		ALIVE_PLAYERS.add(player);
+	static void removeAlivePlayer(String player) {
+		AbstractPlayerUtil.instance.removeAlivePlayer(player);
 	}
 	
-	public static void removeAlivePlayer(Player player) {
-		removeAlivePlayer(player.getName());
+	static boolean isPlayerAlive(Player player) {
+		return AbstractPlayerUtil.instance.isPlayerAlive(player);
 	}
 	
-	public static void removeAlivePlayer(String player) {
-		if(ALIVE_PLAYERS.contains(player))
-			ALIVE_PLAYERS.remove(player);
-		
-		if(DEAD_PLAYERS.contains(player))
-			DEAD_PLAYERS.remove(player);
+	static boolean isPlayerAlive(String player) {
+		return AbstractPlayerUtil.instance.isPlayerAlive(player);
 	}
 	
-	public static boolean isPlayerAlive(Player player) {
-		return isPlayerAlive(player.getName());
+	static void addDeadPlayer(Player player) {
+		AbstractPlayerUtil.instance.addDeadPlayer(player);
 	}
 	
-	public static boolean isPlayerAlive(String player) {
-		return ALIVE_PLAYERS.contains(player);
+	static void addDeadPlayer(String player) {
+		AbstractPlayerUtil.instance.addDeadPlayer(player);
 	}
 	
-	public static List<String> getDeadPlayers() {
-		return DEAD_PLAYERS;
+	static void removeDeadPlayer(Player player) {
+		AbstractPlayerUtil.instance.removeDeadPlayer(player);
 	}
 	
-	public static void addDeadPlayer(Player player) {
-		addDeadPlayer(player.getName());
+	static void removeDeadPlayer(String player) {
+		AbstractPlayerUtil.instance.removeDeadPlayer(player);
 	}
 	
-	public static void addDeadPlayer(String player) {
-		DEAD_PLAYERS.add(player);
+	static boolean isPlayerDead(Player player) {
+		return AbstractPlayerUtil.instance.isPlayerDead(player);
 	}
 	
-	public static void removeDeadPlayer(Player player) {
-		removeDeadPlayer(player.getName());
-	}
-	
-	public static void removeDeadPlayer(String player) {
-		if(DEAD_PLAYERS.contains(player))
-			DEAD_PLAYERS.remove(player);
-	}
-	
-	public static boolean isPlayerDead(Player player) {
-		return isPlayerDead(player.getName());
-	}
-	
-	public static boolean isPlayerDead(String player) {
-		return DEAD_PLAYERS.contains(player);
+	static boolean isPlayerDead(String player) {
+		return AbstractPlayerUtil.instance.isPlayerDead(player);
 	}
 }

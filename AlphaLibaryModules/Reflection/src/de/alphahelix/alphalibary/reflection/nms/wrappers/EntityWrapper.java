@@ -1,33 +1,34 @@
 package de.alphahelix.alphalibary.reflection.nms.wrappers;
 
 import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.Location;
 
 
 public class EntityWrapper {
 	
-	private static final ReflectionUtil.SaveMethod SLOC = ReflectionUtil.getDeclaredMethod("setLocation", "Entity",
+	private static final AbstractReflectionUtil.SaveMethod SLOC = ReflectionUtil.getDeclaredMethod("setLocation", "Entity",
 			double.class, double.class, double.class, float.class, float.class);
 	
-	private static final ReflectionUtil.SaveMethod SINVIS = ReflectionUtil.getDeclaredMethod("setInvisible", "Entity",
+	private static final AbstractReflectionUtil.SaveMethod SINVIS = ReflectionUtil.getDeclaredMethod("setInvisible", "Entity",
 			boolean.class);
 	
-	private static final ReflectionUtil.SaveMethod SCUSTOMNAME = ReflectionUtil.getDeclaredMethod("setCustomName", "Entity",
+	private static final AbstractReflectionUtil.SaveMethod SCUSTOMNAME = ReflectionUtil.getDeclaredMethod("setCustomName", "Entity",
 			String.class);
 	
-	private static final ReflectionUtil.SaveMethod SCUSTOMNAMEVIS = ReflectionUtil.getDeclaredMethod("setCustomNameVisible", "Entity",
+	private static final AbstractReflectionUtil.SaveMethod SCUSTOMNAMEVIS = ReflectionUtil.getDeclaredMethod("setCustomNameVisible", "Entity",
 			boolean.class);
 	
-	private static final ReflectionUtil.SaveMethod STRIDING = ReflectionUtil.getDeclaredMethod("startRiding", "Entity",
+	private static final AbstractReflectionUtil.SaveMethod STRIDING = ReflectionUtil.getDeclaredMethod("startRiding", "Entity",
 			ReflectionUtil.getNmsClass("Entity"));
 	
-	private static final ReflectionUtil.SaveMethod SPRIDING = ReflectionUtil.getDeclaredMethod("stopRiding", "Entity");
+	private static final AbstractReflectionUtil.SaveMethod SPRIDING = ReflectionUtil.getDeclaredMethod("stopRiding", "Entity");
 	
-	private static final ReflectionUtil.SaveMethod SNOGRAV = ReflectionUtil.getDeclaredMethod("setNoGravity", "Entity",
+	private static final AbstractReflectionUtil.SaveMethod SNOGRAV = ReflectionUtil.getDeclaredMethod("setNoGravity", "Entity",
 			boolean.class);
 	
-	private static final ReflectionUtil.SaveMethod GDATAWATCHER = ReflectionUtil.getDeclaredMethod("getDataWatcher", "Entity");
+	private static final AbstractReflectionUtil.SaveMethod GDATAWATCHER = ReflectionUtil.getDeclaredMethod("getDataWatcher", "Entity");
 	
 	private final Object entity;
 	private final int entityID;

@@ -1,12 +1,13 @@
 package de.alphahelix.alphalibary.reflection.nms.packets;
 
 import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 
 public class PPONamedEntitySpawn implements IPacket {
 	
-	private static final ReflectionUtil.SaveConstructor PACKET =
+	private static final AbstractReflectionUtil.SaveConstructor PACKET =
 			ReflectionUtil.getDeclaredConstructor("PacketPlayOutNamedEntitySpawn",
 					ReflectionUtil.getNmsClass("EntityHuman"));
 	

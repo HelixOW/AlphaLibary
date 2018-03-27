@@ -2,12 +2,13 @@ package de.alphahelix.alphalibary.reflection.nms.packets;
 
 import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.core.utils.MathUtil;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 
 public class PPORelEntityMove implements IPacket {
 	
-	private static final ReflectionUtil.SaveConstructor PACKET =
+	private static final AbstractReflectionUtil.SaveConstructor PACKET =
 			ReflectionUtil.getDeclaredConstructor("PacketPlayOutEntity$PacketPlayOutRelEntityMove",
 					int.class, long.class, long.class, long.class, boolean.class);
 	

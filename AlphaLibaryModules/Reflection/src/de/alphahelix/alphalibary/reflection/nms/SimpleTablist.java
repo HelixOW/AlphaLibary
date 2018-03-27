@@ -15,6 +15,7 @@
  */
 package de.alphahelix.alphalibary.reflection.nms;
 
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -22,8 +23,8 @@ import org.bukkit.entity.Player;
 
 public class SimpleTablist {
 	
-	private static final ReflectionUtil.SaveConstructor CHAT_COMPONENT_TEXT = ReflectionUtil.getDeclaredConstructor("ChatComponentText", String.class);
-	private static final ReflectionUtil.SaveConstructor PACKET_PLAY_OUT_PLAYER_LIST_HEADER_FOOTER = ReflectionUtil.getDeclaredConstructor("PacketPlayOutPlayerListHeaderFooter");
+	private static final AbstractReflectionUtil.SaveConstructor CHAT_COMPONENT_TEXT = ReflectionUtil.getDeclaredConstructor("ChatComponentText", String.class);
+	private static final AbstractReflectionUtil.SaveConstructor PACKET_PLAY_OUT_PLAYER_LIST_HEADER_FOOTER = ReflectionUtil.getDeclaredConstructor("PacketPlayOutPlayerListHeaderFooter");
 	
 	/**
 	 * Set the tablist of the {@link Player}
@@ -43,8 +44,8 @@ public class SimpleTablist {
 		
 		Object packetPlayOutPlayerListHeaderFooter = PACKET_PLAY_OUT_PLAYER_LIST_HEADER_FOOTER.newInstance(true);
 		
-		ReflectionUtil.SaveField h = ReflectionUtil.getDeclaredField("a", packetPlayOutPlayerListHeaderFooter.getClass());
-		ReflectionUtil.SaveField f = ReflectionUtil.getDeclaredField("b", packetPlayOutPlayerListHeaderFooter.getClass());
+		AbstractReflectionUtil.SaveField h = ReflectionUtil.getDeclaredField("a", packetPlayOutPlayerListHeaderFooter.getClass());
+		AbstractReflectionUtil.SaveField f = ReflectionUtil.getDeclaredField("b", packetPlayOutPlayerListHeaderFooter.getClass());
 		
 		h.set(packetPlayOutPlayerListHeaderFooter, headerComponent, true);
 		f.set(packetPlayOutPlayerListHeaderFooter, footerComponent, true);

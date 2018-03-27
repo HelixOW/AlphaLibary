@@ -225,4 +225,18 @@ public class SimpleDatabaseList<T> {
 			}
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "SimpleDatabaseList{" +
+				"fieldNames=" + fieldNames +
+				", primaryUniqueFieldName='" + primaryUniqueFieldName + '\'' +
+				", primaryUniqueFieldID=" + primaryUniqueFieldID +
+				", handler=" + handler +
+				", typeClazz=" + typeClazz +
+				", cache=" + cache +
+				'}';
+	}
+	
+	
 }

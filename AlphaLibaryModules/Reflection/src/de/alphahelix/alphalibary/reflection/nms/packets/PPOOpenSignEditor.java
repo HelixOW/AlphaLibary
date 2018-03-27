@@ -1,13 +1,14 @@
 package de.alphahelix.alphalibary.reflection.nms.packets;
 
 import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.BlockPos;
 
 
 public class PPOOpenSignEditor implements IPacket {
 	
-	private static final ReflectionUtil.SaveConstructor PACKET =
+	private static final AbstractReflectionUtil.SaveConstructor PACKET =
 			ReflectionUtil.getDeclaredConstructor("PacketPlayOutOpenSignEditor",
 					ReflectionUtil.getNmsClass("BlockPosition"));
 	

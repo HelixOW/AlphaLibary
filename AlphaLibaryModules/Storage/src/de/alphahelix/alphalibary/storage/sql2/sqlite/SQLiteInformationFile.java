@@ -22,10 +22,10 @@ public class SQLiteInformationFile extends SQLInformationFile {
 		
 		setDefault("informations", new ArrayList<>(Arrays.asList(
 				new SQLInformation(
-						"root", "localhost", getPlugin().getDataFolder().getAbsolutePath() + "/database1.db", "password", 3306
+						"root", "localhost", "file:" + getPlugin().getDataFolder().getAbsolutePath() + "/database1.db", "password", 3306
 				),
 				new SQLInformation(
-						"root", "localhost", getPlugin().getDataFolder().getAbsolutePath() + "/database2.db", "password", 3306
+						"root", "localhost", "file:" + getPlugin().getDataFolder().getAbsolutePath() + "/database2.db", "password", 3306
 				)
 		)));
 	}

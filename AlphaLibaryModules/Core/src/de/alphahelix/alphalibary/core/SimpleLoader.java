@@ -9,6 +9,4 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface SimpleLoader {
 	
-	String version() default "1.12.2";
-
 }

@@ -7,11 +7,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-/**
- * @see de.alphahelix.alphalibary.annotations.command.Command
- * @deprecated
- */
-
 @Deprecated
 public class CommandWatcher {
 	

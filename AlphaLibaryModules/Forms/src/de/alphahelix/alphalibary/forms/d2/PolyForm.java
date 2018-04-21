@@ -4,39 +4,32 @@ import de.alphahelix.alphalibary.core.utilites.Pair;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.util.List;
 
 
 public class PolyForm extends Form {
 	
-	private Pair<Vector, Vector>[] points;
+	private Pair<Location, Location>[] points;
 	
-	@SafeVarargs
-	public PolyForm(Location location, double dense, FormAction action, Pair<Vector, Vector>... points) {
-		super(location, new Vector(0, 0, 0), dense, 0, action);
+	public PolyForm(Location location, double dense, FormAction action, Pair<Location, Location>... points) {
+		super(location, dense, action);
 		this.points = points;
 		apply();
 	}
 	
 	@Override
-	public void send(Player p) {
-		for(int i = 0; i < points.length; i++)
-			new PointForm(getLocation(), getDense(), getAction(), getPoints()[i].getKey(), getPoints()[i].getValue()).send(p);
-	}
-	
-	@Override
 	public void calculate(List<Location> locations) {
+		for(int i = 0; i < getPoints().length; i++) {
+			locations.addAll(new RayForm(getLocation(), getDense(), getAction(), 0, getPoints()[i].getKey(), getPoints()[i].getValue()).getToSpawn());
+		}
 	}
 	
-	public Pair<Vector, Vector>[] getPoints() {
+	public Pair<Location, Location>[] getPoints() {
 		return points;
 	}
 	
-	@SafeVarargs
-	public final PolyForm setPoints(Pair<Vector, Vector>... points) {
+	public PolyForm setPoints(Pair<Location, Location>[] points) {
 		this.points = points;
 		return this;
 	}

@@ -1,37 +1,49 @@
 package de.alphahelix.alphalibary.forms;
 
-import com.google.common.base.Objects;
+import de.alphahelix.alphalibary.core.AlphaLibary;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
-public abstract class Form implements Serializable {
+public abstract class Form implements Serializable, Listener {
 	
-	private FormFunction[] formFunctions;
-	private FormAction formAction;
+	private double dense, angle;
+	private boolean filled;
 	private Location location;
 	private Vector axis;
-	private double dense, angle;
+	private Visualizer visualizer;
+	private FormAction action;
 	private List<Location> toSpawn;
 	
-	public Form(Location location, Vector axis, double dense, double angle, FormAction action, FormFunction... formFunctions) {
-		this.formFunctions = formFunctions;
-		this.formAction = action;
-		this.location = location;
-		this.axis = axis;
-		this.dense = dense;
-		this.angle = angle;
+	public Form(Location location, double dense, FormAction action) {
+		this(location, null, dense, 0, false, action);
 	}
 	
-	public Form setParticleFunctions(FormFunction... functions) {
-		this.formFunctions = functions;
-		return this;
+	public Form(Location location, Vector axis, double dense, double angle, boolean filled, FormAction action) {
+		Bukkit.getPluginManager().registerEvents(this, AlphaLibary.getInstance());
+		this.action = action;
+		this.location = location;
+		this.axis = axis == null ? new Vector(0, 0, 0) : axis;
+		this.dense = dense;
+		this.angle = angle;
+		this.filled = filled;
+		visualizer = new Visualizer(action, dense);
+	}
+	
+	public Form(Location location, double dense, boolean filled, FormAction action) {
+		this(location, null, dense, 0, filled, action);
+	}
+	
+	public Form(Location location, Vector axis, double dense, double angle, FormAction action) {
+		this(location, axis, dense, angle, false, action);
 	}
 	
 	public Form setAxis(double x, double y, double z) {
@@ -48,15 +60,6 @@ public abstract class Form implements Serializable {
 		return this;
 	}
 	
-	public FormAction getAction() {
-		return formAction;
-	}
-	
-	public Form setAction(FormAction formAction) {
-		this.formAction = formAction;
-		return this;
-	}
-	
 	public void send(Player p) {
 		for(Location loc : getToSpawn()) {
 			getAction().action(p, loc);
@@ -65,6 +68,15 @@ public abstract class Form implements Serializable {
 	
 	public List<Location> getToSpawn() {
 		return toSpawn;
+	}
+	
+	public FormAction getAction() {
+		return action;
+	}
+	
+	public Form setAction(FormAction formAction) {
+		this.action = formAction;
+		return this;
 	}
 	
 	public void apply() {
@@ -77,34 +89,13 @@ public abstract class Form implements Serializable {
 	
 	public abstract void calculate(List<Location> locations);
 	
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(getFormFunctions(), getLocation(), getAxis(), getDense());
+	public Visualizer getVisualizer() {
+		return visualizer;
 	}
 	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		Form form = (Form) o;
-		return Double.compare(form.getDense(), getDense()) == 0 &&
-				Objects.equal(getFormFunctions(), form.getFormFunctions()) &&
-				Objects.equal(getLocation(), form.getLocation()) &&
-				Objects.equal(getAxis(), form.getAxis());
-	}
-	
-	@Override
-	public String toString() {
-		return "Form{" +
-				"formFunctions=" + Arrays.toString(formFunctions) +
-				", location=" + location +
-				", axis='" + axis + '\'' +
-				", dense=" + dense +
-				'}';
-	}
-	
-	public FormFunction[] getFormFunctions() {
-		return formFunctions;
+	public Form setVisualizer(Visualizer visualizer) {
+		this.visualizer = visualizer;
+		return this;
 	}
 	
 	public Location getLocation() {
@@ -120,6 +111,11 @@ public abstract class Form implements Serializable {
 		return axis;
 	}
 	
+	public Form setAxis(Vector axis) {
+		this.axis = axis;
+		return this;
+	}
+	
 	public double getDense() {
 		return dense;
 	}
@@ -129,8 +125,44 @@ public abstract class Form implements Serializable {
 		return this;
 	}
 	
-	public Form setAxis(Vector axis) {
-		this.axis = axis;
+	public boolean isFilled() {
+		return filled;
+	}
+	
+	public Form setFilled(boolean filled) {
+		this.filled = filled;
 		return this;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(action, location, axis, dense, angle, toSpawn, visualizer);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		Form form = (Form) o;
+		return Double.compare(form.dense, dense) == 0 &&
+				Double.compare(form.angle, angle) == 0 &&
+				Objects.equals(action, form.action) &&
+				Objects.equals(location, form.location) &&
+				Objects.equals(axis, form.axis) &&
+				Objects.equals(toSpawn, form.toSpawn) &&
+				Objects.equals(visualizer, form.visualizer);
+	}
+	
+	@Override
+	public String toString() {
+		return "Form{" +
+				"action=" + action +
+				", location=" + location +
+				", axis=" + axis +
+				", dense=" + dense +
+				", angle=" + angle +
+				", toSpawn=" + toSpawn +
+				", visualizer=" + visualizer +
+				'}';
 	}
 }

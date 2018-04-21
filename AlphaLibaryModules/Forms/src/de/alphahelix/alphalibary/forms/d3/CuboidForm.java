@@ -3,7 +3,6 @@ package de.alphahelix.alphalibary.forms.d3;
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.d2.RectangleForm;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -21,17 +20,12 @@ public class CuboidForm extends Form {
 	}
 	
 	@Override
-	public void send(Player p) {
-		new RectangleForm(getLocation(), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), getRectangleForm().isFilled(), getAction()).send(p);
-		new RectangleForm(getLocation().add(0, 0, getWidth()), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), getRectangleForm().isFilled(), getAction()).send(p);
+	public void calculate(List<Location> locations) {
+		locations.addAll(new RectangleForm(getLocation(), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), getRectangleForm().isFilled(), getAction()).getToSpawn());
+		locations.addAll(new RectangleForm(getLocation().add(0, 0, getWidth()), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), getRectangleForm().isFilled(), getAction()).getToSpawn());
 		
 		for(double w = getDense(); w < (getWidth() - getDense()); w += getDense())
-			new RectangleForm(getLocation().add(0, 0, w), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), false, getAction()).send(p);
-	}
-	
-	@Override
-	public void calculate(List<Location> locations) {
-	
+			locations.addAll(new RectangleForm(getLocation().add(0, 0, w), getAxis(), getDense(), getAngle(), getRectangleForm().getLenght(), getRectangleForm().getHeight(), false, getAction()).getToSpawn());
 	}
 	
 	public RectangleForm getRectangleForm() {

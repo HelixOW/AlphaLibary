@@ -22,6 +22,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 
+import java.util.Collection;
+
 @Utility(implementation = ILocationUtil.class)
 public abstract class AbstractLocationUtil {
 	
@@ -61,6 +63,12 @@ public abstract class AbstractLocationUtil {
 	
 	public abstract double[] getZ(Location[] locations);
 	
+	public abstract double[] getX(Collection<Location> locations);
+	
+	public abstract double[] getY(Collection<Location> locations);
+	
+	public abstract double[] getZ(Collection<Location> locations);
+	
 	/**
 	 * Gets the {@link Location} behind a {@link Player}
 	 *
@@ -76,4 +84,6 @@ public abstract class AbstractLocationUtil {
 	public abstract EulerAngle angleToEulerAngle(double radians);
 	
 	public abstract World getRandomWorld();
+	
+	public abstract Location trim(int decimals, Location loc);
 }

@@ -28,6 +28,10 @@ public interface MathUtil {
 		return AbstractMathUtil.instance.trim(value, precision);
 	}
 	
+	static boolean between(double min, double max, double value) {
+		return AbstractMathUtil.instance.between(min, max, value);
+	}
+	
 	static int decimals(double value) {
 		return AbstractMathUtil.instance.decimals(value);
 	}

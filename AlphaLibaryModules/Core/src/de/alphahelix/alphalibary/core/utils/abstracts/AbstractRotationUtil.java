@@ -11,6 +11,8 @@ public abstract class AbstractRotationUtil {
 	
 	public abstract Vector findPerpendicularVector(Vector from);
 	
+	public abstract Vector findPerpendicularVector2D(Vector from);
+	
 	public abstract Vector rotate(Vector toRotate, double yaw, double pitch);
 	
 	public abstract Vector rotate(Vector toRotate, double yaw, double pitch, double roll);

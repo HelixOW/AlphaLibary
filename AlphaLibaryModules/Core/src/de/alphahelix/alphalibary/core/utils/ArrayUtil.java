@@ -27,7 +27,7 @@ public interface ArrayUtil {
 		return AbstractArrayUtil.instance.makeVectorArray(locations);
 	}
 	
-	static Vector[] makeLocationArray(World world, Vector... vectors) {
+	static Location[] makeLocationArray(World world, Vector... vectors) {
 		return AbstractArrayUtil.instance.makeLocationArray(world, vectors);
 	}
 	
@@ -93,5 +93,13 @@ public interface ArrayUtil {
 	
 	static long sum(long... a) {
 		return AbstractArrayUtil.instance.sum(a);
+	}
+	
+	static double[] trim(int decimal, double... a) {
+		return AbstractArrayUtil.instance.trim(decimal, a);
+	}
+	
+	static Location[] trim(int decimal, Location... locations) {
+		return AbstractArrayUtil.instance.trim(decimal, locations);
 	}
 }

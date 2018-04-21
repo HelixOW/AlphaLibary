@@ -2,7 +2,6 @@ package de.alphahelix.alphalibary.forms.d3;
 
 import de.alphahelix.alphalibary.forms.Form;
 import de.alphahelix.alphalibary.forms.FormAction;
-import de.alphahelix.alphalibary.forms.d2.CircleForm;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -44,7 +43,8 @@ public class ConeForm extends Form {
 	@Override
 	public void send(Player p) {
 		for(double r = baseRadius; r > 0 && size != 0; r -= getDense(), size -= getDense())
-			new CircleForm(getLocation().subtract(0, r, 0), getAxis(), getDense(), getAngle(), r, getAction()).send(p);
+			return;
+		//			new CircleForm(getLocation().subtract(0, r, 0), getAxis(), getDense(), getAngle(), r, getAction()).send(p);
 	}
 	
 	@Override

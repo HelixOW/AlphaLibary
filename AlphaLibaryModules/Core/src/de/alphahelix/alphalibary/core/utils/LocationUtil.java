@@ -21,6 +21,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 
+import java.util.Collection;
+
 
 public interface LocationUtil {
 	
@@ -58,15 +60,27 @@ public interface LocationUtil {
 		return AbstractLocationUtil.instance.isInside(loc, locations);
 	}
 	
-	static double[] getX(Location[] locations) {
+	static double[] getX(Location... locations) {
 		return AbstractLocationUtil.instance.getX(locations);
 	}
 	
-	static double[] getY(Location[] locations) {
+	static double[] getY(Location... locations) {
 		return AbstractLocationUtil.instance.getY(locations);
 	}
 	
-	static double[] getZ(Location[] locations) {
+	static double[] getZ(Location... locations) {
+		return AbstractLocationUtil.instance.getZ(locations);
+	}
+	
+	static double[] getX(Collection<Location> locations) {
+		return AbstractLocationUtil.instance.getX(locations);
+	}
+	
+	static double[] getY(Collection<Location> locations) {
+		return AbstractLocationUtil.instance.getY(locations);
+	}
+	
+	static double[] getZ(Collection<Location> locations) {
 		return AbstractLocationUtil.instance.getZ(locations);
 	}
 	
@@ -94,5 +108,9 @@ public interface LocationUtil {
 	
 	static World getRandomWorld() {
 		return AbstractLocationUtil.instance.getRandomWorld();
+	}
+	
+	static Location trim(int decimals, Location loc) {
+		return AbstractLocationUtil.instance.trim(decimals, loc);
 	}
 }

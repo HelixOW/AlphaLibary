@@ -1,4 +1,4 @@
-package de.alphahelix.alphalibary.forms.particles.data;
+package de.alphahelix.alphalibary.forms.particledata;
 
 import org.bukkit.potion.Potion;
 

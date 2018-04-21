@@ -1,8 +1,9 @@
 package de.alphahelix.alphalibary.core;
 
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public interface AlphaModule {
+public interface AlphaModule extends Listener {
 	
 	default void enable() {
 	}

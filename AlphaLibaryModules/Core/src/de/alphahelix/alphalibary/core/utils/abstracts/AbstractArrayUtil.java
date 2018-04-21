@@ -23,7 +23,7 @@ public abstract class AbstractArrayUtil {
 	
 	public abstract Vector[] makeVectorArray(Location... locations);
 	
-	public abstract Vector[] makeLocationArray(World world, Vector... vectors);
+	public abstract Location[] makeLocationArray(World world, Vector... vectors);
 	
 	public abstract String[] replaceInArray(String pattern, String replace, String... array);
 	
@@ -56,4 +56,8 @@ public abstract class AbstractArrayUtil {
 	public abstract float sum(float... a);
 	
 	public abstract long sum(long... a);
+	
+	public abstract double[] trim(int decimal, double... a);
+	
+	public abstract Location[] trim(int decimal, Location... locations);
 }

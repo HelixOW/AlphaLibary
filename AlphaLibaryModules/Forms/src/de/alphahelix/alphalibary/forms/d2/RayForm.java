@@ -9,35 +9,62 @@ import java.util.List;
 
 public class RayForm extends Form {
 	
-	private double lenght;
+	private double length;
 	private Vector direction;
 	
-	public RayForm(Location location, Vector direction, double dense, double lenght, FormAction action) {
-		super(location, new Vector(0, 0, 0), dense, 0, action);
-		this.lenght = lenght;
+	public RayForm(Location location, double dense, FormAction action, double length, Location loc1, Location loc2) {
+		this(location, dense, action, length, loc2.clone().subtract(loc1).toVector());
+	}
+	
+	public RayForm(Location location, double dense, FormAction action, double length, Vector direction) {
+		this(location, dense, false, action, length, direction);
+	}
+	
+	public RayForm(Location location, double dense, boolean filled, FormAction action, double length, Vector direction) {
+		this(location, null, dense, 0, action, length, direction);
+	}
+	
+	public RayForm(Location location, Vector axis, double dense, double angle, FormAction action, double length, Vector direction) {
+		this(location, axis, dense, angle, false, action, length, direction);
+	}
+	
+	public RayForm(Location location, Vector axis, double dense, double angle, boolean filled, FormAction action, double length, Vector direction) {
+		super(location, axis, dense, angle, filled, action);
+		this.length = length;
 		this.direction = direction;
+		getVisualizer().setDense(.2);
 		apply();
+	}
+	
+	public RayForm(Location location, double dense, boolean filled, FormAction action, double length, Location loc1, Location loc2) {
+		this(location, dense, filled, action, length, loc2.clone().subtract(loc1).toVector());
+	}
+	
+	public RayForm(Location location, Vector axis, double dense, double angle, FormAction action, double length, Location loc1, Location loc2) {
+		this(location, axis, dense, angle, action, length, loc2.clone().subtract(loc1).toVector());
+	}
+	
+	public RayForm(Location location, Vector axis, double dense, double angle, boolean filled, FormAction action, double length, Location loc1, Location loc2) {
+		this(location, axis, dense, angle, filled, action, length, loc2.clone().subtract(loc1).toVector());
 	}
 	
 	@Override
 	public void calculate(List<Location> locations) {
-		Vector view = getDirection().clone().normalize();
-		
-		for(double d = 0; d < getLenght(); d += getDense()) {
-			locations.add(getLocation().add(view.clone().multiply(d)));
+		for(double d = 0; d < getLength(); d += getDense()) {
+			locations.add(getLocation().clone().add(getDirection().clone().multiply(d)));
 		}
 	}
 	
+	public double getLength() {
+		return length;
+	}
+	
 	public Vector getDirection() {
-		return direction;
+		return direction.clone().normalize();
 	}
 	
-	public double getLenght() {
-		return lenght;
-	}
-	
-	public RayForm setLenght(double lenght) {
-		this.lenght = lenght;
+	public RayForm setLength(double length) {
+		this.length = length;
 		return this;
 	}
 	

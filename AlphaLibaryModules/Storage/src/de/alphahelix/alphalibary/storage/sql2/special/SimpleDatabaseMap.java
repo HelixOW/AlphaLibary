@@ -142,8 +142,11 @@ public class SimpleDatabaseMap<K, V> {
 	public void getValue(String key, Consumer<V> callback, boolean cached) {
 		Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
 			if(cached) {
-				cache.getObject(key).ifPresent(o -> callback.accept((V) o));
-				return;
+				if(cache.getObject(key).isPresent()) {
+					callback.accept((V) cache.getObject(key));
+					return;
+				} else
+					getValue(key, callback, false);
 			}
 			cache.save(key, getValue(key));
 			handler.syncedCallback(getValue(key), callback);

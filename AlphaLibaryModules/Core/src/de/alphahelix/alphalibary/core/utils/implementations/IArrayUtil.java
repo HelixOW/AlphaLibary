@@ -1,5 +1,7 @@
 package de.alphahelix.alphalibary.core.utils.implementations;
 
+import de.alphahelix.alphalibary.core.utils.LocationUtil;
+import de.alphahelix.alphalibary.core.utils.MathUtil;
 import de.alphahelix.alphalibary.core.utils.abstracts.AbstractArrayUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -48,13 +50,13 @@ public class IArrayUtil extends AbstractArrayUtil {
 		return vectors;
 	}
 	
-	public Vector[] makeLocationArray(World world, Vector... vectors) {
+	public Location[] makeLocationArray(World world, Vector... vectors) {
 		Location[] locations = new Location[vectors.length];
 		
 		for(int i = 0; i < locations.length; i++)
 			locations[i] = vectors[i].toLocation(world);
 		
-		return vectors;
+		return locations;
 	}
 	
 	public String[] replaceInArray(String pattern, String replace, String... array) {
@@ -194,4 +196,23 @@ public class IArrayUtil extends AbstractArrayUtil {
 		return sum;
 	}
 	
+	@Override
+	public double[] trim(int decimal, double... a) {
+		double[] trimmed = new double[a.length];
+		
+		for(int i = 0; i < a.length; i++)
+			trimmed[i] = MathUtil.trim(a[i], decimal);
+		
+		return trimmed;
+	}
+	
+	@Override
+	public Location[] trim(int decimal, Location... locations) {
+		Location[] trimmed = new Location[locations.length];
+		
+		for(int i = 0; i < locations.length; i++)
+			trimmed[i] = LocationUtil.trim(decimal, locations[i]);
+		
+		return trimmed;
+	}
 }

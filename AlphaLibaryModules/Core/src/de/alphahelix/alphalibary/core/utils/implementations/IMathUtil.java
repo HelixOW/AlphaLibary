@@ -38,6 +38,11 @@ public class IMathUtil extends AbstractMathUtil {
 		return Double.valueOf(Double.toString(value).split("\\.")[0] + "." + trimmed.toString());
 	}
 	
+	@Override
+	public boolean between(double min, double max, double value) {
+		return min <= value && value <= max;
+	}
+	
 	public int decimals(double value) {
 		String v = String.valueOf(value).split("\\.")[1];
 		

@@ -6,9 +6,12 @@ import org.bukkit.util.Vector;
 public class IRotationUtil extends AbstractRotationUtil {
 	
 	public Vector findPerpendicularVector(Vector from) {
-		Vector x = new Vector(1, 0, 0);
-		
-		return from.getCrossProduct(x).normalize();
+		return from.getCrossProduct(new Vector(1, 0, 0));
+	}
+	
+	@Override
+	public Vector findPerpendicularVector2D(Vector from) {
+		return findPerpendicularVector(from.clone().setY(0));
 	}
 	
 	public Vector rotate(Vector toRotate, double yaw, double pitch) {
@@ -22,7 +25,7 @@ public class IRotationUtil extends AbstractRotationUtil {
 	}
 	
 	public Vector rotate(Vector toRotate, Vector around, double angle) {
-		if(angle == 0)
+		if(around == null || angle == 0)
 			return toRotate;
 		
 		double vx = around.getX(), vy = around.getY(), vz = around.getZ();
@@ -40,6 +43,7 @@ public class IRotationUtil extends AbstractRotationUtil {
 			y1 = x * ((vy * vx) * (1 - cosA) + vz * sinA) + y * ((vy * vy) * (1 - cosA) + cosA) + z * ((vy * vz) * (1 - cosA) - vx * sinA);
 			z1 = x * ((vz * vx) * (1 - cosA) - vy * sinA) + y * ((vz * vy) * (1 - cosA) + vx * sinA) + z * ((vz * vz) * (1 - cosA) + cosA);
 		}
+		
 		return new Vector(x1, y1, z1);
 	}
 	

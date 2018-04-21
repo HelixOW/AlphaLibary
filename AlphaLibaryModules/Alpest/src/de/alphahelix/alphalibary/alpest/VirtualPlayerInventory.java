@@ -45,7 +45,7 @@ public class VirtualPlayerInventory implements PlayerInventory {
 	
 	@Override
 	public ItemStack[] getArmorContents() {
-		return new ItemStack[0];
+		return new ItemStack[]{helmet, chestplate, leggins, boots};
 	}
 	
 	@Override
@@ -55,22 +55,22 @@ public class VirtualPlayerInventory implements PlayerInventory {
 	
 	@Override
 	public ItemStack getHelmet() {
-		return null;
+		return helmet;
 	}
 	
 	@Override
 	public ItemStack getChestplate() {
-		return null;
+		return chestplate;
 	}
 	
 	@Override
 	public ItemStack getLeggings() {
-		return null;
+		return leggins;
 	}
 	
 	@Override
 	public ItemStack getBoots() {
-		return null;
+		return boots;
 	}
 	
 	@Override

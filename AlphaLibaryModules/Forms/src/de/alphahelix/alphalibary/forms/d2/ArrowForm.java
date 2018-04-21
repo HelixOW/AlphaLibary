@@ -8,57 +8,29 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 
-
 public class ArrowForm extends Form {
 	
-	private double lenght, width, angle;
+	private double length, angle;
+	private Vector direction;
 	
-	public ArrowForm(Location location, Vector axis, double dense, double angle, double lenght, double width, FormAction action) {
-		super(location, axis, dense, angle, action,
-				x -> x[0] * (-1),
-				x -> x[0]);
-		this.lenght = lenght;
-		this.width = width;
+	public ArrowForm(Location location, Vector axis, double dense, double angle, FormAction action, double length, double angle1, Vector direction) {
+		super(location, axis, dense, angle, action);
+		this.angle = angle1;
+		this.direction = RotationUtil.rotate(direction.multiply(-1), axis, angle);
+		this.length = length;
 		apply();
-	}
-	
-	public double getLenght() {
-		return lenght;
-	}
-	
-	public ArrowForm setLenght(double lenght) {
-		this.lenght = lenght;
-		return this;
-	}
-	
-	public double getWidth() {
-		return width;
-	}
-	
-	public ArrowForm setWidth(double width) {
-		this.width = width;
-		return this;
 	}
 	
 	@Override
 	public void calculate(List<Location> locations) {
-		Vector v;
-		for(double x = 0; x < (width / 2); x += getDense()) {
-			v = new Vector(x, getFormFunctions()[0].f(x), 0);
-			
-			locations.add(getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
-		}
+		Vector a = RotationUtil.rotate(direction, RotationUtil.findPerpendicularVector(direction), 360 - (angle / 2));
+		Vector b = RotationUtil.rotate(direction, RotationUtil.findPerpendicularVector(direction), angle / 2);
 		
-		for(double x = ((width / 2) * (-1)); x < 0; x += getDense()) {
-			v = new Vector(x, getFormFunctions()[1].f(x), 0);
-			
-			locations.add(getLocation().add(RotationUtil.rotate(v, getAxis(), (-1) * getAngle())));
-		}
+		b.normalize();
 		
-		for(double x = 0; x < lenght; x += getDense()) {
-			v = new Vector(x, x, 0);
-			
-			locations.add(getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
+		for(double x = 0; x < length; x += getDense()) {
+			locations.add(getLocation().add(b.clone().multiply(x)));
+			locations.add(getLocation().add(a.clone().multiply(x)));
 		}
 	}
 }

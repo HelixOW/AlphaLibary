@@ -9,13 +9,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 
 public class Kit implements Serializable {
 	
-	private static final Map<String, Kit> KITS = new WeakHashMap<>();
 	private final ItemStack[] items;
 	private String name;
 	private String rawName;
@@ -29,13 +26,7 @@ public class Kit implements Serializable {
 		this.icon = icon;
 		this.items = items;
 		
-		KITS.put(rawName, this);
-	}
-	
-	public static Kit getKitByName(String name) {
-		if(KITS.containsKey(name))
-			return KITS.get(name);
-		return null;
+		KitManager.addKit(this);
 	}
 	
 	public ItemStack[] getItems() {
@@ -43,7 +34,6 @@ public class Kit implements Serializable {
 	}
 	
 	public void giveItems(Player p) {
-		
 		KitReceiveEvent event = new KitReceiveEvent(p, this);
 		
 		Bukkit.getPluginManager().callEvent(event);

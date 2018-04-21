@@ -34,6 +34,12 @@ public final class SQLCache<V> {
 		return this;
 	}
 	
+	public SQLCache clear() {
+		cache.clear();
+		listCache.clear();
+		return this;
+	}
+	
 	public Map<String, V> getCache() {
 		return cache;
 	}

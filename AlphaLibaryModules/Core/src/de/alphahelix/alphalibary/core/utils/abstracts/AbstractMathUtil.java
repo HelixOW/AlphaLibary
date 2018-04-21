@@ -49,5 +49,7 @@ public abstract class AbstractMathUtil {
 	
 	public abstract double trim(double value, int precision);
 	
+	public abstract boolean between(double min, double max, double value);
+	
 	public abstract int decimals(double value);
 }

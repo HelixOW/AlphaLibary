@@ -21,7 +21,6 @@ package de.alphahelix.alphalibary.core;
 import de.alphahelix.alphalibary.core.type.TypeFinder;
 import de.alphahelix.alphalibary.core.utilites.PluginWatcher;
 import de.alphahelix.alphalibary.core.utilites.Utility;
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -74,8 +73,6 @@ public class AlphaLibary extends JavaPlugin {
 		}
 		
 		new PluginWatcher(this).run();
-		
-		System.out.println(AbstractReflectionUtil.instance.getNmsPrefix());
 	}
 	
 	public static void registerModule(AlphaModule module) {

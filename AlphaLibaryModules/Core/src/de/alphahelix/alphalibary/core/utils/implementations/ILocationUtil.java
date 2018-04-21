@@ -16,6 +16,7 @@
 package de.alphahelix.alphalibary.core.utils.implementations;
 
 import de.alphahelix.alphalibary.core.utils.ArrayUtil;
+import de.alphahelix.alphalibary.core.utils.MathUtil;
 import de.alphahelix.alphalibary.core.utils.abstracts.AbstractLocationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +24,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 
+import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -106,6 +108,21 @@ public class ILocationUtil extends AbstractLocationUtil {
 		return z;
 	}
 	
+	@Override
+	public double[] getX(Collection<Location> locations) {
+		return getX(locations.toArray(new Location[locations.size()]));
+	}
+	
+	@Override
+	public double[] getY(Collection<Location> locations) {
+		return getY(locations.toArray(new Location[locations.size()]));
+	}
+	
+	@Override
+	public double[] getZ(Collection<Location> locations) {
+		return getZ(locations.toArray(new Location[locations.size()]));
+	}
+	
 	public Location getLocationBehindPlayer(Player p, int range) {
 		return p.getLocation().clone().add(p.getLocation().getDirection().normalize().multiply(-1).multiply(range));
 	}
@@ -140,5 +157,11 @@ public class ILocationUtil extends AbstractLocationUtil {
 		if(optionalWorld.isPresent())
 			return optionalWorld.get();
 		throw new NoSuchElementException("Cannot find any world");
+	}
+	
+	@Override
+	public Location trim(int decimals, Location loc) {
+		return new Location(loc.getWorld(), MathUtil.trim(loc.getX(), decimals), MathUtil.trim(loc.getY(), decimals), MathUtil.trim(loc.getZ(), decimals),
+				(float) MathUtil.trim(loc.getYaw(), decimals), (float) MathUtil.trim(loc.getPitch(), decimals));
 	}
 }

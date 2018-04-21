@@ -142,6 +142,7 @@ public class VirtualPlayer implements Player {
 		this.id = id;
 		this.fakeLocation = fakeLocation;
 		this.txtfile = new SimpleTXTFile(plugin.getDataFolder().getAbsolutePath() + "/virtualPlayerLogs", name + "_" + id.toString() + ".log");
+		callEvent(new PlayerJoinEvent(this, ""), playerJoinEvent -> sendRawMessage("Player joined!"));
 		Bukkit.getPluginManager().callEvent(new PlayerJoinEvent(this, ""));
 	}
 	

@@ -9,6 +9,10 @@ public interface RotationUtil {
 		return AbstractRotationUtil.instance.findPerpendicularVector(from);
 	}
 	
+	static Vector findPerpendicularVector2D(Vector from) {
+		return AbstractRotationUtil.instance.findPerpendicularVector2D(from);
+	}
+	
 	static Vector rotate(Vector toRotate, double yaw, double pitch) {
 		return AbstractRotationUtil.instance.rotate(toRotate, yaw, pitch);
 	}

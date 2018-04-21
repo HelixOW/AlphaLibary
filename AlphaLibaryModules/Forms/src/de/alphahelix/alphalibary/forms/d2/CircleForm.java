@@ -12,10 +12,23 @@ public class CircleForm extends Form {
 	
 	private final double radius;
 	
-	public CircleForm(Location location, Vector axis, double dense, double angle, double radius, FormAction action) {
-		super(location, axis, dense, angle, action);
+	public CircleForm(Location location, double dense, FormAction formAction, double radius) {
+		this(location, dense, false, formAction, radius);
+	}
+	
+	public CircleForm(Location location, double dense, boolean filled, FormAction formAction, double radius) {
+		this(location, null, dense, 0, filled, formAction, radius);
+	}
+	
+	public CircleForm(Location location, Vector axis, double dense, double angle, boolean filled, FormAction formAction, double radius) {
+		super(location, axis, dense, angle, filled, formAction);
 		this.radius = radius;
+		getVisualizer().setDense(.2);
 		apply();
+	}
+	
+	public CircleForm(Location location, Vector axis, double dense, double angle, FormAction formAction, double radius) {
+		this(location, axis, dense, angle, false, formAction, radius);
 	}
 	
 	@Override
@@ -24,6 +37,9 @@ public class CircleForm extends Form {
 			Vector v = new Vector(getRadius() * Math.cos(alpha), getRadius() * Math.sin(alpha), 0);
 			
 			locations.add(getLocation().add(RotationUtil.rotate(v, getAxis(), getAngle())));
+			
+			if(isFilled())
+				locations.addAll(getVisualizer().getVectorLocations(getLocation(), v));
 		}
 	}
 	

@@ -9,17 +9,15 @@ import java.util.UUID;
 public class Economy implements Serializable {
 	
 	private final UUID owner;
-	private long money;
-	private boolean minus = false;
+	private EcoNumber money;
 	
 	public Economy(UUID owner) {
 		this(owner, 0, false);
 	}
 	
-	public Economy(UUID owner, long money, boolean minus) {
+	public Economy(UUID owner, Number money, boolean minus) {
 		this.owner = owner;
-		this.money = money;
-		this.minus = minus;
+		this.money = new EcoNumber(money, !minus);
 	}
 	
 	public Economy(UUID owner, long money) {
@@ -27,20 +25,17 @@ public class Economy implements Serializable {
 	}
 	
 	public Economy addMoney(long money) {
-		this.money += money;
+		this.money.add(money);
 		return this;
 	}
 	
 	public Economy removeMoney(long money) {
-		if(this.money - money < 0 && !isMinus())
-			this.money = 0;
-		else
-			this.money -= money;
+		this.money.add(money);
 		return this;
 	}
 	
 	public boolean isMinus() {
-		return minus;
+		return !this.money.isOnlyPositive();
 	}
 	
 	@Override
@@ -63,7 +58,6 @@ public class Economy implements Serializable {
 		return "Economy{" +
 				"owner=" + owner +
 				", money=" + money +
-				", minus=" + minus +
 				'}';
 	}
 	
@@ -71,12 +65,12 @@ public class Economy implements Serializable {
 		return owner;
 	}
 	
-	public long getMoney() {
-		return money;
+	public double getMoney() {
+		return money.getValue();
 	}
 	
-	public Economy setMoney(long money) {
-		this.money = money;
+	public Economy setMoney(double money) {
+		this.money.setValue(money);
 		return this;
 	}
 }

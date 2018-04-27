@@ -21,6 +21,7 @@ package de.alphahelix.alphalibary.core;
 import de.alphahelix.alphalibary.core.type.TypeFinder;
 import de.alphahelix.alphalibary.core.utilites.PluginWatcher;
 import de.alphahelix.alphalibary.core.utilites.Utility;
+import io.netty.util.internal.ConcurrentSet;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,11 +29,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class AlphaLibary extends JavaPlugin {
 	
 	private static final List<AlphaModule> MODULES = new ArrayList<>();
 	
+	private static Set<Class<?>> moduleClasses;
+	private static Set<String> loadedClasses = new ConcurrentSet<>();
 	private static AlphaLibary instance;
 	
 	public static AlphaLibary getInstance() {
@@ -49,6 +53,37 @@ public class AlphaLibary extends JavaPlugin {
 			module.disable();
 	}
 	
+	public static void registerModules() throws ReflectiveOperationException {
+		Set<Class<?>> runSet = new ConcurrentSet<>();
+		if(moduleClasses == null)
+			moduleClasses = TypeFinder.findClassesImplementing(AlphaModule.class);
+		
+		for(Class<?> load : moduleClasses) {
+			Dependency depends = load.getAnnotation(Dependency.class);
+			
+			if(depends == null) {
+				registerModule((AlphaModule) load.newInstance());
+				runSet.add(load);
+				loadedClasses.add(load.getSimpleName());
+			} else {
+				for(String dependency : depends.dependencies()) {
+					if(loadedClasses.contains(dependency)) {
+						registerModule((AlphaModule) load.newInstance());
+						runSet.add(load);
+						loadedClasses.add(load.getSimpleName());
+					} /*else {
+						System.out.println("Cannot load " + load.getSimpleName() + " missing " + dependency);
+					}*/
+				}
+			}
+		}
+		
+		moduleClasses.removeAll(runSet);
+		
+		if(moduleClasses.size() != 0)
+			registerModules();
+	}
+	
 	@Override
 	public void onEnable() {
 		instance = this;
@@ -61,11 +96,10 @@ public class AlphaLibary extends JavaPlugin {
 				}
 		}
 		
-		for(Class<?> loaded : TypeFinder.findClassesImplementing(AlphaModule.class)) {
-			try {
-				registerModule((AlphaModule) loaded.newInstance());
-			} catch(ReflectiveOperationException ignored) {
-			}
+		try {
+			registerModules();
+		} catch(ReflectiveOperationException e) {
+			e.printStackTrace();
 		}
 		
 		for(Class<?> utilities : TypeFinder.findClassesAnnotatedWith(Utility.class)) {

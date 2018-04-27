@@ -281,4 +281,17 @@ public class ArmorstandFakeUtil {
 				dw
 		).getPacket(false));
 	}
+	
+	public static void changeVisibilty(Player p, boolean visible, FakeArmorstand armorstand) {
+		EntityWrapper a = new EntityWrapper(armorstand.getNmsEntity());
+		
+		a.setInvisible(!visible);
+		
+		Object dw = a.getDataWatcher();
+		
+		ReflectionUtil.sendPacket(p, new PPOEntityMetadata(
+				ReflectionUtil.getEntityID(armorstand.getNmsEntity()),
+				dw
+		).getPacket(false));
+	}
 }

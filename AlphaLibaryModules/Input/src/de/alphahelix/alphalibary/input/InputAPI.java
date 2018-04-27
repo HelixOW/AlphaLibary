@@ -1,6 +1,7 @@
 package de.alphahelix.alphalibary.input;
 
 import de.alphahelix.alphalibary.core.AlphaModule;
+import de.alphahelix.alphalibary.core.Dependency;
 import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import de.alphahelix.alphalibary.input.events.ArmorChangeEvent;
 import de.alphahelix.alphalibary.input.events.ItemRenameEvent;
@@ -21,6 +22,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
+@Dependency(dependencies = {
+		"PacketListenerAPI"
+})
 public class InputAPI implements AlphaModule {
 	
 	private static final Map<UUID, Double> OLD_VALUES = new WeakHashMap<>();

@@ -164,6 +164,10 @@ public class SimpleDatabaseList<T> {
 		});
 	}
 	
+	public void getValues(int limit, Consumer<List<T>> callback) {
+		getValues(limit, callback, false);
+	}
+	
 	public void removeValue(T value) {
 		cache.remove(value);
 		if(primaryUniqueFieldID == -1) {
@@ -174,12 +178,56 @@ public class SimpleDatabaseList<T> {
 		}
 	}
 	
-	public void getValues(int limit, Consumer<List<T>> callback) {
-		getValues(limit, callback, false);
-	}
-	
 	public void hasValue(T value, Consumer<Boolean> callback) {
 		hasValue(value, callback, false);
+	}
+	
+	public boolean hasSyncedValue(T value) {
+		return hasSyncedValue(value, false);
+	}
+	
+	public boolean hasSyncedValue(T value, boolean cached) {
+		if(cached)
+			return cache.getListCache().contains(value);
+		
+		List<T> ts = getSyncedValues();
+		
+		if(ts == null)
+			return false;
+		
+		return ts.contains(value);
+	}
+	
+	public List<T> getSyncedValues() {
+		return getSyncedValues(false);
+	}
+	
+	public List<T> getSyncedValues(boolean cached) {
+		return getSyncedValues(-1, cached);
+	}
+	
+	public List<T> getSyncedValues(int limit, boolean cached) {
+		if(cached)
+			return cache.getListCache();
+		
+		cache.getListCache().clear();
+		
+		List<T> result = new LinkedList<>();
+		
+		for(List<String> rows : handler.getSyncRows()) {
+			JsonObject obj = new JsonObject();
+			
+			for(int cID = 0; cID < rows.size(); cID++) {
+				String rowValue = rows.get(cID);
+				
+				obj.add(handler.getColumnName(cID), PARSER.parse(rowValue));
+			}
+			
+			result.add(JSONUtil.getValue(obj, typeClazz));
+		}
+		
+		cache.getListCache().addAll(result);
+		return result;
 	}
 	
 	public void hasUIDValue(Object key, Consumer<Boolean> callback) {
@@ -206,6 +254,31 @@ public class SimpleDatabaseList<T> {
 		});
 	}
 	
+	public boolean hasSyncedUIDValue(Object key) {
+		return hasSyncedUIDValue(key, false);
+	}
+	
+	public boolean hasSyncedUIDValue(Object key, boolean cached) {
+		if(cached) {
+			for(T t : cache.getListCache())
+				if(checkSync(key, t))
+					return true;
+			return false;
+		}
+		
+		List<T> ts = getSyncedValues();
+		
+		if(ts == null)
+			return false;
+		
+		for(T t : ts) {
+			if(checkSync(key, t))
+				return true;
+		}
+		
+		return false;
+	}
+	
 	private void check(Object key, T t, Consumer<Boolean> callback) {
 		for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, t.getClass())) {
 			Field f = sf.field();
@@ -224,6 +297,25 @@ public class SimpleDatabaseList<T> {
 				}
 			}
 		}
+	}
+	
+	private boolean checkSync(Object key, T t) {
+		for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, t.getClass())) {
+			Field f = sf.field();
+			
+			if(f.isAnnotationPresent(PrimaryKey.class)) {
+				Object fVal = sf.get(t);
+				if(fVal.equals(key)) {
+					return true;
+				}
+			} else if(f.isAnnotationPresent(Unique.class)) {
+				Object fVal = sf.get(t);
+				if(fVal.equals(key)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	@Override

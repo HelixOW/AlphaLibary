@@ -47,12 +47,6 @@ public class AlphaLibary extends JavaPlugin {
 		return MODULES;
 	}
 	
-	@Override
-	public void onDisable() {
-		for(AlphaModule module : MODULES)
-			module.disable();
-	}
-	
 	public static void registerModules() throws ReflectiveOperationException {
 		Set<Class<?>> runSet = new ConcurrentSet<>();
 		if(moduleClasses == null)
@@ -71,9 +65,7 @@ public class AlphaLibary extends JavaPlugin {
 						registerModule((AlphaModule) load.newInstance());
 						runSet.add(load);
 						loadedClasses.add(load.getSimpleName());
-					} /*else {
-						System.out.println("Cannot load " + load.getSimpleName() + " missing " + dependency);
-					}*/
+					}
 				}
 			}
 		}
@@ -82,31 +74,6 @@ public class AlphaLibary extends JavaPlugin {
 		
 		if(moduleClasses.size() != 0)
 			registerModules();
-	}
-	
-	@Override
-	public void onEnable() {
-		instance = this;
-		
-		for(Class<?> loaded : TypeFinder.findClassesAnnotatedWith(SimpleLoader.class)) {
-			if(Listener.class.isInstance(loaded))
-				try {
-					Bukkit.getPluginManager().registerEvents((Listener) loaded.getDeclaredConstructors()[0].newInstance(), this);
-				} catch(ReflectiveOperationException ignored) {
-				}
-		}
-		
-		try {
-			registerModules();
-		} catch(ReflectiveOperationException e) {
-			e.printStackTrace();
-		}
-		
-		for(Class<?> utilities : TypeFinder.findClassesAnnotatedWith(Utility.class)) {
-			registerUtil(utilities, utilities.getAnnotation(Utility.class).implementation());
-		}
-		
-		new PluginWatcher(this).run();
 	}
 	
 	public static void registerModule(AlphaModule module) {
@@ -128,5 +95,42 @@ public class AlphaLibary extends JavaPlugin {
 			inst.set(null, implementation.newInstance());
 		} catch(ReflectiveOperationException ignored) {
 		}
+	}
+	
+	@Override
+	public void onDisable() {
+		for(AlphaModule module : MODULES)
+			module.disable();
+	}
+	
+	@Override
+	public void onEnable() {
+		instance = this;
+		
+		for(Class<?> loaded : TypeFinder.findClassesAnnotatedWith(SimpleLoader.class)) {
+			if(Listener.class.isInstance(loaded))
+				try {
+					Bukkit.getPluginManager().registerEvents((Listener) loaded.getDeclaredConstructors()[0].newInstance(), this);
+				} catch(ReflectiveOperationException ignored) {
+				}
+			else {
+				try {
+					loaded.getDeclaredConstructors()[0].newInstance();
+				} catch(ReflectiveOperationException ignored) {
+				}
+			}
+		}
+		
+		for(Class<?> utilities : TypeFinder.findClassesAnnotatedWith(Utility.class)) {
+			registerUtil(utilities, utilities.getAnnotation(Utility.class).implementation());
+		}
+		
+		try {
+			registerModules();
+		} catch(ReflectiveOperationException e) {
+			e.printStackTrace();
+		}
+		
+		new PluginWatcher(this).run();
 	}
 }

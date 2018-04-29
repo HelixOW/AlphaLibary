@@ -25,7 +25,7 @@ public final class SQLConnectionHandler {
 		
 		if(information.getDatabaseName().contains(".")) {
 			try {
-				new AbstractFile(new URI(information.getDatabaseName()));
+				new AbstractFile(new URI("file:" + information.getDatabaseName()));
 			} catch(URISyntaxException e) {
 				e.printStackTrace();
 			}
@@ -40,6 +40,10 @@ public final class SQLConnectionHandler {
 	
 	public static Optional<SQLConnector> getSQLConnector(String databaseName) {
 		return Optional.ofNullable(CONNECTORS.get(databaseName));
+	}
+	
+	public static void addConnector(String database, SQLConnector connector) {
+		CONNECTORS.putIfAbsent(database, connector);
 	}
 	
 	public static Collection<SQLConnector> getSQLConnectors() {

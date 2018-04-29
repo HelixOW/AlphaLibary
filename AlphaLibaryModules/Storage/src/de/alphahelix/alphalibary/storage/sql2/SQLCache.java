@@ -19,7 +19,8 @@ public final class SQLCache<V> {
 	}
 	
 	public SQLCache save(String key, V object) {
-		cache.put(key, object);
+		if(!key.isEmpty())
+			cache.put(key, object);
 		listCache.add(object);
 		return this;
 	}

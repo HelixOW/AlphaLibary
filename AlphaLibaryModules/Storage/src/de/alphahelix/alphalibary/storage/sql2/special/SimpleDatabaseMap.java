@@ -72,10 +72,6 @@ public class SimpleDatabaseMap<K, V> {
 		});
 	}
 	
-	public void hasValue(K key, Consumer<Boolean> callback) {
-		hasValue(key, callback, false);
-	}
-	
 	public void addValue(K key, V value) {
 		Map<String, String> values = new LinkedHashMap<>();
 		
@@ -100,9 +96,13 @@ public class SimpleDatabaseMap<K, V> {
 		});
 	}
 	
-	public void hasValue(K key, Consumer<Boolean> callback, boolean cached) {
+	public void hasValue(String key, Consumer<Boolean> callback) {
+		hasValue(key, callback, false);
+	}
+	
+	public void hasValue(String key, Consumer<Boolean> callback, boolean cached) {
 		if(cached) {
-			getKeys(vs -> callback.accept(vs.contains(key.toString())), true);
+			getKeys(vs -> callback.accept(vs.contains(key)), true);
 			return;
 		}
 		handler.getList(keyColumnName, objects -> {
@@ -110,7 +110,7 @@ public class SimpleDatabaseMap<K, V> {
 				callback.accept(false);
 				return;
 			}
-			callback.accept(objects.contains(key.toString()));
+			callback.accept(objects.contains(key));
 		});
 	}
 	
@@ -126,6 +126,22 @@ public class SimpleDatabaseMap<K, V> {
 		handler.getList(keyColumnName, limit, callback);
 	}
 	
+	public void hasValue(K key, Consumer<Boolean> callback) {
+		hasValue(key, callback, false);
+	}
+	
+	public void hasValue(K key, Consumer<Boolean> callback, boolean cached) {
+		hasValue(key.toString(), callback, cached);
+	}
+	
+	public boolean hasSyncValue(K key) {
+		return hasSyncValue(key, false);
+	}
+	
+	public boolean hasSyncValue(K key, boolean cached) {
+		return hasSyncValue(key.toString(), cached);
+	}
+	
 	public void removeValue(K key) {
 		handler.remove(keyColumnName, key.toString());
 		cache.remove(key.toString());
@@ -139,21 +155,117 @@ public class SimpleDatabaseMap<K, V> {
 		getValue(key, callback, false);
 	}
 	
+	public boolean hasSyncValue(String key, boolean cached) {
+		if(cached)
+			return getSyncKeys(true).contains(key);
+		
+		List<Object> keys = getSyncKeys();
+		
+		if(keys == null)
+			return false;
+		
+		return keys.contains(key);
+	}
+	
+	public List<Object> getSyncKeys(boolean cached) {
+		return getSyncKeys(-1, cached);
+	}
+	
+	public List<Object> getSyncKeys() {
+		return getSyncKeys(-1, false);
+	}
+	
+	public List<Object> getSyncKeys(int limit, boolean cached) {
+		if(cached)
+			return new ArrayList<>(cache.getCache().keySet());
+		
+		return handler.getSyncList(keyColumnName, limit);
+	}
+	
+	public boolean hasSyncValue(String key) {
+		return hasSyncValue(key, false);
+	}
+	
 	public void getValue(String key, Consumer<V> callback, boolean cached) {
 		Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
 			if(cached) {
 				if(cache.getObject(key).isPresent()) {
-					callback.accept((V) cache.getObject(key));
+					callback.accept((V) cache.getObject(key).get());
 					return;
 				} else
 					getValue(key, callback, false);
 			}
-			cache.save(key, getValue(key));
-			handler.syncedCallback(getValue(key), callback);
+			cache.save(key, getJSONValue(key));
+			handler.syncedCallback(getJSONValue(key), callback);
 		});
 	}
 	
-	private V getValue(String key) {
+	public void getValue(K key, Consumer<V> callback, boolean cached) {
+		getValue(key.toString(), callback, cached);
+	}
+	
+	public void getValues(Consumer<List<V>> callback) {
+		getValues(callback, false);
+	}
+	
+	public V getSyncValue(K key) {
+		return getSyncValue(key.toString(), false);
+	}
+	
+	public V getSyncValue(String key) {
+		return getSyncValue(key, false);
+	}
+	
+	public V getSyncValue(K key, boolean cached) {
+		return getSyncValue(key.toString(), cached);
+	}
+	
+	public void getKeys(int limit, Consumer<List<Object>> callback) {
+		getKeys(limit, callback, false);
+	}
+	
+	public void getKeys(Consumer<List<Object>> callback) {
+		getKeys(-1, callback, false);
+	}
+	
+	public V getSyncValue(String key, boolean cached) {
+		if(cached) {
+			if(cache.getObject(key).isPresent())
+				return (V) cache.getObject(key).get();
+			else
+				return getSyncValue(key, false);
+		}
+		
+		cache.save(key, getJSONValue(key));
+		return getJSONValue(key);
+	}
+	
+	public void getValues(Consumer<List<V>> callback, boolean cached) {
+		if(cached) {
+			callback.accept(new ArrayList<>(cache.getCache().values()));
+			return;
+		}
+		
+		getKeys(keys -> Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
+			List<V> values = new ArrayList<>();
+			
+			if(keys == null) {
+				handler.syncedCallback(values, callback);
+				return;
+			}
+			
+			cache.getCache().clear();
+			
+			for(Object key : keys) {
+				values.add(getJSONValue(key.toString()));
+				cache.save(key.toString(), getJSONValue(key.toString()));
+			}
+			
+			handler.syncedCallback(values, callback);
+		}));
+	}
+	
+	private V getJSONValue(String key) {
 		JsonObject obj = new JsonObject();
 		
 		for(String fN : fieldNames) {
@@ -165,45 +277,32 @@ public class SimpleDatabaseMap<K, V> {
 		return JSONUtil.getGson().fromJson(obj, valueClazz);
 	}
 	
-	public void getValue(K key, Consumer<V> callback, boolean cached) {
-		getValue(key.toString(), callback, cached);
+	public List<V> getSyncValues() {
+		return getSyncValues(false);
 	}
 	
-	public void getValues(Consumer<List<V>> callback) {
-		getValues(callback, false);
-	}
-	
-	public void getValues(Consumer<List<V>> callback, boolean cached) {
-		if(cached) {
-			callback.accept(new ArrayList<>(cache.getCache().values()));
-			return;
+	public List<V> getSyncValues(boolean cached) {
+		if(cached)
+			return new ArrayList<>(cache.getCache().values());
+		
+		List<V> values = new ArrayList<>();
+		List<Object> keys = getSyncKeys();
+		
+		if(keys == null)
+			return values;
+		
+		cache.getCache().clear();
+		
+		for(Object key : keys) {
+			values.add(getJSONValue(key.toString()));
+			cache.save(key.toString(), getJSONValue(key.toString()));
 		}
 		
-		getKeys(-1, keys -> Bukkit.getScheduler().runTaskAsynchronously(AlphaLibary.getInstance(), () -> {
-			List<V> values = new ArrayList<>();
-			
-			if(keys == null) {
-				handler.syncedCallback(values, callback);
-				return;
-			}
-			
-			cache.getCache().clear();
-			
-			for(Object key : keys) {
-				values.add(getValue(key.toString()));
-				cache.save(key.toString(), getValue(key.toString()));
-			}
-			
-			handler.syncedCallback(values, callback);
-		}));
+		return values;
 	}
 	
-	public void getKeys(int limit, Consumer<List<Object>> callback) {
-		getKeys(limit, callback, false);
-	}
-	
-	public void getKeys(Consumer<List<Object>> callback) {
-		getKeys(-1, callback, false);
+	public List<Object> getSyncKeys(int limit) {
+		return getSyncKeys(limit, false);
 	}
 	
 	@Override

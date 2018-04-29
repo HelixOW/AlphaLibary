@@ -22,4 +22,8 @@ public class PlayerMap<V> extends WeakHashMap<String, V> {
 	public Player[] getKeys() {
 		return ArrayUtil.makePlayerArray(keySet());
 	}
+	
+	public boolean containsKey(Player key) {
+		return keySet().contains(key.getName());
+	}
 }

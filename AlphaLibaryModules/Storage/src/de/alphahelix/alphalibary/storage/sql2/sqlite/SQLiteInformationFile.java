@@ -1,7 +1,6 @@
 package de.alphahelix.alphalibary.storage.sql2.sqlite;
 
 import de.alphahelix.alphalibary.storage.file2.SimpleFile;
-import de.alphahelix.alphalibary.storage.sql2.SQLInformation;
 import de.alphahelix.alphalibary.storage.sql2.SQLInformationFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,22 +20,19 @@ public class SQLiteInformationFile extends SQLInformationFile {
 		if(jsonContains("informations")) return;
 		
 		setDefault("informations", new ArrayList<>(Arrays.asList(
-				new SQLInformation(
-						"root", "localhost", "file:" + getPlugin().getDataFolder().getAbsolutePath() + "/database1.db", "password", 3306
-				),
-				new SQLInformation(
-						"root", "localhost", "file:" + getPlugin().getDataFolder().getAbsolutePath() + "/database2.db", "password", 3306
-				)
+				new SQLiteInformation("file:" + getPlugin().getDataFolder().getAbsolutePath() + "/database1.db"),
+				new SQLiteInformation("file:" + getPlugin().getDataFolder().getAbsolutePath() + "/database2.db")
 		)));
 	}
 	
 	@Override
 	public void setup() {
-		for(SQLInformation information : getListValues("informations", SQLInformation[].class)) {
+		for(SQLiteInformation information : getListValues("informations", SQLiteInformation[].class)) {
 			try {
 				new SimpleFile(new URI(information.getDatabaseName()));
 			} catch(URISyntaxException ignore) {
 			}
+			
 			new SQLiteConnector(getPlugin(), information);
 		}
 	}

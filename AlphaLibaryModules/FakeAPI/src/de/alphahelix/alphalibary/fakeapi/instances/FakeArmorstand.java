@@ -17,8 +17,16 @@
 package de.alphahelix.alphalibary.fakeapi.instances;
 
 import org.bukkit.Location;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FakeArmorstand extends FakeEntity {
+	
+	private static final Map<String, BukkitTask> FOLLOW_MAP = new ConcurrentHashMap<>();
+	private static final Map<String, BukkitTask> SPLIT_MAP = new ConcurrentHashMap<>();
+	
 	public FakeArmorstand(Location location, String name, Object fake) {
 		super(location, name, fake);
 	}

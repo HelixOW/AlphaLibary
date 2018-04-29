@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import de.alphahelix.alphalibary.core.utils.abstracts.AbstractJsonUtil;
 
+
 public interface JSONUtil {
 	
 	static void addTypeAdapter(Class<?> clazz, Object adapter) {

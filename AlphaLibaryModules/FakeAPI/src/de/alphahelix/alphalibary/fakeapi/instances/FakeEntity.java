@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 
-public class FakeEntity implements Serializable {
+public abstract class FakeEntity implements Serializable {
 	
 	private Location startLocation;
 	private String name;

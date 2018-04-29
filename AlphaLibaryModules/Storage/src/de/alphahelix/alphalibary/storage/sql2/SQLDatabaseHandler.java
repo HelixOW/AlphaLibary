@@ -59,11 +59,9 @@ public class SQLDatabaseHandler {
 				return;
 			
 			tableinfo = tableinfo.replaceFirst(",", "");
-			if(!TABLE_NAMES.contains(table))
-				TABLE_NAMES.add(table);
 			
-			if(!TABLE_INFO.containsKey(table))
-				TABLE_INFO.put(table, tableinfo);
+			TABLE_NAMES.add(table);
+			TABLE_INFO.put(table, tableinfo);
 			
 			if(connector != null) {
 				if(connector.handler().isConnected()) {
@@ -95,6 +93,12 @@ public class SQLDatabaseHandler {
 				}
 			}
 		});
+	}
+	
+	private boolean doSyncChecks() {
+		if(connector != null)
+			return connector.handler().isConnected();
+		return false;
 	}
 	
 	public void empty() {
@@ -135,6 +139,8 @@ public class SQLDatabaseHandler {
 			if(connector != null) {
 				if(connector.handler().isConnected()) {
 					try {
+						if(info.isEmpty())
+							return;
 						String qry = "INSERT INTO " + table + " (" + info + ") VALUES (" + builder.toString().replaceFirst(",", "") + ");";
 						connector.connect().prepareStatement(qry).executeUpdate();
 					} catch(SQLException ignored) {
@@ -145,9 +151,12 @@ public class SQLDatabaseHandler {
 	}
 	
 	public int getColumnAmount() {
+		
+		
 		if(TABLE_INFO.get(table) == null) {
 			return 0;
 		}
+		
 		if(!TABLE_INFO.get(table).contains(",")) {
 			return 1;
 		}
@@ -166,7 +175,7 @@ public class SQLDatabaseHandler {
 	 */
 	public String getColumnName(int column) {
 		if(TABLE_INFO.get(table) == null) {
-			return null;
+			return "";
 		}
 		
 		String[] info = TABLE_INFO.get(table).split(",");
@@ -211,6 +220,10 @@ public class SQLDatabaseHandler {
 		getResult(condition, value, condition, result -> check.accept(result != null));
 	}
 	
+	public boolean syncContains(String condition, String value) {
+		return getResult(condition, value, condition) != null;
+	}
+	
 	public <T> void getResult(String condition, String value, String column, Consumer<T> callback) {
 		doChecks(() -> syncedCallback(getResult(condition, value, column), callback));
 	}
@@ -246,57 +259,69 @@ public class SQLDatabaseHandler {
 	}
 	
 	public void getList(String column, int limit, Consumer<List<Object>> callback) {
-		doChecks(() -> {
-			String qry = "SELECT " + column + " FROM " + table + " LIMIT " + limit + ";";
-			if(limit == -1)
-				qry = "SELECT " + column + " FROM " + table + ";";
+		doChecks(() -> syncedCallback(getSyncList(column, limit), callback));
+	}
+	
+	public List<Object> getSyncList(String column, int limit) {
+		String qry = "SELECT " + column + " FROM " + table + " LIMIT " + limit + ";";
+		if(limit == -1)
+			qry = "SELECT " + column + " FROM " + table + ";";
+		
+		try {
+			ResultSet rs = connector.connect().prepareStatement(qry).executeQuery();
 			
-			try {
-				ResultSet rs = connector.connect().prepareStatement(qry).executeQuery();
-				
-				List<Object> objs = new ArrayList<>();
-				
-				while(rs.next())
-					objs.add(rs.getObject(column));
-				
-				syncedCallback(objs, callback);
-			} catch(SQLException ignored) {
-				syncedCallback(new ArrayList<>(), callback);
-			}
-		});
+			List<Object> objs = new ArrayList<>();
+			
+			while(rs.next())
+				objs.add(rs.getObject(column));
+			
+			return objs;
+		} catch(SQLException ignored) {
+			return new ArrayList<>();
+		}
+	}
+	
+	public List<Object> getSyncList(String column) {
+		return getSyncList(column, -1);
 	}
 	
 	public void getRows(Consumer<List<List<String>>> callback) {
 		getRows(-1, callback);
 	}
 	
-	public void getRows(int limit, Consumer<List<List<String>>> callback) {
-		doChecks(() -> {
-			String qry = "SELECT * FROM " + table + " LIMIT " + limit + ";";
-			if(limit == -1)
-				qry = "SELECT * FROM " + table + ";";
+	public List<List<String>> getSyncRows() {
+		return getSyncRows(-1);
+	}
+	
+	public List<List<String>> getSyncRows(int limit) {
+		String qry = "SELECT * FROM " + table + " LIMIT " + limit + ";";
+		if(limit == -1)
+			qry = "SELECT * FROM " + table + ";";
+		
+		try {
+			ResultSet rs = connector.connect().prepareStatement(qry).executeQuery();
+			List<List<String>> res = new LinkedList<>();
 			
-			try {
-				ResultSet rs = connector.connect().prepareStatement(qry).executeQuery();
-				List<List<String>> res = new LinkedList<>();
+			List<String> rowObjects = new ArrayList<>();
+			int cID = 1;
+			
+			while(rs.next()) {
+				rowObjects.add(rs.getString(getColumnName(cID)));
+				cID++;
 				
-				List<String> rowObjects = new ArrayList<>();
-				int cID = 1;
-				
-				while(rs.next()) {
-					rowObjects.add(rs.getString(getColumnName(cID)));
-					cID++;
-					
-					if(cID > getColumnAmount()) {
-						res.add(rowObjects);
-						rowObjects.clear();
-					}
+				if(cID > getColumnAmount()) {
+					res.add(rowObjects);
+					rowObjects.clear();
 				}
-				
-				syncedCallback(res, callback);
-			} catch(SQLException ignored) {
-				syncedCallback(new ArrayList<>(), callback);
 			}
-		});
+			
+			return res;
+		} catch(SQLException ignored) {
+			return new ArrayList<>();
+		}
+	}
+	
+	public void getRows(int limit, Consumer<List<List<String>>> callback) {
+		doChecks(() -> syncedCallback(getSyncRows(limit), callback));
 	}
 }

@@ -128,6 +128,19 @@ public class JSONDatabase implements IDataStorage {
 		});
 	}
 	
+	public <T> T getSyncValue(String idValue, Class<T> define) {
+		if(id == null) return null;
+		
+		if(this.sqlDatabaseHandler.syncContains(id.name().toLowerCase(), idValue))
+			return JSONUtil.getValue(this.sqlDatabaseHandler.getResult(id.name().toLowerCase(), idValue, "val").toString(), define);
+		else
+			return null;
+	}
+	
+	public boolean hasValue(String idValue) {
+		return this.sqlDatabaseHandler.syncContains(id.name().toLowerCase(), idValue);
+	}
+	
 	public void hasValue(String idValue, Consumer<Boolean> callback) {
 		this.sqlDatabaseHandler.contains(id.name().toLowerCase(), idValue, callback);
 	}

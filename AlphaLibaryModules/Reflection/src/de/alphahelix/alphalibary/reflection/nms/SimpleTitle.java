@@ -15,7 +15,6 @@
  */
 package de.alphahelix.alphalibary.reflection.nms;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import org.bukkit.entity.Player;
 
@@ -24,8 +23,8 @@ public class SimpleTitle {
 	private static final Class<?> PACKET_PLAY_OUT_TITLE_$_ENUM_TITLE_ACTION = ReflectionUtil.getNmsClass("PacketPlayOutTitle$EnumTitleAction");
 	private static final Class<?> I_CHAT_BASE_COMPONENT = ReflectionUtil.getNmsClass("IChatBaseComponent");
 	
-	private static final AbstractReflectionUtil.SaveConstructor PACKET_PLAY_OUT_TITLE = ReflectionUtil.getDeclaredConstructor("PacketPlayOutTitle", PACKET_PLAY_OUT_TITLE_$_ENUM_TITLE_ACTION, I_CHAT_BASE_COMPONENT);
-	private static final AbstractReflectionUtil.SaveConstructor PACKET_PLAY_OUT_TITLE1 = ReflectionUtil.getDeclaredConstructor("PacketPlayOutTitle", int.class, int.class, int.class);
+	private static final ReflectionUtil.SaveConstructor PACKET_PLAY_OUT_TITLE = ReflectionUtil.getDeclaredConstructor("PacketPlayOutTitle", PACKET_PLAY_OUT_TITLE_$_ENUM_TITLE_ACTION, I_CHAT_BASE_COMPONENT);
+	private static final ReflectionUtil.SaveConstructor PACKET_PLAY_OUT_TITLE1 = ReflectionUtil.getDeclaredConstructor("PacketPlayOutTitle", int.class, int.class, int.class);
 	
 	/**
 	 * Send a title and subtitle to a {@link Player}

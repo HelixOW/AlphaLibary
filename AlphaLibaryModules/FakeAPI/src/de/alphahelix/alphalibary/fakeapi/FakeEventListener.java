@@ -33,6 +33,8 @@ public class FakeEventListener extends SimpleListener {
 	public void onJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
 		
+		if(FakeRegister.getArmorstandLocationsFile() == null) return;
+		
 		UUIDFetcher.getUUID(p, id -> FakeAPI.getEntityIds().put(p.getEntityId(), id));
 		
 		for(FakeArmorstand stands : FakeRegister.getArmorstandLocationsFile().getFakeArmorstandFromFile()) {

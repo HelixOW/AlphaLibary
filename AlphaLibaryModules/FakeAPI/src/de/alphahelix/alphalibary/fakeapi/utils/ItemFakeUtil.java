@@ -16,7 +16,6 @@
 
 package de.alphahelix.alphalibary.fakeapi.utils;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeItem;
@@ -32,7 +31,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemFakeUtil {
 	
-	private static final AbstractReflectionUtil.SaveConstructor ENTITY_ITEM =
+	private static final ReflectionUtil.SaveConstructor ENTITY_ITEM =
 			ReflectionUtil.getDeclaredConstructor("EntityItem", ReflectionUtil.getNmsClass("World"),
 					double.class, double.class, double.class, ReflectionUtil.getNmsClass("ItemStack"));
 	

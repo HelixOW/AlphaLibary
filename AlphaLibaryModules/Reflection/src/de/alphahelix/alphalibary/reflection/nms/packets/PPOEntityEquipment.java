@@ -1,7 +1,6 @@
 package de.alphahelix.alphalibary.reflection.nms.packets;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.enums.REnumEquipSlot;
 import org.bukkit.inventory.ItemStack;
@@ -9,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class PPOEntityEquipment implements IPacket {
 	
-	private static final AbstractReflectionUtil.SaveConstructor PACKET =
+	private static final ReflectionUtil.SaveConstructor PACKET =
 			ReflectionUtil.getDeclaredConstructor("PacketPlayOutEntityEquipment",
 					int.class, ReflectionUtil.getNmsClass("EnumItemSlot"), ReflectionUtil.getNmsClass("ItemStack"));
 	

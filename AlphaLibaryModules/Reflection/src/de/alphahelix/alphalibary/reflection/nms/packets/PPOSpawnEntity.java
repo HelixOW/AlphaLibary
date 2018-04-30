@@ -1,16 +1,15 @@
 package de.alphahelix.alphalibary.reflection.nms.packets;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.BlockPos;
 
 
 public class PPOSpawnEntity implements IPacket {
 	
-	private static final AbstractReflectionUtil.SaveConstructor PACKET_OPT_1 = ReflectionUtil.getDeclaredConstructor("PacketPlayOutSpawnEntity",
+	private static final ReflectionUtil.SaveConstructor PACKET_OPT_1 = ReflectionUtil.getDeclaredConstructor("PacketPlayOutSpawnEntity",
 			ReflectionUtil.getNmsClass("Entity"), int.class, int.class);
-	private static final AbstractReflectionUtil.SaveConstructor PACKET_OPT_2 = ReflectionUtil.getDeclaredConstructor("PacketPlayOutSpawnEntity",
+	private static final ReflectionUtil.SaveConstructor PACKET_OPT_2 = ReflectionUtil.getDeclaredConstructor("PacketPlayOutSpawnEntity",
 			ReflectionUtil.getNmsClass("Entity"), int.class, int.class,
 			ReflectionUtil.getNmsClass("BlockPosition"));
 	

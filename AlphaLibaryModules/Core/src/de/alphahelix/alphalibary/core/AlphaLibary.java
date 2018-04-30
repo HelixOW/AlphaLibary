@@ -20,13 +20,11 @@ package de.alphahelix.alphalibary.core;
 
 import de.alphahelix.alphalibary.core.type.TypeFinder;
 import de.alphahelix.alphalibary.core.utilites.PluginWatcher;
-import de.alphahelix.alphalibary.core.utilites.Utility;
 import io.netty.util.internal.ConcurrentSet;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -86,17 +84,6 @@ public class AlphaLibary extends JavaPlugin {
 		}
 	}
 	
-	public static void registerUtil(Class<?> util, Class<?> implementation) {
-		try {
-			Field inst = util.getField("instance");
-			
-			inst.setAccessible(true);
-			
-			inst.set(null, implementation.newInstance());
-		} catch(ReflectiveOperationException ignored) {
-		}
-	}
-	
 	@Override
 	public void onDisable() {
 		for(AlphaModule module : MODULES)
@@ -119,10 +106,6 @@ public class AlphaLibary extends JavaPlugin {
 				} catch(ReflectiveOperationException ignored) {
 				}
 			}
-		}
-		
-		for(Class<?> utilities : TypeFinder.findClassesAnnotatedWith(Utility.class)) {
-			registerUtil(utilities, utilities.getAnnotation(Utility.class).implementation());
 		}
 		
 		try {

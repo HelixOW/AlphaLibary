@@ -1,71 +1,96 @@
 package de.alphahelix.alphalibary.core.utils;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractPlayerUtil;
 import org.bukkit.entity.Player;
 
-public interface PlayerUtil {
+import java.util.HashSet;
+import java.util.Set;
+
+
+public class PlayerUtil {
 	
-	static void addTotalPlayer(Player player) {
-		AbstractPlayerUtil.instance.addTotalPlayer(player);
+	private static final Set<String> TOTAL_PLAYERS = new HashSet<>();
+	private static final Set<String> ALIVE_PLAYERS = new HashSet<>();
+	private static final Set<String> DEAD_PLAYERS = new HashSet<>();
+	
+	public static void addTotalPlayer(Player player) {
+		addTotalPlayer(player.getName());
 	}
 	
-	static void addTotalPlayer(String player) {
-		AbstractPlayerUtil.instance.addTotalPlayer(player);
+	public static void addTotalPlayer(String player) {
+		getTotalPlayers().add(player);
 	}
 	
-	static void removeTotalPlayer(Player player) {
-		AbstractPlayerUtil.instance.removeTotalPlayer(player);
+	public static Set<String> getTotalPlayers() {
+		return TOTAL_PLAYERS;
 	}
 	
-	static void removeTotalPlayer(String player) {
-		AbstractPlayerUtil.instance.removeTotalPlayer(player);
+	public static void removeTotalPlayer(Player player) {
+		removeTotalPlayer(player.getName());
 	}
 	
-	static void addAlivePlayer(Player player) {
-		AbstractPlayerUtil.instance.addAlivePlayer(player);
+	public static void removeTotalPlayer(String player) {
+		getTotalPlayers().remove(player);
+		
+		getAlivePlayers().remove(player);
+		
+		getDeadPlayers().remove(player);
 	}
 	
-	static void addAlivePlayer(String player) {
-		AbstractPlayerUtil.instance.addAlivePlayer(player);
+	public static Set<String> getAlivePlayers() {
+		return ALIVE_PLAYERS;
 	}
 	
-	static void removeAlivePlayer(Player player) {
-		AbstractPlayerUtil.instance.removeAlivePlayer(player);
+	public static Set<String> getDeadPlayers() {
+		return DEAD_PLAYERS;
 	}
 	
-	static void removeAlivePlayer(String player) {
-		AbstractPlayerUtil.instance.removeAlivePlayer(player);
+	public static void addAlivePlayer(Player player) {
+		addAlivePlayer(player.getName());
 	}
 	
-	static boolean isPlayerAlive(Player player) {
-		return AbstractPlayerUtil.instance.isPlayerAlive(player);
+	public static void addAlivePlayer(String player) {
+		getAlivePlayers().add(player);
 	}
 	
-	static boolean isPlayerAlive(String player) {
-		return AbstractPlayerUtil.instance.isPlayerAlive(player);
+	public static void removeAlivePlayer(Player player) {
+		removeAlivePlayer(player.getName());
 	}
 	
-	static void addDeadPlayer(Player player) {
-		AbstractPlayerUtil.instance.addDeadPlayer(player);
+	public static void removeAlivePlayer(String player) {
+		getAlivePlayers().remove(player);
+		
+		getDeadPlayers().remove(player);
 	}
 	
-	static void addDeadPlayer(String player) {
-		AbstractPlayerUtil.instance.addDeadPlayer(player);
+	public static boolean isPlayerAlive(Player player) {
+		return isPlayerAlive(player.getName());
 	}
 	
-	static void removeDeadPlayer(Player player) {
-		AbstractPlayerUtil.instance.removeDeadPlayer(player);
+	public static boolean isPlayerAlive(String player) {
+		return getAlivePlayers().contains(player);
 	}
 	
-	static void removeDeadPlayer(String player) {
-		AbstractPlayerUtil.instance.removeDeadPlayer(player);
+	public static void addDeadPlayer(Player player) {
+		addDeadPlayer(player.getName());
 	}
 	
-	static boolean isPlayerDead(Player player) {
-		return AbstractPlayerUtil.instance.isPlayerDead(player);
+	public static void addDeadPlayer(String player) {
+		getDeadPlayers().add(player);
 	}
 	
-	static boolean isPlayerDead(String player) {
-		return AbstractPlayerUtil.instance.isPlayerDead(player);
+	public static void removeDeadPlayer(Player player) {
+		removeDeadPlayer(player.getName());
+	}
+	
+	public static void removeDeadPlayer(String player) {
+		getDeadPlayers().remove(player);
+	}
+	
+	public static boolean isPlayerDead(Player player) {
+		return isPlayerDead(player.getName());
+	}
+	
+	public static boolean isPlayerDead(String player) {
+		return getDeadPlayers().contains(player);
 	}
 }

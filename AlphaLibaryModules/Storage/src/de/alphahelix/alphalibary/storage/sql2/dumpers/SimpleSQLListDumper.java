@@ -25,24 +25,35 @@ public class SimpleSQLListDumper<T> {
 	
 	private static final JsonParser PARSER = new JsonParser();
 	
-	private final List<String> fieldNames = new ArrayList<>();
-	private final String primaryUniqueFieldName;
-	private final int primaryUniqueFieldID;
 	private final SQLDatabaseHandler handler;
-	private final Class<T> typeClazz;
+	private final List<Class<?>> typeClazzes;
 	private final SQLCache<T> cache = new SQLCache<>();
 	
 	public SimpleSQLListDumper(String table, String database, DatabaseType type, Class<T> listClasses) {
 		this.handler = new SQLDatabaseHandler(table, database);
-		this.typeClazz = listClasses;
 		
 		List<String> columnNames = new ArrayList<>();
 		boolean acceptMore = true;
 		String pUFN = "";
 		int pUFID = -1;
 		
+		List<Class<?>> supers = new ArrayList<>();
+		Class<?> sup = listClasses;
+		
+		supers.add(sup);
+		
+		while(!sup.equals(Object.class)) {
+			sup = sup.getSuperclass();
+			
+			if(!sup.equals(Object.class)) {
+				supers.add(sup);
+			}
+		}
+		
+		this.typeClazzes = supers;
+		
 		if(type == DatabaseType.MYSQL) {
-			for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, typeClazz)) {
+			for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, supers.toArray(new Class<?>[supers.size()]))) {
 				Field f = sf.field();
 				
 				if(f.isAnnotationPresent(PrimaryKey.class) && acceptMore) {
@@ -61,10 +72,9 @@ public class SimpleSQLListDumper<T> {
 					columnNames.add(SQLDatabaseHandler.createMySQLColumn(
 							f.getName(), MySQLDataType.TEXT, 5000));
 				}
-				fieldNames.add(f.getName());
 			}
 		} else if(type == DatabaseType.SQLITE) {
-			for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, typeClazz)) {
+			for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, supers.toArray(new Class<?>[supers.size()]))) {
 				Field f = sf.field();
 				
 				if(f.isAnnotationPresent(PrimaryKey.class) && acceptMore) {
@@ -83,13 +93,11 @@ public class SimpleSQLListDumper<T> {
 					columnNames.add(SQLDatabaseHandler.createSQLiteColumn(
 							f.getName(), SQLiteDataType.TEXT));
 				}
-				
-				fieldNames.add(f.getName());
 			}
 		}
 		
-		primaryUniqueFieldName = pUFN;
-		primaryUniqueFieldID = pUFID;
+		String primaryUniqueFieldName = pUFN;
+		int primaryUniqueFieldID = pUFID;
 		
 		handler.create(columnNames.toArray(new String[columnNames.size()]));
 	}
@@ -100,7 +108,7 @@ public class SimpleSQLListDumper<T> {
 		List<String> records = new ArrayList<>();
 		
 		for(T value : list) {
-			for(ReflectionHelper.SaveField field : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, this.typeClazz)) {
+			for(ReflectionHelper.SaveField field : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, this.typeClazzes.toArray(new Class<?>[typeClazzes.size()]))) {
 				records.add(JSONUtil.toJson(field.get(value)));
 			}
 		}
@@ -131,7 +139,7 @@ public class SimpleSQLListDumper<T> {
 				obj.add(handler.getColumnName(rID), PARSER.parse(record));
 			}
 			
-			values.add(JSONUtil.getValue(obj, typeClazz));
+			values.add(JSONUtil.getValue(obj, typeClazzes.get(0)));
 		}
 		
 		return values;

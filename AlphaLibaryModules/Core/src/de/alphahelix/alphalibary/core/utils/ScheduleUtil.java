@@ -1,20 +1,48 @@
 package de.alphahelix.alphalibary.core.utils;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractScheduleUtil;
+import de.alphahelix.alphalibary.core.AlphaLibary;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
-public interface ScheduleUtil {
+public class ScheduleUtil {
 	
-	static <T> void cooldown(int length, final T key, final List<T> cooldownList) {
-		AbstractScheduleUtil.instance.cooldown(length, key, cooldownList);
+	public static <T> void cooldown(int length, final T key, final List<T> cooldownList) {
+		cooldownList.add(key);
+		new BukkitRunnable() {
+			public void run() {
+				cooldownList.remove(key);
+			}
+		}.runTaskLaterAsynchronously(AlphaLibary.getInstance(), length);
 	}
 	
-	static void runLater(long ticks, boolean async, Runnable timer) {
-		AbstractScheduleUtil.instance.runLater(ticks, async, timer);
+	public static void runLater(long ticks, boolean async, Runnable timer) {
+		if(async)
+			new BukkitRunnable() {
+				public void run() {
+					timer.run();
+				}
+			}.runTaskLaterAsynchronously(AlphaLibary.getInstance(), ticks);
+		else
+			new BukkitRunnable() {
+				public void run() {
+					timer.run();
+				}
+			}.runTaskLater(AlphaLibary.getInstance(), ticks);
 	}
 	
-	static void runTimer(long wait, long ticks, boolean async, Runnable timer) {
-		AbstractScheduleUtil.instance.runTimer(wait, ticks, async, timer);
+	public static void runTimer(long wait, long ticks, boolean async, Runnable timer) {
+		if(async)
+			new BukkitRunnable() {
+				public void run() {
+					timer.run();
+				}
+			}.runTaskTimerAsynchronously(AlphaLibary.getInstance(), wait, ticks);
+		else
+			new BukkitRunnable() {
+				public void run() {
+					timer.run();
+				}
+			}.runTaskTimer(AlphaLibary.getInstance(), wait, ticks);
 	}
 }

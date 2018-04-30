@@ -1,7 +1,6 @@
 package de.alphahelix.alphalibary.reflection.nms.packets;
 
 import com.google.common.base.Objects;
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 import java.util.Arrays;
@@ -9,7 +8,7 @@ import java.util.Arrays;
 
 public class PPOEntityDestroy implements IPacket {
 	
-	private static final AbstractReflectionUtil.SaveConstructor PACKET =
+	private static final ReflectionUtil.SaveConstructor PACKET =
 			ReflectionUtil.getDeclaredConstructor("PacketPlayOutEntityDestroy",
 					int[].class);
 	

@@ -1,11 +1,10 @@
 package de.alphahelix.alphalibary.reflection.nms.wrappers;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 public class EntityAgeableWrapper extends EntityWrapper {
 	
-	private static final AbstractReflectionUtil.SaveMethod SAGE = ReflectionUtil.getDeclaredMethod("setAge", "EntityAgeable",
+	private static final ReflectionUtil.SaveMethod SAGE = ReflectionUtil.getDeclaredMethod("setAge", "EntityAgeable",
 			int.class);
 	
 	public EntityAgeableWrapper(Object entityAgeable, boolean stackTrace) {

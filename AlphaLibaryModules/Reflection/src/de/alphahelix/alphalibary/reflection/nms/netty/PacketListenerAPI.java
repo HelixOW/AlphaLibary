@@ -3,8 +3,7 @@ package de.alphahelix.alphalibary.reflection.nms.netty;
 import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.core.AlphaLibary;
 import de.alphahelix.alphalibary.core.AlphaModule;
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
-import de.alphahelix.alphalibary.reflection.IReflectionUtil;
+import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.netty.channel.ChannelWrapper;
 import de.alphahelix.alphalibary.reflection.nms.netty.handler.PacketHandler;
 import de.alphahelix.alphalibary.reflection.nms.netty.handler.ReceivedPacket;
@@ -35,7 +34,7 @@ public class PacketListenerAPI implements IPacketListener, Listener, AlphaModule
 		Bukkit.getPluginManager().registerEvents(this, plugin());
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			channelInjector.addChannel(player);
-			AlphaLibary.registerUtil(AbstractReflectionUtil.class, IReflectionUtil.class);
+			AlphaLibary.registerUtil(ReflectionUtil.class, ReflectionUtil.class);
 		}
 	}
 	

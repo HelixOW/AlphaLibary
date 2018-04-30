@@ -1,12 +1,11 @@
 package de.alphahelix.alphalibary.reflection.nms.wrappers;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 
 public class EntityLlamaWrapper extends EntityWrapper {
 	
-	private static final AbstractReflectionUtil.SaveMethod SVAR = ReflectionUtil.getDeclaredMethod("setVariant", "EntityLlama",
+	private static final ReflectionUtil.SaveMethod SVAR = ReflectionUtil.getDeclaredMethod("setVariant", "EntityLlama",
 			int.class);
 	
 	public EntityLlamaWrapper(Object entityLlama) {

@@ -1,6 +1,5 @@
 package de.alphahelix.alphalibary.reflection.nms.packets;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.enums.REnumDifficulty;
 import de.alphahelix.alphalibary.reflection.nms.enums.REnumGamemode;
@@ -10,7 +9,7 @@ import java.util.Objects;
 
 public class PPORespawn implements IPacket {
 	
-	private static final AbstractReflectionUtil.SaveConstructor PACKET =
+	private static final ReflectionUtil.SaveConstructor PACKET =
 			ReflectionUtil.getDeclaredConstructor("PacketPlayOutRespawn",
 					int.class,
 					ReflectionUtil.getNmsClass("EnumDifficulty"),

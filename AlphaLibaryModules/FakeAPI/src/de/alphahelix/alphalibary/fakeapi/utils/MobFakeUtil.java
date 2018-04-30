@@ -133,7 +133,7 @@ public class MobFakeUtil {
 				ReflectionUtil.getEntityID(mob.getNmsEntity()),
 				old.getX() - ne.getX(),
 				old.getY() - ne.getY(),
-				old.getY() - ne.getY(),
+				old.getZ() - ne.getZ(),
 				false
 		));
 		ReflectionUtil.sendPacket(p, new PPOEntityHeadRotation(mob.getNmsEntity(), yaw));

@@ -1,105 +1,213 @@
 package de.alphahelix.alphalibary.core.utils;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractArrayUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public interface ArrayUtil {
+public class ArrayUtil {
 	
-	static <T> T[] makeArray(T... types) {
-		return AbstractArrayUtil.instance.makeArray(types);
+	public static <T> T[] makeArray(T... types) {
+		return types;
 	}
 	
-	static Player[] makePlayerArray(List<String> types) {
-		return AbstractArrayUtil.instance.makePlayerArray(types);
+	public static Player[] makePlayerArray(List<String> types) {
+		List<Player> playerArrayList = new ArrayList<>();
+		
+		for(String type : types) {
+			if(Bukkit.getPlayer(type) == null) continue;
+			playerArrayList.add(Bukkit.getPlayer(type));
+		}
+		
+		return playerArrayList.toArray(new Player[playerArrayList.size()]);
 	}
 	
-	static Player[] makePlayerArray(Set<String> types) {
-		return AbstractArrayUtil.instance.makePlayerArray(types);
+	public static Player[] makePlayerArray(Set<String> types) {
+		List<Player> playerArrayList = new ArrayList<>();
+		
+		for(String type : types) {
+			if(Bukkit.getPlayer(type) == null) continue;
+			playerArrayList.add(Bukkit.getPlayer(type));
+		}
+		
+		return playerArrayList.toArray(new Player[playerArrayList.size()]);
 	}
 	
-	static Vector[] makeVectorArray(Location... locations) {
-		return AbstractArrayUtil.instance.makeVectorArray(locations);
+	public static Vector[] makeVectorArray(Location... locations) {
+		Vector[] vectors = new Vector[locations.length];
+		
+		for(int i = 0; i < vectors.length; i++)
+			vectors[i] = locations[i].toVector();
+		
+		return vectors;
 	}
 	
-	static Location[] makeLocationArray(World world, Vector... vectors) {
-		return AbstractArrayUtil.instance.makeLocationArray(world, vectors);
+	public static Location[] makeLocationArray(World world, Vector... vectors) {
+		Location[] locations = new Location[vectors.length];
+		
+		for(int i = 0; i < locations.length; i++)
+			locations[i] = vectors[i].toLocation(world);
+		
+		return locations;
 	}
 	
-	static String[] replaceInArray(String pattern, String replace, String... array) {
-		return AbstractArrayUtil.instance.replaceInArray(pattern, replace, array);
+	public static String[] replaceInArray(String pattern, String replace, String... array) {
+		for(int i = 0; i < array.length; i++) {
+			array[i] = array[i].replace(pattern, replace);
+		}
+		return array;
 	}
 	
-	static <T> List<T> getTypesOf(Class<T> clazzType, List<Object> inList) {
-		return AbstractArrayUtil.instance.getTypesOf(clazzType, inList);
+	public static <T> List<T> getTypesOf(Class<T> clazzType, List<Object> inList) {
+		List<T> types = new ArrayList<>();
+		for(Object e : inList)
+			if(e.getClass().isInstance(clazzType))
+				types.add((T) e);
+		return types;
 	}
 	
-	static void checkForArguments(Object[] array, int min, int max) {
-		AbstractArrayUtil.instance.checkForArguments(array, min, max);
+	public static void checkForArguments(Object[] array, int min, int max) {
+		if(array.length < min || array.length > max)
+			throw new ArrayIndexOutOfBoundsException("You have to at least parse " + min + " arguments and up to " + max);
 	}
 	
-	static <T> T[] replaceInArray(T obj, int pos, T... array) {
-		return AbstractArrayUtil.instance.replaceInArray(obj, pos, array);
+	@SafeVarargs
+	public static <T> T[] replaceInArray(T obj, int pos, T... array) {
+		T[] clone = array.clone();
+		
+		clone[pos] = obj;
+		
+		return clone;
 	}
 	
-	static double min(double... a) {
-		return AbstractArrayUtil.instance.min(a);
+	public static double min(double... a) {
+		double lowest = a[0];
+		
+		for(double l : a)
+			lowest = Math.min(l, lowest);
+		
+		return lowest;
 	}
 	
-	static int min(int... a) {
-		return AbstractArrayUtil.instance.min(a);
+	public static int min(int... a) {
+		int lowest = a[0];
+		
+		for(int l : a)
+			lowest = Math.min(l, lowest);
+		
+		return lowest;
 	}
 	
-	static long min(long... a) {
-		return AbstractArrayUtil.instance.min(a);
+	public static long min(long... a) {
+		long lowest = a[0];
+		
+		for(long l : a)
+			lowest = Math.min(l, lowest);
+		
+		return lowest;
 	}
 	
-	static float min(float... a) {
-		return AbstractArrayUtil.instance.min(a);
+	public static float min(float... a) {
+		float lowest = a[0];
+		
+		for(float l : a)
+			lowest = Math.min(l, lowest);
+		
+		return lowest;
 	}
 	
-	static double max(double... a) {
-		return AbstractArrayUtil.instance.max(a);
+	public static double max(double... a) {
+		double highest = a[0];
+		
+		for(double l : a)
+			highest = Math.max(l, highest);
+		
+		return highest;
 	}
 	
-	static int max(int... a) {
-		return AbstractArrayUtil.instance.max(a);
+	public static int max(int... a) {
+		int highest = a[0];
+		
+		for(int l : a)
+			highest = Math.max(l, highest);
+		
+		return highest;
 	}
 	
-	static long max(long... a) {
-		return AbstractArrayUtil.instance.max(a);
+	public static long max(long... a) {
+		long highest = a[0];
+		
+		for(long l : a)
+			highest = Math.max(l, highest);
+		
+		return highest;
 	}
 	
-	static float max(float... a) {
-		return AbstractArrayUtil.instance.max(a);
+	public static float max(float... a) {
+		float highest = a[0];
+		
+		for(float l : a)
+			highest = Math.max(l, highest);
+		
+		return highest;
 	}
 	
-	static double sum(double... a) {
-		return AbstractArrayUtil.instance.sum(a);
+	public static double sum(double... a) {
+		double sum = a[0];
+		
+		for(double s : a)
+			sum += s;
+		
+		return sum;
 	}
 	
-	static int sum(int... a) {
-		return AbstractArrayUtil.instance.sum(a);
+	public static int sum(int... a) {
+		int sum = a[0];
+		
+		for(int s : a)
+			sum += s;
+		
+		return sum;
 	}
 	
-	static float sum(float... a) {
-		return AbstractArrayUtil.instance.sum(a);
+	public static float sum(float... a) {
+		float sum = a[0];
+		
+		for(float s : a)
+			sum += s;
+		
+		return sum;
 	}
 	
-	static long sum(long... a) {
-		return AbstractArrayUtil.instance.sum(a);
+	public static long sum(long... a) {
+		long sum = a[0];
+		
+		for(long s : a)
+			sum += s;
+		
+		return sum;
 	}
 	
-	static double[] trim(int decimal, double... a) {
-		return AbstractArrayUtil.instance.trim(decimal, a);
+	public static double[] trim(int decimal, double... a) {
+		double[] trimmed = new double[a.length];
+		
+		for(int i = 0; i < a.length; i++)
+			trimmed[i] = MathUtil.trim(a[i], decimal);
+		
+		return trimmed;
 	}
 	
-	static Location[] trim(int decimal, Location... locations) {
-		return AbstractArrayUtil.instance.trim(decimal, locations);
+	public static Location[] trim(int decimal, Location... locations) {
+		Location[] trimmed = new Location[locations.length];
+		
+		for(int i = 0; i < locations.length; i++)
+			trimmed[i] = LocationUtil.trim(decimal, locations[i]);
+		
+		return trimmed;
 	}
 }

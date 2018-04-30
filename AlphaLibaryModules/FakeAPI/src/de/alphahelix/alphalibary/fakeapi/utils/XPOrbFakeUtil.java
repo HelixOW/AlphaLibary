@@ -16,7 +16,6 @@
 
 package de.alphahelix.alphalibary.fakeapi.utils;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.fakeapi.FakeAPI;
 import de.alphahelix.alphalibary.fakeapi.FakeRegister;
 import de.alphahelix.alphalibary.fakeapi.instances.FakeXPOrb;
@@ -29,9 +28,9 @@ import org.bukkit.entity.Player;
 
 public class XPOrbFakeUtil {
 	
-	private static final AbstractReflectionUtil.SaveConstructor ENTITY_XP_ORB =
+	private static final ReflectionUtil.SaveConstructor ENTITY_XP_ORB =
 			ReflectionUtil.getDeclaredConstructor("EntityExperienceOrb", ReflectionUtil.getNmsClass("World"));
-	private static final AbstractReflectionUtil.SaveConstructor SPAWN_XP_ORB =
+	private static final ReflectionUtil.SaveConstructor SPAWN_XP_ORB =
 			ReflectionUtil.getDeclaredConstructor("PacketPlayOutSpawnEntityExperienceOrb", ReflectionUtil.getNmsClass("EntityExperienceOrb"));
 	
 	/**
@@ -48,7 +47,6 @@ public class XPOrbFakeUtil {
 		
 		FakeRegister.getXpOrbLocationsFile().addXPOrbToFile(fXO);
 		
-		FakeAPI.addFakeEntity(p, fXO);
 		return fXO;
 	}
 	

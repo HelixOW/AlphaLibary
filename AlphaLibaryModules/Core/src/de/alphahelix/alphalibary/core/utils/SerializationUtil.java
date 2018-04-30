@@ -17,15 +17,15 @@
  */
 package de.alphahelix.alphalibary.core.utils;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractSerializationUtil;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-public interface SerializationUtil {
+public class SerializationUtil {
 	
-	static <T> String encodeBase64(T instance) {
-		return AbstractSerializationUtil.instance.encodeBase64(instance);
+	public static <T> String encodeBase64(T instance) {
+		return Base64Coder.encodeString(JSONUtil.toJson(instance));
 	}
 	
-	static <T> T decodeBase64(String base64, Class<T> identifier) {
-		return AbstractSerializationUtil.instance.decodeBase64(base64, identifier);
+	public static <T> T decodeBase64(String base64, Class<T> identifier) {
+		return JSONUtil.getGson().fromJson(Base64Coder.decodeString(base64), identifier);
 	}
 }

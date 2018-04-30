@@ -1,9 +1,6 @@
 package de.alphahelix.alphalibary.fakeapi2.instances;
 
-import de.alphahelix.alphalibary.fakeapi.FakeAPI;
-import de.alphahelix.alphalibary.fakeapi.FakeMobType;
-import de.alphahelix.alphalibary.fakeapi.instances.FakeMob;
-import de.alphahelix.alphalibary.fakeapi.utils.MobFakeUtil;
+import de.alphahelix.alphalibary.fakeapi2.FakeMobType;
 import de.alphahelix.alphalibary.fakeapi2.FakeModule;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.enums.REnumEquipSlot;
@@ -19,13 +16,13 @@ public class FakeBigItem extends FakeEntity {
 	
 	private final ItemStack itemStack;
 	
-	public FakeBigItem(String name, Location start, Object nmsEntity, ItemStack itemStack) {
+	FakeBigItem(String name, Location start, Object nmsEntity, ItemStack itemStack) {
 		super(name, start, nmsEntity);
 		this.itemStack = itemStack;
 	}
 	
-	public static FakeBigItem spawnBigItem(Player p, Location loc, String name, ItemStack itemStack) {
-		FakeBigItem fBI = spawnTemporaryBigItem(p, loc, name, itemStack);
+	public static FakeBigItem spawn(Player p, Location loc, String name, ItemStack itemStack) {
+		FakeBigItem fBI = spawnTemporary(p, loc, name, itemStack);
 		
 		if(fBI == null)
 			return null;
@@ -35,10 +32,8 @@ public class FakeBigItem extends FakeEntity {
 		return fBI;
 	}
 	
-	public static FakeBigItem spawnTemporaryBigItem(Player p, Location loc, String name, ItemStack stack) {
-		FakeMob fakeGiant = MobFakeUtil.spawnTemporaryMob(p, loc, name, FakeMobType.GIANT, false);
-		
-		//TODO: Actual version 2.0
+	public static FakeBigItem spawnTemporary(Player p, Location loc, String name, ItemStack stack) {
+		FakeMob fakeGiant = FakeMob.spawnTemporary(p, loc, name, FakeMobType.GIANT, false);
 		
 		EntityWrapper g = new EntityWrapper(fakeGiant.getNmsEntity());
 		Object dw = g.getDataWatcher();
@@ -47,12 +42,18 @@ public class FakeBigItem extends FakeEntity {
 		
 		ReflectionUtil.sendPacket(p, new PPOEntityMetadata(g.getEntityID(), dw));
 		
-		MobFakeUtil.equipMob(p, fakeGiant, stack, REnumEquipSlot.HAND);
 		
-		de.alphahelix.alphalibary.fakeapi.instances.FakeBigItem fBI = new de.alphahelix.alphalibary.fakeapi.instances.FakeBigItem(loc, name, fakeGiant.getNmsEntity(), stack);
+		fakeGiant.equip(p, stack, REnumEquipSlot.HAND);
 		
-		FakeAPI.addFakeEntity(p, fBI);
+		FakeBigItem fBI = new FakeBigItem(name, loc, fakeGiant.getNmsEntity(), stack);
+		
+		FakeModule.getEntityHandler().addFakeEntity(p, fBI);
+		
 		return fBI;
+	}
+	
+	public FakeBigItem spawn(Player p) {
+		return FakeBigItem.spawnTemporary(p, getStart(), getName(), itemStack);
 	}
 	
 	@Override

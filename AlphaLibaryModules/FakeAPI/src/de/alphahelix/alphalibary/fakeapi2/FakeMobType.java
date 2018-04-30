@@ -14,7 +14,7 @@
  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.alphahelix.alphalibary.fakeapi;
+package de.alphahelix.alphalibary.fakeapi2;
 
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 

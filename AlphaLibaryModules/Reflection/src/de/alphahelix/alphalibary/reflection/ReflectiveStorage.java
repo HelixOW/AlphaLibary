@@ -1,30 +1,28 @@
 package de.alphahelix.alphalibary.reflection;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ReflectiveStorage {
 	
-	private static final Map<AbstractReflectionUtil.ClassInfo, Class<?>> CLASSES = new ConcurrentHashMap<>();
-	private static final Map<AbstractReflectionUtil.MethodInfo, AbstractReflectionUtil.SaveMethod> METHODS = new ConcurrentHashMap<>();
-	private static final Map<AbstractReflectionUtil.ConstructorInfo, AbstractReflectionUtil.SaveConstructor<?>> CONSTRUCTORS = new ConcurrentHashMap<>();
-	private static final Map<AbstractReflectionUtil.JarInfo, Class<?>[]> JARS = new ConcurrentHashMap<>();
+	private static final Map<ReflectionUtil.ClassInfo, Class<?>> CLASSES = new ConcurrentHashMap<>();
+	private static final Map<ReflectionUtil.MethodInfo, ReflectionUtil.SaveMethod> METHODS = new ConcurrentHashMap<>();
+	private static final Map<ReflectionUtil.ConstructorInfo, ReflectionUtil.SaveConstructor<?>> CONSTRUCTORS = new ConcurrentHashMap<>();
+	private static final Map<ReflectionUtil.JarInfo, Class<?>[]> JARS = new ConcurrentHashMap<>();
 	
-	public static Map<AbstractReflectionUtil.ClassInfo, Class<?>> getClasses() {
+	public static Map<ReflectionUtil.ClassInfo, Class<?>> getClasses() {
 		return CLASSES;
 	}
 	
-	public static Map<AbstractReflectionUtil.MethodInfo, AbstractReflectionUtil.SaveMethod> getMethods() {
+	public static Map<ReflectionUtil.MethodInfo, ReflectionUtil.SaveMethod> getMethods() {
 		return METHODS;
 	}
 	
-	public static Map<AbstractReflectionUtil.ConstructorInfo, AbstractReflectionUtil.SaveConstructor<?>> getConstructors() {
+	public static Map<ReflectionUtil.ConstructorInfo, ReflectionUtil.SaveConstructor<?>> getConstructors() {
 		return CONSTRUCTORS;
 	}
 	
-	public static Map<AbstractReflectionUtil.JarInfo, Class<?>[]> getJars() {
+	public static Map<ReflectionUtil.JarInfo, Class<?>[]> getJars() {
 		return JARS;
 	}
 }

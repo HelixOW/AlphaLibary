@@ -2,13 +2,12 @@ package de.alphahelix.alphalibary.reflection.nms.packets;
 
 import com.google.common.base.Objects;
 import de.alphahelix.alphalibary.core.utils.MathUtil;
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 
 public class PPOEntityHeadRotation implements IPacket {
 	
-	private static final AbstractReflectionUtil.SaveConstructor PACKET =
+	private static final ReflectionUtil.SaveConstructor PACKET =
 			ReflectionUtil.getDeclaredConstructor("PacketPlayOutEntityHeadRotation",
 					ReflectionUtil.getNmsClass("Entity"), byte.class);
 	

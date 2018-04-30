@@ -1,6 +1,5 @@
 package de.alphahelix.alphalibary.reflection.nms.netty.channel;
 
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.netty.IPacketListener;
 import io.netty.channel.Channel;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 public class INCChannel extends ChannelAbstract {
 	
-	private static final AbstractReflectionUtil.SaveField channelField = ReflectionUtil.getFirstType(Channel.class, ReflectionUtil.getNmsClass("NetworkManager"));
+	private static final ReflectionUtil.SaveField channelField = ReflectionUtil.getFirstType(Channel.class, ReflectionUtil.getNmsClass("NetworkManager"));
 	
 	public INCChannel(IPacketListener iPacketListener) {
 		super(iPacketListener);

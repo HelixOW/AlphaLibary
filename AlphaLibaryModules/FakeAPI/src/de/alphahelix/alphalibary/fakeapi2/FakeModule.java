@@ -6,9 +6,7 @@ import de.alphahelix.alphalibary.core.Dependency;
 import de.alphahelix.alphalibary.fakeapi2.events.FakeEntityClickEvent;
 import de.alphahelix.alphalibary.fakeapi2.exceptions.NoSuchFakeEntityException;
 import de.alphahelix.alphalibary.fakeapi2.handlers.EntityHandler;
-import de.alphahelix.alphalibary.fakeapi2.instances.FakeArmorstand;
-import de.alphahelix.alphalibary.fakeapi2.instances.FakeBigItem;
-import de.alphahelix.alphalibary.fakeapi2.instances.FakeEntity;
+import de.alphahelix.alphalibary.fakeapi2.instances.*;
 import de.alphahelix.alphalibary.fakeapi2.storage.EntityStorage;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 import de.alphahelix.alphalibary.reflection.nms.enums.REnumAction;
@@ -24,10 +22,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Dependency(dependencies = {
 		"PacketListenerAPI", "StorageModule", "InventoryModule"
@@ -36,6 +31,7 @@ public class FakeModule implements AlphaModule {
 	
 	private static final EntityHandler ENTITY_HANDLER = new EntityHandler();
 	private static final List<String> NPCS = new ArrayList<>();
+	private static final Map<Integer, UUID> ENTITY_ID = new HashMap<>();
 	private static final Map<Class<? extends FakeEntity>, EntityStorage<? extends FakeEntity>> STORAGE = new HashMap<>();
 	
 	public static EntityHandler getEntityHandler() {
@@ -47,6 +43,20 @@ public class FakeModule implements AlphaModule {
 				new EntityStorage<>(plugin, "armorstands", FakeArmorstand.class));
 		STORAGE.put(FakeBigItem.class,
 				new EntityStorage<>(plugin, "bigItems", FakeBigItem.class));
+		STORAGE.put(FakeMob.class,
+				new EntityStorage<>(plugin, "mobs", FakeMob.class));
+		STORAGE.put(FakeEndercrystal.class,
+				new EntityStorage<>(plugin, "endercrystals", FakeEndercrystal.class));
+		STORAGE.put(FakeItem.class,
+				new EntityStorage<>(plugin, "items", FakeItem.class));
+		STORAGE.put(FakePlayer.class,
+				new EntityStorage<>(plugin, "players", FakePlayer.class));
+		STORAGE.put(FakeXPOrb.class,
+				new EntityStorage<>(plugin, "xpOrbs", FakeXPOrb.class));
+	}
+	
+	public static Map<Class<? extends FakeEntity>, EntityStorage<? extends FakeEntity>> getStorage() {
+		return STORAGE;
 	}
 	
 	public static <T extends FakeEntity> EntityStorage<T> getStorage(Class<T> entity) {
@@ -111,6 +121,10 @@ public class FakeModule implements AlphaModule {
 				}
 			}
 		});
+	}
+	
+	public static Map<Integer, UUID> getEntityId() {
+		return ENTITY_ID;
 	}
 	
 	public static List<String> getNPCS() {

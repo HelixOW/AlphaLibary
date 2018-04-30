@@ -2,7 +2,6 @@ package de.alphahelix.alphalibary.reflection.nms.wrappers;
 
 import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
-import de.alphahelix.alphalibary.core.utils.abstracts.AbstractReflectionUtil;
 import de.alphahelix.alphalibary.reflection.ReflectionUtil;
 
 
@@ -10,7 +9,7 @@ public class PlayerInfoDataWrapper {
 	
 	private static final Class<?> P_ID_CLAZZ = ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData");
 	
-	private static final AbstractReflectionUtil.SaveConstructor P_ID_CONSTUCTOR = ReflectionUtil.getDeclaredConstructor(
+	private static final ReflectionUtil.SaveConstructor P_ID_CONSTUCTOR = ReflectionUtil.getDeclaredConstructor(
 			P_ID_CLAZZ, ReflectionUtil.getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class, ReflectionUtil.getNmsClass("EnumGamemode"),
 			ReflectionUtil.getNmsClass("IChatBaseComponent")
 	);

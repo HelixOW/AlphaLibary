@@ -19,7 +19,6 @@ package de.alphahelix.alphalibary.inventories.item;
 import com.mojang.authlib.GameProfile;
 import de.alphahelix.alphalibary.core.utilites.UUIDFetcher;
 import de.alphahelix.alphalibary.core.utils.SkinChangeUtil;
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -30,8 +29,6 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 
 public class SkullItemBuilder {
-	
-	private static final Base64 BASE_64 = new Base64();
 	
 	public static ItemStack getCustomSkull(String url) {
 		GameProfile profile = SkinChangeUtil.changeSkin(url);

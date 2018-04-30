@@ -67,7 +67,7 @@ public class EntityHandler {
 		throw new NoSuchFakeEntityException();
 	}
 	
-	public List<FakeEntity> getFakeEntitysInRadius(Player p, double radius) {
+	public List<FakeEntity> getFakeEntitiesInRadius(Player p, double radius) {
 		if(seesNoEntities(p))
 			return new ArrayList<>();
 		

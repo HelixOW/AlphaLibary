@@ -15,13 +15,13 @@ import de.alphahelix.alphalibary.storage.sql2.mysql.MySQLDataType;
 import de.alphahelix.alphalibary.storage.sql2.sqlite.SQLiteDataType;
 import org.bukkit.Bukkit;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-public class SimpleDatabaseMap<K, V> {
+public class SimpleDatabaseMap<K, V> implements Map<K, V> {
 	
 	private static final JsonParser PARSER = new JsonParser();
 	
@@ -72,28 +72,12 @@ public class SimpleDatabaseMap<K, V> {
 		});
 	}
 	
-	public void addValue(K key, V value) {
-		Map<String, String> values = new LinkedHashMap<>();
-		
-		cache.save(key.toString(), value);
-		
-		values.put(keyColumnName, key.toString());
-		
-		for(String fieldName : fieldNames) {
-			ReflectionHelper.SaveField sf = ReflectionHelper.getDeclaredField(fieldName, valueClazz);
-			
-			values.put(fieldName, JSONUtil.toJson(sf.get(value)));
-		}
-		
-		this.handler.contains(keyColumnName, key.toString(), res -> {
-			if(res) {
-				for(String fieldName : values.keySet()) {
-					this.handler.update(keyColumnName, key.toString(), fieldName, values.get(fieldName));
-				}
-			} else {
-				this.handler.insert(values.values().toArray(new String[values.values().size()]));
-			}
-		});
+	public void hasValue(K key, Consumer<Boolean> callback) {
+		hasValue(key, callback, false);
+	}
+	
+	public void hasValue(K key, Consumer<Boolean> callback, boolean cached) {
+		hasValue(key.toString(), callback, cached);
 	}
 	
 	public void hasValue(String key, Consumer<Boolean> callback) {
@@ -126,12 +110,8 @@ public class SimpleDatabaseMap<K, V> {
 		handler.getList(keyColumnName, limit, callback);
 	}
 	
-	public void hasValue(K key, Consumer<Boolean> callback) {
-		hasValue(key, callback, false);
-	}
-	
-	public void hasValue(K key, Consumer<Boolean> callback, boolean cached) {
-		hasValue(key.toString(), callback, cached);
+	public void getValue(K key, Consumer<V> callback) {
+		getValue(key.toString(), callback);
 	}
 	
 	public boolean hasSyncValue(K key) {
@@ -140,19 +120,6 @@ public class SimpleDatabaseMap<K, V> {
 	
 	public boolean hasSyncValue(K key, boolean cached) {
 		return hasSyncValue(key.toString(), cached);
-	}
-	
-	public void removeValue(K key) {
-		handler.remove(keyColumnName, key.toString());
-		cache.remove(key.toString());
-	}
-	
-	public void getValue(K key, Consumer<V> callback) {
-		getValue(key.toString(), callback);
-	}
-	
-	public void getValue(String key, Consumer<V> callback) {
-		getValue(key, callback, false);
 	}
 	
 	public boolean hasSyncValue(String key, boolean cached) {
@@ -182,6 +149,14 @@ public class SimpleDatabaseMap<K, V> {
 		return handler.getSyncList(keyColumnName, limit);
 	}
 	
+	public void getValue(String key, Consumer<V> callback) {
+		getValue(key, callback, false);
+	}
+	
+	public void getKeys(Consumer<List<Object>> callback) {
+		getKeys(-1, callback, false);
+	}
+	
 	public boolean hasSyncValue(String key) {
 		return hasSyncValue(key, false);
 	}
@@ -206,38 +181,6 @@ public class SimpleDatabaseMap<K, V> {
 	
 	public void getValues(Consumer<List<V>> callback) {
 		getValues(callback, false);
-	}
-	
-	public V getSyncValue(K key) {
-		return getSyncValue(key.toString(), false);
-	}
-	
-	public V getSyncValue(String key) {
-		return getSyncValue(key, false);
-	}
-	
-	public V getSyncValue(K key, boolean cached) {
-		return getSyncValue(key.toString(), cached);
-	}
-	
-	public void getKeys(int limit, Consumer<List<Object>> callback) {
-		getKeys(limit, callback, false);
-	}
-	
-	public void getKeys(Consumer<List<Object>> callback) {
-		getKeys(-1, callback, false);
-	}
-	
-	public V getSyncValue(String key, boolean cached) {
-		if(cached) {
-			if(cache.getObject(key).isPresent())
-				return (V) cache.getObject(key).get();
-			else
-				return getSyncValue(key, false);
-		}
-		
-		cache.save(key, getJSONValue(key));
-		return getJSONValue(key);
 	}
 	
 	public void getValues(Consumer<List<V>> callback, boolean cached) {
@@ -265,6 +208,10 @@ public class SimpleDatabaseMap<K, V> {
 		}));
 	}
 	
+	public V getSyncValue(K key) {
+		return getSyncValue(key.toString(), false);
+	}
+	
 	private V getJSONValue(String key) {
 		JsonObject obj = new JsonObject();
 		
@@ -275,6 +222,55 @@ public class SimpleDatabaseMap<K, V> {
 		}
 		
 		return JSONUtil.getGson().fromJson(obj, valueClazz);
+	}
+	
+	public V getSyncValue(String key) {
+		return getSyncValue(key, false);
+	}
+	
+	public V getSyncValue(K key, boolean cached) {
+		return getSyncValue(key.toString(), cached);
+	}
+	
+	public void getKeys(int limit, Consumer<List<Object>> callback) {
+		getKeys(limit, callback, false);
+	}
+	
+	public V getSyncValue(String key, boolean cached) {
+		if(cached) {
+			if(cache.getObject(key).isPresent())
+				return (V) cache.getObject(key).get();
+			else
+				return getSyncValue(key, false);
+		}
+		
+		cache.save(key, getJSONValue(key));
+		return getJSONValue(key);
+	}
+	
+	public List<Object> getSyncKeys(int limit) {
+		return getSyncKeys(limit, false);
+	}
+	
+	@Override
+	public String toString() {
+		return "SimpleDatabaseMap{" +
+				"fieldNames=" + fieldNames +
+				", keyColumnName='" + keyColumnName + '\'' +
+				", valueClazz=" + valueClazz +
+				", handler=" + handler +
+				", cache=" + cache +
+				'}';
+	}
+	
+	@Override
+	public int size() {
+		return getSyncValues().size();
+	}
+	
+	@Override
+	public boolean isEmpty() {
+		return getSyncKeys().size() == 0;
 	}
 	
 	public List<V> getSyncValues() {
@@ -301,18 +297,181 @@ public class SimpleDatabaseMap<K, V> {
 		return values;
 	}
 	
-	public List<Object> getSyncKeys(int limit) {
-		return getSyncKeys(limit, false);
+	@Override
+	public boolean containsKey(Object key) {
+		return getSyncKeys().contains(key);
 	}
 	
 	@Override
-	public String toString() {
-		return "SimpleDatabaseMap{" +
-				"fieldNames=" + fieldNames +
-				", keyColumnName='" + keyColumnName + '\'' +
-				", valueClazz=" + valueClazz +
-				", handler=" + handler +
-				", cache=" + cache +
-				'}';
+	public boolean containsValue(Object value) {
+		return getSyncValues().contains(value);
+	}
+	
+	@Override
+	public V get(Object key) {
+		return getSyncValue((K) key);
+	}
+	
+	@Override
+	public V put(K key, V value) {
+		return addValue(key, value);
+	}
+	
+	@Override
+	public V remove(Object key) {
+		return remove(key);
+	}
+	
+	@Override
+	public void putAll(Map<? extends K, ? extends V> m) {
+		for(Entry<? extends K, ? extends V> entry : m.entrySet()) {
+			addValue(entry.getKey(), entry.getValue());
+		}
+	}
+	
+	public V addValue(K key, V value) {
+		Map<String, String> values = new LinkedHashMap<>();
+		
+		cache.save(key.toString(), value);
+		
+		values.put(keyColumnName, key.toString());
+		
+		for(String fieldName : fieldNames) {
+			ReflectionHelper.SaveField sf = ReflectionHelper.getDeclaredField(fieldName, valueClazz);
+			
+			values.put(fieldName, JSONUtil.toJson(sf.get(value)));
+		}
+		
+		this.handler.contains(keyColumnName, key.toString(), res -> {
+			if(res) {
+				for(String fieldName : values.keySet()) {
+					this.handler.update(keyColumnName, key.toString(), fieldName, values.get(fieldName));
+				}
+			} else {
+				this.handler.insert(values.values().toArray(new String[values.values().size()]));
+			}
+		});
+		return value;
+	}
+	
+	@Override
+	public void clear() {
+		handler.empty();
+	}
+	
+	@Override
+	public Set<K> keySet() {
+		return new HashSet<>((Collection<? extends K>) getSyncKeys());
+	}
+	
+	@Override
+	public Collection<V> values() {
+		return getSyncValues();
+	}
+	
+	@Override
+	public Set<Entry<K, V>> entrySet() {
+		Set<Entry<K, V>> entries = new HashSet<>();
+		
+		for(int i = 0; i < keySet().size(); i++) {
+			int finalI = i;
+			entries.add(new Entry<K, V>() {
+				@Override
+				public K getKey() {
+					return (K) getSyncKeys().get(finalI);
+				}
+				
+				@Override
+				public V getValue() {
+					return getSyncValues().get(finalI);
+				}
+				
+				@Override
+				public V setValue(V value) {
+					return value;
+				}
+			});
+		}
+		
+		return entries;
+	}
+	
+	@Override
+	public V getOrDefault(Object key, V defaultValue) {
+		return containsKey(key) ? get(key) : defaultValue;
+	}
+	
+	@Override
+	public void forEach(BiConsumer<? super K, ? super V> action) {
+		entrySet().forEach(kvEntry -> action.accept(kvEntry.getKey(), kvEntry.getValue()));
+	}
+	
+	@Override
+	public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+		for(int i = 0; i < keySet().size(); i++) {
+			function.apply((K) getSyncKeys().get(i), getSyncValues().get(i));
+		}
+	}
+	
+	@Override
+	public V putIfAbsent(K key, V value) {
+		return containsKey(key) ? value : put(key, value);
+	}
+	
+	@Override
+	public boolean remove(Object key, Object value) {
+		removeValue((K) key);
+		return true;
+	}
+	
+	public void removeValue(K key) {
+		handler.remove(keyColumnName, key.toString());
+		cache.remove(key.toString());
+	}
+	
+	@Override
+	public boolean replace(K key, V oldValue, V newValue) {
+		replace(key, newValue);
+		return true;
+	}
+	
+	@Override
+	public V replace(K key, V value) {
+		Map<String, String> values = new LinkedHashMap<>();
+		
+		cache.save(key.toString(), value);
+		
+		values.put(keyColumnName, key.toString());
+		
+		for(String fieldName : fieldNames) {
+			ReflectionHelper.SaveField sf = ReflectionHelper.getDeclaredField(fieldName, valueClazz);
+			
+			values.put(fieldName, JSONUtil.toJson(sf.get(value)));
+		}
+		
+		for(String fieldName : values.keySet())
+			this.handler.update(keyColumnName, key.toString(), fieldName, values.get(fieldName));
+		
+		return value;
+	}
+	
+	@Override
+	public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+		return null;
+	}
+	
+	@Override
+	public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+		return null;
+	}
+	
+	@Override
+	public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+		return null;
+	}
+	
+	@Override
+	public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+		return null;
 	}
 }

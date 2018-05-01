@@ -3,10 +3,16 @@ package de.alphahelix.alphalibary.storage;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 public final class ReflectionHelper {
+	
+	public static SaveField[] findFieldsNotAnnotatedWith(Class<? extends Annotation> annotation, Collection<Class<?>> classes) {
+		return findFieldsNotAnnotatedWith(annotation, classes.toArray(new Class[classes.size()]));
+	}
+	
 	public static SaveField[] findFieldsNotAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
 		List<SaveField> fields = new LinkedList<>();
 		int i = 0;
@@ -24,6 +30,10 @@ public final class ReflectionHelper {
 		return fields.toArray(new SaveField[fields.size()]);
 	}
 	
+	public static SaveField[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation, Collection<Class<?>> classes) {
+		return findFieldsAnnotatedWith(annotation, classes.toArray(new Class[classes.size()]));
+	}
+	
 	public static SaveField[] findFieldsAnnotatedWith(Class<? extends Annotation> annotation, Class<?>... classes) {
 		List<SaveField> fields = new LinkedList<>();
 		int i = 0;
@@ -39,6 +49,10 @@ public final class ReflectionHelper {
 		}
 		
 		return fields.toArray(new SaveField[fields.size()]);
+	}
+	
+	public static SaveField findFieldAtIndex(int index, Collection<Class<?>> classes) {
+		return findFieldAtIndex(index, classes.toArray(new Class[classes.size()]));
 	}
 	
 	public static SaveField findFieldAtIndex(int index, Class<?>... classes) {

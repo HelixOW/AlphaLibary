@@ -28,20 +28,34 @@ public class SimpleDatabaseList<T> {
 	private final String primaryUniqueFieldName;
 	private final int primaryUniqueFieldID;
 	private final SQLDatabaseHandler handler;
-	private final Class<T> typeClazz;
+	private final List<Class<?>> typeClazzes;
 	private final SQLCache<T> cache = new SQLCache<>();
 	
 	public SimpleDatabaseList(String table, String database, DatabaseType type, Class<T> typeClazz) {
 		this.handler = new SQLDatabaseHandler(table, database);
-		this.typeClazz = typeClazz;
 		
 		List<String> columnNames = new ArrayList<>();
 		boolean acceptMore = true;
 		String pUFN = "";
 		int pUFID = -1;
 		
+		List<Class<?>> supers = new ArrayList<>();
+		Class<?> sup = typeClazz;
+		
+		supers.add(sup);
+		
+		while(!sup.equals(Object.class)) {
+			sup = sup.getSuperclass();
+			
+			if(!sup.equals(Object.class)) {
+				supers.add(sup);
+			}
+		}
+		
+		this.typeClazzes = supers;
+		
 		if(type == DatabaseType.MYSQL) {
-			for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, typeClazz)) {
+			for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, supers)) {
 				Field f = sf.field();
 				
 				if(f.isAnnotationPresent(PrimaryKey.class) && acceptMore) {
@@ -63,7 +77,7 @@ public class SimpleDatabaseList<T> {
 				fieldNames.add(f.getName());
 			}
 		} else if(type == DatabaseType.SQLITE) {
-			for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, typeClazz)) {
+			for(ReflectionHelper.SaveField sf : ReflectionHelper.findFieldsNotAnnotatedWith(Expose.class, supers)) {
 				Field f = sf.field();
 				
 				if(f.isAnnotationPresent(PrimaryKey.class) && acceptMore) {
@@ -118,7 +132,7 @@ public class SimpleDatabaseList<T> {
 		List<String> values = new ArrayList<>();
 		
 		for(String fieldName : fieldNames) {
-			ReflectionHelper.SaveField sf = ReflectionHelper.getDeclaredField(fieldName, typeClazz);
+			ReflectionHelper.SaveField sf = ReflectionHelper.getDeclaredField(fieldName, typeClazzes.get(0));
 			
 			values.add(JSONUtil.toJson(sf.get(value)));
 		}
@@ -156,7 +170,7 @@ public class SimpleDatabaseList<T> {
 					obj.add(handler.getColumnName(cID), PARSER.parse(rowValue));
 				}
 				
-				result.add(JSONUtil.getValue(obj, typeClazz));
+				result.add(JSONUtil.getValue(obj, typeClazzes.get(0)));
 			}
 			
 			cache.getListCache().addAll(result);
@@ -172,7 +186,7 @@ public class SimpleDatabaseList<T> {
 		cache.remove(value);
 		if(primaryUniqueFieldID == -1) {
 			String fN = fieldNames.get(0);
-			handler.remove(fN, JSONUtil.toJson(ReflectionHelper.getDeclaredField(fN, typeClazz).get(value)));
+			handler.remove(fN, JSONUtil.toJson(ReflectionHelper.getDeclaredField(fN, typeClazzes.get(0)).get(value)));
 		} else {
 			handler.remove(primaryUniqueFieldName, JSONUtil.toJson(ReflectionHelper.findFieldAtIndex(primaryUniqueFieldID).get(value)));
 		}
@@ -223,7 +237,7 @@ public class SimpleDatabaseList<T> {
 				obj.add(handler.getColumnName(cID), PARSER.parse(rowValue));
 			}
 			
-			result.add(JSONUtil.getValue(obj, typeClazz));
+			result.add(JSONUtil.getValue(obj, typeClazzes.get(0)));
 		}
 		
 		cache.getListCache().addAll(result);
@@ -325,7 +339,7 @@ public class SimpleDatabaseList<T> {
 				", primaryUniqueFieldName='" + primaryUniqueFieldName + '\'' +
 				", primaryUniqueFieldID=" + primaryUniqueFieldID +
 				", handler=" + handler +
-				", typeClazz=" + typeClazz +
+				", typeClazzes=" + typeClazzes +
 				", cache=" + cache +
 				'}';
 	}

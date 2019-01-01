@@ -1,5 +1,8 @@
-name: AlphaLibary
-version: 1.9
-main: de.alphahelix.alphalibary.AlphaLibary
-authors: [AlphaHelix]
-description: Libary for Plugins of AlphaHelix. Credits to Inventivetalent!
+name: Alpary
+version: 0.1b
+main: io.github.alphahelixdev.alpary.Alpary
+website: https://alphahelixdev.github.io
+author: WhoIsAlphaHelix
+description: Libary for Plugins of WhoIsAlphaHelix
+prefix: AlphaLibary
+api-version: 1.13

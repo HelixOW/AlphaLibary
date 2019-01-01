@@ -6,7 +6,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Comparator;
 
-public class ItemComperator implements Comparator<ItemStack> {
+public class ItemComparator implements Comparator<ItemStack> {
     @Override
     public int compare(ItemStack o1, ItemStack o2) {
         return (isSame(o1, o2) ? 0 : 1);

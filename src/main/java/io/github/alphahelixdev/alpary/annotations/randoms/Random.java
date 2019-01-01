@@ -1,3 +1,4 @@
+
 package io.github.alphahelixdev.alpary.annotations.randoms;
 
 import java.lang.annotation.ElementType;

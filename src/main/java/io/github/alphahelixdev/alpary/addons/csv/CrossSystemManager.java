@@ -8,7 +8,7 @@ public class CrossSystemManager {
 	private static final Map<String, String> VARIABLES = new HashMap<>();
 	
 	public static String getVariable(String name) {
-		return VARIABLES.entrySet().stream().filter(stringStringEntry -> stringStringEntry.getKey().equals(name)).map(Map.Entry::getValue).findFirst().orElse("notFound");
+		return VARIABLES.getOrDefault(name, "not found");
 	}
 	
 	public static Map<String, String> getVariables() {

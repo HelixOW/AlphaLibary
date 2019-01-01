@@ -1,97 +1,74 @@
 package io.github.alphahelixdev.alpary.utils;
 
+import io.github.alphahelixdev.helius.utils.MathUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 
-public class ArrayUtil {
-	
-	public Player[] playerArrayFromNames(Collection<String> playerNames) {
-		return this.playerArray(playerNames.toArray(new String[playerNames.size()]));
+public class ArrayUtil extends io.github.alphahelixdev.helius.utils.ArrayUtil {
+
+    public static double[][] trim(int decimal, double[]... coordinates) {
+        return Arrays.stream(coordinates).map(doubles -> new double[]{
+                MathUtil.trim(doubles[0], decimal), MathUtil.trim(doubles[1], decimal), MathUtil.trim(doubles[2], decimal)
+        }).toArray(double[][]::new);
+    }
+
+    public static Location[] trim(int decimal, Location... locations) {
+        return Arrays.stream(locations).map(location -> Utils.locations().trim(decimal, location)).toArray(Location[]::new);
+    }
+
+    public Player[] playerArrayFromString(Collection<String> playerNames) {
+        return playerNames.stream().map(Bukkit::getPlayer).filter(Objects::nonNull).toArray(Player[]::new);
 	}
 	
 	public Player[] playerArray(String... playerNames) {
-		Player[] players = new Player[playerNames.length];
-		
-		for(int i = 0; i < playerNames.length - 1; i++) {
-			Player player = Bukkit.getPlayer(playerNames[i]);
-			if(player != null)
-				players[i] = player;
-		}
-		
-		return players;
+        return this.playerArrayFromString(Arrays.asList(playerNames));
 	}
 	
 	public Player[] playerArrayFromUUID(Collection<UUID> playerUUIDS) {
-		return this.playerArray(playerUUIDS.toArray(new UUID[playerUUIDS.size()]));
+        return playerUUIDS.stream().map(Bukkit::getPlayer).filter(Objects::nonNull).toArray(Player[]::new);
 	}
 	
 	public Player[] playerArray(UUID... playerUUIDS) {
-		Player[] players = new Player[playerUUIDS.length];
-		
-		for(int i = 0; i < playerUUIDS.length - 1; i++) {
-			Player player = Bukkit.getPlayer(playerUUIDS[i]);
-			if(player != null)
-				players[i] = player;
-		}
-		
-		return players;
+        return this.playerArrayFromUUID(Arrays.asList(playerUUIDS));
 	}
 	
 	public Vector[] vectorArrayByLocation(Collection<Location> locations) {
-		return this.vectorArray(locations.toArray(new Location[locations.size()]));
+        return locations.stream().map(Location::toVector).toArray(Vector[]::new);
 	}
 	
 	public Vector[] vectorArray(Location... locations) {
-		Vector[] vectors = new Vector[locations.length];
-		
-		for(int i = 0; i < locations.length - 1; i++)
-			vectors[i] = locations[i].toVector();
-		
-		return vectors;
+        return this.vectorArrayByLocation(Arrays.asList(locations));
 	}
 	
 	public Vector[] vectorArrayByCoordinates(Collection<double[]> coordinates) {
-		return this.vectorArray(coordinates.toArray(new double[coordinates.size()][3]));
+        return coordinates.stream().map(doubles -> new Vector(doubles[0], doubles[1], doubles[2])).toArray(Vector[]::new);
 	}
 	
 	public Vector[] vectorArray(double[]... coordinates) {
-		Vector[] vectors = new Vector[coordinates.length];
-		
-		for(int i = 0; i < coordinates.length - 1; i++)
-			vectors[i] = new Vector(coordinates[i][0], coordinates[i][1], coordinates[i][2]);
-		
-		return vectors;
+        return this.vectorArrayByCoordinates(Arrays.asList(coordinates));
 	}
 	
 	public Location[] locationArrayByVector(World world, Collection<Vector> vectors) {
-		return this.locationArray(world, vectors.toArray(new Vector[vectors.size()]));
+        return vectors.stream().map(vector -> new Location(world, vector.getX(), vector.getY(), vector.getZ())).toArray(Location[]::new);
 	}
 	
 	public Location[] locationArray(World world, Vector... vectors) {
-		Location[] locations = new Location[vectors.length];
-		
-		for(int i = 0; i < locations.length; i++)
-			locations[i] = vectors[i].toLocation(world);
-		
-		return locations;
-	}
-	
+        return this.locationArrayByVector(world, Arrays.asList(vectors));
+    }
+
 	public Location[] locationArrayByCoordinates(World world, Collection<double[]> coordinates) {
-		return this.locationArray(world, coordinates.toArray(new double[coordinates.size()][3]));
-	}
-	
+        return coordinates.stream().map(doubles -> new Location(world, doubles[0], doubles[1], doubles[2])).toArray(Location[]::new);
+    }
+
 	public Location[] locationArray(World world, double[]... vectors) {
-		Location[] locations = new Location[vectors.length];
-		
-		for(int i = 0; i < locations.length; i++)
-			locations[i] = new Location(world, vectors[i][0], vectors[i][1], vectors[i][2]);
-		
-		return locations;
+        return this.locationArrayByCoordinates(world, Arrays.asList(vectors));
 	}
 }

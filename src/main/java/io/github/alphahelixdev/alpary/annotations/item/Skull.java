@@ -7,10 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ItemEnchantment {
+public @interface Skull {
+    String owner() default "";
 
-    String name();
-
-    int level();
-
+    String url() default "";
 }

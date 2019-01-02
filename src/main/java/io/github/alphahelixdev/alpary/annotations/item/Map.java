@@ -7,10 +7,12 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ItemEnchantment {
+public @interface Map {
 
-    String name();
+    int[] color() default {};
 
-    int level();
+    String locationName() default "";
+
+    boolean scaling() default false;
 
 }

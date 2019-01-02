@@ -8,16 +8,16 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/org/spigotmc/spigot/1.13.2-R0.1-SNAPSHOT/spigot-1.13.2-R0.1-SNAPSHOT-sources.jar!/" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/Bukkit/src/main/java" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/Bukkit/src/main/javadoc" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/Bukkit/src/test/java" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/CraftBukkit/src/main/java" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/CraftBukkit/src/test/java" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/Spigot-API/src/main/java" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/Spigot-API/src/main/javadoc" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/Spigot-API/src/test/java" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/Spigot-Server/src/main/java" />
-      <root url="file://$PROJECT_DIR$/../minecraft/buildTools/Spigot/Spigot-Server/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/Bukkit/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/Bukkit/src/main/javadoc" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/Bukkit/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/CraftBukkit/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/CraftBukkit/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/Spigot-API/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/Spigot-API/src/main/javadoc" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/Spigot-API/src/test/java" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/Spigot-Server/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../../Documents/minecraft/buildtools/Spigot/Spigot-Server/src/test/java" />
     </SOURCES>
   </library>
 </component>

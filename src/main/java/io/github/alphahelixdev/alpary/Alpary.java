@@ -3,6 +3,8 @@ package io.github.alphahelixdev.alpary;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.alphahelixdev.alpary.addons.AddonCore;
+import io.github.alphahelixdev.alpary.annotations.item.Item;
+import io.github.alphahelixdev.alpary.annotations.item.ItemColor;
 import io.github.alphahelixdev.alpary.annotations.randoms.Random;
 import io.github.alphahelixdev.alpary.utilities.BukkitListener;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
@@ -11,6 +13,9 @@ import io.github.alphahelixdev.helius.Helius;
 import io.github.alphahelixdev.helius.reflection.SaveField;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
@@ -94,6 +99,34 @@ public class Alpary extends JavaPlugin {
                     randomField.set(o, UUID.randomUUID());
                     break;
             }
+        });
+    }
+
+    public void setItemFields(Object o) {
+        Arrays.stream(o.getClass().getDeclaredFields()).filter(field -> field.isAnnotationPresent(Item.class))
+                .map(SaveField::new).forEach(itemField -> {
+            Item item = itemField.asNormal().getAnnotation(Item.class);
+            ItemStack created = new ItemStack(item.material(), item.amount());
+            ItemMeta meta = created.getItemMeta();
+
+            if (item.itemflags().length != 0)
+                meta.addItemFlags(item.itemflags());
+
+            if (!item.name().equals(""))
+                meta.setDisplayName(item.name());
+
+            if (item.damage() != 0 && meta instanceof Damageable)
+                ((Damageable) meta).setDamage(item.damage());
+
+            if (item.lore().length != 0)
+                meta.setLore(Arrays.asList(item.lore()));
+
+            meta.setUnbreakable(item.unbreakable());
+
+            if (itemField.asNormal().isAnnotationPresent(ItemColor.class)) {
+
+            }
+
         });
     }
 }

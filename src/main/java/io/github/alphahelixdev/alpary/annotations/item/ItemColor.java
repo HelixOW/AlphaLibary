@@ -7,10 +7,11 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ItemEnchantment {
+public @interface ItemColor {
+    int red() default 0;
 
-    String name();
+    int green() default 0;
 
-    int level();
+    int blue() default 0;
 
 }

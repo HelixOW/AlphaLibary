@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.github.alphahelixdev:HeliusAPI:0.6.3.3a">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/github/alphahelixdev/HeliusAPI/0.6.3.3a/HeliusAPI-0.6.3.3a.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/github/alphahelixdev/HeliusAPI/0.6.3.3a/HeliusAPI-0.6.3.3a-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/github/alphahelixdev/HeliusAPI/0.6.3.3a/HeliusAPI-0.6.3.3a-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

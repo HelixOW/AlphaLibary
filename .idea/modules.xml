@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Tests/AddonSecTest/AddonSecTest.iml" filepath="$PROJECT_DIR$/Tests/AddonSecTest/AddonSecTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Tests/AddonTest/AddonTest.iml" filepath="$PROJECT_DIR$/Tests/AddonTest/AddonTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Alpary.iml" filepath="$PROJECT_DIR$/Alpary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Tests/Tests.iml" filepath="$PROJECT_DIR$/Tests/Tests.iml" />
+    </modules>
+  </component>
+</project>

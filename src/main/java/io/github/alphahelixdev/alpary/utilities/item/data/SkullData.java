@@ -1,6 +1,6 @@
 package io.github.alphahelixdev.alpary.utilities.item.data;
 
-import io.github.alphahelixdev.alphalibary.utilities.uuid.UUIDFetcher;
+import io.github.alphahelixdev.alpary.Alpary;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +30,7 @@ public class SkullData implements ItemData {
             applyOn.setDurability((short) 3);
 
             SkullMeta skullMeta = (SkullMeta) applyOn.getItemMeta();
-            skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(UUIDFetcher.getUUID(this.getOwnerName())));
+	        skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(Alpary.getInstance().uuidFetcher().getUUID(this.getOwnerName())));
             applyOn.setItemMeta(skullMeta);
 
         } catch (Exception e) {

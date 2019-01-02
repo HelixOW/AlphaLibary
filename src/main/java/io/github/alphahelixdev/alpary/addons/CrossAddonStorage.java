@@ -1,9 +1,9 @@
-package io.github.alphahelixdev.alpary.addons.csv;
+package io.github.alphahelixdev.alpary.addons;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CrossSystemManager {
+public class CrossAddonStorage {
 	
 	private static final Map<String, String> VARIABLES = new HashMap<>();
 	
@@ -12,6 +12,6 @@ public class CrossSystemManager {
 	}
 	
 	public static Map<String, String> getVariables() {
-		return CrossSystemManager.VARIABLES;
+		return CrossAddonStorage.VARIABLES;
 	}
 }

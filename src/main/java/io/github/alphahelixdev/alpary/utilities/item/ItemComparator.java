@@ -1,4 +1,4 @@
-package io.github.alphahelixdev.alpary.utilities;
+package io.github.alphahelixdev.alpary.utilities.item;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;

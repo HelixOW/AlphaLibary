@@ -7,10 +7,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ItemEnchantment {
+public @interface Potion {
+    int[] duration() default {};
 
-    String name();
+    int[] amplifier() default {};
 
-    int level();
-
+    String[] type() default {};
 }

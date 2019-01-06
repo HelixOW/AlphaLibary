@@ -1,7 +1,7 @@
 package io.github.alphahelixdev;
 
+import io.github.alphahelixdev.alpary.addons.CrossAddonStorage;
 import io.github.alphahelixdev.alpary.addons.core.Addon;
-import io.github.alphahelixdev.alpary.addons.csv.CrossSystemManager;
 
 @Addon.AddonInfo(
 		name = "U suck",
@@ -15,6 +15,6 @@ public class SecTest extends Addon {
 	
 	@Override
 	public void onEnable() {
-		CrossSystemManager.getVariables().put("a", "Du kannst nicht wissen, was hier steht");
+		CrossAddonStorage.getVariables().put("a", "Du kannst nicht wissen, was hier steht");
 	}
 }

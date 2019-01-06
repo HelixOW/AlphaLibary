@@ -19,6 +19,7 @@ import io.github.alphahelixdev.helius.reflection.SaveField;
 import io.github.alphahelixdev.helius.reflection.SaveMethod;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -93,6 +94,8 @@ public class AnnotationHandler {
 				case "location":
 					randomField.set(o, Utils.locations().getRandomLocation(Utils.locations().getRandomWorld()));
 					break;
+				case "material":
+					randomField.set(o, Material.values()[ThreadLocalRandom.current().nextInt(Material.values().length)]);
 			}
 		});
 	}

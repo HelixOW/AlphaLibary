@@ -9,7 +9,8 @@ public class Utils {
 	private static final SerializationUtil SERIALIZATIONS = new SerializationUtil();
 	private static final SkinUtil SKINS = new SkinUtil();
 	private static final StringUtil STRINGS = new StringUtil();
-
+	private static final SkullUtil SKULLS = new SkullUtil();
+	
 	public static ArrayUtil arrays() {
 		return ARRAYS;
 	}
@@ -36,5 +37,9 @@ public class Utils {
 
 	public static StringUtil strings() {
 		return STRINGS;
+	}
+	
+	public static SkullUtil skulls() {
+		return SKULLS;
 	}
 }

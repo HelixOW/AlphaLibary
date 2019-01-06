@@ -1,4 +1,4 @@
-package io.github.alphahelixdev.alpary.annotations.item;
+package io.github.alphahelixdev.alpary.annotations.entity;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,14 +7,13 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Map {
+public @interface Location {
 	
-	int red() default 0;
+	double x();
 	
-	int green() default 0;
+	double y();
 	
-	int blue() default 0;
-
-    String locationName() default "";
-
+	double z();
+	
+	String world() default "world";
 }

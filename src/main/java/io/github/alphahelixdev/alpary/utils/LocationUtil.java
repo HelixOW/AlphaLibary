@@ -10,6 +10,7 @@ import org.bukkit.util.EulerAngle;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class LocationUtil {
@@ -54,6 +55,12 @@ public class LocationUtil {
 
 	public Location getLocationBehindPlayer(Player p, int range) {
 		return p.getLocation().clone().add(p.getLocation().getDirection().normalize().multiply(-1).multiply(range));
+	}
+	
+	public Location getRandomLocation(World w) {
+		return new Location(w, ThreadLocalRandom.current().nextInt(99999999),
+				ThreadLocalRandom.current().nextInt(99999999),
+				ThreadLocalRandom.current().nextInt(99999999));
 	}
 
 	public Location getRandomLocation(Location player, double minX, double maxX, double minZ, double maxZ, double y) {

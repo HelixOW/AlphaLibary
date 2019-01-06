@@ -8,7 +8,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -41,7 +40,6 @@ public class MessageUtil {
 	}
 
 	public static class ActionTextCommand extends SimpleCommand {
-
 		private final Consumer<Player> action;
 
 		public ActionTextCommand(UUID player, String id, Consumer<Player> action) {
@@ -53,11 +51,6 @@ public class MessageUtil {
 		public boolean execute(CommandSender cs, String label, String[] args) {
 			action.accept((Player) cs);
 			return true;
-		}
-
-		@Override
-		public List<String> tabComplete(CommandSender cs, String label, String[] args) {
-			return null;
 		}
 	}
 }

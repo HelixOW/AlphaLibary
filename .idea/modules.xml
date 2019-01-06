@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Tests/AddonTest/AddonTest.iml" filepath="$PROJECT_DIR$/Tests/AddonTest/AddonTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/AlphaLibary.iml" filepath="$PROJECT_DIR$/.idea/AlphaLibary.iml" />
+    </modules>
+  </component>
+</project>

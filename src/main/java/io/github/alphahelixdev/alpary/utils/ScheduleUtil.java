@@ -46,4 +46,12 @@ public class ScheduleUtil {
             }.runTaskTimer(Alpary.getInstance(), wait, ticks);
     }
 
+    public void runAsync(Runnable runnable) {
+        new BukkitRunnable() {
+            public void run() {
+                runnable.run();
+            }
+        }.runTaskAsynchronously(Alpary.getInstance());
+    }
+
 }

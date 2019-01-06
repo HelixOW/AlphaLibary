@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="AddonTest:jar">
-    <output-path>$PROJECT_DIR$/../minecraft/testServer/plugins/Alpary/Addons</output-path>
-    <root id="archive" name="AddonTest.jar">
-      <element id="module-output" name="AddonTest" />
-    </root>
-  </artifact>
-</component>

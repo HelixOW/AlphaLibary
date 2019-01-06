@@ -1,9 +1,14 @@
 package io.github.alphahelixdev.alpary.annotations.command.errorhandlers;
 
+import io.github.alphahelixdev.alpary.annotations.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class VoidErrorHandler implements ErrorHandler {
-	
+public class VoidErrorHandler extends ErrorHandler {
+
+    public VoidErrorHandler(Command command) {
+        super(command);
+    }
+
 	@Override
 	public void noPermission(CommandSender cs, String label, String[] args) {
 	

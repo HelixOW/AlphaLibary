@@ -14,30 +14,30 @@ import java.util.function.Consumer;
 public class MessageUtil {
 
 	public MessageUtil sendClickText(Player p, String text, String id, Consumer<Player> action) {
-		Alpary.getInstance().uuidFetcher().getUUID(p, uuid -> {
-			new ActionTextCommand(uuid, id, action);
-
-			TextComponent txt = new TextComponent(text);
-
-			txt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/atcPerform_" + uuid + "_" + id));
-
-			p.spigot().sendMessage(txt);
-		});
+        Alpary.getInstance().uuidFetcher().getUUID(p, uuid -> p.spigot().sendMessage(createTextComponent(text, id, action, uuid)));
 		return this;
 	}
 
 	public void sendHoverClickText(Player p, String clickText, String hovertext, String id, Consumer<Player> clickAction) {
 		Alpary.getInstance().uuidFetcher().getUUID(p, playerID -> {
-			new ActionTextCommand(playerID, id, clickAction);
+            TextComponent txt = createTextComponent(clickText, id, clickAction, playerID);
 
-			TextComponent txt = new TextComponent(clickText);
+            txt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hovertext)));
 
-			txt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/atcPerform_" + playerID + "_" + id));
-			txt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hovertext)));
+            p.spigot().sendMessage(txt);
+        });
+    }
 
-			p.spigot().sendMessage(txt);
-		});
-	}
+    private TextComponent createTextComponent(String clickText, String id, Consumer<Player> clickAction, UUID playerID) {
+        new ActionTextCommand(playerID, id, clickAction);
+
+        TextComponent txt = new TextComponent(clickText);
+
+        txt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/atcPerform_" + playerID + "_" + id));
+
+        return txt;
+    }
+
 
 	public static class ActionTextCommand extends SimpleCommand {
 		private final Consumer<Player> action;

@@ -1,13 +1,14 @@
 package io.github.alphahelixdev.alpary.annotations;
 
+import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.annotations.command.Command;
 import io.github.alphahelixdev.alpary.annotations.command.CommandObject;
 import io.github.alphahelixdev.alpary.annotations.command.Permission;
 import io.github.alphahelixdev.alpary.annotations.command.errorhandlers.ErrorHandler;
 import io.github.alphahelixdev.alpary.annotations.entity.Entity;
 import io.github.alphahelixdev.alpary.annotations.entity.Location;
-import io.github.alphahelixdev.alpary.annotations.item.*;
 import io.github.alphahelixdev.alpary.annotations.item.Map;
+import io.github.alphahelixdev.alpary.annotations.item.*;
 import io.github.alphahelixdev.alpary.annotations.randoms.Random;
 import io.github.alphahelixdev.alpary.commands.SimpleCommand;
 import io.github.alphahelixdev.alpary.utilities.entity.EntityBuilder;
@@ -24,6 +25,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
@@ -178,6 +180,46 @@ public class AnnotationHandler {
 			entityField.set(o, builder.spawn(loc));
 		});
 	}
+
+    public void createSingletons() {
+        Alpary.getInstance().reflections().getTypesAnnotatedWith(Singleton.class).stream().filter(aClass -> {
+            try {
+                return aClass.getDeclaredConstructor() != null;
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }).forEach(singletonClass -> {
+            Arrays.stream(singletonClass.getDeclaredFields()).filter(field -> field.isAnnotationPresent(Singleton.class))
+                    .filter(field -> field.getType().equals(singletonClass)).forEach(field -> {
+                try {
+                    Object instance = singletonClass.getDeclaredConstructor().newInstance();
+                    field.set(instance, instance);
+                } catch (ReflectiveOperationException e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+    }
+
+    public void registerListeners() {
+        Alpary.getInstance().reflections().getTypesAnnotatedWith(BukkitListener.class).stream().filter(Listener.class::isAssignableFrom)
+                .filter(aClass -> {
+                    try {
+                        return aClass.getDeclaredConstructor() != null;
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }).forEach(listenerClass -> {
+            try {
+                Bukkit.getPluginManager().registerEvents((Listener) listenerClass.getDeclaredConstructor()
+                        .newInstance(), Alpary.getInstance());
+            } catch (ReflectiveOperationException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 	
 	public void registerCommands(Object o) {
 		Arrays.stream(o.getClass().getDeclaredMethods()).filter(method ->

@@ -28,6 +28,7 @@ public class Input {
     private static final List<InputHandler> HANDLERS = new ArrayList<>();
 
     public Input() {
+        Alpary.getInstance().reflections().getTypesAnnotatedWith(InputListener.class).forEach(System.out::println);
         Alpary.getInstance().reflections().getTypesAnnotatedWith(InputListener.class).stream().filter(InputHandler.class::isAssignableFrom).filter(aClass -> {
             try {
                 return aClass.getDeclaredConstructor() != null;

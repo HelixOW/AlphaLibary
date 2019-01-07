@@ -1,4 +1,4 @@
-package io.github.alphahelixdev.alpary.game.arena;
+package io.github.alphahelixdev.alpary.game;
 
 import com.google.gson.annotations.Expose;
 import io.github.alphahelixdev.alpary.Alpary;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Arena {
+public class GameArena {
 	
 	@Expose
 	private static transient JsonFile arenaFile;
@@ -30,8 +30,8 @@ public class Arena {
 	private final String fileName;
 	private final ItemStack icon;
 	private final List<NoInitLocation> spawns = new ArrayList<>();
-	
-	public Arena(JavaPlugin plugin, String name, String fileName, ItemStack icon, Collection<NoInitLocation> spawns) {
+
+    public GameArena(JavaPlugin plugin, String name, String fileName, ItemStack icon, Collection<NoInitLocation> spawns) {
 		this.plugin = plugin;
 		this.name = name;
 		this.fileName = fileName;
@@ -45,16 +45,16 @@ public class Arena {
 			
 			locs.add(new NoInitLocation(5, 55, 5, 0, 0, "example"));
 			locs.add(new NoInitLocation(10, 55, 5, 0, 0, "example"));
-			
-			arenaFile.setValue("example_arena", new Arena(plugin, "&7Example Arena",
+
+            arenaFile.setValue("example_arena", new GameArena(plugin, "&7Example GameArena",
 					"example_arena", new ItemStack(Material.NAME_TAG), locs));
 		}
 		
 		new SimpleFolder(plugin, "arenas");
 	}
-	
-	public static Arena getArena(String name) {
-		return arenaFile.getValue(ChatColor.stripColor(name).replace(" ", "_"), Arena.class);
+
+    public static GameArena getArena(String name) {
+        return arenaFile.getValue(ChatColor.stripColor(name).replace(" ", "_"), GameArena.class);
 	}
 	
 	public void loadArena() {
@@ -89,12 +89,12 @@ public class Arena {
 	public boolean equals(Object o) {
 		if(this == o) return true;
 		if(o == null || getClass() != o.getClass()) return false;
-		Arena arena = (Arena) o;
-		return Objects.equals(this.getPlugin(), arena.getPlugin()) &&
-				Objects.equals(this.getName(), arena.getName()) &&
-				Objects.equals(this.getFileName(), arena.getFileName()) &&
-				Objects.equals(this.getIcon(), arena.getIcon()) &&
-				Objects.equals(this.getSpawns(), arena.getSpawns());
+        GameArena gameArena = (GameArena) o;
+        return Objects.equals(this.getPlugin(), gameArena.getPlugin()) &&
+                Objects.equals(this.getName(), gameArena.getName()) &&
+                Objects.equals(this.getFileName(), gameArena.getFileName()) &&
+                Objects.equals(this.getIcon(), gameArena.getIcon()) &&
+                Objects.equals(this.getSpawns(), gameArena.getSpawns());
 	}
 	
 	public JavaPlugin getPlugin() {
@@ -119,7 +119,7 @@ public class Arena {
 	
 	@Override
 	public String toString() {
-		return "Arena{" +
+        return "GameArena{" +
 				"plugin=" + plugin +
 				", name='" + name + '\'' +
 				", fileName='" + fileName + '\'' +

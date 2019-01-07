@@ -61,8 +61,8 @@ public class GameProfileFetcher {
         else
             Utils.schedules().runAsync(() -> profile.accept(fetch(id, forceNew)));
     }
-
-    private GameProfile fetch(UUID id, boolean forceNew) {
+	
+	public GameProfile fetch(UUID id, boolean forceNew) {
         if (!forceNew && getCache().getProfiles().containsKey(id))
             return getCache().getProfiles().get(id);
 

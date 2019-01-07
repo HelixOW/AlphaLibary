@@ -24,12 +24,10 @@ public class SkullData implements ItemData {
     @Override
     public void applyOn(ItemStack applyOn) {
         try {
-            if (!(applyOn.getType() == Material.SKELETON_SKULL))
+	        if(applyOn.getType() != Material.PLAYER_HEAD)
                 return;
-
-            applyOn.setDurability((short) 3);
-
-            SkullMeta skullMeta = (SkullMeta) applyOn.getItemMeta();
+	
+	        SkullMeta skullMeta = (SkullMeta) applyOn.getItemMeta();
 	        skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(Alpary.getInstance().uuidFetcher().getUUID(this.getOwnerName())));
             applyOn.setItemMeta(skullMeta);
 

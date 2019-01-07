@@ -7,8 +7,8 @@ import io.github.alphahelixdev.alpary.annotations.command.Permission;
 import io.github.alphahelixdev.alpary.annotations.command.errorhandlers.ErrorHandler;
 import io.github.alphahelixdev.alpary.annotations.entity.Entity;
 import io.github.alphahelixdev.alpary.annotations.entity.Location;
-import io.github.alphahelixdev.alpary.annotations.item.Map;
 import io.github.alphahelixdev.alpary.annotations.item.*;
+import io.github.alphahelixdev.alpary.annotations.item.Map;
 import io.github.alphahelixdev.alpary.annotations.randoms.Random;
 import io.github.alphahelixdev.alpary.commands.SimpleCommand;
 import io.github.alphahelixdev.alpary.utilities.entity.EntityBuilder;
@@ -189,17 +189,15 @@ public class AnnotationHandler {
                 e.printStackTrace();
                 return false;
             }
-        }).forEach(singletonClass -> {
-            Arrays.stream(singletonClass.getDeclaredFields()).filter(field -> field.isAnnotationPresent(Singleton.class))
-                    .filter(field -> field.getType().equals(singletonClass)).forEach(field -> {
-                try {
-                    Object instance = singletonClass.getDeclaredConstructor().newInstance();
-                    field.set(instance, instance);
-                } catch (ReflectiveOperationException e) {
-                    e.printStackTrace();
-                }
-            });
-        });
+        }).forEach(singletonClass -> Arrays.stream(singletonClass.getDeclaredFields()).filter(field
+		        -> field.isAnnotationPresent(Singleton.class))
+		        .filter(field -> field.getType().equals(singletonClass)).map(SaveField::new).forEach(field -> {
+			        try {
+				        field.set(null, singletonClass.getDeclaredConstructor().newInstance());
+			        } catch(ReflectiveOperationException e) {
+				        e.printStackTrace();
+			        }
+		        }));
     }
 
     public void registerListeners() {

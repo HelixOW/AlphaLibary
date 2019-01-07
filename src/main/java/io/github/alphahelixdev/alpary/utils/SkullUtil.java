@@ -17,7 +17,7 @@ public class SkullUtil {
 	public ItemStack getCustomSkull(String url) {
 		GameProfile profile = Utils.skins().changeSkin(url);
 		
-		ItemStack head = new ItemStack(Material.SKELETON_SKULL, 1, (short) 3);
+		ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
 		ItemMeta headMeta = head.getItemMeta();
 		Class<?> headMetaClass = headMeta.getClass();
 		

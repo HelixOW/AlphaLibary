@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.alphahelixdev.alpary.addons.AddonCore;
 import io.github.alphahelixdev.alpary.annotations.AnnotationHandler;
+import io.github.alphahelixdev.alpary.utilities.GameProfileFetcher;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
 import io.github.alphahelixdev.helius.Helius;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +17,7 @@ public class Alpary extends JavaPlugin {
     private final GsonBuilder gsonBuilder = new GsonBuilder();
     private final AnnotationHandler annotationHandler = new AnnotationHandler();
     private UUIDFetcher uuidFetcher;
+	private GameProfileFetcher gameProfileFetcher;
 
     public static Alpary getInstance() {
         return Alpary.instance;
@@ -27,6 +29,7 @@ public class Alpary extends JavaPlugin {
         Alpary.instance = this;
 
         this.uuidFetcher = new UUIDFetcher();
+	    this.gameProfileFetcher = new GameProfileFetcher();
         new AddonCore().enable();
 
         this.annotationHandler.registerListeners();
@@ -48,6 +51,10 @@ public class Alpary extends JavaPlugin {
     public UUIDFetcher uuidFetcher() {
         return this.uuidFetcher;
     }
+	
+	public GameProfileFetcher gameProfileFetcher() {
+		return this.gameProfileFetcher;
+	}
 
     public AnnotationHandler annotationHandler() {
         return this.annotationHandler;

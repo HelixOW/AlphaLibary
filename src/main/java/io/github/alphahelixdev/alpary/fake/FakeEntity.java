@@ -1,18 +1,21 @@
 package io.github.alphahelixdev.alpary.fake;
 
 import com.google.gson.annotations.Expose;
-import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityDestroyPacket;
-import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityHeadRotationPacket;
-import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityLookPacket;
-import io.github.alphahelixdev.alpary.reflection.nms.packets.RelEntityMovePacket;
+import io.github.alphahelixdev.alpary.Alpary;
+import io.github.alphahelixdev.alpary.reflection.nms.packets.*;
+import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
+import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
+import io.github.alphahelixdev.helius.reflection.SaveField;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class FakeEntity {
@@ -67,10 +70,84 @@ public abstract class FakeEntity {
     public FakeEntity move(Player p, Vector by, float yaw, float pitch) {
         return move(p, by.getX(), by.getY(), by.getZ(), yaw, pitch);
     }
-
-    public FakeEntity follow(Player p, Player toFollow) {
-
-    }
+	
+	public FakeEntity follow(Player p, Player toFollow) {
+		this.follows.put(p.getUniqueId(), new BukkitRunnable() {
+			@Override
+			public void run() {
+				teleport(p, Utils.locations().getLocationBehindPlayer(toFollow, 2));
+			}
+		}.runTaskTimer(Alpary.getInstance(), 0, 1));
+		return this;
+	}
+	
+	public FakeEntity teleport(Player p, Location loc) {
+		SaveField x = NMSUtil.getReflections().getField("locX", Utils.nms().getNMSClass("Entity")),
+				y = NMSUtil.getReflections().getField("locY", Utils.nms().getNMSClass("Entity")),
+				z = NMSUtil.getReflections().getField("locZ", Utils.nms().getNMSClass("Entity")),
+				yaw = NMSUtil.getReflections().getField("yaw", Utils.nms().getNMSClass("Entity")),
+				pitch = NMSUtil.getReflections().getField("pitch", Utils.nms().getNMSClass("Entity"));
+		
+		x.set(getNmsEntity(), loc.getX());
+		y.set(getNmsEntity(), loc.getY());
+		z.set(getNmsEntity(), loc.getZ());
+		yaw.set(getNmsEntity(), loc.getYaw());
+		pitch.set(getNmsEntity(), loc.getPitch());
+		
+		Utils.nms().sendPackets(p, new EntityTeleportPacket(this.getNmsEntity()),
+				new EntityHeadRotationPacket(this.getNmsEntity(), loc.getYaw()), new EntityLookPacket(
+						this.getEntityID(), loc.getYaw(), loc.getPitch(), false));
+		
+		this.setCurrent(loc);
+		return this;
+	}
+	
+	public FakeEntity splitTeleport(Player p, Location to, int teleportCount, long wait) {
+		Vector between = to.toVector().subtract(getCurrent().toVector());
+		
+		double toMoveInX = between.getX() / teleportCount;
+		double toMoveInY = between.getY() / teleportCount;
+		double toMoveInZ = between.getZ() / teleportCount;
+		
+		this.splits.put(p.getUniqueId(), new BukkitRunnable() {
+			public void run() {
+				if(!Utils.locations().isSameBlockLocation(getCurrent(), to)) {
+					teleport(p, getCurrent().clone().add(new Vector(toMoveInX, toMoveInY, toMoveInZ)));
+				} else
+					this.cancel();
+			}
+		}.runTaskTimer(Alpary.getInstance(), 0, wait));
+		return this;
+	}
+	
+	public FakeEntity stareAtPlayer(Player p, Player toStareAt) {
+		stares.put(p.getUniqueId(), new BukkitRunnable() {
+			@Override
+			public void run() {
+				lookAtPlayer(p, toStareAt);
+			}
+		}.runTaskTimer(Alpary.getInstance(), 0, 1));
+		return this;
+	}
+	
+	public FakeEntity lookAtPlayer(Player p, Player toLookAt) {
+		Location delta = Utils.locations().lookAt(this.getCurrent(), toLookAt.getLocation());
+		
+		Utils.nms().sendPackets(p,
+				new EntityHeadRotationPacket(this.getNmsEntity(), delta.getYaw()),
+				new EntityLookPacket(this.getEntityID(), delta.getYaw(), delta.getPitch(), true));
+		return this;
+	}
+	
+	public FakeEntity setName(Player p, String name) {
+		EntityWrapper e = new EntityWrapper(getNmsEntity());
+		
+		e.setCustomName(name.replace("&", "§").replace("_", " "));
+		e.setCustomNameVisible(true);
+		
+		Utils.nms().sendPacket(p, new EntityMetaDataPacket(e.getEntityID(), e.getDataWatcher()));
+		return this;
+	}
 
     public FakeEntity normalizeLook(Player p) {
         if (this.stares.containsKey(p.getUniqueId())) {
@@ -129,4 +206,40 @@ public abstract class FakeEntity {
     }
 
     public abstract <T extends FakeEntity> T spawn(Player p);
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.getName(), this.getId(), this.getStart(), this.getNmsEntity(), this.getEntityID(), this.follows, this.splits, this.stares, this.getCurrent());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+		FakeEntity that = (FakeEntity) o;
+		return this.getEntityID() == that.getEntityID() &&
+				Objects.equals(this.getName(), that.getName()) &&
+				Objects.equals(this.getId(), that.getId()) &&
+				Objects.equals(this.getStart(), that.getStart()) &&
+				Objects.equals(this.getNmsEntity(), that.getNmsEntity()) &&
+				Objects.equals(this.follows, that.follows) &&
+				Objects.equals(this.splits, that.splits) &&
+				Objects.equals(this.stares, that.stares) &&
+				Objects.equals(this.getCurrent(), that.getCurrent());
+	}
+	
+	@Override
+	public String toString() {
+		return "FakeEntity{" +
+				"name='" + name + '\'' +
+				", id=" + id +
+				", start=" + start +
+				", nmsEntity=" + nmsEntity +
+				", entityID=" + entityID +
+				", follows=" + follows +
+				", splits=" + splits +
+				", stares=" + stares +
+				", current=" + current +
+				'}';
+	}
 }

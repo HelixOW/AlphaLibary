@@ -1,17 +1,11 @@
 package io.github.alphahelix;
 
-import io.github.alphahelixdev.alpary.addons.core.Addon;
+import org.bukkit.plugin.java.JavaPlugin;
 
-@Addon.AddonInfo(
-        name = "Test",
-        author = "Alpha"
-)
-public class TestAddon extends Addon {
-    public TestAddon(AddonInfo info) {
-        super(info);
-    }
+public class TestAddon extends JavaPlugin {
 
     @Override
     public void onEnable() {
+	
     }
 }

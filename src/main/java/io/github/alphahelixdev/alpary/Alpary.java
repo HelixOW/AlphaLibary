@@ -15,7 +15,7 @@ public class Alpary extends JavaPlugin {
     private static Alpary instance;
     private final GsonBuilder gsonBuilder = new GsonBuilder();
     private final AnnotationHandler annotationHandler = new AnnotationHandler();
-    private Reflections reflections = new Reflections();
+	private final Reflections reflections = new Reflections();
     private UUIDFetcher uuidFetcher;
 	private GameProfileFetcher gameProfileFetcher;
 
@@ -34,11 +34,6 @@ public class Alpary extends JavaPlugin {
 
         this.annotationHandler.registerListeners();
         this.annotationHandler.createSingletons();
-    }
-
-    public Alpary resetReflections() {
-        this.reflections = new Reflections();
-        return this;
     }
 
     public Reflections reflections() {

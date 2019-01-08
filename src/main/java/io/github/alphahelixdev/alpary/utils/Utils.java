@@ -12,10 +12,10 @@ import java.util.zip.ZipFile;
 
 @Singleton
 public class Utils {
-	
+
 	@Singleton
 	private static Utils instance;
-	
+
 	private static final ArrayUtil ARRAYS = new ArrayUtil();
 	private static final LocationUtil LOCATIONS = new LocationUtil();
 	private static final MessageUtil MESSAGES = new MessageUtil();

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.alphahelixdev.alpary.addons.AddonCore;
 import io.github.alphahelixdev.alpary.annotations.AnnotationHandler;
+import io.github.alphahelixdev.alpary.reflection.nms.netty.PacketListener;
 import io.github.alphahelixdev.alpary.utilities.GameProfileFetcher;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
 import io.github.alphahelixdev.helius.Helius;
@@ -16,6 +17,7 @@ public class Alpary extends JavaPlugin {
     private final GsonBuilder gsonBuilder = new GsonBuilder();
     private final AnnotationHandler annotationHandler = new AnnotationHandler();
 	private final Reflections reflections = new Reflections();
+    private final PacketListener packetListener = new PacketListener();
     private UUIDFetcher uuidFetcher;
 	private GameProfileFetcher gameProfileFetcher;
 
@@ -29,11 +31,19 @@ public class Alpary extends JavaPlugin {
         Alpary.instance = this;
 
         this.uuidFetcher = new UUIDFetcher();
-	    this.gameProfileFetcher = new GameProfileFetcher();
+        this.gameProfileFetcher = new GameProfileFetcher();
         new AddonCore().enable();
 
         this.annotationHandler.registerListeners();
         this.annotationHandler.createSingletons();
+
+        this.packetListener.load();
+        this.packetListener.enable();
+    }
+
+    @Override
+    public void onDisable() {
+        this.packetListener.disable();
     }
 
     public Reflections reflections() {

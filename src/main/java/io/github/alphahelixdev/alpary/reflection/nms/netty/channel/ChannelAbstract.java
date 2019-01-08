@@ -29,11 +29,11 @@ public abstract class ChannelAbstract {
     private static final Class<?> MINECRAFT_SERVER_CLASS = Utils.nms().getNMSClass("MinecraftServer");
 
     private static final SaveField PLAYER_CONNECTION = NMSUtil.getReflections().getDeclaredField(
-            "playerConnection", ENTITY_PLAYER_CLASS);
+            "playerConnection", ENTITY_PLAYER_CLASS).removeFinal();
     private static final SaveField NETWORK_MANAGER = NMSUtil.getReflections().getDeclaredField(
-            "networkManager", PLAYER_CONNECTION_CLASS);
-    private static final SaveField SERVER_CONNECTION = NMSUtil.getReflections().getFirstFieldWithType(
-            SERVER_CONNECTION_CLASS, MINECRAFT_SERVER_CLASS);
+            "networkManager", PLAYER_CONNECTION_CLASS).removeFinal();
+    private static final SaveField SERVER_CONNECTION = NMSUtil.getReflections().getFirstDeclaredFieldWithType(
+            MINECRAFT_SERVER_CLASS, SERVER_CONNECTION_CLASS).removeFinal();
     private static final SaveField CONNECTION_LIST = NMSUtil.getReflections().getLastFieldWithType(List.class,
             SERVER_CONNECTION_CLASS);
     private static final SaveMethod GET_SERVER = NMSUtil.getReflections().getDeclaredMethod("getServer",

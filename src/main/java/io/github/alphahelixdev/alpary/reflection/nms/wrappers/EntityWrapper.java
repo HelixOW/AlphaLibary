@@ -17,7 +17,7 @@ public class EntityWrapper {
             "setInvisible", Utils.nms().getNMSClass("Entity"), boolean.class);
 
     private static final SaveMethod ENTITY_SET_CUSTOM_NAME = NMSUtil.getReflections().getDeclaredMethod(
-            "setCustomName", Utils.nms().getNMSClass("Entity"), String.class);
+            "setCustomName", Utils.nms().getNMSClass("Entity"), Utils.nms().getNMSClass("IChatBaseComponent"));
 
     private static final SaveMethod ENTITY_SET_CUSTOM_NAME_VISIBLE = NMSUtil.getReflections().getDeclaredMethod(
             "setCustomNameVisible", Utils.nms().getNMSClass("Entity"), boolean.class);
@@ -91,7 +91,7 @@ public class EntityWrapper {
     }
 
     public void setCustomName(String name) {
-        EntityWrapper.getEntitySetCustomName().invoke(this.getEntity(), this.isStackTrace(), name);
+        EntityWrapper.getEntitySetCustomName().invoke(this.getEntity(), this.isStackTrace(), Utils.nms().toIChatBaseComponent(name)[0]);
     }
 
     public void setCustomNameVisible(boolean visible) {

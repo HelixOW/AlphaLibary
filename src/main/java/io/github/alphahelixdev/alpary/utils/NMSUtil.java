@@ -126,14 +126,14 @@ public class NMSUtil {
         Object[] array = (Object[]) Array.newInstance(getNMSClass("IChatBaseComponent"), strings.length);
 
         for (int i = 0; i < array.length; i++) {
-            array[i] = toIChatBaseComponentArray(strings[i]);
+            array[i] = toIChatBaseComponentArray(strings[i])[i];
         }
 
         return array;
     }
 
-    public Object toIChatBaseComponentArray(String s) {
-        return getReflections().getDeclaredMethod("fromString", getCraftBukkitClass("util.CraftChatMessage"), String.class).invoke(null, true, s);
+    public Object[] toIChatBaseComponentArray(String s) {
+        return (Object[]) getReflections().getDeclaredMethod("fromString", getCraftBukkitClass("util.CraftChatMessage"), String.class).invoke(null, true, s);
     }
 
     public GameProfile getGameProfile(Player p) {

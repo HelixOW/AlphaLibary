@@ -7,6 +7,7 @@ import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumEquipSlot;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityMetaDataPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utils.Utils;
+import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Blob;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 
 public class FakeBigItem extends FakeEntity {
-	
+
+	@Blob
 	private final ItemStack itemStack;
 	
 	FakeBigItem(String name, Location start, Object nmsEntity, ItemStack itemStack) {

@@ -1,16 +1,17 @@
 package io.github.alphahelixdev.alpary.fake;
 
 import com.mojang.authlib.GameProfile;
+import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.fake.entities.*;
 import io.github.alphahelixdev.alpary.fake.events.FakeEntityClickEvent;
 import io.github.alphahelixdev.alpary.fake.exceptions.NoSuchFakeEntityException;
 import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumAction;
 import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumHand;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.PacketListener;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.handler.PacketHandler;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.handler.PacketOptions;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.handler.ReceivedPacket;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.handler.SentPacket;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.NettyInjector;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.PacketHandler;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.PacketOptions;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.ReceivedPacket;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.SentPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.PlayerInfoDataWrapper;
 import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import org.bukkit.Bukkit;
@@ -26,6 +27,7 @@ public class Fake {
 	private static final List<String> NPCS = new ArrayList<>();
 	private static final Map<Integer, UUID> ENTITY_ID_MAP = new HashMap<>();
 	private static final Map<Class<? extends FakeEntity>, EntityStorage<? extends FakeEntity>> STORAGE = new HashMap<>();
+	private static boolean enabled = false;
 	
 	public Fake(JavaPlugin plugin) {
 		storage().put(FakeArmorstand.class,
@@ -57,7 +59,9 @@ public class Fake {
 	}
 	
 	public void enable() {
-		PacketListener.addPacketHandler(new PacketHandler() {
+		if(enabled)
+			return;
+		NettyInjector.addPacketHandler(new PacketHandler(Alpary.getInstance()) {
 			@PacketOptions(forcePlayer = true)
 			public void onSend(SentPacket packet) {
 				if(packet.getPacketName().equals("PacketPlayOutPlayerInfo")) {
@@ -97,15 +101,16 @@ public class Fake {
 				if(packet.getPacketName().equals("PacketPlayInUseEntity")) {
 					Player p = packet.getPlayer();
 					int id = (int) packet.getPacketValue("a");
+
 					try {
 						FakeEntity clicked = Fake.getEntityHandler().getFakeEntityByID(p, id);
-						
-						REnumAction action = REnumAction.values()[NMSUtil.getReflections().getEnumConstantID(packet.getPacketValue("action"))];
+
+						REnumAction action = REnumAction.valueOf(packet.getPacketValue("action").toString());
 						REnumHand hand = REnumHand.MAIN_HAND;
 						
 						if(packet.getPacketValue("d") != null)
 							hand = REnumHand.values()[NMSUtil.getReflections().getEnumConstantID(packet.getPacketValue("d"))];
-						
+
 						if(action != REnumAction.INTERACT_AT)
 							Bukkit.getPluginManager().callEvent(new FakeEntityClickEvent(p, clicked, action, hand));
 					} catch(NoSuchFakeEntityException ignore) {
@@ -113,6 +118,7 @@ public class Fake {
 				}
 			}
 		});
+		enabled = true;
 	}
 	
 	public static List<String> npcs() {

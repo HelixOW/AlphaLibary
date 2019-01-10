@@ -7,11 +7,11 @@ import io.github.alphahelixdev.alpary.input.events.PlayerInputEvent;
 import io.github.alphahelixdev.alpary.input.gui.AnvilGUI;
 import io.github.alphahelixdev.alpary.input.gui.SignGUI;
 import io.github.alphahelixdev.alpary.reflection.nms.BlockPos;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.PacketListener;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.handler.PacketHandler;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.handler.PacketOptions;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.handler.ReceivedPacket;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.handler.SentPacket;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.NettyInjector;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.PacketHandler;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.PacketOptions;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.ReceivedPacket;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.SentPacket;
 import io.github.alphahelixdev.alpary.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
@@ -54,7 +54,7 @@ public class Input {
     }
 
     public void startListening() {
-        PacketListener.addPacketHandler(new PacketHandler() {
+	    NettyInjector.addPacketHandler(new PacketHandler(Alpary.getInstance()) {
             @Override
             @PacketOptions(forcePlayer = true)
             public void onSend(SentPacket packet) {

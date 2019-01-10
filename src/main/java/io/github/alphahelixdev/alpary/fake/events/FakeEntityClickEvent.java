@@ -21,6 +21,10 @@ public class FakeEntityClickEvent extends PlayerEvent {
 		this.clickAction = clickAction;
 		this.hand = hand;
 	}
+
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 	
 	/**
 	 * Gets a list of handlers handling this event.

@@ -9,13 +9,17 @@ import io.github.alphahelixdev.alpary.reflection.nms.packets.*;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityAgeableWrapper;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utils.Utils;
+import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Blob;
+import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Text;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class FakeMob extends FakeEntity {
-	
+
+	@Text
 	private final FakeMobType fakeMobType;
+	@Blob
 	private final boolean baby;
 	
 	FakeMob(String name, Location start, Object nmsEntity, FakeMobType fakeMobType, boolean baby) {

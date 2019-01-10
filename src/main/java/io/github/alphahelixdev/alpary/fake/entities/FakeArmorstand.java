@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class FakeArmorstand extends FakeEntity {
-	
+
 	FakeArmorstand(String name, Location start, Object nmsEntity) {
 		super(name, start, nmsEntity);
 	}
@@ -24,7 +24,7 @@ public class FakeArmorstand extends FakeEntity {
 		
 		if(fakeA == null)
 			return null;
-		
+
 		Fake.storage(FakeArmorstand.class).addEntity(fakeA);
 		
 		return fakeA;

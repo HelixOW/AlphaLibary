@@ -15,6 +15,7 @@ import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
 import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
+import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -26,7 +27,8 @@ import org.bukkit.util.Consumer;
 import java.util.UUID;
 
 public class FakePlayer extends FakeEntity {
-	
+
+	@Text
 	private final UUID skinUUID;
 	@Expose
 	private final OfflinePlayer skinPlayer;

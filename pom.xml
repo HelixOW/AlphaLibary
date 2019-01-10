@@ -51,12 +51,7 @@
         <dependency>
             <groupId>io.github.alphahelixdev</groupId>
             <artifactId>HeliusAPI</artifactId>
-            <version>0.6.3.3a</version>
-        </dependency>
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
+            <version>0.6.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

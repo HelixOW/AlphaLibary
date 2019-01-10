@@ -1,12 +1,13 @@
 package io.github.alphahelixdev.alpary.fake;
 
-import com.google.gson.annotations.Expose;
 import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.*;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
 import io.github.alphahelixdev.helius.reflection.SaveField;
+import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Blob;
+import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Text;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -20,24 +21,20 @@ import java.util.UUID;
 
 public abstract class FakeEntity {
 
-    private final String name;
-    private final UUID id;
-    private final Location start;
+	private final Object nmsEntity;
+	private final int entityID;
+	private final Map<UUID, BukkitTask> follows = new HashMap<>();
+	private final Map<UUID, BukkitTask> splits = new HashMap<>();
+	private final Map<UUID, BukkitTask> stares = new HashMap<>();
+	@Text
+	private String name;
+	@Text
+	private UUID id;
+	@Blob
+	private Location start;
+	private Location current;
 
-    @Expose
-    private transient final Object nmsEntity;
-    @Expose
-    private transient final int entityID;
-    @Expose
-    private transient final Map<UUID, BukkitTask> follows = new HashMap<>();
-    @Expose
-    private transient final Map<UUID, BukkitTask> splits = new HashMap<>();
-    @Expose
-    private transient final Map<UUID, BukkitTask> stares = new HashMap<>();
-    @Expose
-    private transient Location current;
-
-    public FakeEntity(String name, Location start, Object nmsEntity) {
+	public FakeEntity(String name, Location start, Object nmsEntity) {
         this.name = name;
         this.id = UUID.randomUUID();
         this.start = start;

@@ -6,13 +6,15 @@ import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityMetaDataPacke
 import io.github.alphahelixdev.alpary.reflection.nms.packets.SpawnEntityPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityItemWrapper;
 import io.github.alphahelixdev.alpary.utils.Utils;
+import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Text;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class FakeItem extends FakeEntity {
-	
+
+	@Text
 	private final Material type;
 	
 	public FakeItem(String name, Location start, Object nmsEntity, Material type) {

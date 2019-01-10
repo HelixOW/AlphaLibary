@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.alphahelixdev.alpary.addons.AddonCore;
 import io.github.alphahelixdev.alpary.annotations.AnnotationHandler;
-import io.github.alphahelixdev.alpary.reflection.nms.netty.PacketListener;
+import io.github.alphahelixdev.alpary.fake.Fake;
+import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.NettyInjector;
 import io.github.alphahelixdev.alpary.utilities.GameProfileFetcher;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
 import io.github.alphahelixdev.helius.Helius;
@@ -17,13 +18,23 @@ public class Alpary extends JavaPlugin {
     private final GsonBuilder gsonBuilder = new GsonBuilder();
     private final AnnotationHandler annotationHandler = new AnnotationHandler();
 	private final Reflections reflections = new Reflections();
-    private final PacketListener packetListener = new PacketListener();
+	private final NettyInjector nettyInjector = new NettyInjector();
     private UUIDFetcher uuidFetcher;
 	private GameProfileFetcher gameProfileFetcher;
 
     public static Alpary getInstance() {
         return Alpary.instance;
     }
+
+	@Override
+	public void onLoad() {
+		nettyInjector.load();
+	}
+
+	@Override
+	public void onDisable() {
+		this.nettyInjector.disable();
+	}
 
     @Override
     public void onEnable() {
@@ -37,13 +48,8 @@ public class Alpary extends JavaPlugin {
         this.annotationHandler.registerListeners();
         this.annotationHandler.createSingletons();
 
-        this.packetListener.load();
-        this.packetListener.enable();
-    }
-
-    @Override
-    public void onDisable() {
-        this.packetListener.disable();
+	    this.nettyInjector.enable(this);
+	    new Fake(this).enable();
     }
 
     public Reflections reflections() {
@@ -69,4 +75,8 @@ public class Alpary extends JavaPlugin {
     public AnnotationHandler annotationHandler() {
         return this.annotationHandler;
     }
+
+	public NettyInjector nettyInjector() {
+		return nettyInjector;
+	}
 }

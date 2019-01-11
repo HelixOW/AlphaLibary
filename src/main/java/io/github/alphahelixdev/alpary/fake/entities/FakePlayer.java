@@ -27,7 +27,7 @@ import org.bukkit.util.Consumer;
 import java.util.UUID;
 
 public class FakePlayer extends FakeEntity {
-
+	
 	@Text
 	private final UUID skinUUID;
 	@Expose
@@ -39,23 +39,23 @@ public class FakePlayer extends FakeEntity {
 		this.skinPlayer = Bukkit.getOfflinePlayer(skinUUID);
 	}
 	
-	public static void spawn(Player p, Location loc, OfflinePlayer skin, String customName,
+	public static void spawn(Player p, Location loc, String customName, OfflinePlayer skin,
 	                         Consumer<FakePlayer> callback) {
-		spawnTemporary(p, loc, skin, customName, entity -> {
+		spawnTemporary(p, loc, customName, skin, entity -> {
 			Fake.storage(FakePlayer.class).addEntity(entity);
 			callback.accept(entity);
 		});
 	}
 	
-	public static void spawnTemporary(Player p, Location loc, OfflinePlayer skin, String customName,
+	public static void spawnTemporary(Player p, Location loc, String customName, OfflinePlayer skin,
 	                                  Consumer<FakePlayer> callback) {
 		Alpary.getInstance().uuidFetcher().getUUID(skin, id ->
 				Alpary.getInstance().gameProfileFetcher().fetch(id, gameProfile ->
-						callback.accept(spawnTemporary(p, loc, gameProfile, customName)))
+						callback.accept(spawnTemporary(p, loc, customName, gameProfile)))
 		);
 	}
 	
-	public static FakePlayer spawnTemporary(Player p, Location loc, GameProfile skin, String customName) {
+	public static FakePlayer spawnTemporary(Player p, Location loc, String customName, GameProfile skin) {
 		Object npc = CustomSpawnable.PLAYER.newInstance(false,
 				Utils.nms().getMinecraftServer(),
 				Utils.nms().getWorldServer(loc.getWorld()),
@@ -98,8 +98,8 @@ public class FakePlayer extends FakeEntity {
 		return fakePlayer;
 	}
 	
-	public static FakePlayer spawn(Player p, Location loc, OfflinePlayer skin, String customName) {
-		FakePlayer player = spawnTemporary(p, loc, skin, customName);
+	public static FakePlayer spawn(Player p, Location loc, String customName, OfflinePlayer skin) {
+		FakePlayer player = spawnTemporary(p, loc, customName, skin);
 		
 		if(player == null)
 			return null;
@@ -109,17 +109,17 @@ public class FakePlayer extends FakeEntity {
 		return player;
 	}
 	
-	public static FakePlayer spawnTemporary(Player p, Location loc, OfflinePlayer skin, String customName) {
+	public static FakePlayer spawnTemporary(Player p, Location loc, String customName, OfflinePlayer skin) {
 		try {
-			return spawnTemporary(p, loc, Alpary.getInstance().gameProfileFetcher().fetch(Alpary.getInstance().uuidFetcher().getUUID(skin), false), customName);
+			return spawnTemporary(p, loc, customName, Alpary.getInstance().gameProfileFetcher().fetch(Alpary.getInstance().uuidFetcher().getUUID(skin), false));
 		} catch(UUIDFetcher.UUIDNotFoundException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public static FakePlayer spawn(Player p, Location loc, UUID skin, String name) {
-		FakePlayer player = spawnTemporary(p, loc, skin, name);
+	public static FakePlayer spawn(Player p, Location loc, String name, UUID skin) {
+		FakePlayer player = spawnTemporary(p, loc, name, skin);
 		
 		if(player == null)
 			return null;
@@ -129,23 +129,23 @@ public class FakePlayer extends FakeEntity {
 		return player;
 	}
 	
-	public static FakePlayer spawnTemporary(Player p, Location loc, UUID skin, String customName) {
-		return spawnTemporary(p, loc, Alpary.getInstance().gameProfileFetcher().fetch(skin, false), customName);
+	public static FakePlayer spawnTemporary(Player p, Location loc, String customName, UUID skin) {
+		return spawnTemporary(p, loc, customName, Alpary.getInstance().gameProfileFetcher().fetch(skin, false));
 	}
 	
 	public static void spawn(Player p, Location loc, UUID skin, String name, Consumer<FakePlayer> callback) {
-		spawnTemporary(p, loc, skin, name, entity -> {
+		spawnTemporary(p, loc, name, skin, entity -> {
 			Fake.storage(FakePlayer.class).addEntity(entity);
 			callback.accept(entity);
 		});
 	}
 	
-	public static void spawnTemporary(Player p, Location loc, UUID skin, String customName, Consumer<FakePlayer> callback) {
-		Alpary.getInstance().gameProfileFetcher().fetch(skin, gameProfile -> callback.accept(spawnTemporary(p, loc, gameProfile, customName)));
+	public static void spawnTemporary(Player p, Location loc, String customName, UUID skin, Consumer<FakePlayer> callback) {
+		Alpary.getInstance().gameProfileFetcher().fetch(skin, gameProfile -> callback.accept(spawnTemporary(p, loc, customName, gameProfile)));
 	}
 	
-	public static FakePlayer spawn(Player p, Location loc, GameProfile skin, String name) {
-		FakePlayer tR = spawnTemporary(p, loc, skin, name);
+	public static FakePlayer spawn(Player p, Location loc, String name, GameProfile skin) {
+		FakePlayer tR = spawnTemporary(p, loc, name, skin);
 		
 		if(tR == null)
 			return null;
@@ -156,7 +156,7 @@ public class FakePlayer extends FakeEntity {
 	}
 	
 	public void spawn(Player p, Consumer<FakePlayer> callback) {
-		FakePlayer.spawnTemporary(p, getStart(), getSkinUUID(), getName(), callback);
+		FakePlayer.spawnTemporary(p, getStart(), getName(), getSkinUUID(), callback);
 	}
 	
 	public UUID getSkinUUID() {
@@ -220,6 +220,6 @@ public class FakePlayer extends FakeEntity {
 	
 	@Override
 	public FakePlayer spawn(Player p) {
-		return FakePlayer.spawnTemporary(p, getStart(), getSkinUUID(), getName());
+		return FakePlayer.spawnTemporary(p, getStart(), getName(), getSkinUUID());
 	}
 }

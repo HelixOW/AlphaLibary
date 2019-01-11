@@ -11,6 +11,10 @@ public class NoInitLocation {
 	private float yaw, pitch;
 	private String world;
 	
+	public NoInitLocation(Location loc) {
+		this(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc.getWorld().getName());
+	}
+	
 	public NoInitLocation(double x, double y, double z, float yaw, float pitch, String world) {
 		this.x = x;
 		this.y = y;

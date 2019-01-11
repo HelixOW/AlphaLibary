@@ -18,9 +18,7 @@ public class FakeEventListener implements Listener {
 		Alpary.getInstance().uuidFetcher().getUUID(p, uuid -> Fake.entityIDMap().put(p.getEntityId(), uuid));
 		
 		for(EntityStorage<? extends FakeEntity> storages : Fake.storage().values()) {
-			for(FakeEntity entity : storages.getLoadableEntities()) {
-				entity.spawn(p);
-			}
+			storages.spawnEntities(p);
 		}
 	}
 	

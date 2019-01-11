@@ -25,6 +25,7 @@ public class Utils {
 	private static final SkinUtil SKINS = new SkinUtil();
 	private static final StringUtil STRINGS = new StringUtil();
 	private static final SkullUtil SKULLS = new SkullUtil();
+	private static final JsonUtil JSON = new JsonUtil();
 	
 	public static ArrayUtil arrays() {
 		return ARRAYS;
@@ -60,6 +61,10 @@ public class Utils {
 	
 	public static SkullUtil skulls() {
 		return SKULLS;
+	}
+	
+	public static JsonUtil json() {
+		return JSON;
 	}
 	
 	public static Utils utils() {

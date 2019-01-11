@@ -26,6 +26,7 @@ public abstract class FakeEntity {
 	private final Map<UUID, BukkitTask> follows = new HashMap<>();
 	private final Map<UUID, BukkitTask> splits = new HashMap<>();
 	private final Map<UUID, BukkitTask> stares = new HashMap<>();
+	
 	@Text
 	private String name;
 	@Text

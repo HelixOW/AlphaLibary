@@ -43,8 +43,8 @@ public class FakeItem extends FakeEntity {
 		
 		i.setItemStack(new ItemStack(type));
 		
-		Utils.nms().sendPackets(p, new SpawnEntityPacket(item, 2, 0),
-				new EntityMetaDataPacket(i.getEntityID(), i.getDataWatcher()));
+		Utils.nms().sendPacket(p, new SpawnEntityPacket(item, 2, 0));
+		Utils.nms().sendPacket(p, new EntityMetaDataPacket(i.getEntityID(), i.getDataWatcher()));
 		
 		FakeItem fI = new FakeItem(name, loc, item, type);
 		

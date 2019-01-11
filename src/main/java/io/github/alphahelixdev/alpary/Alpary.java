@@ -8,14 +8,17 @@ import io.github.alphahelixdev.alpary.fake.Fake;
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.NettyInjector;
 import io.github.alphahelixdev.alpary.utilities.GameProfileFetcher;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
+import io.github.alphahelixdev.alpary.utilities.json.MaterialTypeAdapter;
 import io.github.alphahelixdev.helius.Helius;
+import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
 public class Alpary extends JavaPlugin {
 
     private static Alpary instance;
-    private final GsonBuilder gsonBuilder = new GsonBuilder();
+	private final GsonBuilder gsonBuilder = new GsonBuilder().registerTypeAdapter(Material.class,
+			new MaterialTypeAdapter());
     private final AnnotationHandler annotationHandler = new AnnotationHandler();
 	private final Reflections reflections = new Reflections();
 	private final NettyInjector nettyInjector = new NettyInjector();
@@ -40,8 +43,8 @@ public class Alpary extends JavaPlugin {
     public void onEnable() {
         Helius.main(new String[0]);
         Alpary.instance = this;
-
-        this.uuidFetcher = new UUIDFetcher();
+	
+	    this.uuidFetcher = new UUIDFetcher();
         this.gameProfileFetcher = new GameProfileFetcher();
         new AddonCore().enable();
 

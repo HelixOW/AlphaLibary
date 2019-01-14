@@ -10,8 +10,6 @@ public class MaterialTypeAdapter implements JsonSerializer<Material>, JsonDeseri
 	public Material deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
 		JsonObject obj = (JsonObject) jsonElement;
 		
-		System.out.println(obj);
-		
 		return Material.getMaterial(obj.get("material").getAsString().toUpperCase());
 	}
 	

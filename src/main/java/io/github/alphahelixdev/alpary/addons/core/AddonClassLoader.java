@@ -1,6 +1,10 @@
 package io.github.alphahelixdev.alpary.addons.core;
 
 import io.github.alphahelixdev.alpary.addons.core.exceptions.InvalidAddonException;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang.Validate;
 
 import java.io.File;
@@ -12,6 +16,10 @@ import java.net.URLClassLoader;
 import java.util.function.Supplier;
 import java.util.jar.JarFile;
 
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class AddonClassLoader extends URLClassLoader {
 	
 	private final File dataFolder;

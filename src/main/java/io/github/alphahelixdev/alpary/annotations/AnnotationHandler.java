@@ -2,13 +2,11 @@ package io.github.alphahelixdev.alpary.annotations;
 
 import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.annotations.command.Command;
-import io.github.alphahelixdev.alpary.annotations.command.CommandObject;
 import io.github.alphahelixdev.alpary.annotations.command.Permission;
 import io.github.alphahelixdev.alpary.annotations.command.errorhandlers.ErrorHandler;
 import io.github.alphahelixdev.alpary.annotations.entity.Entity;
 import io.github.alphahelixdev.alpary.annotations.entity.Location;
 import io.github.alphahelixdev.alpary.annotations.item.*;
-import io.github.alphahelixdev.alpary.annotations.item.Map;
 import io.github.alphahelixdev.alpary.annotations.randoms.Random;
 import io.github.alphahelixdev.alpary.commands.SimpleCommand;
 import io.github.alphahelixdev.alpary.utilities.entity.EntityBuilder;
@@ -18,6 +16,8 @@ import io.github.alphahelixdev.alpary.utils.StringUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
 import io.github.alphahelixdev.helius.reflection.SaveField;
 import io.github.alphahelixdev.helius.reflection.SaveMethod;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -30,37 +30,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+@EqualsAndHashCode
+@ToString
 public class AnnotationHandler {
-	
-	private final List<CommandObject<?>> commandObjects = new ArrayList<>(Arrays.asList(
-			(CommandObject<String>) commandString -> commandString,
-			(CommandObject<Boolean>) commandString -> {
-				List<String> trueBools = Arrays.asList("true", "on", "t");
-				List<String> falseBools = Arrays.asList("false", "off", "f");
-				
-				if(trueBools.contains(commandString))
-					return true;
-				else if(falseBools.contains(commandString))
-					return false;
-				else
-					throw new IllegalArgumentException("Can't cast " + commandString + " to a boolean!");
-			},
-			(CommandObject<Integer>) Integer::parseInt,
-			(CommandObject<Short>) Short::parseShort,
-			(CommandObject<Double>) Double::parseDouble,
-			(CommandObject<Float>) Float::parseFloat,
-			(CommandObject<Long>) Long::parseLong,
-			(CommandObject<Byte>) Byte::parseByte,
-			(CommandObject<Character>) commandString -> {
-				if(commandString.length() == 1)
-					return commandString.charAt(0);
-				throw new IllegalArgumentException("Can't cast String with length of " + commandString.length() + " to char");
-			},
-			(CommandObject<UUID>) UUID::fromString
-	));
 	
 	public void randomizeFields(Object o) {
 		Arrays.stream(o.getClass().getDeclaredFields()).filter(field -> field.isAnnotationPresent(Random.class))
@@ -180,44 +157,25 @@ public class AnnotationHandler {
 			entityField.set(o, builder.spawn(loc));
 		});
 	}
-
-    public void createSingletons() {
-        Alpary.getInstance().reflections().getTypesAnnotatedWith(Singleton.class).stream().filter(aClass -> {
-            try {
-                return aClass.getDeclaredConstructor() != null;
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }).forEach(singletonClass -> Arrays.stream(singletonClass.getDeclaredFields()).filter(field
-		        -> field.isAnnotationPresent(Singleton.class))
-		        .filter(field -> field.getType().equals(singletonClass)).map(SaveField::new).forEach(field -> {
-			        try {
-				        field.set(null, singletonClass.getDeclaredConstructor().newInstance());
-			        } catch(ReflectiveOperationException e) {
-				        e.printStackTrace();
-			        }
-		        }));
-    }
-
-    public void registerListeners() {
-        Alpary.getInstance().reflections().getTypesAnnotatedWith(BukkitListener.class).stream().filter(Listener.class::isAssignableFrom)
-                .filter(aClass -> {
-                    try {
-                        return aClass.getDeclaredConstructor() != null;
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                        return false;
-                    }
-                }).forEach(listenerClass -> {
-            try {
-                Bukkit.getPluginManager().registerEvents((Listener) listenerClass.getDeclaredConstructor()
-                        .newInstance(), Alpary.getInstance());
-            } catch (ReflectiveOperationException e) {
-                e.printStackTrace();
-            }
-        });
-    }
+	
+	public void createSingletons() {
+		Alpary.getInstance().reflections().getTypesAnnotatedWith(Singleton.class).stream().filter(aClass -> {
+			try {
+				return aClass.getDeclaredConstructor() != null;
+			} catch(NoSuchMethodException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}).forEach(singletonClass -> Arrays.stream(singletonClass.getDeclaredFields()).filter(field
+				-> field.isAnnotationPresent(Singleton.class))
+				.filter(field -> field.getType().equals(singletonClass)).map(SaveField::new).forEach(field -> {
+					try {
+						field.set(null, singletonClass.getDeclaredConstructor().newInstance());
+					} catch(ReflectiveOperationException e) {
+						e.printStackTrace();
+					}
+				}));
+	}
 	
 	public void registerCommands(Object o) {
 		Arrays.stream(o.getClass().getDeclaredMethods()).filter(method ->
@@ -251,7 +209,7 @@ public class AnnotationHandler {
 								return false;
 							}
 							
-							Object[] parsedArgs = parseArguments(cs, args);
+							Object[] parsedArgs = getArgumentParser().parseArguments(cs, args);
 							
 							if(parsedArgs.length != commandMethod.asNormal().getParameterCount()) {
 								errorHandler.wrongAmountOfArguments(cs, label, args);
@@ -259,7 +217,7 @@ public class AnnotationHandler {
 							}
 							
 							try {
-								commandMethod.asNormal().invoke(o, parseArguments(cs, args));
+								commandMethod.asNormal().invoke(o, parsedArgs);
 							} catch(IllegalAccessException | InvocationTargetException e) {
 								e.printStackTrace();
 								return false;
@@ -273,22 +231,22 @@ public class AnnotationHandler {
 				});
 	}
 	
-	public final Object[] parseArguments(CommandSender cs, String[] args) {
-		List<Object> objects = new ArrayList<>(Collections.singletonList(cs));
-		
-		Arrays.stream(args).forEach(arg -> {
-			for(CommandObject<?> o : getCommandObjects())
-				try {
-					objects.add(o.fromCommandString(arg));
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
+	public void registerListeners() {
+		Alpary.getInstance().reflections().getTypesAnnotatedWith(BukkitListener.class).stream().filter(Listener.class::isAssignableFrom)
+				.filter(aClass -> {
+					try {
+						return aClass.getDeclaredConstructor() != null;
+					} catch(NoSuchMethodException e) {
+						e.printStackTrace();
+						return false;
+					}
+				}).forEach(listenerClass -> {
+			try {
+				Bukkit.getPluginManager().registerEvents((Listener) listenerClass.getDeclaredConstructor()
+						.newInstance(), Alpary.getInstance());
+			} catch(ReflectiveOperationException e) {
+				e.printStackTrace();
+			}
 		});
-		
-		return objects.toArray();
-	}
-	
-	public List<CommandObject<?>> getCommandObjects() {
-		return this.commandObjects;
 	}
 }

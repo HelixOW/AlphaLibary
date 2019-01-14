@@ -15,7 +15,11 @@ import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
 import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Text;
+import io.github.whoisalphahelix.sql.annotations.Column;
+import io.github.whoisalphahelix.sql.annotations.Table;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -26,9 +30,13 @@ import org.bukkit.util.Consumer;
 
 import java.util.UUID;
 
+@Table(name = "players")
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString
 public class FakePlayer extends FakeEntity {
 	
-	@Text
+	@Column(name = "skin")
 	private final UUID skinUUID;
 	@Expose
 	private final OfflinePlayer skinPlayer;
@@ -159,10 +167,6 @@ public class FakePlayer extends FakeEntity {
 		FakePlayer.spawnTemporary(p, getStart(), getName(), getSkinUUID(), callback);
 	}
 	
-	public UUID getSkinUUID() {
-		return skinUUID;
-	}
-	
 	public FakePlayer attack(Player p, Player toAttack, double damage) {
 		if(!Fake.getEntityHandler().getFakeEntitiesInRadius(toAttack, 4).contains(this)) return this;
 		
@@ -212,10 +216,6 @@ public class FakePlayer extends FakeEntity {
 		
 		Utils.nms().sendPacket(p, new MountPacket(Utils.nms().getCraftPlayer(p)));
 		return this;
-	}
-	
-	public OfflinePlayer getSkinPlayer() {
-		return skinPlayer;
 	}
 	
 	@Override

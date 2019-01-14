@@ -1,11 +1,20 @@
 package io.github.alphahelixdev.alpary.addons.core;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public abstract class Addon {
 	
 	private final String name, description, author, version;
@@ -28,34 +37,6 @@ public abstract class Addon {
 	}
 	
 	public abstract void onEnable();
-	
-	public File getDataFolder() {
-		return this.dataFolder;
-	}
-	
-	public boolean isLoaded() {
-		return this.loaded;
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	public String getDescription() {
-		return this.description;
-	}
-	
-	public String getAuthor() {
-		return this.author;
-	}
-	
-	public String getVersion() {
-		return this.version;
-	}
-	
-	public ClassLoader getLoader() {
-		return this.loader;
-	}
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)

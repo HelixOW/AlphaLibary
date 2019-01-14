@@ -9,12 +9,18 @@ import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityMetaDataPacke
 import io.github.alphahelixdev.alpary.reflection.nms.packets.SpawnEntityLivingPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utils.Utils;
+import io.github.whoisalphahelix.sql.annotations.Table;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@Table(name = "armorstands")
+@EqualsAndHashCode(callSuper = true)
+@ToString
 public class FakeArmorstand extends FakeEntity {
-
+	
 	FakeArmorstand(String name, Location start, Object nmsEntity) {
 		super(name, start, nmsEntity);
 	}
@@ -24,7 +30,7 @@ public class FakeArmorstand extends FakeEntity {
 		
 		if(fakeA == null)
 			return null;
-
+		
 		Fake.storage(FakeArmorstand.class).addEntity(fakeA);
 		
 		return fakeA;

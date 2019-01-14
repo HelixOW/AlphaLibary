@@ -4,9 +4,15 @@ import io.github.alphahelixdev.alpary.fake.Fake;
 import io.github.alphahelixdev.alpary.fake.FakeEntity;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utils.Utils;
+import io.github.whoisalphahelix.sql.annotations.Table;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+@Table(name = "xporbs")
+@EqualsAndHashCode(callSuper = true)
+@ToString
 public class FakeXPOrb extends FakeEntity {
 	
 	FakeXPOrb(String name, Location start, Object nmsEntity) {

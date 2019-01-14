@@ -1,5 +1,8 @@
 package io.github.alphahelixdev.alpary.commands;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -10,7 +13,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public abstract class SimpleCommand extends Command {
+	
+	private final ArgumentParser argumentParser = new ArgumentParser();
 	
 	public SimpleCommand(String command) {
 		this(command, "");

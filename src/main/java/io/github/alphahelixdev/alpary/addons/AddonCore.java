@@ -1,6 +1,7 @@
 package io.github.alphahelixdev.alpary.addons;
 
 import io.github.alphahelixdev.alpary.addons.core.AddonManager;
+import lombok.Getter;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -8,7 +9,9 @@ import java.util.logging.Level;
 public class AddonCore {
 	
 	private static final File ADDON_FOLDER = new File("plugins/Alpary/Addons");
+	@Getter
 	private static AddonLogger logger;
+	@Getter
 	private static AddonManager addonManager;
 	
 	public void enable() {
@@ -27,13 +30,5 @@ public class AddonCore {
 	
 	public static File getAddonFolder() {
 		return ADDON_FOLDER;
-	}
-	
-	public static AddonLogger getLogger() {
-		return AddonCore.logger;
-	}
-	
-	public static AddonManager getAddonManager() {
-		return AddonCore.addonManager;
 	}
 }

@@ -3,9 +3,11 @@ package io.github.alphahelixdev.alpary.fake;
 import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
 import io.github.alphahelixdev.helius.reflection.SaveConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
-import java.util.Arrays;
-
+@Getter
+@ToString
 public enum FakeMobType {
 	
 	GUARDIAN("EntityGuardian", Utils.nms().getNMSClass("World")),
@@ -56,21 +58,5 @@ public enum FakeMobType {
 	
 	public SaveConstructor getConstructor() {
 		return NMSUtil.getReflections().getDeclaredConstructor(Utils.nms().getNMSClass(this.getNmsClass()), this.getClasses());
-	}
-	
-	public String getNmsClass() {
-		return this.nmsClass;
-	}
-	
-	public Class<?>[] getClasses() {
-		return this.classes;
-	}
-	
-	@Override
-	public String toString() {
-		return "FakeMobType{" +
-				"nmsClass='" + nmsClass + '\'' +
-				", classes=" + Arrays.toString(classes) +
-				"} " + super.toString();
 	}
 }

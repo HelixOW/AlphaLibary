@@ -6,15 +6,23 @@ import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityMetaDataPacke
 import io.github.alphahelixdev.alpary.reflection.nms.packets.SpawnEntityPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityItemWrapper;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Text;
+import io.github.whoisalphahelix.sql.annotations.Column;
+import io.github.whoisalphahelix.sql.annotations.Table;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@Table(name = "items")
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class FakeItem extends FakeEntity {
-
-	@Text
+	
+	@Column(name = "type")
 	private final Material type;
 	
 	public FakeItem(String name, Location start, Object nmsEntity, Material type) {
@@ -55,10 +63,6 @@ public class FakeItem extends FakeEntity {
 	
 	public FakeItem spawn(Player p) {
 		return FakeItem.spawnTemporary(p, getStart(), getName(), getType());
-	}
-	
-	public Material getType() {
-		return type;
 	}
 	
 	public void setGravity(Player p, boolean gravity) {

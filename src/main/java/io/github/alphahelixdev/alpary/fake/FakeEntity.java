@@ -6,8 +6,11 @@ import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
 import io.github.alphahelixdev.helius.reflection.SaveField;
-import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Blob;
-import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Text;
+import io.github.whoisalphahelix.sql.annotations.Column;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,58 +19,61 @@ import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
+@Getter
+@EqualsAndHashCode
+@ToString
 public abstract class FakeEntity {
-
+	
 	private final Object nmsEntity;
 	private final int entityID;
 	private final Map<UUID, BukkitTask> follows = new HashMap<>();
 	private final Map<UUID, BukkitTask> splits = new HashMap<>();
 	private final Map<UUID, BukkitTask> stares = new HashMap<>();
 	
-	@Text
+	@Column(name = "name")
 	private String name;
-	@Text
+	@Column(name = "id")
 	private UUID id;
-	@Blob
+	@Column(name = "start")
 	private Location start;
+	@Setter
 	private Location current;
-
+	
 	public FakeEntity(String name, Location start, Object nmsEntity) {
-        this.name = name;
-        this.id = UUID.randomUUID();
-        this.start = start;
-        this.current = start;
-        this.nmsEntity = nmsEntity;
-        this.entityID = Utils.nms().getNMSEntityID(nmsEntity);
-    }
-
-    public void destroy(Player p) {
-        Utils.nms().sendPacket(p, new EntityDestroyPacket(this.entityID));
-        Fake.getEntityHandler().removeFakeEntity(p, this);
-    }
-
-    public FakeEntity move(Player p, double x, double y, double z, float yaw, float pitch) {
-        Location ne = getCurrent().clone().add(x, y, z);
-
-        Utils.nms().sendPackets(p, new RelEntityMovePacket(
-                this.getEntityID(),
-                this.getCurrent().getX() - ne.getX(),
-                this.getCurrent().getY() - ne.getY(),
-                this.getCurrent().getZ() - ne.getZ(),
-                false), new EntityHeadRotationPacket(this.nmsEntity, yaw), new EntityLookPacket(
-                this.entityID, yaw, pitch, false
-        ));
-
-        this.getCurrent().add(x, y, z);
-        return this;
-    }
-
-    public FakeEntity move(Player p, Vector by, float yaw, float pitch) {
-        return move(p, by.getX(), by.getY(), by.getZ(), yaw, pitch);
-    }
+		this.name = name;
+		this.id = UUID.randomUUID();
+		this.start = start;
+		this.current = start;
+		this.nmsEntity = nmsEntity;
+		this.entityID = Utils.nms().getNMSEntityID(nmsEntity);
+	}
+	
+	public void destroy(Player p) {
+		Utils.nms().sendPacket(p, new EntityDestroyPacket(this.entityID));
+		Fake.getEntityHandler().removeFakeEntity(p, this);
+	}
+	
+	public FakeEntity move(Player p, double x, double y, double z, float yaw, float pitch) {
+		Location ne = getCurrent().clone().add(x, y, z);
+		
+		Utils.nms().sendPackets(p, new RelEntityMovePacket(
+				this.getEntityID(),
+				this.getCurrent().getX() - ne.getX(),
+				this.getCurrent().getY() - ne.getY(),
+				this.getCurrent().getZ() - ne.getZ(),
+				false), new EntityHeadRotationPacket(this.nmsEntity, yaw), new EntityLookPacket(
+				this.entityID, yaw, pitch, false
+		));
+		
+		this.getCurrent().add(x, y, z);
+		return this;
+	}
+	
+	public FakeEntity move(Player p, Vector by, float yaw, float pitch) {
+		return move(p, by.getX(), by.getY(), by.getZ(), yaw, pitch);
+	}
 	
 	public FakeEntity follow(Player p, Player toFollow) {
 		this.follows.put(p.getUniqueId(), new BukkitRunnable() {
@@ -146,98 +152,34 @@ public abstract class FakeEntity {
 		Utils.nms().sendPacket(p, new EntityMetaDataPacket(e.getEntityID(), e.getDataWatcher()));
 		return this;
 	}
-
-    public FakeEntity normalizeLook(Player p) {
-        if (this.stares.containsKey(p.getUniqueId())) {
-            this.stares.get(p.getUniqueId()).cancel();
-            this.stares.remove(p.getUniqueId());
-        }
-        return this;
-    }
-
-    public FakeEntity cancelAllSplitted(Player p) {
-        if (this.splits.containsKey(p.getUniqueId())) {
-            this.splits.get(p.getUniqueId()).cancel();
-            this.splits.remove(p.getUniqueId());
-        }
-        return this;
-    }
-
-    public boolean hasFollower(Player p) {
-        return this.follows.containsKey(p.getUniqueId());
-    }
-
-    public FakeEntity cancelFollows(Player p) {
-        if (hasFollower(p)) {
-            this.follows.get(p.getUniqueId()).cancel();
-            this.follows.remove(p.getUniqueId());
-        }
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public Location getStart() {
-        return start;
-    }
-
-    public Object getNmsEntity() {
-        return nmsEntity;
-    }
-
-    public int getEntityID() {
-        return entityID;
-    }
-
-    public Location getCurrent() {
-        return current;
-    }
-
-    public void setCurrent(Location current) {
-        this.current = current;
-    }
-
-    public abstract <T extends FakeEntity> T spawn(Player p);
 	
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getName(), this.getId(), this.getStart(), this.getNmsEntity(), this.getEntityID(), this.follows, this.splits, this.stares, this.getCurrent());
+	public FakeEntity normalizeLook(Player p) {
+		if (this.stares.containsKey(p.getUniqueId())) {
+			this.stares.get(p.getUniqueId()).cancel();
+			this.stares.remove(p.getUniqueId());
+		}
+		return this;
 	}
 	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		FakeEntity that = (FakeEntity) o;
-		return this.getEntityID() == that.getEntityID() &&
-				Objects.equals(this.getName(), that.getName()) &&
-				Objects.equals(this.getId(), that.getId()) &&
-				Objects.equals(this.getStart(), that.getStart()) &&
-				Objects.equals(this.getNmsEntity(), that.getNmsEntity()) &&
-				Objects.equals(this.follows, that.follows) &&
-				Objects.equals(this.splits, that.splits) &&
-				Objects.equals(this.stares, that.stares) &&
-				Objects.equals(this.getCurrent(), that.getCurrent());
+	public FakeEntity cancelAllSplitted(Player p) {
+		if (this.splits.containsKey(p.getUniqueId())) {
+			this.splits.get(p.getUniqueId()).cancel();
+			this.splits.remove(p.getUniqueId());
+		}
+		return this;
 	}
 	
-	@Override
-	public String toString() {
-		return "FakeEntity{" +
-				"name='" + name + '\'' +
-				", id=" + id +
-				", start=" + start +
-				", nmsEntity=" + nmsEntity +
-				", entityID=" + entityID +
-				", follows=" + follows +
-				", splits=" + splits +
-				", stares=" + stares +
-				", current=" + current +
-				'}';
+	public boolean hasFollower(Player p) {
+		return this.follows.containsKey(p.getUniqueId());
 	}
+	
+	public FakeEntity cancelFollows(Player p) {
+		if (hasFollower(p)) {
+			this.follows.get(p.getUniqueId()).cancel();
+			this.follows.remove(p.getUniqueId());
+		}
+		return this;
+	}
+	
+	public abstract <T extends FakeEntity> T spawn(Player p);
 }

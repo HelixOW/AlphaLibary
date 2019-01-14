@@ -9,17 +9,24 @@ import io.github.alphahelixdev.alpary.reflection.nms.packets.*;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityAgeableWrapper;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Blob;
-import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Text;
+import io.github.whoisalphahelix.sql.annotations.Column;
+import io.github.whoisalphahelix.sql.annotations.Table;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@Table(name = "mobs")
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString
 public class FakeMob extends FakeEntity {
-
-	@Text
+	
+	@Column(name = "mobtype")
 	private final FakeMobType fakeMobType;
-	@Blob
+	@Column(name = "baby")
 	private final boolean baby;
 	
 	FakeMob(String name, Location start, Object nmsEntity, FakeMobType fakeMobType, boolean baby) {
@@ -65,14 +72,6 @@ public class FakeMob extends FakeEntity {
 	
 	public FakeMob spawn(Player p) {
 		return FakeMob.spawnTemporary(p, getStart(), getName(), getFakeMobType(), isBaby());
-	}
-	
-	public FakeMobType getFakeMobType() {
-		return fakeMobType;
-	}
-	
-	public boolean isBaby() {
-		return baby;
 	}
 	
 	public FakeMob equipSkull(Player p, String textureURL) {

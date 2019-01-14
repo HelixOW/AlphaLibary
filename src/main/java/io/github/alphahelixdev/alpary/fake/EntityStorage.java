@@ -83,8 +83,6 @@ public class EntityStorage<T extends FakeEntity> {
 			for(int i = 3; i < rowEntry.size(); i++)
 				insert.add(Utils.json().fromJsonTree(rowEntry.get(i)));
 			
-			System.out.println(insert);
-			
 			entities.add((T) NMSUtil.getReflections().getMethod("spawnTemporary", this.entityClass, parameters.toArray(new Class[0]))
 					.invokeStatic(insert.toArray(new Object[0])));
 		}

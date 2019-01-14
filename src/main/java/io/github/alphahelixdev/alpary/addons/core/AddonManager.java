@@ -2,6 +2,9 @@ package io.github.alphahelixdev.alpary.addons.core;
 
 import io.github.alphahelixdev.alpary.addons.AddonCore;
 import io.github.alphahelixdev.alpary.addons.core.exceptions.InvalidAddonException;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.apache.commons.lang.Validate;
 
 import java.io.File;
@@ -10,6 +13,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+@Getter
+@EqualsAndHashCode
+@ToString
 public class AddonManager {
 	
 	private final static Pattern JAR_PATTERN = Pattern.compile("(.+?)(\\.jar)");
@@ -66,6 +72,6 @@ public class AddonManager {
 	}
 	
 	public Addon[] getAddons() {
-		return this.addons.toArray(new Addon[this.addons.size()]);
+		return this.addons.toArray(new Addon[0]);
 	}
 }

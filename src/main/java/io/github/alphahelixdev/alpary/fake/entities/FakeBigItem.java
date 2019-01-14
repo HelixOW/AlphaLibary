@@ -7,16 +7,22 @@ import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumEquipSlot;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityMetaDataPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.sql.annotations.datatypes.sqlite.Blob;
+import io.github.whoisalphahelix.sql.annotations.Column;
+import io.github.whoisalphahelix.sql.annotations.Table;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
+@Table(name = "bigitems")
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class FakeBigItem extends FakeEntity {
-
-	@Blob
+	
+	@Column(name = "item")
 	private final ItemStack itemStack;
 	
 	FakeBigItem(String name, Location start, Object nmsEntity, ItemStack itemStack) {
@@ -57,26 +63,5 @@ public class FakeBigItem extends FakeEntity {
 	
 	public FakeBigItem spawn(Player p) {
 		return FakeBigItem.spawnTemporary(p, getStart(), getName(), itemStack);
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		if(!super.equals(o)) return false;
-		FakeBigItem that = (FakeBigItem) o;
-		return Objects.equals(itemStack, that.itemStack);
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), itemStack);
-	}
-	
-	@Override
-	public String toString() {
-		return "FakeBigItem{" +
-				"itemStack=" + itemStack +
-				'}';
 	}
 }

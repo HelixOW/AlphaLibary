@@ -17,7 +17,7 @@ public class PacketCreator {
 	 * @param gameProfile          the {@link GameProfile} to perform the action on
 	 * @param ping                 the ping which should be displayed inside the tablist
 	 * @param enumGamemode         the {@link REnumGamemode} to use
-	 * @param name                 the name which should be displayed inside the tablist
+	 * @param name                 the skinName which should be displayed inside the tablist
 	 *
 	 * @return the PacketPlayOutPlayerInfoAction
 	 */

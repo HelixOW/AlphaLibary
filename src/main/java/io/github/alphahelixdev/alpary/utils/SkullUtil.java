@@ -3,6 +3,10 @@ package io.github.alphahelixdev.alpary.utils;
 import com.mojang.authlib.GameProfile;
 import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -12,6 +16,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class SkullUtil {
 	
 	public ItemStack getCustomSkull(String url) {
@@ -46,6 +52,9 @@ public class SkullUtil {
 		return itemStack;
 	}
 	
+	@Getter
+	@ToString
+	@RequiredArgsConstructor
 	public enum Skulls implements Serializable {
 		ARROW_LEFT("MHF_ArrowLeft"),
 		ARROW_RIGHT("MHF_ArrowRight"),
@@ -85,23 +94,8 @@ public class SkullUtil {
 		
 		private final String id;
 		
-		Skulls(String id) {
-			this.id = id;
-		}
-		
 		public ItemStack getSkull() {
 			return Utils.skulls().getPlayerSkull(this.getId());
-		}
-		
-		public String getId() {
-			return this.id;
-		}
-		
-		@Override
-		public String toString() {
-			return "Skulls{" +
-					"                            id='" + this.id + '\'' +
-					'}';
 		}
 	}
 	

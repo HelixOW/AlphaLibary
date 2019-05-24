@@ -1,8 +1,8 @@
 package io.github.alphahelixdev.alpary.fake;
 
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
+import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveConstructor;
+import io.github.whoisalphahelix.helix.reflection.SaveConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -57,6 +57,6 @@ public enum FakeMobType {
 	}
 	
 	public SaveConstructor getConstructor() {
-		return NMSUtil.getReflections().getDeclaredConstructor(Utils.nms().getNMSClass(this.getNmsClass()), this.getClasses());
+		return Alpary.getInstance().reflections().getDeclaredConstructor(Utils.nms().getNMSClass(this.getNmsClass()), this.getClasses());
 	}
 }

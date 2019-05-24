@@ -2,10 +2,12 @@ package io.github.alphahelixdev.alpary.addons;
 
 import io.github.alphahelixdev.alpary.addons.core.AddonManager;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 import java.util.logging.Level;
 
+@RequiredArgsConstructor
 public class AddonCore {
 	
 	private static final File ADDON_FOLDER = new File("plugins/Alpary/Addons");

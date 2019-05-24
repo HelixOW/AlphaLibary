@@ -10,31 +10,30 @@ import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public abstract class SimpleCommand extends Command {
+public abstract class BukkitCommand extends Command {
 	
 	private final ArgumentParser argumentParser = new ArgumentParser();
 	
-	public SimpleCommand(String command) {
+	public BukkitCommand(String command) {
 		this(command, "");
 	}
 	
-	public SimpleCommand(String command, String description) {
-		this(command, description, new String[]{});
+	public BukkitCommand(String command, String description) {
+		this(command, "", description);
 	}
 	
-	public SimpleCommand(String command, String description, String... aliases) {
+	public BukkitCommand(String command, String usage, String description, String... aliases) {
 		super(command);
 		
+		super.setUsage(usage);
 		super.setDescription(description);
-		List<String> aliasList = new ArrayList<>();
-		Collections.addAll(aliasList, aliases);
-		super.setAliases(aliasList);
+		super.setAliases(new ArrayList<>(Arrays.asList(aliases)));
 		
 		this.register();
 	}

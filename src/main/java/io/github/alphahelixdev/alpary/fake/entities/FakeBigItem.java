@@ -16,13 +16,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-@Table(name = "bigitems")
+@Table("bigitems")
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class FakeBigItem extends FakeEntity {
 	
-	@Column(name = "item")
+	@Column(name = "item", type = "text")
 	private final ItemStack itemStack;
 	
 	FakeBigItem(String name, Location start, Object nmsEntity, ItemStack itemStack) {

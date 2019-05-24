@@ -1,55 +1,35 @@
 package io.github.alphahelixdev.alpary.commands;
 
-import io.github.alphahelixdev.alpary.annotations.command.CommandObject;
+import io.github.whoisalphahelix.helix.ParsedObject;
+import io.github.whoisalphahelix.helix.StringParser;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.bukkit.command.CommandSender;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+@Getter
+@EqualsAndHashCode
+@ToString
+@RequiredArgsConstructor
 public class ArgumentParser {
 	
-	private final List<CommandObject<?>> commandObjects = new ArrayList<>(Arrays.asList(
-			(CommandObject<String>) commandString -> commandString,
-			(CommandObject<Boolean>) commandString -> {
-				List<String> trueBools = Arrays.asList("true", "on", "t");
-				List<String> falseBools = Arrays.asList("false", "off", "f");
-				
-				if(trueBools.contains(commandString))
-					return true;
-				else if(falseBools.contains(commandString))
-					return false;
-				else
-					throw new IllegalArgumentException("Can't cast " + commandString + " to a boolean!");
-			},
-			(CommandObject<Integer>) Integer::parseInt,
-			(CommandObject<Short>) Short::parseShort,
-			(CommandObject<Double>) Double::parseDouble,
-			(CommandObject<Float>) Float::parseFloat,
-			(CommandObject<Long>) Long::parseLong,
-			(CommandObject<Byte>) Byte::parseByte,
-			(CommandObject<Character>) commandString -> {
-				if(commandString.length() == 1)
-					return commandString.charAt(0);
-				throw new IllegalArgumentException("Can't cast String with length of " + commandString.length() + " to char");
-			},
-			(CommandObject<UUID>) UUID::fromString
-	));
+	private final StringParser parser = new StringParser();
 	
-	public final Object[] parseArguments(CommandSender cs, String[] args) {
-		List<Object> objects = new ArrayList<>(Collections.singletonList(cs));
-		
-		Arrays.stream(args).forEach(arg -> {
-			for(CommandObject<?> o : getCommandObjects())
-				try {
-					objects.add(o.fromCommandString(arg));
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-		});
-		
-		return objects.toArray();
+	public static void registerCommandObject(ParsedObject<?> parsedObject) {
+		StringParser.getParsedObjects().add(0, parsedObject);
 	}
 	
-	public List<CommandObject<?>> getCommandObjects() {
-		return this.commandObjects;
+	public final Object[] parseArguments(CommandSender e, String[] args) {
+		List<Object> objects = new ArrayList<>(Collections.singletonList(e));
+		
+		Arrays.stream(args).map(String::trim).filter(s -> !s.isEmpty()).forEach(parser::parseString);
+		
+		return objects.toArray();
 	}
 }

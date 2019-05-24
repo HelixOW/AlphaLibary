@@ -1,9 +1,11 @@
 package io.github.alphahelixdev.alpary.utilities;
 
-import com.google.common.base.Objects;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import io.github.alphahelixdev.alpary.Alpary;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
@@ -17,7 +19,9 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 
-
+@Getter
+@EqualsAndHashCode
+@ToString
 public class Updater {
 	
 	private final JavaPlugin pluginToUpdate;
@@ -104,35 +108,5 @@ public class Updater {
 			}
 			return sb.toString();
 		}
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(pluginToUpdate, dataFolder, currentVersion, updateURL, pluginName, jarName);
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		Updater updater = (Updater) o;
-		return Objects.equal(pluginToUpdate, updater.pluginToUpdate) &&
-				Objects.equal(dataFolder, updater.dataFolder) &&
-				Objects.equal(currentVersion, updater.currentVersion) &&
-				Objects.equal(updateURL, updater.updateURL) &&
-				Objects.equal(pluginName, updater.pluginName) &&
-				Objects.equal(jarName, updater.jarName);
-	}
-	
-	@Override
-	public String toString() {
-		return "Updater{" +
-				"pluginToUpdate=" + pluginToUpdate +
-				", dataFolder='" + dataFolder + '\'' +
-				", currentVersion='" + currentVersion + '\'' +
-				", updateURL='" + updateURL + '\'' +
-				", pluginName='" + pluginName + '\'' +
-				", jarName='" + jarName + '\'' +
-				'}';
 	}
 }

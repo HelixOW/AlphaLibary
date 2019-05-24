@@ -2,14 +2,17 @@ package io.github.alphahelixdev.alpary.utilities;
 
 import com.mojang.util.UUIDTypeAdapter;
 import io.github.alphahelixdev.alpary.Alpary;
-import io.github.alphahelixdev.helius.Cache;
-import io.github.alphahelixdev.helius.Helius;
-import io.github.alphahelixdev.helius.sql.SQLColumn;
-import io.github.alphahelixdev.helius.sql.SQLConstraint;
-import io.github.alphahelixdev.helius.sql.SQLTableHandler;
-import io.github.alphahelixdev.helius.sql.sqlite.SQLiteConnector;
-import io.github.alphahelixdev.helius.sql.sqlite.SQLiteDataType;
-import io.github.alphahelixdev.helius.web.WebConsumer;
+import io.github.whoisalphahelix.helix.Cache;
+import io.github.whoisalphahelix.helix.FailConsumer;
+import io.github.whoisalphahelix.helix.hon.Hon;
+import io.github.whoisalphahelix.sql.SQL;
+import io.github.whoisalphahelix.sql.SQLTable;
+import io.github.whoisalphahelix.sql.annotations.Column;
+import io.github.whoisalphahelix.sql.annotations.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -19,40 +22,42 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Getter
+@EqualsAndHashCode
+@ToString
 public class UUIDFetcher {
 	
 	private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/%s?at=%d";
 	private static final String NAME_URL = "https://api.mojang.com/user/profiles/%s/NAMES";
 	
-	private UUIDCache cache;
+	private final UUIDCache cache;
 	
 	public UUIDFetcher() {
 		Alpary.getInstance().gsonBuilder().registerTypeAdapter(UUID.class, new UUIDTypeAdapter());
 		this.cache = new UUIDCache();
-		Helius.addCache(this.cache);
+		Alpary.getInstance().cacheHandler().addCache(this.cache);
 	}
 	
-	public void getUUID(Player p, WebConsumer<UUID> callback) {
+	public void getUUID(Player p, FailConsumer<UUID> callback) {
 		this.getUUID(p.getName(), callback);
 	}
 	
-	public void getUUID(String name, WebConsumer<UUID> callback) {
+	public void getUUID(String name, FailConsumer<UUID> callback) {
 		Bukkit.getScheduler().runTaskAsynchronously(Alpary.getInstance(), () -> {
 			UUID id = null;
 			try {
 				id = this.getUUID(name);
 			} catch(UUIDNotFoundException e) {
-				callback.fail("Unable to find UUID for " + name);
+				callback.failt("Unable to find UUID for " + name);
 			}
 			
 			if(id == null)
-				callback.fail("Unable to find UUID for " + name);
+				callback.failt("Unable to find UUID for " + name);
 			else
-				callback.success(id);
+				callback.accept(id);
 		});
 	}
 	
@@ -89,31 +94,27 @@ public class UUIDFetcher {
 		}
 	}
 	
-	public UUIDCache getCache() {
-		return this.cache;
-	}
-	
 	public String getUUIDUrl() {
 		return UUIDFetcher.UUID_URL;
 	}
 	
-	public void getUUID(OfflinePlayer p, WebConsumer<UUID> callback) {
+	public void getUUID(OfflinePlayer p, FailConsumer<UUID> callback) {
 		this.getUUID(p.getName(), callback);
 	}
 	
-	public void getName(UUID uuid, WebConsumer<String> callback) {
+	public void getName(UUID uuid, FailConsumer<String> callback) {
 		Bukkit.getScheduler().runTaskAsynchronously(Alpary.getInstance(), () -> {
-			String name = null;
+			String name = "";
 			try {
 				name = getName(uuid);
 			} catch(NameNotFoundException e) {
-				callback.fail("Unable to find a name for " + uuid);
+				callback.failt("Unable to find a skinName for " + uuid);
 			}
 			
 			if(name.equals(""))
-				callback.fail("Unable to find a name for " + uuid);
+				callback.failt("Unable to find a skinName for " + uuid);
 			else
-				callback.success(name);
+				callback.accept(name);
 		});
 	}
 	
@@ -159,117 +160,70 @@ public class UUIDFetcher {
 		return this.getUUID(p.getName());
 	}
 	
+	@Getter
 	public class UUIDCache implements Cache {
 		private final Map<UUID, String> name = new ConcurrentHashMap<>();
 		private final Map<String, UUID> uuid = new ConcurrentHashMap<>();
 		
-		private final SQLTableHandler nameTable;
-		private final SQLTableHandler uuidTable;
+		private final SQLTable saveTable;
 		
 		public UUIDCache() {
-			this.nameTable = new SQLTableHandler(new SQLiteConnector(()
-					-> Alpary.getInstance().getDataFolder().getAbsolutePath() + "/uuidNameCache.db"));
-			this.uuidTable = new SQLTableHandler(new SQLiteConnector(()
-					-> Alpary.getInstance().getDataFolder().getAbsolutePath() + "/uuidUUIDCache.db"));
+			Hon config = new Hon(Alpary.getInstance().helix());
 			
-			this.getNameTable().create(new SQLColumn("name", SQLiteDataType.TEXT, new SQLConstraint(SQLConstraint.NOT_NULL, "")),
-					new SQLColumn("uuid", SQLiteDataType.TEXT, new SQLConstraint(SQLConstraint.PRIMARY_KEY, "")));
-			this.getUuidTable().create(new SQLColumn("name", SQLiteDataType.TEXT, new SQLConstraint(SQLConstraint.PRIMARY_KEY, "")),
-					new SQLColumn("uuid", SQLiteDataType.TEXT, new SQLConstraint(SQLConstraint.NOT_NULL, "")));
-		}
-		
-		public SQLTableHandler getNameTable() {
-			return this.nameTable;
-		}
-		
-		public SQLTableHandler getUuidTable() {
-			return this.uuidTable;
+			config.set("driver", "org.sqlite.JDBC");
+			config.set("jdbc-path", "jdbc:sqlite:" + Alpary.getInstance().getDataFolder().getAbsolutePath() + "/uuidNameCache.db");
+			
+			SQL sql = new SQL(Alpary.getInstance().helix(), config);
+			this.saveTable = sql.createTable(Saver.class);
 		}
 		
 		@Override
-		public void clear() {
+		public boolean clear() {
 			this.getName().clear();
 			this.getUuid().clear();
-		}
-		
-		public Map<UUID, String> getName() {
-			return this.name;
-		}
-		
-		public Map<String, UUID> getUuid() {
-			return this.uuid;
+			
+			return true;
 		}
 		
 		@Override
-		public String clearMessage() {
+		public String log() {
 			return "UUID Cache cleared";
 		}
 		
 		@Override
 		public void save() {
-			this.getNameTable().empty();
-			this.getUuidTable().empty();
+			this.getSaveTable().delete();
 			
-			for(Map.Entry<UUID, String> nameEntry : this.getName().entrySet())
-				this.getNameTable().insert(nameEntry.getKey().toString(), nameEntry.getValue());
-			
-			for(Map.Entry<String, UUID> uuidEntry : this.getUuid().entrySet())
-				this.getUuidTable().insert(uuidEntry.getKey(), uuidEntry.getValue().toString());
+			this.getName().forEach((key, value) -> this.saveTable.insert(new Saver(value, key)));
+			this.getUuid().forEach((key, value) -> this.saveTable.insert(new Saver(key, value)));
+		}
+		
+		@Table
+		@Getter
+		@AllArgsConstructor
+		private class Saver {
+			@Column(name = "name", type = "text")
+			private String name;
+			@Column(name = "uuid", type = "text")
+			private UUID uuid;
 		}
 	}
 	
 	public class UUIDNotFoundException extends Exception {
-		public UUIDNotFoundException(String name) {
+		UUIDNotFoundException(String name) {
 			super("Unable to find UUID for " + name);
 		}
 	}
 	
 	public class NameNotFoundException extends Exception {
-		public NameNotFoundException(String uuid) {
+		NameNotFoundException(String uuid) {
 			super("Unable to find Name for " + uuid);
 		}
 	}
-	
-	@Override
-	public String toString() {
-		return "UUIDFetcher{" +
-				"cache=" + cache +
-				'}';
-	}
 }
 
+@Getter
 class PlayerUUID {
 	private String name;
 	private UUID id;
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getName(), this.getId());
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		PlayerUUID that = (PlayerUUID) o;
-		return Objects.equals(this.getName(), that.getName()) &&
-				Objects.equals(this.getId(), that.getId());
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	public UUID getId() {
-		return this.id;
-	}
-	
-	
-	@Override
-	public String toString() {
-		return "PlayerUUID{" +
-				"name='" + this.name + '\'' +
-				",id=" + this.id +
-				'}';
-	}
 }

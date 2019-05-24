@@ -1,24 +1,26 @@
 package io.github.alphahelixdev.alpary.utilities.server;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Objects;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-
+@Getter
+@EqualsAndHashCode
+@ToString
+@RequiredArgsConstructor
 public class ServerPinger {
 	
 	private final String server;
 	private final int port;
-	
-	public ServerPinger(String server, int port) {
-		this.server = server;
-		this.port = port;
-	}
 	
 	public void ping(Consumer<ServerResult> callback) {
 		ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
@@ -46,27 +48,5 @@ public class ServerPinger {
 				callback.accept(null);
 			}
 		}, 1, TimeUnit.MILLISECONDS);
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(server, port);
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		ServerPinger that = (ServerPinger) o;
-		return port == that.port &&
-				Objects.equals(server, that.server);
-	}
-	
-	@Override
-	public String toString() {
-		return "ServerPinger{" +
-				"server='" + server + '\'' +
-				", port=" + port +
-				'}';
 	}
 }

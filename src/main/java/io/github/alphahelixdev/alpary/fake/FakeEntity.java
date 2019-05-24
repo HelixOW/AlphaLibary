@@ -3,9 +3,8 @@ package io.github.alphahelixdev.alpary.fake;
 import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.*;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveField;
+import io.github.whoisalphahelix.helix.reflection.SaveField;
 import io.github.whoisalphahelix.sql.annotations.Column;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -32,11 +31,11 @@ public abstract class FakeEntity {
 	private final Map<UUID, BukkitTask> splits = new HashMap<>();
 	private final Map<UUID, BukkitTask> stares = new HashMap<>();
 	
-	@Column(name = "name")
+	@Column(name = "name", type = "text")
 	private String name;
-	@Column(name = "id")
+	@Column(name = "id", type = "text")
 	private UUID id;
-	@Column(name = "start")
+	@Column(name = "start", type = "text")
 	private Location start;
 	@Setter
 	private Location current;
@@ -51,7 +50,7 @@ public abstract class FakeEntity {
 	}
 	
 	public void destroy(Player p) {
-		Utils.nms().sendPacket(p, new EntityDestroyPacket(this.entityID));
+		Utils.nms().sendPacket(p, new EntityDestroyPacket(new int[]{this.entityID}));
 		Fake.getEntityHandler().removeFakeEntity(p, this);
 	}
 	
@@ -86,11 +85,11 @@ public abstract class FakeEntity {
 	}
 	
 	public FakeEntity teleport(Player p, Location loc) {
-		SaveField x = NMSUtil.getReflections().getField("locX", Utils.nms().getNMSClass("Entity")),
-				y = NMSUtil.getReflections().getField("locY", Utils.nms().getNMSClass("Entity")),
-				z = NMSUtil.getReflections().getField("locZ", Utils.nms().getNMSClass("Entity")),
-				yaw = NMSUtil.getReflections().getField("yaw", Utils.nms().getNMSClass("Entity")),
-				pitch = NMSUtil.getReflections().getField("pitch", Utils.nms().getNMSClass("Entity"));
+		SaveField x = Alpary.getInstance().reflections().getField("locX", Utils.nms().getNMSClass("Entity")),
+				y = Alpary.getInstance().reflections().getField("locY", Utils.nms().getNMSClass("Entity")),
+				z = Alpary.getInstance().reflections().getField("locZ", Utils.nms().getNMSClass("Entity")),
+				yaw = Alpary.getInstance().reflections().getField("yaw", Utils.nms().getNMSClass("Entity")),
+				pitch = Alpary.getInstance().reflections().getField("pitch", Utils.nms().getNMSClass("Entity"));
 		
 		x.set(getNmsEntity(), loc.getX());
 		y.set(getNmsEntity(), loc.getY());

@@ -1,5 +1,8 @@
 package io.github.alphahelixdev.alpary.utilities.entity;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -7,9 +10,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import java.io.Serializable;
-import java.util.Objects;
 
-
+@Getter
+@EqualsAndHashCode
+@ToString
 public class EntityBuilder implements Serializable {
 	
 	private double health;
@@ -41,17 +45,9 @@ public class EntityBuilder implements Serializable {
 		return e;
 	}
 	
-	public EntityType getType() {
-		return this.type;
-	}
-	
 	public EntityBuilder setType(EntityType type) {
 		this.type = type;
 		return this;
-	}
-	
-	public Class<? extends Entity> getEntityClazz() {
-		return this.entityClazz;
 	}
 	
 	public EntityBuilder setEntityClazz(Class<? extends Entity> entityClazz) {
@@ -76,10 +72,6 @@ public class EntityBuilder implements Serializable {
 		}
 	}
 	
-	public String getName() {
-		return this.name;
-	}
-	
 	private void handleLivingEntity(Entity e) {
 		LivingEntity le = (LivingEntity) e;
 		
@@ -88,17 +80,9 @@ public class EntityBuilder implements Serializable {
 		le.setCanPickupItems(this.isItemPickup());
 	}
 	
-	public boolean isGlowing() {
-		return this.glowing;
-	}
-	
 	public EntityBuilder setGlowing(boolean glowing) {
 		this.glowing = glowing;
 		return this;
-	}
-	
-	public boolean isGravity() {
-		return this.gravity;
 	}
 	
 	public EntityBuilder setGravity(boolean gravity) {
@@ -106,17 +90,9 @@ public class EntityBuilder implements Serializable {
 		return this;
 	}
 	
-	public boolean isInvincible() {
-		return this.invincible;
-	}
-	
 	public EntityBuilder setInvincible(boolean invincible) {
 		this.invincible = invincible;
 		return this;
-	}
-	
-	public EntityAge getAge() {
-		return this.age;
 	}
 	
 	public EntityBuilder setAge(EntityAge age) {
@@ -124,17 +100,9 @@ public class EntityBuilder implements Serializable {
 		return this;
 	}
 	
-	public boolean isAgeLock() {
-		return this.ageLock;
-	}
-	
 	public EntityBuilder setAgeLock(boolean ageLock) {
 		this.ageLock = ageLock;
 		return this;
-	}
-	
-	public double getHealth() {
-		return this.health;
 	}
 	
 	public EntityBuilder setHealth(double health) {
@@ -142,17 +110,9 @@ public class EntityBuilder implements Serializable {
 		return this;
 	}
 	
-	public boolean isMove() {
-		return this.move;
-	}
-	
 	public EntityBuilder setMove(boolean move) {
 		this.move = move;
 		return this;
-	}
-	
-	public boolean isItemPickup() {
-		return this.itemPickup;
 	}
 	
 	public EntityBuilder setItemPickup(boolean itemPickup) {
@@ -163,45 +123,5 @@ public class EntityBuilder implements Serializable {
 	public EntityBuilder setName(String name) {
 		this.name = name;
 		return this;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getHealth(), this.isMove(), this.isItemPickup(), this.isGlowing(), this.isGravity(), this.isInvincible(), this.isAgeLock(), this.getName(), this.getType(), this.getAge(), this.getEntityClazz());
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		EntityBuilder that = (EntityBuilder) o;
-		return Double.compare(that.getHealth(), getHealth()) == 0 &&
-				this.isMove() == that.isMove() &&
-				this.isItemPickup() == that.isItemPickup() &&
-				this.isGlowing() == that.isGlowing() &&
-				this.isGravity() == that.isGravity() &&
-				this.isInvincible() == that.isInvincible() &&
-				this.isAgeLock() == that.isAgeLock() &&
-				Objects.equals(this.getName(), that.getName()) &&
-				this.getType() == that.getType() &&
-				this.getAge() == that.getAge() &&
-				Objects.equals(this.getEntityClazz(), that.getEntityClazz());
-	}
-	
-	@Override
-	public String toString() {
-		return "EntityBuilder{" +
-				"type=" + this.type +
-				", entityClazz=" + this.entityClazz +
-				", name='" + this.name + '\'' +
-				", health=" + this.health +
-				", move=" + this.move +
-				", itemPickup=" + this.itemPickup +
-				", glowing=" + this.glowing +
-				", gravity=" + this.gravity +
-				", invincible=" + this.invincible +
-				", ageLock=" + this.ageLock +
-				", age=" + this.age +
-				'}';
 	}
 }

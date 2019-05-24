@@ -1,9 +1,6 @@
 package io.github.alphahelixdev.alpary.addons.core;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.File;
 import java.lang.annotation.ElementType;
@@ -15,6 +12,7 @@ import java.lang.annotation.Target;
 @Setter
 @EqualsAndHashCode
 @ToString
+@RequiredArgsConstructor
 public abstract class Addon {
 	
 	private final String name, description, author, version;

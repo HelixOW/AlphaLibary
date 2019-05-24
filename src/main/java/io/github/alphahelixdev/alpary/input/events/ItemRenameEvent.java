@@ -1,13 +1,17 @@
 package io.github.alphahelixdev.alpary.input.events;
 
-import com.google.common.base.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.InventoryView;
 
-
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class ItemRenameEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -29,38 +33,6 @@ public class ItemRenameEvent extends PlayerEvent implements Cancellable {
     @Override
     public HandlerList getHandlers() {
         return handlers;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getInventory(), getName(), isCancelled());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemRenameEvent that = (ItemRenameEvent) o;
-        return isCancelled() == that.isCancelled() &&
-                Objects.equal(getInventory(), that.getInventory()) &&
-                Objects.equal(getName(), that.getName());
-    }
-
-    @Override
-    public String toString() {
-        return "ItemRenameEvent{" +
-                "inventory=" + inventory +
-                ", name='" + name + '\'' +
-                ", cancelled=" + cancelled +
-                '}';
-    }
-
-    public InventoryView getInventory() {
-        return inventory;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override

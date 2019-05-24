@@ -1,7 +1,10 @@
 package io.github.alphahelixdev.alpary.addons;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.logging.Level;
 
+@RequiredArgsConstructor
 public class AddonLogger {
 	
 	private static final String PREFIX = "[AlphaLibaryAddon] ";

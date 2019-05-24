@@ -3,9 +3,13 @@ package io.github.alphahelixdev.alpary.reflection.nms.packets;
 import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
 import io.github.alphahelixdev.helius.reflection.SaveConstructor;
+import lombok.*;
 
-import java.util.Objects;
-
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+@AllArgsConstructor
 public class NamedEntitySpawnPacket implements IPacket {
 
     private static final SaveConstructor PACKET = NMSUtil.getReflections().getDeclaredConstructor(
@@ -14,10 +18,6 @@ public class NamedEntitySpawnPacket implements IPacket {
 
     private Object entityHuman;
 
-    public NamedEntitySpawnPacket(Object entityHuman) {
-        this.entityHuman = entityHuman;
-    }
-
     private static SaveConstructor getPacket() {
         return NamedEntitySpawnPacket.PACKET;
     }
@@ -25,34 +25,5 @@ public class NamedEntitySpawnPacket implements IPacket {
     @Override
     public Object getPacket(boolean stackTrace) {
         return NamedEntitySpawnPacket.getPacket().newInstance(stackTrace, this.getEntityHuman());
-    }
-
-    public Object getEntityHuman() {
-        return this.entityHuman;
-    }
-
-    public NamedEntitySpawnPacket setEntityHuman(Object entityHuman) {
-        this.entityHuman = entityHuman;
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NamedEntitySpawnPacket that = (NamedEntitySpawnPacket) o;
-        return Objects.equals(this.getEntityHuman(), that.getEntityHuman());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.getEntityHuman());
-    }
-
-    @Override
-    public String toString() {
-        return "NamedEntitySpawnPacket{" +
-                "                            entityHuman=" + this.entityHuman +
-                '}';
     }
 }

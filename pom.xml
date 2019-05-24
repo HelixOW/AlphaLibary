@@ -49,19 +49,24 @@
             <version>1.13.2-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>io.github.alphahelixdev</groupId>
-            <artifactId>HeliusAPI</artifactId>
-            <version>0.6.4.1</version>
+            <groupId>io.github.whoisalphahelix</groupId>
+            <artifactId>helix</artifactId>
+            <version>0.1b</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.whoisalphahelix</groupId>
+            <artifactId>sql-api</artifactId>
+            <version>0.1a</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.2</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
+            <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

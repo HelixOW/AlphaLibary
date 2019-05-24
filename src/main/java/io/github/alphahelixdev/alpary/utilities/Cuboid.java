@@ -51,9 +51,9 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
 	}
 	
 	/**
-	 * Construct a Cuboid in the given world name and xyz co-ordinates.
+	 * Construct a Cuboid in the given world skinName and xyz co-ordinates.
 	 *
-	 * @param worldName - The Cuboid's world name
+	 * @param worldName - The Cuboid's world skinName
 	 * @param x1        - X co-ordinate of corner 1
 	 * @param y1        - Y co-ordinate of corner 1
 	 * @param z1        - Z co-ordinate of corner 1

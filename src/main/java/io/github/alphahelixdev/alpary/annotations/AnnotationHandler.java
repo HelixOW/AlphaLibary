@@ -1,82 +1,31 @@
 package io.github.alphahelixdev.alpary.annotations;
 
 import io.github.alphahelixdev.alpary.Alpary;
-import io.github.alphahelixdev.alpary.annotations.command.Command;
-import io.github.alphahelixdev.alpary.annotations.command.Permission;
-import io.github.alphahelixdev.alpary.annotations.command.errorhandlers.ErrorHandler;
 import io.github.alphahelixdev.alpary.annotations.entity.Entity;
 import io.github.alphahelixdev.alpary.annotations.entity.Location;
 import io.github.alphahelixdev.alpary.annotations.item.*;
-import io.github.alphahelixdev.alpary.annotations.randoms.Random;
-import io.github.alphahelixdev.alpary.commands.SimpleCommand;
 import io.github.alphahelixdev.alpary.utilities.entity.EntityBuilder;
 import io.github.alphahelixdev.alpary.utilities.item.ItemBuilder;
 import io.github.alphahelixdev.alpary.utilities.item.data.*;
-import io.github.alphahelixdev.alpary.utils.StringUtil;
-import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveField;
-import io.github.alphahelixdev.helius.reflection.SaveMethod;
-import lombok.EqualsAndHashCode;
+import io.github.whoisalphahelix.helix.Helix;
+import io.github.whoisalphahelix.helix.reflection.SaveField;
 import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
-@EqualsAndHashCode
 @ToString
-public class AnnotationHandler {
+public class AnnotationHandler extends io.github.whoisalphahelix.helix.handlers.AnnotationHandler {
 	
-	public void randomizeFields(Object o) {
-		Arrays.stream(o.getClass().getDeclaredFields()).filter(field -> field.isAnnotationPresent(Random.class))
-				.map(SaveField::new).forEach(randomField -> {
-			Random r = randomField.asNormal().getAnnotation(Random.class);
-			
-			switch(randomField.asNormal().getType().getName().toLowerCase()) {
-				case "string":
-					randomField.set(o, StringUtil.generateRandomString(r.max()));
-					break;
-				case "double":
-					randomField.set(o, ThreadLocalRandom.current().nextDouble(r.min(), r.max()));
-					break;
-				case "float":
-					randomField.set(o, ThreadLocalRandom.current().nextDouble((r.min() < Float.MIN_VALUE ? Float.MIN_VALUE : r.min()), (r.max() > Float.MAX_VALUE ? Float.MAX_VALUE : r.max())));
-					break;
-				case "int":
-				case "integer":
-					randomField.set(o, ThreadLocalRandom.current().nextInt(r.min(), r.max()));
-					break;
-				case "long":
-					randomField.set(o, ThreadLocalRandom.current().nextLong(r.min(), r.max()));
-					break;
-				case "short":
-					randomField.set(o, ThreadLocalRandom.current().nextInt((r.min() < Short.MIN_VALUE ? Short.MIN_VALUE : r.min()), (r.max() > Short.MAX_VALUE ? Short.MAX_VALUE : r.max())));
-					break;
-				case "boolean":
-					randomField.set(o, ThreadLocalRandom.current().nextBoolean());
-					break;
-				case "uuid":
-					randomField.set(o, UUID.randomUUID());
-					break;
-				case "location":
-					randomField.set(o, Utils.locations().getRandomLocation(Utils.locations().getRandomWorld()));
-					break;
-				case "material":
-					randomField.set(o, Material.values()[ThreadLocalRandom.current().nextInt(Material.values().length)]);
-			}
-		});
+	public AnnotationHandler(Helix helix) {
+		super(helix);
 	}
 	
 	public void setItemFields(Object o) {
@@ -119,9 +68,10 @@ public class AnnotationHandler {
 				java.util.List<SimplePotionEffect> effects = new ArrayList<>();
 				for(int i = 0; i < potion.type().length - 1; i++) {
 					effects.add(new SimplePotionEffect(
-							potion.duration()[i], PotionEffectType.getByName(potion.type()[i]), potion.amplifier()[i]));
+							potion.duration()[i], potion.amplifier()[i], PotionEffectType.getByName(potion.type()[i])
+					));
 				}
-				builder.addItemData(new PotionData(effects.toArray(new SimplePotionEffect[effects.size()])));
+				builder.addItemData(new PotionData(effects.toArray(new SimplePotionEffect[0])));
 			}
 			
 			if(itemField.asNormal().isAnnotationPresent(Skull.class)) {
@@ -156,79 +106,6 @@ public class AnnotationHandler {
 			
 			entityField.set(o, builder.spawn(loc));
 		});
-	}
-	
-	public void createSingletons() {
-		Alpary.getInstance().reflections().getTypesAnnotatedWith(Singleton.class).stream().filter(aClass -> {
-			try {
-				return aClass.getDeclaredConstructor() != null;
-			} catch(NoSuchMethodException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}).forEach(singletonClass -> Arrays.stream(singletonClass.getDeclaredFields()).filter(field
-				-> field.isAnnotationPresent(Singleton.class))
-				.filter(field -> field.getType().equals(singletonClass)).map(SaveField::new).forEach(field -> {
-					try {
-						field.set(null, singletonClass.getDeclaredConstructor().newInstance());
-					} catch(ReflectiveOperationException e) {
-						e.printStackTrace();
-					}
-				}));
-	}
-	
-	public void registerCommands(Object o) {
-		Arrays.stream(o.getClass().getDeclaredMethods()).filter(method ->
-				method.isAnnotationPresent(Command.class)).map(SaveMethod::new).filter(
-				saveMethod -> saveMethod.asNormal().getParameterCount() > 0)
-				.filter(saveMethod -> saveMethod.asNormal().getParameterTypes()[0].equals(CommandSender.class))
-				.forEach(commandMethod -> {
-					Command cmd = commandMethod.asNormal().getAnnotation(Command.class);
-					Permission permission = commandMethod.asNormal().getAnnotation(Permission.class);
-					ErrorHandler errorHandler;
-					try {
-						errorHandler = (ErrorHandler) cmd.errorHandler().getDeclaredConstructors()[0].newInstance(cmd);
-					} catch(ReflectiveOperationException e) {
-						e.printStackTrace();
-						return;
-					}
-					
-					new SimpleCommand((cmd.name().equals("") ? commandMethod.asNormal().getName() : cmd.name()),
-							cmd.description(), cmd.alias()) {
-						@Override
-						public boolean execute(CommandSender cs, String label, String[] args) {
-							if(permission != null) {
-								if(!cs.hasPermission(permission.permission())) {
-									errorHandler.noPermission(cs, label, args);
-									return false;
-								}
-							}
-							
-							if(cmd.playersOnly() && !(cs instanceof Player)) {
-								errorHandler.notAPlayer(cs, label, args);
-								return false;
-							}
-							
-							Object[] parsedArgs = getArgumentParser().parseArguments(cs, args);
-							
-							if(parsedArgs.length != commandMethod.asNormal().getParameterCount()) {
-								errorHandler.wrongAmountOfArguments(cs, label, args);
-								return false;
-							}
-							
-							try {
-								commandMethod.asNormal().invoke(o, parsedArgs);
-							} catch(IllegalAccessException | InvocationTargetException e) {
-								e.printStackTrace();
-								return false;
-							} catch(IllegalArgumentException e) {
-								errorHandler.wrongArgument(cs, label, args);
-								return false;
-							}
-							return true;
-						}
-					};
-				});
 	}
 	
 	public void registerListeners() {

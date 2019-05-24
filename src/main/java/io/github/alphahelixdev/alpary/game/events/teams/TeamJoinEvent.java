@@ -1,13 +1,17 @@
 package io.github.alphahelixdev.alpary.game.events.teams;
 
-import com.google.common.base.Objects;
 import io.github.alphahelixdev.alpary.game.GameTeam;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class TeamJoinEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -26,30 +30,6 @@ public class TeamJoinEvent extends PlayerEvent implements Cancellable {
     @Override
     public final HandlerList getHandlers() {
         return handlers;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getJoinedTeam());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TeamJoinEvent that = (TeamJoinEvent) o;
-        return Objects.equal(getJoinedTeam(), that.getJoinedTeam());
-    }
-
-    @Override
-    public String toString() {
-        return "TeamJoinEvent{" +
-                "joinedTeam=" + joinedTeam +
-                '}';
-    }
-
-    public GameTeam getJoinedTeam() {
-        return joinedTeam;
     }
 
     @Override

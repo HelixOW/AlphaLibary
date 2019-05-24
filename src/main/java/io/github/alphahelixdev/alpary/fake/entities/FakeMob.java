@@ -18,15 +18,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-@Table(name = "mobs")
+@Table("mobs")
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class FakeMob extends FakeEntity {
 	
-	@Column(name = "mobtype")
+	@Column(name = "mobtype", type = "text")
 	private final FakeMobType fakeMobType;
-	@Column(name = "baby")
+	@Column(name = "baby", type = "text")
 	private final boolean baby;
 	
 	FakeMob(String name, Location start, Object nmsEntity, FakeMobType fakeMobType, boolean baby) {

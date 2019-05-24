@@ -13,7 +13,6 @@ import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumPlayerInfoAction
 import io.github.alphahelixdev.alpary.reflection.nms.packets.*;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
 import io.github.whoisalphahelix.sql.annotations.Column;
 import io.github.whoisalphahelix.sql.annotations.Table;
@@ -30,13 +29,13 @@ import org.bukkit.util.Consumer;
 
 import java.util.UUID;
 
-@Table(name = "players")
+@Table("players")
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class FakePlayer extends FakeEntity {
 	
-	@Column(name = "skin")
+	@Column(name = "skin", type = "text")
 	private final UUID skinUUID;
 	@Expose
 	private final OfflinePlayer skinPlayer;
@@ -47,28 +46,12 @@ public class FakePlayer extends FakeEntity {
 		this.skinPlayer = Bukkit.getOfflinePlayer(skinUUID);
 	}
 	
-	public static void spawn(Player p, Location loc, String customName, OfflinePlayer skin,
-	                         Consumer<FakePlayer> callback) {
-		spawnTemporary(p, loc, customName, skin, entity -> {
-			Fake.storage(FakePlayer.class).addEntity(entity);
-			callback.accept(entity);
-		});
-	}
-	
-	public static void spawnTemporary(Player p, Location loc, String customName, OfflinePlayer skin,
-	                                  Consumer<FakePlayer> callback) {
-		Alpary.getInstance().uuidFetcher().getUUID(skin, id ->
-				Alpary.getInstance().gameProfileFetcher().fetch(id, gameProfile ->
-						callback.accept(spawnTemporary(p, loc, customName, gameProfile)))
-		);
-	}
-	
 	public static FakePlayer spawnTemporary(Player p, Location loc, String customName, GameProfile skin) {
 		Object npc = CustomSpawnable.PLAYER.newInstance(false,
 				Utils.nms().getMinecraftServer(),
 				Utils.nms().getWorldServer(loc.getWorld()),
 				skin,
-				NMSUtil.getReflections().getDeclaredConstructor(Utils.nms().getNMSClass("PlayerInteractManager"),
+				Alpary.getInstance().reflections().getDeclaredConstructor(Utils.nms().getNMSClass("PlayerInteractManager"),
 						Utils.nms().getNMSClass("World"))
 						.newInstance(false, Utils.nms().getWorldServer(loc.getWorld())));
 		EntityWrapper e = new EntityWrapper(npc);

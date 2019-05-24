@@ -2,6 +2,7 @@ package io.github.alphahelixdev.alpary.fake;
 
 import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.annotations.BukkitListener;
+import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,7 +16,11 @@ public class FakeEventListener implements Listener {
 	public void onJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
 		
-		Alpary.getInstance().uuidFetcher().getUUID(p, uuid -> Fake.entityIDMap().put(p.getEntityId(), uuid));
+		try {
+			Fake.entityIDMap().put(p.getEntityId(), Alpary.getInstance().uuidFetcher().getUUID(p));
+		} catch(UUIDFetcher.UUIDNotFoundException ex) {
+			ex.printStackTrace();
+		}
 		
 		for(EntityStorage<? extends FakeEntity> storages : Fake.storage().values()) {
 			storages.spawnEntities(p);

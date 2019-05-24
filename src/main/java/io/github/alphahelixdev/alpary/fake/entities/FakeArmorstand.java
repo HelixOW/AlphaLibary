@@ -16,7 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-@Table(name = "armorstands")
+@Table("armorstands")
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class FakeArmorstand extends FakeEntity {

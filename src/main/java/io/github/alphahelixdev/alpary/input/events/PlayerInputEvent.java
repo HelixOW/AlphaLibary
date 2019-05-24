@@ -1,11 +1,15 @@
 package io.github.alphahelixdev.alpary.input.events;
 
-import com.google.common.base.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class PlayerInputEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
@@ -24,29 +28,5 @@ public class PlayerInputEvent extends PlayerEvent {
     @Override
     public HandlerList getHandlers() {
         return handlers;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getInput());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PlayerInputEvent that = (PlayerInputEvent) o;
-        return Objects.equal(getInput(), that.getInput());
-    }
-
-    @Override
-    public String toString() {
-        return "PlayerInputEvent{" +
-                "input='" + input + '\'' +
-                '}';
-    }
-
-    public String getInput() {
-        return input;
     }
 }

@@ -3,8 +3,11 @@ package io.github.alphahelixdev.alpary.utils;
 import com.mojang.authlib.GameProfile;
 import io.github.alphahelixdev.alpary.reflection.nms.BlockPos;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.IPacket;
-import io.github.alphahelixdev.helius.reflection.Reflections;
-import io.github.alphahelixdev.helius.reflection.SaveField;
+import io.github.whoisalphahelix.helix.Helix;
+import io.github.whoisalphahelix.helix.reflection.Reflections;
+import io.github.whoisalphahelix.helix.reflection.SaveField;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -14,85 +17,86 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Array;
 
-public class NMSUtil {
+@EqualsAndHashCode(callSuper = false)
+@ToString
+public class NMSUtil extends Reflections {
 
     private static final String VERSION;
-    private static final Reflections REFLECTIONS = new Reflections();
 
     static {
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
         VERSION = packageName.substring(packageName.lastIndexOf(".") + 1);
     }
-
-    public static String getNMSPrefix() {
-        return "net.minecraft.server." + getVersion() + ".";
+	
+	public NMSUtil(Helix helix) {
+		super(helix);
+	}
+	
+	public Class<?> getNmsClassAsArray(String name) {
+		return getClass(getNMSPrefix() + name, true);
     }
 
     public static String getCraftBukkitPrefix() {
         return "org.bukkit.craftbukkit." + getVersion() + ".";
     }
 
-    public static Reflections getReflections() {
-        return REFLECTIONS;
-    }
-
     public static String getVersion() {
         return VERSION;
     }
-
-    public Class<?> getNMSClass(String name) {
-        return getReflections().getClass(getNMSPrefix() + name, false);
-    }
-
-    public Class<?> getNmsClassAsArray(String name) {
-        return getReflections().getClass(getNMSPrefix() + name, true);
-    }
-
-    public Class<?> getCraftBukkitClass(String name) {
-        return getReflections().getClass(getCraftBukkitPrefix() + name, false);
+	
+	public static String getNMSPrefix() {
+		return "net.minecraft.server." + getVersion() + ".";
     }
 
     public Class<?> getCraftBukkitClassAsArray(String name) {
-        return getReflections().getClass(getCraftBukkitPrefix() + name, true);
+	    return getClass(getCraftBukkitPrefix() + name, true);
     }
 
     public Object getEnumGamemode(OfflinePlayer p) {
-        SaveField fInteractManager = getReflections().getDeclaredField("playerInteractManager",
+	    SaveField fInteractManager = getDeclaredField("playerInteractManager",
                 getNMSClass("EntityPlayer"));
-
-        return getReflections().getDeclaredField("gamemode", getNMSClass("PlayerInteractManager"))
+	
+	    return getDeclaredField("gamemode", getNMSClass("PlayerInteractManager"))
                 .get(fInteractManager.get(getCraftPlayer(p)));
     }
+	
+	public Class<?> getNMSClass(String name) {
+		return getClass(getNMSPrefix() + name, false);
+	}
 
     public Object getCraftPlayer(OfflinePlayer p) {
-        return getReflections().getDeclaredMethod("getHandle", getCraftBukkitClass("entity.CraftPlayer"))
+	    return getDeclaredMethod("getHandle", getCraftBukkitClass("entity.CraftPlayer"))
                 .invoke(p, true);
     }
+	
+	public Class<?> getCraftBukkitClass(String name) {
+		return getClass(getCraftBukkitPrefix() + name, false);
+	}
 
     public Object getCraftEntity(Entity entity) {
-        return getReflections().getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true);
+	    return getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true);
     }
 
     public int getPing(Player p) {
-        return (int) getReflections().getDeclaredField("ping", getNMSClass("EntityPlayer"))
+	    return (int) getDeclaredField("ping", getNMSClass("EntityPlayer"))
                 .get(getCraftPlayer(p));
     }
 
     public Object getNMSItemStack(ItemStack item) {
-        return getReflections().getMethod("asNMSCopy", getCraftBukkitClass("inventory.CraftItemStack"), ItemStack.class).invoke(null, true, item);
+	    return getMethod("asNMSCopy", getCraftBukkitClass("inventory.CraftItemStack"), ItemStack.class).invoke(null, true, item);
     }
 
     public ItemStack getBukkitItemStack(Object nmsItem) {
-        return (ItemStack) getReflections().getDeclaredMethod("asCraftMirror",
+	    return (ItemStack) getDeclaredMethod("asCraftMirror",
                 getCraftBukkitClass("inventory.CraftItemStack"), nmsItem.getClass()).invokeStatic(nmsItem);
     }
 
     public int getCraftEntityID(Entity entity) {
-        return (int) getReflections().getMethod("getId", getNMSClass("Entity")).invoke(getReflections().getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true), true);
+	    return (int) getMethod("getId", getNMSClass("Entity")).invoke(getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true), true);
     }
 
     public int getNMSEntityID(Object entity) {
-        return (int) getReflections().getDeclaredField("id", getNMSClass("Entity")).get(entity);
+	    return (int) getDeclaredField("id", getNMSClass("Entity")).get(entity);
     }
 
     public void sendPackets(Player p, Object... packets) {
@@ -101,11 +105,11 @@ public class NMSUtil {
     }
 
     public Object getWorldServer(World world) {
-        return getReflections().getMethod("getHandle", getCraftBukkitClass("CraftWorld")).invoke(world, true);
+	    return getMethod("getHandle", getCraftBukkitClass("CraftWorld")).invoke(world, true);
     }
 
     public Object getMinecraftServer() {
-        return getReflections().getMethod("getServer", getCraftBukkitClass("CraftServer")).invoke(Bukkit.getServer(), true);
+	    return getMethod("getServer", getCraftBukkitClass("CraftServer")).invoke(Bukkit.getServer(), true);
     }
 
     public String[] fromIChatBaseComponent(Object... baseComponentArray) {
@@ -119,7 +123,7 @@ public class NMSUtil {
     }
 
     private String fromIChatBaseComponent(Object component) {
-        return (String) getReflections().getMethod("fromComponent", getCraftBukkitClass("util.CraftChatMessage"), getNMSClass("IChatBaseComponent")).invoke(null, true, component);
+	    return (String) getMethod("fromComponent", getCraftBukkitClass("util.CraftChatMessage"), getNMSClass("IChatBaseComponent")).invoke(null, true, component);
     }
 
     public Object[] toIChatBaseComponent(String... strings) {
@@ -133,21 +137,21 @@ public class NMSUtil {
     }
 
     public Object[] toIChatBaseComponentArray(String s) {
-        return (Object[]) getReflections().getDeclaredMethod("fromString", getCraftBukkitClass("util.CraftChatMessage"), String.class).invoke(null, true, s);
+	    return (Object[]) getDeclaredMethod("fromString", getCraftBukkitClass("util.CraftChatMessage"), String.class).invoke(null, true, s);
     }
 
     public GameProfile getGameProfile(Player p) {
-        return (GameProfile) getReflections().getDeclaredMethod("getProfile", getCraftBukkitClass("entity.CraftPlayer")).invoke(p, true);
+	    return (GameProfile) getDeclaredMethod("getProfile", getCraftBukkitClass("entity.CraftPlayer")).invoke(p, true);
     }
 
     public Object toBlockPosition(BlockPos loc) {
-        return getReflections().getDeclaredConstructor(getNMSClass("BlockPosition"), int.class, int.class, int.class).newInstance(true, loc.getX(), loc.getY(), loc.getZ());
+	    return getDeclaredConstructor(getNMSClass("BlockPosition"), int.class, int.class, int.class).newInstance(true, loc.getX(), loc.getY(), loc.getZ());
     }
 
     public BlockPos fromBlockPostition(Object nmsLoc) {
         Class<?> bP = getNMSClass("BaseBlockPosition");
-
-        return new BlockPos((int) getReflections().getDeclaredField("a", bP).get(nmsLoc), (int) getReflections().getDeclaredField("b", bP).get(nmsLoc), (Integer) getReflections().getDeclaredField("c", bP).get(nmsLoc));
+	
+	    return new BlockPos((int) getDeclaredField("a", bP).get(nmsLoc), (int) getDeclaredField("b", bP).get(nmsLoc), (Integer) getDeclaredField("c", bP).get(nmsLoc));
     }
 
     public Object getNMSEnumConstant(String nmsClass, int position) {
@@ -162,10 +166,10 @@ public class NMSUtil {
         Object nmsPlayer = getCraftPlayer(p);
 
         if (nmsPlayer == null) return;
-
-        Object con = getReflections().getDeclaredField("playerConnection", nmsPlayer.getClass()).get(nmsPlayer);
-
-        getReflections().getMethod("sendPacket", getNMSClass("PlayerConnection"),
+	
+	    Object con = getDeclaredField("playerConnection", nmsPlayer.getClass()).get(nmsPlayer);
+	
+	    getMethod("sendPacket", getNMSClass("PlayerConnection"),
                 getNMSClass("Packet")).invoke(con, true, packet);
     }
 

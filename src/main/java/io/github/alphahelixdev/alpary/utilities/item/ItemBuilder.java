@@ -5,6 +5,9 @@ import io.github.alphahelixdev.alpary.utilities.SimpleListener;
 import io.github.alphahelixdev.alpary.utilities.item.data.ItemData;
 import io.github.alphahelixdev.alpary.utilities.item.data.WrongDataException;
 import io.github.alphahelixdev.helius.utils.ArrayUtil;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
@@ -18,7 +21,9 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
-
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class ItemBuilder extends SimpleListener implements Serializable {
 	
 	private static final ItemComparator COMPARATOR = new ItemComparator();
@@ -58,22 +63,10 @@ public class ItemBuilder extends SimpleListener implements Serializable {
 		}
 	}
 	
-	public List<String> getLore() {
-		return this.lore;
-	}
-	
 	public ItemBuilder setLore(String... newLore) {
 		this.getLore().clear();
 		this.getLore().addAll(Arrays.asList(ArrayUtil.replaceInArray("&", "§", newLore)));
 		return this;
-	}
-	
-	public Map<Enchantment, Integer> getEnchantments() {
-		return this.enchantments;
-	}
-	
-	public List<ItemFlag> getItemflags() {
-		return this.itemflags;
 	}
 	
 	@EventHandler
@@ -110,25 +103,9 @@ public class ItemBuilder extends SimpleListener implements Serializable {
 		return s;
 	}
 	
-	public Consumer<PlayerInteractEvent> getTriggerEventConsumer() {
-		return this.triggerEventConsumer;
-	}
-	
-	public Material getMaterial() {
-		return this.material;
-	}
-	
 	public ItemBuilder setMaterial(Material material) {
 		this.material = material;
 		return this;
-	}
-	
-	public int getAmount() {
-		return this.amount;
-	}
-	
-	public String getName() {
-		return this.name;
 	}
 	
 	public ItemBuilder setName(String name) {
@@ -136,17 +113,9 @@ public class ItemBuilder extends SimpleListener implements Serializable {
 		return this;
 	}
 	
-	public int getDamage() {
-		return this.damage;
-	}
-	
 	public ItemBuilder setDamage(int damage) {
 		this.damage = damage;
 		return this;
-	}
-	
-	public List<ItemData> getItemData() {
-		return this.itemData;
 	}
 	
 	public ItemBuilder setAmount(int amount) {
@@ -185,50 +154,9 @@ public class ItemBuilder extends SimpleListener implements Serializable {
 		return this;
 	}
 	
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getItemflags(), this.getItemData(), this.getLore(), this.getEnchantments(), this.getMaterial(), this.getAmount(), this.getDamage(), this.getName(), this.isUnbreakable(), this.getTriggerEventConsumer());
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		ItemBuilder that = (ItemBuilder) o;
-		return this.getAmount() == that.getAmount() &&
-				this.getDamage() == that.getDamage() &&
-				this.isUnbreakable() == that.isUnbreakable() &&
-				Objects.equals(this.getItemflags(), that.getItemflags()) &&
-				Objects.equals(this.getItemData(), that.getItemData()) &&
-				Objects.equals(this.getLore(), that.getLore()) &&
-				Objects.equals(this.getEnchantments(), that.getEnchantments()) &&
-				this.getMaterial() == that.getMaterial() &&
-				Objects.equals(this.getName(), that.getName()) &&
-				Objects.equals(this.getTriggerEventConsumer(), that.getTriggerEventConsumer());
-	}
-	
-	public boolean isUnbreakable() {
-		return this.unbreakable;
-	}
-	
 	public ItemBuilder setUnbreakable(boolean status) {
 		this.unbreakable = status;
 		return this;
 	}
 	
-	@Override
-	public String toString() {
-		return "ItemBuilder{" +
-				"itemflags=" + itemflags +
-				", itemData=" + itemData +
-				", lore=" + lore +
-				", enchantments=" + enchantments +
-				", material=" + material +
-				", amount=" + amount +
-				", damage=" + damage +
-				", name='" + name + '\'' +
-				", unbreakable=" + unbreakable +
-				", triggerEventConsumer=" + triggerEventConsumer +
-				"} " + super.toString();
-	}
 }

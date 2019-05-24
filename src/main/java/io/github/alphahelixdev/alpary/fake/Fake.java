@@ -13,7 +13,6 @@ import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.Pack
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.ReceivedPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.SentPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.PlayerInfoDataWrapper;
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -31,19 +30,19 @@ public class Fake {
 	
 	public Fake(JavaPlugin plugin) {
 		storage().put(FakeArmorstand.class,
-				new EntityStorage<>(plugin, "armorstands", FakeArmorstand.class));
+				new EntityStorage<>(plugin, FakeArmorstand.class));
 		storage().put(FakeBigItem.class,
-				new EntityStorage<>(plugin, "bigItems", FakeBigItem.class));
+				new EntityStorage<>(plugin, FakeBigItem.class));
 		storage().put(FakeMob.class,
-				new EntityStorage<>(plugin, "mobs", FakeMob.class));
+				new EntityStorage<>(plugin, FakeMob.class));
 		storage().put(FakeEndercrystal.class,
-				new EntityStorage<>(plugin, "endercrystals", FakeEndercrystal.class));
+				new EntityStorage<>(plugin, FakeEndercrystal.class));
 		storage().put(FakeItem.class,
-				new EntityStorage<>(plugin, "items", FakeItem.class));
+				new EntityStorage<>(plugin, FakeItem.class));
 		storage().put(FakePlayer.class,
-				new EntityStorage<>(plugin, "players", FakePlayer.class));
+				new EntityStorage<>(plugin, FakePlayer.class));
 		storage().put(FakeXPOrb.class,
-				new EntityStorage<>(plugin, "xpOrbs", FakeXPOrb.class));
+				new EntityStorage<>(plugin, FakeXPOrb.class));
 	}
 	
 	public static Map<Class<? extends FakeEntity>, EntityStorage<? extends FakeEntity>> storage() {
@@ -82,10 +81,10 @@ public class Fake {
 						OfflinePlayer p = Bukkit.getOfflinePlayer(wrapper.getProfile().getId());
 						
 						if(Fake.npcs().contains(wrapper.getName())) {
-							NMSUtil.getReflections().getDeclaredField("name", GameProfile.class).set(wrapper.getProfile(), wrapper.getName(), true);
+							Alpary.getInstance().reflections().getDeclaredField("name", GameProfile.class).set(wrapper.getProfile(), wrapper.getName(), true);
 							
 							newPlayerInfo.add(new PlayerInfoDataWrapper(
-									wrapper.getProfile(), wrapper.getPing(), wrapper.getGameMode(), p.getName(), packet.getPacket()
+									wrapper.getPing(), wrapper.getGameMode(), wrapper.getProfile(), p.getName(), packet.getPacket()
 							).getPlayerInfoData());
 						} else {
 							newPlayerInfo.add(playerInfo);
@@ -109,7 +108,7 @@ public class Fake {
 						REnumHand hand = REnumHand.MAIN_HAND;
 						
 						if(packet.getPacketValue("d") != null)
-							hand = REnumHand.values()[NMSUtil.getReflections().getEnumConstantID(packet.getPacketValue("d"))];
+							hand = REnumHand.values()[Alpary.getInstance().reflections().getEnumConstantID(packet.getPacketValue("d"))];
 
 						if(action != REnumAction.INTERACT_AT)
 							Bukkit.getPluginManager().callEvent(new FakeEntityClickEvent(p, clicked, action, hand));

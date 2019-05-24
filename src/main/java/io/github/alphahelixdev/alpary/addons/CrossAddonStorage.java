@@ -1,8 +1,11 @@
 package io.github.alphahelixdev.alpary.addons;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class CrossAddonStorage {
 	
 	private static final Map<String, String> VARIABLES = new HashMap<>();

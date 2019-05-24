@@ -1,6 +1,10 @@
 package io.github.alphahelixdev.alpary.utilities.menu;
 
 import io.github.alphahelixdev.alpary.annotations.BukkitListener;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,67 +15,46 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @BukkitListener
+@Getter
+@EqualsAndHashCode
+@ToString
+@NoArgsConstructor
 public class MenuManager implements Listener {
-
-    private final Map<String, Menu> menus;
-
-    public MenuManager() {
-        this.menus = new HashMap<>();
-    }
+	
+	private final Map<String, Menu> menus = new HashMap<>();
 
     public boolean hasMenuOpened(Player p) {
-        return this.menus.containsKey(p.getName());
+	    return getMenus().containsKey(p.getName());
     }
 
     public void toggleMenu(Player p, Menu menu) {
-        if (this.menus.containsKey(p.getName()))
-            this.menus.remove(p.getName(), menu);
+	    if(getMenus().containsKey(p.getName()))
+		    getMenus().remove(p.getName(), menu);
         else
-            this.menus.put(p.getName(), menu);
-    }
-
-    public Menu getMenu(Player p) {
-        return this.menus.getOrDefault(p.getName(), null);
+		    getMenus().put(p.getName(), menu);
     }
 
     @EventHandler
     public void onMenuClose(InventoryCloseEvent e) {
-        this.menus.remove(e.getPlayer().getName());
+	    getMenus().remove(e.getPlayer().getName());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMenuClick(InventoryClickEvent e) {
         Inventory i = e.getClickedInventory();
         Player p = (Player) e.getWhoClicked();
-
-        if (i == null || e.getCurrentItem() == null || !this.menus.containsKey(p.getName())) return;
+	
+	    if(i == null || e.getCurrentItem() == null || !getMenus().containsKey(p.getName())) return;
         if (i.getTitle().equals("")) return;
 
         Menu menu = this.getMenu(p);
         if (menu != null && menu.getElement(e.getRawSlot()) != null)
             menu.getElement(e.getRawSlot()).click(e);
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MenuManager that = (MenuManager) o;
-        return Objects.equals(menus, that.menus);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(menus);
-    }
-
-    @Override
-    public String toString() {
-        return "MenuManager{" +
-                "menus=" + menus +
-                '}';
+	
+	public Menu getMenu(Player p) {
+		return getMenus().getOrDefault(p.getName(), null);
     }
 }

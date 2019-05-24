@@ -18,7 +18,7 @@ import java.util.jar.JarFile;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
 public class AddonClassLoader extends URLClassLoader {
 	

@@ -11,7 +11,7 @@ import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-@Table(name = "endercrystals")
+@Table("endercrystals")
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class FakeEndercrystal extends FakeEntity {

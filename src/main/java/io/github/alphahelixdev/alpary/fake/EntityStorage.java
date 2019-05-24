@@ -1,64 +1,53 @@
 package io.github.alphahelixdev.alpary.fake;
 
-import com.google.gson.annotations.Expose;
 import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.utilities.NoInitLocation;
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
-import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.Helius;
-import io.github.alphahelixdev.helius.reflection.SaveField;
-import io.github.alphahelixdev.helius.sql.SQLColumn;
-import io.github.alphahelixdev.helius.sql.SQLTableHandler;
-import io.github.alphahelixdev.helius.sql.exceptions.NoConnectionException;
-import io.github.alphahelixdev.helius.sql.sqlite.SQLiteDataType;
+import io.github.whoisalphahelix.helix.hon.Hon;
+import io.github.whoisalphahelix.sql.SQL;
+import io.github.whoisalphahelix.sql.SQLTable;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
+@Getter
+@EqualsAndHashCode
+@ToString
 public class EntityStorage<T extends FakeEntity> {
 	
 	private final Class<T> entityClass;
-	private SQLTableHandler tableHandler;
-	private List<SaveField> custom = new ArrayList<>();
+	private SQLTable tableHandler;
 	
-	public EntityStorage(JavaPlugin plugin, String entityName, Class<T> entityClass) {
+	public EntityStorage(JavaPlugin plugin, Class<T> entityClass) {
 		String dbPath = plugin.getDataFolder().getAbsolutePath() + "/fakes.db";
 		this.entityClass = entityClass;
 		
 		try {
-			this.tableHandler = Helius.fastSQLiteConnect(dbPath, entityName);
-			List<SQLColumn> columns = new ArrayList<>(Arrays.asList(
-					new SQLColumn("name", SQLiteDataType.TEXT),
-					new SQLColumn("id", SQLiteDataType.TEXT),
-					new SQLColumn("start", SQLiteDataType.BLOB)));
-			
-			this.custom = Helius.getReflections().getDeclaredFieldsNotAnnotated(entityClass, Expose.class);
-			
-			this.custom.stream().map(f -> f.asNormal().getName())
-					.forEach(s -> columns.add(new SQLColumn(s, SQLiteDataType.BLOB)));
-			
-			this.tableHandler.create(columns.toArray(new SQLColumn[0]));
-		} catch(NoConnectionException e) {
+			Alpary.getInstance().ioHandler().createFile(new File(dbPath));
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
+		
+		Hon config = new Hon(Alpary.getInstance().helix());
+		
+		config.set("driver", "org.sqlite.JDBC");
+		config.set("jdbc-path", "jdbc:sqlite:" + dbPath);
+		
+		SQL sql = new SQL(Alpary.getInstance().helix(), config);
+		
+		this.tableHandler = sql.createTable(entityClass);
 	}
 	
 	public EntityStorage<T> addEntity(T entity) {
-		List<String> values = new ArrayList<>(Arrays.asList(
-				entity.getName(),
-				entity.getId().toString(),
-				Alpary.getInstance().gson().toJson(new NoInitLocation(entity.getStart()))));
-		
-		values.addAll(this.custom.stream().map(saveField -> saveField.get(entity))
-				.map(o -> Utils.json().toJsonTree(o).toString()).collect(Collectors.toList()));
-		
-		this.tableHandler.insert(values.toArray(new String[0]));
+		this.tableHandler.insert(entity);
 		return this;
 	}
 	
@@ -71,9 +60,7 @@ public class EntityStorage<T extends FakeEntity> {
 		List<T> entities = new ArrayList<>();
 		List<Class<?>> parameters = new ArrayList<>(Arrays.asList(Player.class, Location.class, String.class));
 		
-		parameters.addAll(this.custom.stream().map(saveField -> saveField.asNormal().getType()).collect(Collectors.toList()));
-		
-		for(List<String> rowEntry : this.tableHandler.getSyncRows()) {
+		for(List<String> rowEntry : this.tableHandler.getAll()) {
 			List<Object> insert = new ArrayList<>(Arrays.asList(
 					p,
 					Alpary.getInstance().gson().fromJson(rowEntry.get(2), NoInitLocation.class).realize(),
@@ -81,37 +68,12 @@ public class EntityStorage<T extends FakeEntity> {
 			));
 			
 			for(int i = 3; i < rowEntry.size(); i++)
-				insert.add(Utils.json().fromJsonTree(rowEntry.get(i)));
+				insert.add(Alpary.getInstance().utilHandler().getJsonUtil().fromJsonTree(
+						Alpary.getInstance().ioHandler().getGson(), rowEntry.get(i)));
 			
-			entities.add((T) NMSUtil.getReflections().getMethod("spawnTemporary", this.entityClass, parameters.toArray(new Class[0]))
+			entities.add((T) Alpary.getInstance().reflections().getMethod("spawnTemporary", this.entityClass, parameters.toArray(new Class[0]))
 					.invokeStatic(insert.toArray(new Object[0])));
 		}
 		return entities;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getTableHandler(), this.custom);
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
-		EntityStorage<?> that = (EntityStorage<?>) o;
-		return Objects.equals(this.getTableHandler(), that.getTableHandler()) &&
-				Objects.equals(this.custom, that.custom);
-	}
-	
-	public SQLTableHandler getTableHandler() {
-		return this.tableHandler;
-	}
-	
-	@Override
-	public String toString() {
-		return "EntityStorage{" +
-				"tableHandler=" + tableHandler +
-				", custom=" + custom +
-				'}';
 	}
 }

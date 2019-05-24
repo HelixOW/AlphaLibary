@@ -1,9 +1,13 @@
 package io.github.alphahelixdev.alpary.utils;
 
 import com.google.common.base.Strings;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.ChatColor;
 
-public class StringUtil extends io.github.alphahelixdev.helius.utils.StringUtil {
+@EqualsAndHashCode(callSuper = false)
+@ToString
+public class StringUtil extends io.github.whoisalphahelix.helix.utils.StringUtil {
 
     public String getProgessBar(float current, int maximum, int total, char symbol, ChatColor completed, ChatColor uncompleted) {
         float percent = current / maximum;
@@ -12,8 +16,8 @@ public class StringUtil extends io.github.alphahelixdev.helius.utils.StringUtil 
         return Strings.repeat("" + completed + symbol, progress)
                 + Strings.repeat("" + uncompleted + symbol, total - progress);
     }
-
-    public String getFirstColors(String input) {
+	
+	public String getFirstColors(String input) {
         StringBuilder result = new StringBuilder();
         int length = input.length();
 

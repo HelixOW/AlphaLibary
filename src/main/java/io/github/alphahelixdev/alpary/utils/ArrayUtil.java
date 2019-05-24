@@ -1,5 +1,8 @@
 package io.github.alphahelixdev.alpary.utils;
 
+import io.github.whoisalphahelix.helix.handlers.UtilHandler;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,7 +14,13 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ArrayUtil extends io.github.alphahelixdev.helius.utils.ArrayUtil {
+@EqualsAndHashCode(callSuper = false)
+@ToString
+public class ArrayUtil extends io.github.whoisalphahelix.helix.utils.ArrayUtil {
+	
+	public ArrayUtil(UtilHandler utilHandler) {
+		super(utilHandler);
+	}
 	
 	public Location[] trim(int decimal, Location... locations) {
 		return Arrays.stream(locations).map(location -> Utils.locations().trim(decimal, location)).toArray(Location[]::new);

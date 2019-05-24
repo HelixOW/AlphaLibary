@@ -10,7 +10,7 @@ import lombok.ToString;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-@Table(name = "xporbs")
+@Table("xporbs")
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class FakeXPOrb extends FakeEntity {

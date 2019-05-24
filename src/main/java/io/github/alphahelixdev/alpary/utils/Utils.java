@@ -1,6 +1,9 @@
 package io.github.alphahelixdev.alpary.utils;
 
-import io.github.alphahelixdev.alpary.annotations.Singleton;
+import io.github.alphahelixdev.alpary.Alpary;
+import io.github.whoisalphahelix.helix.annotations.Singleton;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,16 +13,17 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-@Singleton
+@EqualsAndHashCode
+@ToString
 public class Utils {
 
 	@Singleton
 	private static Utils instance;
-
-	private static final ArrayUtil ARRAYS = new ArrayUtil();
+	
+	private static final ArrayUtil ARRAYS = new ArrayUtil(Alpary.getInstance().utilHandler());
 	private static final LocationUtil LOCATIONS = new LocationUtil();
 	private static final MessageUtil MESSAGES = new MessageUtil();
-	private static final NMSUtil NMS = new NMSUtil();
+	private static final NMSUtil NMS = new NMSUtil(Alpary.getInstance().helix());
 	private static final ScheduleUtil SCHEDULES = new ScheduleUtil();
 	private static final SerializationUtil SERIALIZATIONS = new SerializationUtil();
 	private static final SkinUtil SKINS = new SkinUtil();

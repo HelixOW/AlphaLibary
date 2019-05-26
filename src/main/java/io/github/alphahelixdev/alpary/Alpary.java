@@ -14,13 +14,13 @@ import io.github.whoisalphahelix.helix.IHelix;
 import io.github.whoisalphahelix.helix.handlers.CacheHandler;
 import io.github.whoisalphahelix.helix.handlers.IOHandler;
 import io.github.whoisalphahelix.helix.handlers.NettyHandler;
-import io.github.whoisalphahelix.helix.handlers.UtilHandler;
 import io.github.whoisalphahelix.helix.reflection.Reflection;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 public class Alpary extends JavaPlugin implements IHelix {
@@ -31,7 +31,7 @@ public class Alpary extends JavaPlugin implements IHelix {
 	private static Alpary instance;
 	
 	private final NettyInjector nettyInjector = new NettyInjector();
-	private final Helix helix = new Helix();
+	private final Helix helix = Helix.helix();
 	private final AnnotationHandler annotationHandler = new AnnotationHandler(helix);
 	
 	private UUIDFetcher uuidFetcher;
@@ -50,26 +50,34 @@ public class Alpary extends JavaPlugin implements IHelix {
 	@Override
 	public void onEnable() {
 		Alpary.instance = this;
+
+		ioHandler().createFolder(getDataFolder());
 		
 		this.uuidFetcher = new UUIDFetcher();
-		this.gameProfileFetcher = new GameProfileFetcher();
+		try {
+			this.gameProfileFetcher = new GameProfileFetcher();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		new AddonCore().enable();
 		
 		this.annotationHandler.registerListeners();
 		this.annotationHandler.createSingletons();
-		
+
 		this.nettyInjector.enable(this);
 		new Fake(this).enable();
+
+		cacheHandler().startCacheClearing();
 	}
 	
 	@Override
-	public Reflection reflections() {
+	public Reflection reflection() {
+		return this.helix.reflection();
+	}
+	
+	@Override
+	public Reflections reflections() {
 		return this.helix.reflections();
-	}
-	
-	@Override
-	public Reflections reflections2() {
-		return this.helix.reflections2();
 	}
 	
 	@Override
@@ -103,11 +111,6 @@ public class Alpary extends JavaPlugin implements IHelix {
 	@Override
 	public NettyHandler nettyHandler() {
 		return this.helix.nettyHandler();
-	}
-	
-	@Override
-	public UtilHandler utilHandler() {
-		return this.helix.utilHandler();
 	}
 	
 	public Gson gson() {

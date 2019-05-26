@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public enum REnumHand implements Serializable {
+public enum RHand implements Serializable {
 	
 	MAIN_HAND(0),
 	OFF_HAND(1);

@@ -1,6 +1,6 @@
 package io.github.alphahelixdev.alpary.reflection.nms.enums;
 
-public enum AnimationType {
+public enum RAnimationType {
     SWING_ARM,
     TAKE_DAMAGE,
     LEAVE_BED,

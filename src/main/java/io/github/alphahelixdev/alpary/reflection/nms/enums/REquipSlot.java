@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public enum REnumEquipSlot implements Serializable {
+public enum REquipSlot implements Serializable {
 	
 	HELMET(4, 5),
 	CHESTPLATE(3, 4),

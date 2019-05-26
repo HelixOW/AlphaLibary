@@ -3,15 +3,14 @@ package io.github.alphahelixdev.alpary.reflection.player;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import io.github.alphahelixdev.alpary.Alpary;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumDifficulty;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumGamemode;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumPlayerInfoAction;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RDifficulty;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RGamemode;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RPlayerInfoAction;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.RespawnPacket;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveConstructor;
-import io.github.alphahelixdev.helius.reflection.SaveField;
+import io.github.whoisalphahelix.helix.reflection.SaveConstructor;
+import io.github.whoisalphahelix.helix.reflection.SaveField;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,8 +33,8 @@ public class AdvancedPlayer {
 	private static final SaveConstructor PLAYER_INFO_PACKET;
 	
 	static {
-		GAME_PROFILE_NAME_FIELD = NMSUtil.getReflections().getDeclaredField("name", GameProfile.class);
-		PLAYER_INFO_PACKET = NMSUtil.getReflections().getDeclaredConstructor(
+        GAME_PROFILE_NAME_FIELD = Utils.nms().getDeclaredField("name", GameProfile.class);
+        PLAYER_INFO_PACKET = Utils.nms().getDeclaredConstructor(
 				Utils.nms().getNMSClass("PacketPlayOutPlayerInfo"),
 				Utils.nms().getNMSClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction"),
 				Utils.nms().getNmsClassAsArray("EntityPlayer"));
@@ -72,7 +71,7 @@ public class AdvancedPlayer {
 	}
 	
 	public boolean isSwimming() {
-		return (boolean) NMSUtil.getReflections().getDeclaredField("inWater",
+        return (boolean) Utils.nms().getDeclaredField("inWater",
 				Utils.nms().getNMSClass("Entity")).get(this.getEntityPlayer(), true);
 	}
 	
@@ -94,7 +93,7 @@ public class AdvancedPlayer {
 	
 	public void fakeRespawn() {
 		Location loc = this.getPlayer().getLocation();
-		REnumDifficulty difficulty = REnumDifficulty.EASY;
+        RDifficulty difficulty = RDifficulty.EASY;
 		int level = this.getPlayer().getLevel();
 		double health = this.getPlayer().getHealth();
 		float sat = this.getPlayer().getSaturation();
@@ -105,7 +104,7 @@ public class AdvancedPlayer {
 		boolean healthScaled = this.getPlayer().isHealthScaled();
 		
 		Utils.nms().sendPacket(this.getPlayer(), new RespawnPacket(difficulty,
-				this.getPlayer().getWorld().getWorldType(), REnumGamemode.getFromPlayer(this.getPlayer())));
+                this.getPlayer().getWorld().getWorldType(), RGamemode.getFromPlayer(this.getPlayer())));
 		
 		this.getPlayer().teleport(loc);
 		this.getPlayer().setLevel(level);
@@ -122,9 +121,9 @@ public class AdvancedPlayer {
 		this.customName = name;
 		AdvancedPlayer.getGameProfileNameField().set(this.getProfile(), name, true);
 		Utils.nms().sendPackets(
-				AdvancedPlayer.getPlayerInfoPacket().newInstance(true, REnumPlayerInfoAction.REMOVE_PLAYER
+                AdvancedPlayer.getPlayerInfoPacket().newInstance(true, RPlayerInfoAction.REMOVE_PLAYER
 						.getPlayerInfoAction(), new Object[]{this.getEntityPlayer()}),
-				AdvancedPlayer.getPlayerInfoPacket().newInstance(true, REnumPlayerInfoAction.ADD_PLAYER
+                AdvancedPlayer.getPlayerInfoPacket().newInstance(true, RPlayerInfoAction.ADD_PLAYER
 						.getPlayerInfoAction(), new Object[]{this.getEntityPlayer()})
 		);
 		return this;

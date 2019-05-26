@@ -1,8 +1,7 @@
 package io.github.alphahelixdev.alpary.reflection.nms;
 
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveConstructor;
+import io.github.whoisalphahelix.helix.reflection.SaveConstructor;
 import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -16,8 +15,8 @@ import org.bukkit.entity.Player;
 @AllArgsConstructor
 public class SimpleTitle {
 
-    private static final SaveConstructor TITLE_PACKET = NMSUtil.getReflections().getDeclaredConstructor(Utils.nms().getNMSClass("PacketPlayOutTitle"), Utils.nms().getNMSClass("PacketPlayOutTitle$EnumTitleAction"), Utils.nms().getNMSClass("IChatBaseComponent"));
-    private static final SaveConstructor TIMING_PACKET = NMSUtil.getReflections().getDeclaredConstructor(Utils.nms().getNMSClass("PacketPlayOutTitle"), int.class, int.class, int.class);
+    private static final SaveConstructor TITLE_PACKET = Utils.nms().getDeclaredConstructor(Utils.nms().getNMSClass("PacketPlayOutTitle"), Utils.nms().getNMSClass("PacketPlayOutTitle$EnumTitleAction"), Utils.nms().getNMSClass("IChatBaseComponent"));
+    private static final SaveConstructor TIMING_PACKET = Utils.nms().getDeclaredConstructor(Utils.nms().getNMSClass("PacketPlayOutTitle"), int.class, int.class, int.class);
 	
 	@NonNull
 	private String title, sub;

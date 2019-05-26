@@ -3,8 +3,7 @@ package io.github.alphahelixdev.alpary.utils;
 import com.mojang.authlib.GameProfile;
 import io.github.alphahelixdev.alpary.reflection.nms.BlockPos;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.IPacket;
-import io.github.whoisalphahelix.helix.Helix;
-import io.github.whoisalphahelix.helix.reflection.Reflections;
+import io.github.whoisalphahelix.helix.reflection.Reflection;
 import io.github.whoisalphahelix.helix.reflection.SaveField;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -19,7 +18,7 @@ import java.lang.reflect.Array;
 
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class NMSUtil extends Reflections {
+public class NMSUtil extends Reflection {
 
     private static final String VERSION;
 
@@ -27,13 +26,9 @@ public class NMSUtil extends Reflections {
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
         VERSION = packageName.substring(packageName.lastIndexOf(".") + 1);
     }
-	
-	public NMSUtil(Helix helix) {
-		super(helix);
-	}
-	
-	public Class<?> getNmsClassAsArray(String name) {
-		return getClass(getNMSPrefix() + name, true);
+
+    public Class<?> getNmsClassAsArray(String name) {
+        return getType(getNMSPrefix() + name, true);
     }
 
     public static String getCraftBukkitPrefix() {
@@ -49,7 +44,7 @@ public class NMSUtil extends Reflections {
     }
 
     public Class<?> getCraftBukkitClassAsArray(String name) {
-	    return getClass(getCraftBukkitPrefix() + name, true);
+        return getType(getCraftBukkitPrefix() + name, true);
     }
 
     public Object getEnumGamemode(OfflinePlayer p) {
@@ -61,7 +56,7 @@ public class NMSUtil extends Reflections {
     }
 	
 	public Class<?> getNMSClass(String name) {
-		return getClass(getNMSPrefix() + name, false);
+        return getType(getNMSPrefix() + name, false);
 	}
 
     public Object getCraftPlayer(OfflinePlayer p) {
@@ -70,7 +65,7 @@ public class NMSUtil extends Reflections {
     }
 	
 	public Class<?> getCraftBukkitClass(String name) {
-		return getClass(getCraftBukkitPrefix() + name, false);
+        return getType(getCraftBukkitPrefix() + name, false);
 	}
 
     public Object getCraftEntity(Entity entity) {

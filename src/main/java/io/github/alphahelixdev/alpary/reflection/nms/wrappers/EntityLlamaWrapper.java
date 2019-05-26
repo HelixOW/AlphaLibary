@@ -1,16 +1,15 @@
 package io.github.alphahelixdev.alpary.reflection.nms.wrappers;
 
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveMethod;
+import io.github.whoisalphahelix.helix.reflection.SaveMethod;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class EntityLlamaWrapper extends EntityWrapper {
-	
-	private static final SaveMethod ENTITY_LLAMA_SET_VARIANT = NMSUtil.getReflections().getDeclaredMethod(
+
+    private static final SaveMethod ENTITY_LLAMA_SET_VARIANT = Utils.nms().getDeclaredMethod(
 			"setVariant", Utils.nms().getNMSClass("EntityLlama"), int.class);
 	
 	public EntityLlamaWrapper(Object entityLlama) {

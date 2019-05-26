@@ -1,7 +1,7 @@
 package io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler;
 
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.channel.ChannelWrapper;
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
+import io.github.alphahelixdev.alpary.utils.Utils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,35 +31,35 @@ public class PacketAbstract {
 	}
 	
 	public void setPacketValue(String field, Object value) {
-		NMSUtil.getReflections().getDeclaredField(field, packet.getClass()).set(this.packet, value, true);
+        Utils.nms().getDeclaredField(field, packet.getClass()).set(this.packet, value, true);
 	}
 	
 	public void setPacketValueSilent(String field, Object value) {
-		NMSUtil.getReflections().getDeclaredField(field, packet.getClass()).set(this.packet, value, false);
+        Utils.nms().getDeclaredField(field, packet.getClass()).set(this.packet, value, false);
 	}
 	
 	public void setPacketValue(int index, Object value) {
-		NMSUtil.getReflections().getDeclaredFields(packet.getClass()).get(index).set(packet, value, true);
+        Utils.nms().getDeclaredFields(packet.getClass()).get(index).set(packet, value, true);
 	}
 	
 	public void setPacketValueSilent(int index, Object value) {
-		NMSUtil.getReflections().getDeclaredFields(packet.getClass()).get(index).set(packet, value, false);
+        Utils.nms().getDeclaredFields(packet.getClass()).get(index).set(packet, value, false);
 	}
 	
 	public Object getPacketValue(String field) {
-		return NMSUtil.getReflections().getDeclaredField(field, packet.getClass()).get(this.packet, true);
+        return Utils.nms().getDeclaredField(field, packet.getClass()).get(this.packet, true);
 	}
 	
 	public Object getPacketValueSilent(String field) {
-		return NMSUtil.getReflections().getDeclaredField(field, packet.getClass()).get(this.packet, false);
+        return Utils.nms().getDeclaredField(field, packet.getClass()).get(this.packet, false);
 	}
 	
 	public Object getPacketValue(int index) {
-		return NMSUtil.getReflections().getDeclaredFields(packet.getClass()).get(index).get(packet, true);
+        return Utils.nms().getDeclaredFields(packet.getClass()).get(index).get(packet, true);
 	}
 	
 	public Object getPacketValueSilent(int index) {
-		return NMSUtil.getReflections().getDeclaredFields(packet.getClass()).get(index).get(packet, false);
+        return Utils.nms().getDeclaredFields(packet.getClass()).get(index).get(packet, false);
 	}
 	
 	public boolean isCancelled() {

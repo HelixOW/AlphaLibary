@@ -2,9 +2,8 @@ package io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.channel;
 
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.CancellablePacket;
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.INettyInjector;
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveField;
+import io.github.whoisalphahelix.helix.reflection.SaveField;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,8 +20,8 @@ import java.util.ArrayList;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class INCChannel extends ChannelAbstract {
-	
-	private static final SaveField channelField = NMSUtil.getReflections()
+
+    private static final SaveField channelField = Utils.nms()
 			.getFirstDeclaredFieldWithType(Channel.class,
 					NETWORK_MANAGER_CLASS);
 	

@@ -1,9 +1,7 @@
 package io.github.alphahelixdev.alpary.reflection.nms.packets;
 
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveConstructor;
-import io.github.alphahelixdev.helius.utils.MathUtil;
+import io.github.whoisalphahelix.helix.reflection.SaveConstructor;
 import lombok.*;
 
 @Getter
@@ -13,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 public class EntityLookPacket implements IPacket {
 
-    private static final SaveConstructor PACKET = NMSUtil.getReflections().getDeclaredConstructor(
+    private static final SaveConstructor PACKET = Utils.nms().getDeclaredConstructor(
             Utils.nms().getNMSClass("PacketPlayOutEntity$PacketPlayOutEntityLook"), int.class, byte.class,
             byte.class, boolean.class);
 
@@ -27,7 +25,7 @@ public class EntityLookPacket implements IPacket {
 
     @Override
     public Object getPacket(boolean stackTrace) {
-        return EntityLookPacket.getPacket().newInstance(stackTrace, this.getEntityID(), MathUtil.toAngle(this.getYaw()),
-                MathUtil.toAngle(this.getPitch()), this.isOnGround());
+        return EntityLookPacket.getPacket().newInstance(stackTrace, this.getEntityID(), Utils.math().toAngle(this.getYaw()),
+                Utils.math().toAngle(this.getPitch()), this.isOnGround());
     }
 }

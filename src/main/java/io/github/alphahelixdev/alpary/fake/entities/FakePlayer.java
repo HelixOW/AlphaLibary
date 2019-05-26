@@ -6,10 +6,10 @@ import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.fake.Fake;
 import io.github.alphahelixdev.alpary.fake.FakeEntity;
 import io.github.alphahelixdev.alpary.reflection.nms.PacketCreator;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.AnimationType;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumEquipSlot;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumGamemode;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumPlayerInfoAction;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RAnimationType;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.REquipSlot;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RGamemode;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RPlayerInfoAction;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.*;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
@@ -51,7 +51,7 @@ public class FakePlayer extends FakeEntity {
 				Utils.nms().getMinecraftServer(),
 				Utils.nms().getWorldServer(loc.getWorld()),
 				skin,
-				Alpary.getInstance().reflections().getDeclaredConstructor(Utils.nms().getNMSClass("PlayerInteractManager"),
+                Alpary.getInstance().reflection().getDeclaredConstructor(Utils.nms().getNMSClass("PlayerInteractManager"),
 						Utils.nms().getNMSClass("World"))
 						.newInstance(false, Utils.nms().getWorldServer(loc.getWorld())));
 		EntityWrapper e = new EntityWrapper(npc);
@@ -64,20 +64,20 @@ public class FakePlayer extends FakeEntity {
 			@Override
 			public void run() {
 				Utils.nms().sendPacket(p, PacketCreator.createPlayerInfoPacket(
-						REnumPlayerInfoAction.ADD_PLAYER,
+                        RPlayerInfoAction.ADD_PLAYER,
 						skin,
 						0,
-						REnumGamemode.SURVIVAL,
+                        RGamemode.SURVIVAL,
 						customName));
 				
 				Utils.nms().sendPackets(p, new NamedEntitySpawnPacket(npc),
 						new EntityLookPacket(e.getEntityID(), loc.getYaw(), loc.getPitch(), true));
 				
 				Utils.nms().sendPacket(p, PacketCreator.createPlayerInfoPacket(
-						REnumPlayerInfoAction.REMOVE_PLAYER,
+                        RPlayerInfoAction.REMOVE_PLAYER,
 						skin,
 						0,
-						REnumGamemode.SURVIVAL,
+                        RGamemode.SURVIVAL,
 						customName));
 			}
 		}.runTaskLater(Alpary.getInstance(), 4);
@@ -154,24 +154,24 @@ public class FakePlayer extends FakeEntity {
 		if(!Fake.getEntityHandler().getFakeEntitiesInRadius(toAttack, 4).contains(this)) return this;
 		
 		lookAtPlayer(p, toAttack);
-		
-		Utils.nms().sendPacket(p, new AnimationPacket(getNmsEntity(), AnimationType.SWING_ARM));
+
+        Utils.nms().sendPacket(p, new AnimationPacket(getNmsEntity(), RAnimationType.SWING_ARM));
 		
 		toAttack.damage(damage);
 		return this;
 	}
 	
 	public FakePlayer equipSkull(Player p, String textureURL) {
-		return equip(p, Utils.skulls().getCustomSkull(textureURL), REnumEquipSlot.HELMET);
+        return equip(p, Utils.skulls().getCustomSkull(textureURL), REquipSlot.HELMET);
 	}
-	
-	public FakePlayer equip(Player p, ItemStack item, REnumEquipSlot slot) {
+
+    public FakePlayer equip(Player p, ItemStack item, REquipSlot slot) {
 		Utils.nms().sendPacket(p, new EntityEquipmentPacket(getEntityID(), item, slot));
 		return this;
 	}
 	
 	public FakePlayer equipSkull(Player p, GameProfile profile) {
-		return equip(p, Utils.skulls().getPlayerSkull(profile.getName()), REnumEquipSlot.HELMET);
+        return equip(p, Utils.skulls().getPlayerSkull(profile.getName()), REquipSlot.HELMET);
 	}
 	
 	public FakePlayer stopRide(Player p) {

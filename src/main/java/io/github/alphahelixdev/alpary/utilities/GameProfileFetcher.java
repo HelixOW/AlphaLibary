@@ -5,11 +5,9 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.util.UUIDTypeAdapter;
 import io.github.alphahelixdev.alpary.Alpary;
-import io.github.alphahelixdev.alpary.utils.StringUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.Cache;
-import io.github.alphahelixdev.helius.Helius;
-import io.github.alphahelixdev.helius.file.json.JsonFile;
+import io.github.whoisalphahelix.helix.Cache;
+import io.github.whoisalphahelix.helix.io.HonFile;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -33,10 +31,10 @@ public class GameProfileFetcher {
 	private static final String JSON_CAPE = "{\"timestamp\":%d,\"profileId\":\"%s\",\"profileName\":\"%s\",\"isPublic\":true,\"textures\":{\"SKIN\":{\"url\":\"%s\"},\"CAPE\":{\"url\":\"%s\"}}}";
 	
 	private final GameProfileCache cache;
-	
-	public GameProfileFetcher() {
+
+    public GameProfileFetcher() throws IOException {
 		this.cache = new GameProfileCache();
-		Helius.addCache(this.cache);
+        Alpary.getInstance().cacheHandler().addCache(this.cache);
 	}
 	
 	public static GameProfile buildProfile(String name, String skinUrl, String capeUrl) {
@@ -80,7 +78,7 @@ public class GameProfileFetcher {
 		}
 		
 		if (connection == null)
-			return new GameProfile(UUID.randomUUID(), StringUtil.generateRandomString(15));
+            return new GameProfile(UUID.randomUUID(), Utils.strings().generateRandomString(15));
 		
 		connection.setReadTimeout(5000);
 		
@@ -97,8 +95,8 @@ public class GameProfileFetcher {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return new GameProfile(UUID.randomUUID(), StringUtil.generateRandomString(15));
+
+        return new GameProfile(UUID.randomUUID(), Utils.strings().generateRandomString(15));
 	}
 	
 	@Getter
@@ -107,25 +105,29 @@ public class GameProfileFetcher {
 	public class GameProfileCache implements Cache {
 		
 		private final Map<UUID, GameProfile> profiles = new HashMap<>();
-		private final JsonFile jsonFile;
-		
-		GameProfileCache() {
-			jsonFile = new JsonFile(Alpary.getInstance().getDataFolder(), "profiles.json");
+        private final HonFile honFile;
+
+        GameProfileCache() throws IOException {
+            honFile = new HonFile(Alpary.getInstance().getDataFolder(), "profiles.hon", Alpary.getInstance());
 		}
 		
 		@Override
-		public void clear() {
+        public boolean clear() {
 			profiles.clear();
-		}
-		
+            return true;
+        }
+
 		@Override
-		public String clearMessage() {
-			return "GameProfile Cache cleared!";
-		}
-		
+        public String log() {
+            return "Gameprofile Cache cleared";
+        }
+
 		@Override
 		public void save() {
-			profiles.forEach((uuid, gameProfile) -> jsonFile.setValue(uuid.toString(), gameProfile));
+            profiles.forEach((uuid, gameProfile) -> {
+                honFile.getHon().set(uuid.toString(), gameProfile);
+                honFile.update();
+            });
 		}
 	}
 }

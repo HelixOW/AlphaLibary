@@ -3,7 +3,7 @@ package io.github.alphahelixdev.alpary.fake.entities;
 import com.mojang.authlib.GameProfile;
 import io.github.alphahelixdev.alpary.fake.Fake;
 import io.github.alphahelixdev.alpary.fake.FakeEntity;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumEquipSlot;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.REquipSlot;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityEquipmentPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityMetaDataPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.SpawnEntityLivingPacket;
@@ -60,16 +60,16 @@ public class FakeArmorstand extends FakeEntity {
 	}
 	
 	public FakeArmorstand equipSkull(Player p, String textureURL) {
-		return this.equip(p, Utils.skulls().getCustomSkull(textureURL), REnumEquipSlot.HELMET);
+        return this.equip(p, Utils.skulls().getCustomSkull(textureURL), REquipSlot.HELMET);
 	}
-	
-	public FakeArmorstand equip(Player p, ItemStack item, REnumEquipSlot slot) {
+
+    public FakeArmorstand equip(Player p, ItemStack item, REquipSlot slot) {
 		Utils.nms().sendPacket(p, new EntityEquipmentPacket(this.getEntityID(), item, slot).getPacket(false));
 		return this;
 	}
 	
 	public FakeArmorstand equipSkull(Player p, GameProfile profile) {
-		return this.equip(p, Utils.skulls().getPlayerSkull(profile.getName()), REnumEquipSlot.HELMET);
+        return this.equip(p, Utils.skulls().getPlayerSkull(profile.getName()), REquipSlot.HELMET);
 	}
 	
 	public FakeArmorstand changeVisibilty(Player p, boolean visible) {

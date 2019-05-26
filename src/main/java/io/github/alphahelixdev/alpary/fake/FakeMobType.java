@@ -57,6 +57,6 @@ public enum FakeMobType {
 	}
 	
 	public SaveConstructor getConstructor() {
-		return Alpary.getInstance().reflections().getDeclaredConstructor(Utils.nms().getNMSClass(this.getNmsClass()), this.getClasses());
+        return Alpary.getInstance().reflection().getDeclaredConstructor(Utils.nms().getNMSClass(this.getNmsClass()), this.getClasses());
 	}
 }

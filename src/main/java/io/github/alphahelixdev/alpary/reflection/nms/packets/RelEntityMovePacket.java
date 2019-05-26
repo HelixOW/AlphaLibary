@@ -1,9 +1,7 @@
 package io.github.alphahelixdev.alpary.reflection.nms.packets;
 
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveConstructor;
-import io.github.alphahelixdev.helius.utils.MathUtil;
+import io.github.whoisalphahelix.helix.reflection.SaveConstructor;
 import lombok.*;
 
 @Getter
@@ -12,8 +10,8 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 public class RelEntityMovePacket implements IPacket {
-	
-	private static final SaveConstructor PACKET = NMSUtil.getReflections().getDeclaredConstructor(
+
+    private static final SaveConstructor PACKET = Utils.nms().getDeclaredConstructor(
 			Utils.nms().getNMSClass("PacketPlayOutEntity$PacketPlayOutRelEntityMove"), int.class, long.class,
 			long.class, long.class, boolean.class);
 	
@@ -28,7 +26,7 @@ public class RelEntityMovePacket implements IPacket {
 	@Override
 	public Object getPacket(boolean stackTrace) {
 		return RelEntityMovePacket.getPacket().newInstance(stackTrace, this.getEntityID(),
-				MathUtil.toDelta(this.getX()), MathUtil.toDelta(this.getY()), MathUtil.toDelta(this.getZ()),
+                Utils.math().toDelta(this.getX()), Utils.math().toDelta(this.getY()), Utils.math().toDelta(this.getZ()),
 				this.isOnGround());
 	}
 }

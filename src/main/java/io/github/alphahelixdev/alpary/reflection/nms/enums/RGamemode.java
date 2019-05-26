@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public enum REnumGamemode implements Serializable {
+public enum RGamemode implements Serializable {
 	
 	NOT_SET(0),
 	SURVIVAL(1),
@@ -20,8 +20,8 @@ public enum REnumGamemode implements Serializable {
 	SPECTATOR(4);
 	
 	private final int c;
-	
-	public static REnumGamemode getFromPlayer(Player player) {
+
+    public static RGamemode getFromPlayer(Player player) {
 		switch (player.getGameMode()) {
 			case ADVENTURE:
 				return ADVENTURE;

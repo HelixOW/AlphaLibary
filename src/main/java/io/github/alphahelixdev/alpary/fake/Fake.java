@@ -5,8 +5,8 @@ import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.fake.entities.*;
 import io.github.alphahelixdev.alpary.fake.events.FakeEntityClickEvent;
 import io.github.alphahelixdev.alpary.fake.exceptions.NoSuchFakeEntityException;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumAction;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumHand;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RAction;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RHand;
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.NettyInjector;
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.PacketHandler;
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.handler.PacketOptions;
@@ -81,7 +81,7 @@ public class Fake {
 						OfflinePlayer p = Bukkit.getOfflinePlayer(wrapper.getProfile().getId());
 						
 						if(Fake.npcs().contains(wrapper.getName())) {
-							Alpary.getInstance().reflections().getDeclaredField("name", GameProfile.class).set(wrapper.getProfile(), wrapper.getName(), true);
+                            Alpary.getInstance().reflection().getDeclaredField("name", GameProfile.class).set(wrapper.getProfile(), wrapper.getName(), true);
 							
 							newPlayerInfo.add(new PlayerInfoDataWrapper(
 									wrapper.getPing(), wrapper.getGameMode(), wrapper.getProfile(), p.getName(), packet.getPacket()
@@ -104,13 +104,13 @@ public class Fake {
 					try {
 						FakeEntity clicked = Fake.getEntityHandler().getFakeEntityByID(p, id);
 
-						REnumAction action = REnumAction.valueOf(packet.getPacketValue("action").toString());
-						REnumHand hand = REnumHand.MAIN_HAND;
+                        RAction action = RAction.valueOf(packet.getPacketValue("action").toString());
+                        RHand hand = RHand.MAIN_HAND;
 						
 						if(packet.getPacketValue("d") != null)
-							hand = REnumHand.values()[Alpary.getInstance().reflections().getEnumConstantID(packet.getPacketValue("d"))];
+                            hand = RHand.values()[Alpary.getInstance().reflection().getEnumConstantID(packet.getPacketValue("d"))];
 
-						if(action != REnumAction.INTERACT_AT)
+                        if (action != RAction.INTERACT_AT)
 							Bukkit.getPluginManager().callEvent(new FakeEntityClickEvent(p, clicked, action, hand));
 					} catch(NoSuchFakeEntityException ignore) {
 					}

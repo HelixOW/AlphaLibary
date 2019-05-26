@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,11 +44,12 @@ public class MenuManager implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMenuClick(InventoryClickEvent e) {
-        Inventory i = e.getClickedInventory();
+        InventoryView iv = e.getView();
+        Inventory i = iv.getTopInventory();
         Player p = (Player) e.getWhoClicked();
 	
 	    if(i == null || e.getCurrentItem() == null || !getMenus().containsKey(p.getName())) return;
-        if (i.getTitle().equals("")) return;
+        if (iv.getTitle().equals("")) return;
 
         Menu menu = this.getMenu(p);
         if (menu != null && menu.getElement(e.getRawSlot()) != null)

@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import io.github.alphahelixdev.alpary.fake.Fake;
 import io.github.alphahelixdev.alpary.fake.FakeEntity;
 import io.github.alphahelixdev.alpary.fake.FakeMobType;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumEquipSlot;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.REquipSlot;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.*;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityAgeableWrapper;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
@@ -75,17 +75,17 @@ public class FakeMob extends FakeEntity {
 	}
 	
 	public FakeMob equipSkull(Player p, String textureURL) {
-		equip(p, Utils.skulls().getCustomSkull(textureURL), REnumEquipSlot.HELMET);
+        equip(p, Utils.skulls().getCustomSkull(textureURL), REquipSlot.HELMET);
 		return this;
 	}
-	
-	public FakeMob equip(Player p, ItemStack item, REnumEquipSlot slot) {
+
+    public FakeMob equip(Player p, ItemStack item, REquipSlot slot) {
 		Utils.nms().sendPacket(p, new EntityEquipmentPacket(getEntityID(), item, slot));
 		return this;
 	}
 	
 	public FakeMob equipSkull(Player p, GameProfile profile) {
-		equip(p, Utils.skulls().getPlayerSkull(profile.getName()), REnumEquipSlot.HELMET);
+        equip(p, Utils.skulls().getPlayerSkull(profile.getName()), REquipSlot.HELMET);
 		return this;
 	}
 	

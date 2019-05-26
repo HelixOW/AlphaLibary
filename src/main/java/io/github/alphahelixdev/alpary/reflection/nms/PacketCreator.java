@@ -1,8 +1,8 @@
 package io.github.alphahelixdev.alpary.reflection.nms;
 
 import com.mojang.authlib.GameProfile;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumGamemode;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumPlayerInfoAction;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RGamemode;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RPlayerInfoAction;
 import io.github.alphahelixdev.alpary.utils.Utils;
 
 import java.lang.reflect.Field;
@@ -16,13 +16,13 @@ public class PacketCreator {
 	 * @param enumPlayerInfoAction the {@link } to use
 	 * @param gameProfile          the {@link GameProfile} to perform the action on
 	 * @param ping                 the ping which should be displayed inside the tablist
-	 * @param enumGamemode         the {@link REnumGamemode} to use
+     * @param enumGamemode         the {@link RGamemode} to use
 	 * @param name                 the skinName which should be displayed inside the tablist
 	 *
 	 * @return the PacketPlayOutPlayerInfoAction
 	 */
-	public static Object createPlayerInfoPacket(REnumPlayerInfoAction enumPlayerInfoAction, GameProfile gameProfile,
-	                                            int ping, REnumGamemode enumGamemode, String name) {
+    public static Object createPlayerInfoPacket(RPlayerInfoAction enumPlayerInfoAction, GameProfile gameProfile,
+                                                int ping, RGamemode enumGamemode, String name) {
 		
 		Class<?> cIChatBaseComponent = Utils.nms().getNMSClass("IChatBaseComponent");
 		Class<?> cPacketPlayOutPlayerInfo = Utils.nms().getNMSClass("PacketPlayOutPlayerInfo");

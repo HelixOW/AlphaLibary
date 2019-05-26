@@ -1,9 +1,8 @@
 package io.github.alphahelixdev.alpary.reflection.nms.wrappers;
 
 import com.mojang.authlib.GameProfile;
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveConstructor;
+import io.github.whoisalphahelix.helix.reflection.SaveConstructor;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,7 +16,7 @@ public class PlayerInfoDataWrapper {
 
     private static final Class<?> P_ID_CLAZZ = Utils.nms().getNMSClass("PacketPlayOutPlayerInfo$PlayerInfoData");
 
-    private static final SaveConstructor P_ID_CONSTUCTOR = NMSUtil.getReflections().getDeclaredConstructor(P_ID_CLAZZ,
+    private static final SaveConstructor P_ID_CONSTUCTOR = Utils.nms().getDeclaredConstructor(P_ID_CLAZZ,
             Utils.nms().getNMSClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class,
             Utils.nms().getNMSClass("EnumGamemode"), Utils.nms().getNMSClass("IChatBaseComponent"));
 
@@ -28,15 +27,15 @@ public class PlayerInfoDataWrapper {
     private final Object playerinfoaction;
 
     public static PlayerInfoDataWrapper getPlayerInfo(Object nmsPlayerInfoData) {
-        int ping = (int) NMSUtil.getReflections().getDeclaredField("b", PlayerInfoDataWrapper.getpIdClazz())
+        int ping = (int) Utils.nms().getDeclaredField("b", PlayerInfoDataWrapper.getpIdClazz())
                 .get(nmsPlayerInfoData);
-        Object gamemode = NMSUtil.getReflections().getDeclaredField("c", PlayerInfoDataWrapper.getpIdClazz())
+        Object gamemode = Utils.nms().getDeclaredField("c", PlayerInfoDataWrapper.getpIdClazz())
                 .get(nmsPlayerInfoData);
-        GameProfile profile = (GameProfile) NMSUtil.getReflections().getDeclaredField("d",
+        GameProfile profile = (GameProfile) Utils.nms().getDeclaredField("d",
                 PlayerInfoDataWrapper.getpIdClazz()).get(nmsPlayerInfoData);
-        Object name = NMSUtil.getReflections().getDeclaredField("e", PlayerInfoDataWrapper.getpIdClazz())
+        Object name = Utils.nms().getDeclaredField("e", PlayerInfoDataWrapper.getpIdClazz())
                 .get(nmsPlayerInfoData);
-        Object infoAction = NMSUtil.getReflections().getDeclaredField("a", PlayerInfoDataWrapper.getpIdClazz())
+        Object infoAction = Utils.nms().getDeclaredField("a", PlayerInfoDataWrapper.getpIdClazz())
                 .get(nmsPlayerInfoData);
 	
 	    return new PlayerInfoDataWrapper(
@@ -44,7 +43,7 @@ public class PlayerInfoDataWrapper {
     }
 
     public static boolean isUnknown(Object playerInfoData) {
-        GameProfile profile = (GameProfile) NMSUtil.getReflections().getDeclaredField("d",
+        GameProfile profile = (GameProfile) Utils.nms().getDeclaredField("d",
                 PlayerInfoDataWrapper.getpIdClazz()).get(playerInfoData);
 
         return playerInfoData == null || profile == null;

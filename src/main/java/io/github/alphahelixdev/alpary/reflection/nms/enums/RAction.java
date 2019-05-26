@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public enum REnumAction implements Serializable {
+public enum RAction implements Serializable {
 	
 	INTERACT(0),
 	ATTACK(1),

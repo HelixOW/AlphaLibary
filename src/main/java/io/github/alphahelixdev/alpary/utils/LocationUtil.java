@@ -1,6 +1,5 @@
 package io.github.alphahelixdev.alpary.utils;
 
-import io.github.alphahelixdev.alpary.Alpary;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.bukkit.Bukkit;
@@ -99,10 +98,10 @@ public class LocationUtil {
 	
 	public Location trim(int decimals, Location loc) {
 		return new Location(loc.getWorld(),
-				Alpary.getInstance().utilHandler().getMathUtil().trim(loc.getX(), decimals),
-				Alpary.getInstance().utilHandler().getMathUtil().trim(loc.getY(), decimals),
-				Alpary.getInstance().utilHandler().getMathUtil().trim(loc.getZ(), decimals),
-				(float) Alpary.getInstance().utilHandler().getMathUtil().trim(loc.getYaw(), decimals),
-				(float) Alpary.getInstance().utilHandler().getMathUtil().trim(loc.getPitch(), decimals));
+                Utils.math().trim(loc.getX(), decimals),
+                Utils.math().trim(loc.getY(), decimals),
+                Utils.math().trim(loc.getZ(), decimals),
+                (float) Utils.math().trim(loc.getYaw(), decimals),
+                (float) Utils.math().trim(loc.getPitch(), decimals));
 	}
 }

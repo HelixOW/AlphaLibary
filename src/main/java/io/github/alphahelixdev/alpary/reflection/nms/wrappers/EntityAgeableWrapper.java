@@ -1,16 +1,15 @@
 package io.github.alphahelixdev.alpary.reflection.nms.wrappers;
 
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveMethod;
+import io.github.whoisalphahelix.helix.reflection.SaveMethod;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class EntityAgeableWrapper extends EntityWrapper {
-	
-	private static final SaveMethod ENTITY_AGEABLE_SET_AGE = NMSUtil.getReflections().getDeclaredMethod("setAge",
+
+    private static final SaveMethod ENTITY_AGEABLE_SET_AGE = Utils.nms().getDeclaredMethod("setAge",
 			Utils.nms().getNMSClass("EntityAgeable"),
 			int.class);
 	

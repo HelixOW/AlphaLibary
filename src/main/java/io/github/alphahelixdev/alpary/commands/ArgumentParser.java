@@ -22,7 +22,7 @@ public class ArgumentParser {
 	private final StringParser parser = new StringParser();
 	
 	public static void registerCommandObject(ParsedObject<?> parsedObject) {
-		StringParser.getParsedObjects().add(0, parsedObject);
+        StringParser.getParsableObjects().add(0, parsedObject);
 	}
 	
 	public final Object[] parseArguments(CommandSender e, String[] args) {

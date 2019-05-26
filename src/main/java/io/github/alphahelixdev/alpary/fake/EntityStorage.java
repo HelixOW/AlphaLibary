@@ -2,6 +2,7 @@ package io.github.alphahelixdev.alpary.fake;
 
 import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.utilities.NoInitLocation;
+import io.github.alphahelixdev.alpary.utils.Utils;
 import io.github.whoisalphahelix.helix.hon.Hon;
 import io.github.whoisalphahelix.sql.SQL;
 import io.github.whoisalphahelix.sql.SQLTable;
@@ -68,10 +69,10 @@ public class EntityStorage<T extends FakeEntity> {
 			));
 			
 			for(int i = 3; i < rowEntry.size(); i++)
-				insert.add(Alpary.getInstance().utilHandler().getJsonUtil().fromJsonTree(
+                insert.add(Utils.json().fromJsonTree(
 						Alpary.getInstance().ioHandler().getGson(), rowEntry.get(i)));
-			
-			entities.add((T) Alpary.getInstance().reflections().getMethod("spawnTemporary", this.entityClass, parameters.toArray(new Class[0]))
+
+            entities.add((T) Alpary.getInstance().reflection().getMethod("spawnTemporary", this.entityClass, parameters.toArray(new Class[0]))
 					.invokeStatic(insert.toArray(new Object[0])));
 		}
 		return entities;

@@ -18,9 +18,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -121,7 +123,7 @@ public class UUIDFetcher {
 	public String getName(UUID uuid) throws NameNotFoundException {
 		if(uuid == null)
 			return "";
-		
+
 		if(this.getCache().getName().containsKey(uuid))
 			return this.getCache().getName().get(uuid);
 		
@@ -139,8 +141,8 @@ public class UUIDFetcher {
 			
 			if(currentName.getName() == null)
 				return "";
-			
-			this.getCache().getName().put(uuid, currentName.getName());
+
+			this.getCache().getName().putIfAbsent(uuid, currentName.getName());
 			
 			return currentName.getName();
 		} catch(Exception e) {
@@ -164,17 +166,31 @@ public class UUIDFetcher {
 	public class UUIDCache implements Cache {
 		private final Map<UUID, String> name = new ConcurrentHashMap<>();
 		private final Map<String, UUID> uuid = new ConcurrentHashMap<>();
-		
-		private final SQLTable saveTable;
+
+		private final SQLTable uuidSaveTable;
+		private final SQLTable nameSaveTable;
 		
 		public UUIDCache() {
 			Hon config = new Hon(Alpary.getInstance().helix());
-			
+
+			try {
+				Alpary.getInstance().ioHandler().createFile(Alpary.getInstance().getDataFolder().getAbsolutePath() + "/uuidNameCache.db");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 			config.set("driver", "org.sqlite.JDBC");
 			config.set("jdbc-path", "jdbc:sqlite:" + Alpary.getInstance().getDataFolder().getAbsolutePath() + "/uuidNameCache.db");
 			
 			SQL sql = new SQL(Alpary.getInstance().helix(), config);
-			this.saveTable = sql.createTable(Saver.class);
+			this.uuidSaveTable = sql.createTable(UUIDSaver.class);
+			this.nameSaveTable = sql.createTable(NameSaver.class);
+
+			for (List<Object> pairs : this.uuidSaveTable.getAll())
+				uuid.put(pairs.get(0).toString(), (UUID) pairs.get(1));
+
+			for (List<Object> pairs : this.nameSaveTable.getAll())
+				name.put((UUID) pairs.get(0), pairs.get(1).toString());
 		}
 		
 		@Override
@@ -192,16 +208,27 @@ public class UUIDFetcher {
 		
 		@Override
 		public void save() {
-			this.getSaveTable().delete();
-			
-			this.getName().forEach((key, value) -> this.saveTable.insert(new Saver(value, key)));
-			this.getUuid().forEach((key, value) -> this.saveTable.insert(new Saver(key, value)));
+			this.getNameSaveTable().delete();
+			this.getUuidSaveTable().delete();
+
+			this.getName().forEach((key, value) -> this.getNameSaveTable().insert(new NameSaver(key, value)));
+			this.getUuid().forEach((key, value) -> this.getUuidSaveTable().insert(new UUIDSaver(key, value)));
 		}
-		
-		@Table
+
+		@Table("names")
 		@Getter
 		@AllArgsConstructor
-		private class Saver {
+		private class NameSaver {
+			@Column(name = "uuid", type = "text")
+			private UUID uuid;
+			@Column(name = "name", type = "text")
+			private String name;
+		}
+
+		@Table("uuids")
+		@Getter
+		@AllArgsConstructor
+		private class UUIDSaver {
 			@Column(name = "name", type = "text")
 			private String name;
 			@Column(name = "uuid", type = "text")

@@ -1,8 +1,8 @@
 package io.github.alphahelixdev.alpary.fake.events;
 
 import io.github.alphahelixdev.alpary.fake.FakeEntity;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumAction;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumHand;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RAction;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RHand;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,10 +17,10 @@ public class FakeEntityClickEvent extends PlayerEvent {
 	
 	private static final HandlerList handlers = new HandlerList();
 	private final FakeEntity fakeEntity;
-	private final REnumAction clickAction;
-	private final REnumHand hand;
-	
-	public FakeEntityClickEvent(Player who, FakeEntity fakeEntity, REnumAction clickAction, REnumHand hand) {
+    private final RAction clickAction;
+    private final RHand hand;
+
+    public FakeEntityClickEvent(Player who, FakeEntity fakeEntity, RAction clickAction, RHand hand) {
 		super(who);
 		this.fakeEntity = fakeEntity;
 		this.clickAction = clickAction;

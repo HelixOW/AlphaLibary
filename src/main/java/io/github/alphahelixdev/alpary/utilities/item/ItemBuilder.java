@@ -4,7 +4,7 @@ import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.utilities.SimpleListener;
 import io.github.alphahelixdev.alpary.utilities.item.data.ItemData;
 import io.github.alphahelixdev.alpary.utilities.item.data.WrongDataException;
-import io.github.alphahelixdev.helius.utils.ArrayUtil;
+import io.github.alphahelixdev.alpary.utils.Utils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -65,7 +65,7 @@ public class ItemBuilder extends SimpleListener implements Serializable {
 	
 	public ItemBuilder setLore(String... newLore) {
 		this.getLore().clear();
-		this.getLore().addAll(Arrays.asList(ArrayUtil.replaceInArray("&", "§", newLore)));
+        this.getLore().addAll(Arrays.asList(Utils.arrays().replaceInArray("&", "§", newLore)));
 		return this;
 	}
 	

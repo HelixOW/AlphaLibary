@@ -1,7 +1,6 @@
 package io.github.alphahelixdev.alpary.reflection.nms.packets;
 
-import io.github.alphahelixdev.alpary.Alpary;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.AnimationType;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.RAnimationType;
 import io.github.alphahelixdev.alpary.utils.Utils;
 import io.github.whoisalphahelix.helix.reflection.SaveConstructor;
 import lombok.*;
@@ -14,13 +13,13 @@ import lombok.*;
 public class AnimationPacket implements IPacket {
 	
 	private static final SaveConstructor PACKET =
-			Alpary.getInstance().reflections().getDeclaredConstructor(Utils.nms().getNMSClass("PacketPlayOutAnimation"),
+            Utils.nms().getDeclaredConstructor(Utils.nms().getNMSClass("PacketPlayOutAnimation"),
 					Utils.nms().getNMSClass("Entity"), int.class);
 	
 	private Object entity;
 	private int animationType;
-	
-	public AnimationPacket(Object entity, AnimationType type) {
+
+    public AnimationPacket(Object entity, RAnimationType type) {
 		this(entity, type.ordinal());
 	}
 	

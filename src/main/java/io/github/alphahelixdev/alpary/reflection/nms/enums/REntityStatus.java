@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public enum EntityStatus {
+public enum REntityStatus {
 	
 	PLAY_GUARDIAN_SOUND(21),
 	PLAY_TOTEM_OF_UNDYING(35),
@@ -50,8 +50,8 @@ public enum EntityStatus {
 	SPAWNER_RESET_DELAY(1);
 	
 	private final byte id;
-	
-	EntityStatus(int i) {
+
+    REntityStatus(int i) {
 		this((byte) i);
 	}
 }

@@ -85,11 +85,11 @@ public abstract class FakeEntity {
 	}
 	
 	public FakeEntity teleport(Player p, Location loc) {
-		SaveField x = Alpary.getInstance().reflections().getField("locX", Utils.nms().getNMSClass("Entity")),
-				y = Alpary.getInstance().reflections().getField("locY", Utils.nms().getNMSClass("Entity")),
-				z = Alpary.getInstance().reflections().getField("locZ", Utils.nms().getNMSClass("Entity")),
-				yaw = Alpary.getInstance().reflections().getField("yaw", Utils.nms().getNMSClass("Entity")),
-				pitch = Alpary.getInstance().reflections().getField("pitch", Utils.nms().getNMSClass("Entity"));
+        SaveField x = Alpary.getInstance().reflection().getField("locX", Utils.nms().getNMSClass("Entity")),
+                y = Alpary.getInstance().reflection().getField("locY", Utils.nms().getNMSClass("Entity")),
+                z = Alpary.getInstance().reflection().getField("locZ", Utils.nms().getNMSClass("Entity")),
+                yaw = Alpary.getInstance().reflection().getField("yaw", Utils.nms().getNMSClass("Entity")),
+                pitch = Alpary.getInstance().reflection().getField("pitch", Utils.nms().getNMSClass("Entity"));
 		
 		x.set(getNmsEntity(), loc.getX());
 		y.set(getNmsEntity(), loc.getY());

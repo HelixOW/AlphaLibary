@@ -38,7 +38,7 @@ public class ServerPinger {
 				StringBuilder str = new StringBuilder();
 				
 				while((b = in.read()) != -1)
-					if(b != 0 && b > 16 && b != 255 && b != 23 && b != 24)
+                    if (b > 16 && b != 255 && b != 23 && b != 24)
 						str.append((char) b);
 				
 				String[] data = str.toString().split("§");

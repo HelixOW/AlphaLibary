@@ -1,9 +1,8 @@
 package io.github.alphahelixdev.alpary.reflection.nms.packets;
 
 import io.github.alphahelixdev.alpary.reflection.nms.BlockPos;
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveConstructor;
+import io.github.whoisalphahelix.helix.reflection.SaveConstructor;
 import lombok.*;
 
 @Getter
@@ -13,11 +12,11 @@ import lombok.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class SpawnEntityPacket implements IPacket {
-	
-	private static final SaveConstructor PACKET_OPT_1 = NMSUtil.getReflections().getDeclaredConstructor(
+
+    private static final SaveConstructor PACKET_OPT_1 = Utils.nms().getDeclaredConstructor(
 			Utils.nms().getNMSClass("PacketPlayOutSpawnEntity"), Utils.nms().getNMSClass("Entity"),
 			int.class, int.class);
-	private static final SaveConstructor PACKET_OPT_2 = NMSUtil.getReflections().getDeclaredConstructor(
+    private static final SaveConstructor PACKET_OPT_2 = Utils.nms().getDeclaredConstructor(
 			Utils.nms().getNMSClass("PacketPlayOutSpawnEntity"), Utils.nms().getNMSClass("Entity"),
 			int.class, int.class, Utils.nms().getNMSClass("BlockPosition"));
 	

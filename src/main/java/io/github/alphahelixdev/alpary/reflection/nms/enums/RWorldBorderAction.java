@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public enum REnumWorldBorderAction implements Serializable {
+public enum RWorldBorderAction implements Serializable {
 	
 	SET_SIZE(0),
 	LERP_SIZE(1),

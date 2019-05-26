@@ -1,8 +1,7 @@
 package io.github.alphahelixdev.alpary.reflection.nms.wrappers;
 
-import io.github.alphahelixdev.alpary.utils.NMSUtil;
 import io.github.alphahelixdev.alpary.utils.Utils;
-import io.github.alphahelixdev.helius.reflection.SaveMethod;
+import io.github.whoisalphahelix.helix.reflection.SaveMethod;
 import lombok.*;
 
 @Getter
@@ -12,8 +11,8 @@ import lombok.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class DataWatcherWrapper {
-	
-	private static final SaveMethod DW_SET = NMSUtil.getReflections().getDeclaredMethod("set",
+
+    private static final SaveMethod DW_SET = Utils.nms().getDeclaredMethod("set",
 			Utils.nms().getNMSClass("DataWatcher"), Utils.nms().getNMSClass("DataWatcherObject"),
 			Object.class);
 	

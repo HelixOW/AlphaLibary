@@ -3,7 +3,7 @@ package io.github.alphahelixdev.alpary.fake.entities;
 import io.github.alphahelixdev.alpary.fake.Fake;
 import io.github.alphahelixdev.alpary.fake.FakeEntity;
 import io.github.alphahelixdev.alpary.fake.FakeMobType;
-import io.github.alphahelixdev.alpary.reflection.nms.enums.REnumEquipSlot;
+import io.github.alphahelixdev.alpary.reflection.nms.enums.REquipSlot;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.EntityMetaDataPacket;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
 import io.github.alphahelixdev.alpary.utils.Utils;
@@ -50,9 +50,9 @@ public class FakeBigItem extends FakeEntity {
 		g.setInvisible(true);
 		
 		Utils.nms().sendPacket(p, new EntityMetaDataPacket(g.getEntityID(), dw));
-		
-		
-		fakeGiant.equip(p, stack, REnumEquipSlot.HAND);
+
+
+        fakeGiant.equip(p, stack, REquipSlot.HAND);
 		
 		FakeBigItem fBI = new FakeBigItem(name, loc, fakeGiant.getNmsEntity(), stack);
 		

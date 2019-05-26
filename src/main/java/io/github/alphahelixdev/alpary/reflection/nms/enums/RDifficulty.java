@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public enum REnumDifficulty {
+public enum RDifficulty {
 	
 	PEACEFUL(0),
 	EASY(1),

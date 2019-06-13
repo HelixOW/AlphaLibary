@@ -2,7 +2,6 @@ package io.github.alphahelixdev.alpary.utils;
 
 import com.mojang.authlib.GameProfile;
 import io.github.alphahelixdev.alpary.Alpary;
-import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
@@ -45,8 +45,8 @@ public class SkullUtil {
 		SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
 		
 		try {
-			meta.setOwningPlayer(Bukkit.getOfflinePlayer(Alpary.getInstance().uuidFetcher().getUUID(name)));
-		} catch(UUIDFetcher.UUIDNotFoundException e) {
+            meta.setOwningPlayer(Bukkit.getOfflinePlayer(Alpary.getInstance().mojangFetcher().getUUID(name).getId()));
+        } catch (IOException ignored) {
 		}
 		itemStack.setItemMeta(meta);
 		return itemStack;

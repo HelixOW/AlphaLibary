@@ -31,37 +31,26 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>io.github.whoisalphahelix</groupId>
             <artifactId>helix</artifactId>
-            <version>0.1b</version>
+            <version>0.1.1.1</version>
         </dependency>
         <dependency>
             <groupId>io.github.whoisalphahelix</groupId>
             <artifactId>sql-api</artifactId>
-            <version>0.1a</version>
+            <version>0.2a</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.27.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

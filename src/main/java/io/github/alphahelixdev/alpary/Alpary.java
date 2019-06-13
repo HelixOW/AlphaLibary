@@ -8,6 +8,7 @@ import io.github.alphahelixdev.alpary.fake.Fake;
 import io.github.alphahelixdev.alpary.reflection.nms.nettyinjection.NettyInjector;
 import io.github.alphahelixdev.alpary.utilities.GameProfileFetcher;
 import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
+import io.github.alphahelixdev.alpary.utilities.fetcher.mojang.SimpleMojangFetcher;
 import io.github.alphahelixdev.alpary.utilities.json.MaterialTypeAdapter;
 import io.github.whoisalphahelix.helix.Helix;
 import io.github.whoisalphahelix.helix.IHelix;
@@ -16,6 +17,7 @@ import io.github.whoisalphahelix.helix.handlers.IOHandler;
 import io.github.whoisalphahelix.helix.handlers.NettyHandler;
 import io.github.whoisalphahelix.helix.reflection.Reflection;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -27,16 +29,21 @@ public class Alpary extends JavaPlugin implements IHelix {
 	
 	private static final GsonBuilder GSON_BUILDER = new GsonBuilder().registerTypeAdapter(Material.class,
 			new MaterialTypeAdapter());
+	private static final String NMS_VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+
 	@Getter
 	private static Alpary instance;
-	
+
 	private final NettyInjector nettyInjector = new NettyInjector();
 	private final Helix helix = Helix.helix();
 	private final AnnotationHandler annotationHandler = new AnnotationHandler(helix);
-	
-	private UUIDFetcher uuidFetcher;
-	private GameProfileFetcher gameProfileFetcher;
-	
+	private final SimpleMojangFetcher mojangFetcher = new SimpleMojangFetcher();
+	private final UUIDFetcher uuidFetcher = new UUIDFetcher();
+	private final GameProfileFetcher gameProfileFetcher = new GameProfileFetcher();
+
+	public Alpary() throws IOException {
+	}
+
 	@Override
 	public void onLoad() {
 		nettyInjector.load();
@@ -53,12 +60,6 @@ public class Alpary extends JavaPlugin implements IHelix {
 
 		ioHandler().createFolder(getDataFolder());
 		
-		this.uuidFetcher = new UUIDFetcher();
-		try {
-			this.gameProfileFetcher = new GameProfileFetcher();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		new AddonCore().enable();
 		
 		this.annotationHandler.registerListeners();
@@ -98,14 +99,14 @@ public class Alpary extends JavaPlugin implements IHelix {
 	public GameProfileFetcher gameProfileFetcher() {
 		return this.gameProfileFetcher;
 	}
-	
+
 	@Override
 	public IOHandler ioHandler() {
 		return this.helix.ioHandler();
 	}
-	
-	public NettyInjector nettyInjector() {
-		return nettyInjector;
+
+	public static String getNMSVersion() {
+		return NMS_VERSION;
 	}
 	
 	@Override
@@ -116,16 +117,24 @@ public class Alpary extends JavaPlugin implements IHelix {
 	public Gson gson() {
 		return gsonBuilder().create();
 	}
-	
+
 	public GsonBuilder gsonBuilder() {
 		return GSON_BUILDER;
 	}
-	
+
+	public NettyInjector nettyInjector() {
+		return this.nettyInjector;
+	}
+
 	public UUIDFetcher uuidFetcher() {
 		return this.uuidFetcher;
 	}
-	
+
 	public Helix helix() {
 		return this.helix;
+	}
+
+	public SimpleMojangFetcher mojangFetcher() {
+		return this.mojangFetcher;
 	}
 }

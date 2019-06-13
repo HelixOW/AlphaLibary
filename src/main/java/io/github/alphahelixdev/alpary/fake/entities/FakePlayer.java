@@ -12,7 +12,6 @@ import io.github.alphahelixdev.alpary.reflection.nms.enums.RGamemode;
 import io.github.alphahelixdev.alpary.reflection.nms.enums.RPlayerInfoAction;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.*;
 import io.github.alphahelixdev.alpary.reflection.nms.wrappers.EntityWrapper;
-import io.github.alphahelixdev.alpary.utilities.UUIDFetcher;
 import io.github.alphahelixdev.alpary.utils.Utils;
 import io.github.whoisalphahelix.sql.annotations.Column;
 import io.github.whoisalphahelix.sql.annotations.Table;
@@ -27,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Consumer;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Table("players")
@@ -102,8 +102,8 @@ public class FakePlayer extends FakeEntity {
 	
 	public static FakePlayer spawnTemporary(Player p, Location loc, String customName, OfflinePlayer skin) {
 		try {
-			return spawnTemporary(p, loc, customName, Alpary.getInstance().gameProfileFetcher().fetch(Alpary.getInstance().uuidFetcher().getUUID(skin), false));
-		} catch(UUIDFetcher.UUIDNotFoundException e) {
+			return spawnTemporary(p, loc, customName, Alpary.getInstance().gameProfileFetcher().fetch(Alpary.getInstance().mojangFetcher().getUUID(skin).getId(), false));
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}

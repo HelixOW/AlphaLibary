@@ -1,6 +1,7 @@
 package io.github.alphahelixdev.alpary.utils;
 
 import com.mojang.authlib.GameProfile;
+import io.github.alphahelixdev.alpary.Alpary;
 import io.github.alphahelixdev.alpary.reflection.nms.BlockPos;
 import io.github.alphahelixdev.alpary.reflection.nms.packets.IPacket;
 import io.github.whoisalphahelix.helix.reflection.Reflection;
@@ -20,12 +21,7 @@ import java.lang.reflect.Array;
 @ToString
 public class NMSUtil extends Reflection {
 
-    private static final String VERSION;
-
-    static {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        VERSION = packageName.substring(packageName.lastIndexOf(".") + 1);
-    }
+    private static final String VERSION = Alpary.getNMSVersion();
 
     public Class<?> getNmsClassAsArray(String name) {
         return getType(getNMSPrefix() + name, true);
@@ -87,7 +83,7 @@ public class NMSUtil extends Reflection {
     }
 
     public int getCraftEntityID(Entity entity) {
-	    return (int) getMethod("getId", getNMSClass("Entity")).invoke(getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true), true);
+        return (int) getMethod("getUuid", getNMSClass("Entity")).invoke(getMethod("getHandle", getCraftBukkitClass("entity.CraftEntity")).invoke(entity, true), true);
     }
 
     public int getNMSEntityID(Object entity) {
